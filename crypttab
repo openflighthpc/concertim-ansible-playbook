@@ -1,0 +1,3 @@
+# target		source			key file	options
+upgrade-rootfs		/dev/sda3		none		luks,keyscript=/usr/local/sbin/cryptkey
+
