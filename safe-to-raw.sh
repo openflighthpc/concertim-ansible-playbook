@@ -84,27 +84,6 @@ create_partitions() {
     losetup -d "${tmp_loop_dev}"
 }
 
-setup_crypto() {
-    # XXX Other partitions here too.
-    if [ -b /dev/mapper/upgrade-rootfs ]; then
-        /sbin/cryptsetup -q remove upgrade-rootfs
-    fi
-    # Only rootfs.key is in the filesystem.  The others need creating.
-    # cp -a "${FILESYSTEM_PATH}/etc/keys/rootfs.key" "${CRYPTO_TMPDIR}"
-
-    # Check to see if luks is already on this disk and openable.
-    local partition
-    partition="/dev/mapper/${LOOP_DEV}p3"
-    local key_file
-    key_file="${FILESYSTEM_PATH}/etc/keys/rootfs.key"
-    if ! /sbin/cryptsetup isLuks "${partition}" && ! /sbin/cryptsetup -q luksOpen "${partition}" upgrade-rootfs --key-file "${key_file}" ; then
-        /sbin/cryptsetup -q luksFormat "${partition}" "${key_file}" && \
-            /sbin/cryptsetup -q luksOpen "${partition}" upgrade-rootfs --key-file "${key_file}"
-    fi
-
-    cp -a crypttab "${CRYPTO_TMPDIR}"
-}
-
 create_loopback_devices() {
     log "Creating loopback devices"
     kpartx -av "${IMG_FILE}" 
@@ -117,10 +96,7 @@ format_partitions() {
     # XXX Determine partition numbers from ${PERSISTENT_IMAGE_PATH}
     mke2fs -t ext3 /dev/mapper/${LOOP_DEV}p1
     mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p2
-
-    # mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p3
-    mkfs -t ext4 -L _data_upgrade /dev/mapper/upgrade-rootfs
-
+    mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p3
     mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p6
     mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p7
     mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p8
@@ -136,19 +112,7 @@ mount_partitions() {
     mkdir -p "${MOUNT_POINT}"/{boot,upgrade,data/private,data/upgrade,data/public}
     mount /dev/mapper/${LOOP_DEV}p1 "${MOUNT_POINT}"/boot
 
-    # mount /dev/mapper/${LOOP_DEV}p3 "${MOUNT_POINT}"/upgrade/
-    if [ ! -b /dev/mapper/upgrade-rootfs ] ; then
-        local partition
-        partition="/dev/mapper/${LOOP_DEV}p3"
-        local key_file
-        key_file="${FILESYSTEM_PATH}/etc/keys/rootfs.key"
-        /sbin/cryptsetup -q luksOpen "${partition}" upgrade-rootfs --key-file "${key_file}"
-    fi
-    if ! mount -t auto /dev/mapper/upgrade-rootfs "${MOUNT_POINT}"/upgrade/ ; then
-        echo "Failed to mount upgrade-rootfs"
-        exit 1
-    fi
-
+    mount /dev/mapper/${LOOP_DEV}p3 "${MOUNT_POINT}"/upgrade/
     mount /dev/mapper/${LOOP_DEV}p6 "${MOUNT_POINT}"/data/private/
     mount /dev/mapper/${LOOP_DEV}p7 "${MOUNT_POINT}"/data/upgrade/
     mount /dev/mapper/${LOOP_DEV}p8 "${MOUNT_POINT}"/data/public/
@@ -157,10 +121,6 @@ mount_partitions() {
 sync_disk() {
     log "Syncing disks"
     rsync -a --delete-after "${FILESYSTEM_PATH}/" "${MOUNT_POINT}"
-    if compgen -G "${CRYPTO_TMPDIR}/*.key" ; then
-        rsync -a "${CRYPTO_TMPDIR}/*.key" "${MOUNT_POINT}"/etc/keys
-    fi
-    rsync -a "${CRYPTO_TMPDIR}/crypttab" "${MOUNT_POINT}"/etc/
 }
 
 build_fstab() {
@@ -209,10 +169,6 @@ unstage_disks() {
     umount "${MOUNT_POINT}"/boot 
     umount "${MOUNT_POINT}"
 
-    if [ -b /dev/mapper/upgrade-rootfs ]; then
-        /sbin/cryptsetup -q remove upgrade-rootfs
-    fi
-
     kpartx -dv "${IMG_FILE}"
 }
 
@@ -221,7 +177,6 @@ prepare_disks() {
     create_raw
     create_partitions
     create_loopback_devices
-    setup_crypto
     format_partitions
 }
 
