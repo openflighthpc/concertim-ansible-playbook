@@ -156,7 +156,7 @@ build_fstab() {
 
 install_stage_2_scripts() {
     log "Intalling stage 2 scripts"
-    rsync -a --delete-after stage-2-scripts /root/stage-2-scripts
+    rsync -a --delete-after stage-2-scripts/ "${MOUNT_POINT}"/root/stage-2-scripts
 }
 
 unstage_disks() {

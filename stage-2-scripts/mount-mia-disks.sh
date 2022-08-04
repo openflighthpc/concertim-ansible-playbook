@@ -1,7 +1,8 @@
 #!/bin/bash
 
 MOUNT_POINT=/mnt/staging
-DISK=/dev/sdb
+DISK=/dev/sda
+# DISK=/dev/sdb
 
 mkdir -p "${MOUNT_POINT}"
 mount "${DISK}"2 "${MOUNT_POINT}"
@@ -10,3 +11,6 @@ mount "${DISK}"3 "${MOUNT_POINT}"/upgrade/
 mount "${DISK}"6 "${MOUNT_POINT}"/data/private/
 mount "${DISK}"7 "${MOUNT_POINT}"/data/upgrade/
 mount "${DISK}"8 "${MOUNT_POINT}"/data/public/
+
+mount -t proc none /proc
+mount -t sysfs none /sys
