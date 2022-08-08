@@ -9,7 +9,6 @@ set -x
 # XXX Create sfdisk from $PERSISTENT_IMAGE_PATH
 # XXX Remove hardcoding of partition layout.
 # XXX Remove hardcoding of loop back device.
-# XXX Add support for encryption.
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
@@ -85,24 +84,66 @@ create_partitions() {
 }
 
 setup_crypto() {
-    # XXX Other partitions here too.
-    if [ -b /dev/mapper/system-rootfs ]; then
-        /sbin/cryptsetup -q remove system-rootfs
+    log "Setting up crypto"
+    # # XXX Other partitions here too.
+    # if [ -b /dev/mapper/system-rootfs ]; then
+    #     /sbin/cryptsetup -q remove system-rootfs
+    # fi
+    # # Only rootfs.key is in the filesystem.  The others need creating.
+    # # cp -a "${FILESYSTEM_PATH}/etc/keys/rootfs.key" "${CRYPTO_TMPDIR}"
+
+    # # Check to see if luks is already on this disk and openable.
+    # local partition
+    # partition="/dev/mapper/${LOOP_DEV}p2"
+    # local key_file
+    # key_file="${FILESYSTEM_PATH}/etc/keys/rootfs.key"
+    # if ! /sbin/cryptsetup isLuks "${partition}" && ! /sbin/cryptsetup -q luksOpen "${partition}" system-rootfs --key-file "${key_file}" ; then
+    #     /sbin/cryptsetup -q luksFormat --type luks1 "${partition}" "${key_file}" && \
+    #         /sbin/cryptsetup -q luksOpen "${partition}" system-rootfs --key-file "${key_file}"
+    # fi
+
+    setup_crypto_part "/dev/mapper/${LOOP_DEV}p2" system-rootfs  /etc/keys/rootfs.key
+    setup_crypto_part "/dev/mapper/${LOOP_DEV}p3" upgrade-rootfs /etc/keys/rootfs.key
+    setup_crypto_part "/dev/mapper/${LOOP_DEV}p5" swap
+    setup_crypto_part "/dev/mapper/${LOOP_DEV}p6" private-data   /etc/keys/private-data.key
+    setup_crypto_part "/dev/mapper/${LOOP_DEV}p7" upgrade-data   /etc/keys/upgrade-data.key
+    mkdir -p "${CRYPTO_TMPDIR}"/etc/
+    cp -a crypttab "${CRYPTO_TMPDIR}"/etc/
+}
+
+setup_crypto_part() {
+    local src tgt key_file
+    src="$1"
+    tgt="$2"
+    key_file="${FILESYSTEM_PATH}${3}"
+
+    if [ -b /dev/mapper/${tgt} ]; then
+        /sbin/cryptsetup -q remove ${tgt}
     fi
-    # Only rootfs.key is in the filesystem.  The others need creating.
-    # cp -a "${FILESYSTEM_PATH}/etc/keys/rootfs.key" "${CRYPTO_TMPDIR}"
+
+    # Deal with encrypted swap.
+    if [ "${tgt}" == "swap" ] ; then
+        /sbin/cryptsetup -q create "${tgt}" "${src}" --key-file /dev/urandom
+        return 0
+    fi
+
+    # Deal with non-swap encryptions.
+    if [ -f "${key_file}" ] ; then
+        # The key is in the filesystem. It will be rsynced along with the rest
+        # of the disk.
+        :
+    else
+        # Create the key in CRYPTO_TMPDIR. It will be rsynced later.
+        key_file="${CRYPTO_TMPDIR}${3}" 
+        mkdir -p "$(dirname "${key_file}")"
+        /bin/dd if=/dev/urandom of="${key_file}" bs=1 count=32
+    fi
 
     # Check to see if luks is already on this disk and openable.
-    local partition
-    partition="/dev/mapper/${LOOP_DEV}p2"
-    local key_file
-    key_file="${FILESYSTEM_PATH}/etc/keys/rootfs.key"
-    if ! /sbin/cryptsetup isLuks "${partition}" && ! /sbin/cryptsetup -q luksOpen "${partition}" system-rootfs --key-file "${key_file}" ; then
-        /sbin/cryptsetup -q luksFormat "${partition}" "${key_file}" && \
-            /sbin/cryptsetup -q luksOpen "${partition}" system-rootfs --key-file "${key_file}"
+    if ! /sbin/cryptsetup isLuks "${src}" && ! /sbin/cryptsetup -q luksOpen "${src}" "${tgt}" --key-file "${key_file}" ; then
+        /sbin/cryptsetup -q luksFormat --type luks1 "${src}" "${key_file}" && \
+            /sbin/cryptsetup -q luksOpen "${src}" "${tgt}" --key-file "${key_file}"
     fi
-
-    cp -a crypttab "${CRYPTO_TMPDIR}"
 }
 
 create_loopback_devices() {
@@ -115,58 +156,97 @@ format_partitions() {
     log "Creating filesystems"
     # XXX Determine filesystem type from ${PERSISTENT_IMAGE_PATH}
     # XXX Determine partition numbers from ${PERSISTENT_IMAGE_PATH}
-    # mke2fs -t ext3 /dev/mapper/${LOOP_DEV}p1
-    mkfs -t ext4 -L _ /dev/mapper/system-rootfs
+    mkfs -t ext3 -L _boot         -O ^metadata_csum /dev/mapper/${LOOP_DEV}p1
+    mkfs -t ext4 -L _             -O ^metadata_csum /dev/mapper/system-rootfs
+    mkfs -t ext4 -L _upgrade      -O ^metadata_csum /dev/mapper/upgrade-rootfs
+    mkfs -t ext4 -L _data_private -O ^metadata_csum /dev/mapper/private-data
+    mkfs -t ext4 -L _data_upgrade -O ^metadata_csum /dev/mapper/upgrade-data
+    mkfs -t ext4 -L _data_public  -O ^metadata_csum /dev/mapper/${LOOP_DEV}p8
 
-    mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p2
-    mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p3
-    mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p6
-    mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p7
-    mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p8
-    mkswap /dev/mapper/${LOOP_DEV}p5
+    # mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p2
+    # mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p3
+    # mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p6
+    # mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p7
+    # mke2fs -t ext4 /dev/mapper/${LOOP_DEV}p8
+
+    mkswap -L SWAP-sda5 /dev/mapper/swap
 }
 
 mount_partitions() {
-    # XXX Don't assume LOOP_DEV is the same as above.
-    # XXX Determine partition numbers and mount points from ${PERSISTENT_IMAGE_PATH}
     log "Mounting partitions"
     mkdir -p "${MOUNT_POINT}"
 
-    # mount /dev/mapper/${LOOP_DEV}p2 "${MOUNT_POINT}"
-    if [ ! -b /dev/mapper/system-rootfs ] ; then
-        local partition
-        partition="/dev/mapper/${LOOP_DEV}p2"
-        local key_file
-        key_file="${FILESYSTEM_PATH}/etc/keys/rootfs.key"
-        /sbin/cryptsetup -q luksOpen "${partition}" system-rootfs --key-file "${key_file}"
-    fi
-    if ! mount -t auto /dev/mapper/system-rootfs "${MOUNT_POINT}" ; then
-        echo "Failed to mount system-rootfs"
-        exit 1
-    fi
+    mount_encrypted_partition /dev/mapper/${LOOP_DEV}p2 system-rootfs / "${FILESYSTEM_PATH}"/etc/keys/rootfs.key
+
+    # if [ ! -b /dev/mapper/system-rootfs ] ; then
+    #     local partition
+    #     partition="/dev/mapper/${LOOP_DEV}p2"
+    #     local key_file
+    #     key_file="${FILESYSTEM_PATH}/etc/keys/rootfs.key"
+    #     /sbin/cryptsetup -q luksOpen "${partition}" system-rootfs --key-file "${key_file}"
+    # fi
+    # if ! mount -t auto /dev/mapper/system-rootfs "${MOUNT_POINT}" ; then
+    #     echo "Failed to mount system-rootfs"
+    #     exit 1
+    # fi
 
     mkdir -p "${MOUNT_POINT}"/{boot,upgrade,data/private,data/upgrade,data/public}
     mount /dev/mapper/${LOOP_DEV}p1 "${MOUNT_POINT}"/boot
 
-    mount /dev/mapper/${LOOP_DEV}p3 "${MOUNT_POINT}"/upgrade/
-    mount /dev/mapper/${LOOP_DEV}p6 "${MOUNT_POINT}"/data/private/
-    mount /dev/mapper/${LOOP_DEV}p7 "${MOUNT_POINT}"/data/upgrade/
+    mount_encrypted_partition /dev/mapper/${LOOP_DEV}p3 upgrade-rootfs /upgrade      "${FILESYSTEM_PATH}"/etc/keys/rootfs.key
+    mount_encrypted_partition /dev/mapper/${LOOP_DEV}p6 private-data   /data/private "${CRYPTO_TMPDIR}"/private-data.key
+    mount_encrypted_partition /dev/mapper/${LOOP_DEV}p7 upgrade-data   /data/upgrade "${CRYPTO_TMPDIR}"/upgrade-data.key
+
+
+    # mount /dev/mapper/${LOOP_DEV}p3 "${MOUNT_POINT}"/upgrade/
+    # mount /dev/mapper/${LOOP_DEV}p6 "${MOUNT_POINT}"/data/private/
+    # mount /dev/mapper/${LOOP_DEV}p7 "${MOUNT_POINT}"/data/upgrade/
     mount /dev/mapper/${LOOP_DEV}p8 "${MOUNT_POINT}"/data/public/
+}
+
+mount_encrypted_partition() {
+    local src tgt key_file mntpt
+    src="$1"
+    tgt="$2"
+    mntpt="$3"
+    key_file="${4}"
+
+    if [ ! -b /dev/mapper/"${tgt}" ] ; then
+        /sbin/cryptsetup -q luksOpen "${src}" "${tgt}" --key-file "${key_file}"
+    fi
+    if ! mount -t auto /dev/mapper/${tgt} "${MOUNT_POINT}${mntpt}" ; then
+        echo "Failed to mount ${tgt} to "${MOUNT_POINT}${mntpt}""
+        exit 1
+    fi
 }
 
 sync_disk() {
     log "Syncing disks"
     rsync -a --delete-after "${FILESYSTEM_PATH}/" "${MOUNT_POINT}"
-    if compgen -G "${CRYPTO_TMPDIR}/*.key" ; then
-        rsync -a "${CRYPTO_TMPDIR}/*.key" "${MOUNT_POINT}"/etc/keys
+    # log "Syncing crypto keys"
+    # compgen -G "${CRYPTO_TMPDIR}/*.key"
+    if compgen -G "${CRYPTO_TMPDIR}/etc/keys/*.key" ; then
+        rsync -a "${CRYPTO_TMPDIR}/etc/keys/" "${MOUNT_POINT}"/etc/keys
     fi
-    rsync -a "${CRYPTO_TMPDIR}/crypttab" "${MOUNT_POINT}"/etc/
+    rsync -a "${CRYPTO_TMPDIR}/etc/crypttab" "${MOUNT_POINT}"/etc/
+
+    log "debug sync"
+    find "${CRYPTO_TMPDIR}"
+    echo
+    find "${MOUNT_POINT}"/etc/keys
+    echo
+    cat "${MOUNT_POINT}"/etc/crypttab
+}
+
+sync_patches() {
+    log "Syncing patched files"
+    rsync -a patches/ "${MOUNT_POINT}"
 }
 
 build_fstab() {
     log "Building fstab"
     # XXX Remove hardcoding of fstab file content.
-    rsync -a --delete-after "${FSTAB_FILE}" "${MOUNT_POINT}"/etc/fstab
+    rsync -a "${FSTAB_FILE}" "${MOUNT_POINT}"/etc/fstab
 }
 
 # install_bootloader() {
@@ -202,18 +282,28 @@ install_stage_2_scripts() {
 unstage_disks() {
     log "Unstaging disks"
     # XXX Determine mount points from ${PERSISTENT_IMAGE_PATH}
-    umount "${MOUNT_POINT}"/data/public 
-    umount "${MOUNT_POINT}"/data/upgrade 
-    umount "${MOUNT_POINT}"/data/private
-    umount "${MOUNT_POINT}"/upgrade 
-    umount "${MOUNT_POINT}"/boot 
-    umount "${MOUNT_POINT}"
+    umount "${MOUNT_POINT}"/data/public  || true
+    umount "${MOUNT_POINT}"/data/upgrade || true
+    umount "${MOUNT_POINT}"/data/private || true
+    umount "${MOUNT_POINT}"/upgrade      || true
+    umount "${MOUNT_POINT}"/boot         || true
+    umount "${MOUNT_POINT}"              || true
 
-    if [ -b /dev/mapper/system-rootfs ]; then
-        /sbin/cryptsetup -q remove system-rootfs
-    fi
+    remove_encrypted_mapper system-rootfs
+    remove_encrypted_mapper upgrade-rootfs
+    remove_encrypted_mapper swap
+    remove_encrypted_mapper private-data
+    remove_encrypted_mapper upgrade-data
 
     kpartx -dv "${IMG_FILE}"
+}
+
+remove_encrypted_mapper() {
+    local tgt
+    tgt="$1"
+    if [ -b /dev/mapper/${tgt} ]; then
+        /sbin/cryptsetup -q remove "${tgt}"
+    fi
 }
 
 prepare_disks() {
@@ -237,6 +327,7 @@ main() {
     prepare_disks
     stage_disks
     sync_disk
+    sync_patches
     build_fstab
     # install_bootloader
     # post_deployment
@@ -247,5 +338,6 @@ main() {
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    trap unstage_disks EXIT
     main "$@"
 fi

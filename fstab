@@ -3,7 +3,7 @@
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
 proc            /proc           proc    defaults        0       0
 
-LABEL=_boot		/boot		ext3e	defaults	0 0
+LABEL=_boot		/boot		ext3	defaults	0 0
 LABEL=_		/		ext4		defaults		0 0
 LABEL=_upgrade		/upgrade		ext4		defaults		0 0
 LABEL=SWAP-sda5		none		swap		defaults		0 0

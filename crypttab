@@ -1,3 +1,6 @@
 # target		source			key file	options
+system-rootfs		/dev/sda2		none		luks,keyscript=/usr/local/sbin/cryptkey
 upgrade-rootfs		/dev/sda3		none		luks,keyscript=/usr/local/sbin/cryptkey
-
+swap		/dev/sda5		/dev/urandom		swap
+private-data		/dev/sda6		/etc/keys/private-data.key		luks
+upgrade-data		/dev/sda7		/etc/keys/upgrade-data.key		luks
