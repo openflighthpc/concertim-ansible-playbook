@@ -55,7 +55,7 @@ with this process.
 2. Remove the VMDK from any such machines.
 3. Delete the VMDK with
    ```
-   disk_uuid=$(VBoxManage list hdds | grep -B5 -A4 MIA-6-4-0-DEV.vmdk)
+   disk_uuid=$(VBoxManage list hdds | grep -B5 -A4 MIA-6-4-0-DEV.vmdk | grep '^UUID:' | awk '{print $2}')
    if [ "${disk_uuid}" == "" ] ; then
      echo "Unable to find disk UUID"
    else
