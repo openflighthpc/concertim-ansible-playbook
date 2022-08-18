@@ -85,53 +85,54 @@ XXX Finish detailing what this should be.
 
 Before the VMDK is ready to be used to boot the machine, some additional
 post-deploy configuration is required.  This includes configuring and
-installing the Grub bootloader.
+installing the Grub bootloader.  The process to do this is roughly:
+
+1. determine the root partition's encryption key.
+2. boot the machine from a Live CD.
+3. mount the partitions including the encrypted partitions.
+4. run the safe post install script and the safe install bootloader script.
 
 ### Determine root partition encryption key
 
-First the password for decrypting the root partition needs to be determined.
-To do this you will need MAC address of the first network interface of the
-virutal machine, e.g., `08:00:27:F0:F3:CF`.  Once you have the MAC address,
-run the following to obtain the "vanilla passwords pool index".
+When first created the root partition is encrypted with a "default encryption
+key".  Once the `safe.postdeploy.sh` script has been ran the "default
+encryption key" is removed and a "vanilla encryption key" is added in its
+place.  Later, when the "first-time setup wizard" is ran the "vanilla
+encryption key" is removed and a "config pack encryption key" added in its
+place.
 
-These commands are to be ran on your laptop.
-
-```
-MAC_ADDRESS=<mac address of VM's first network interface>
-printf %02d $(expr $(printf '%d' 0x`md5sum <(echo ${MAC_ADDRESS} | tr 'A-Z' 'a-z') | cut -c1-2`) % 20) ; echo
-```
-
-This will give you an index in the range `00-19`.
-
-Once you have the "vanilla passwords pool index", the "disk password seed" can
-be found by running:
+In general, determining the root partiion encryption key is complicated by the
+above.  However, if these instructions are followed as laid out, the root
+partition encryption key can be found by running the following on your laptop:
 
 ```
-index=<the index determined above>
-cat filesystems/MIA-6-4-0-DEV/system/data/private/share/vanilla/${index}.vars
+cat filesystems/MIA-6-4-0-DEV/system/etc/keys/rootfs.key
 ```
 
-Once you have the "disk password seed" you can determine the "root partition
-encryption key" by running:
+Details on how to obtain the "vanilla encryption key" and "config pack
+encryption key" are given in docs/encryption-keys.md
 
-```
-seed=<disk password seed>
-echo -n $( echo "${seed}" | cut -c 1-8 ) | md5sum | cut -f1 -d' '
-```
+
+### Boot the machine from a Live CD
+
+1. Download the Ubuntu 16.04 Desktop i386 Live CD.  (Other versions may work).
+2. Attach it to the VM's optical drive.
+3. Edit the VM's boot order, so that it boots from the optical drive.
 
 
 ### Mount root and other partitions
 
 Once the root partition encryption key has been determined, the root partition
-can be mounted inside the VM.  Once that is done, the other partitions can
-then also be mounted.
+can be mounted inside the VM.  Once that is done we can run a script to mount
+the other partitions.
 
-These commands are to be ran on the VM.
+These commands are to be ran as `root` on the VM.
 
 1. Mount the root partition
    ```
    echo <root partition encryption key> > /root/rootfs.key
    /sbin/cryptsetup -q luksOpen /dev/sda2 system-rootfs --key-file /root/rootfs.key
+   mkdir /mnt/staging
    mount -t auto /dev/mapper/system-rootfs /mnt/staging
    ```
 2. Mount the other partitions
@@ -144,16 +145,19 @@ These commands are to be ran on the VM.
 Once the partitions have been mounted, the post-deploy script can be ran and
 the bootloader installed.
 
-These commands are to be ran on the VM.
+These commands are to be ran as `root` on the VM.
 
 ```
+/mnt/staging/root/stage-2-scripts/prepare-chroot.sh
 chroot /mnt/staging
 /usr/local/sbin/safe.postdeploy.sh
 /usr/sbin/safe.install_bootloader 1 2 3
 echo $?
 ```
 
-The final line of output should be `0`, if it isn't investigate and fix!
+The final line of output should be `0`, if it isn't investigate and fix!  It's
+important to check the exit code of `safe.install_bootloader` as it can fail
+silently.
 
 
 ## Boot machine from VMDK

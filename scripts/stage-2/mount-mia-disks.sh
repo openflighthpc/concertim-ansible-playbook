@@ -1,9 +1,4 @@
-#!/bin/bash
-
-# echo 319f4d26e3c536b5dd871bb2c52e3178 > /root/rootfs
-# /sbin/cryptsetup -q luksOpen /dev/sda2 system-rootfs --key-file /root/rootfs
-# mkdir /mnt/staging
-# mount -t auto /dev/mapper/system-rootfs /mnt/staging
+# /mn   /bin/bash
 
 MOUNT_POINT=/mnt/staging
 DISK=/dev/sda
@@ -22,8 +17,3 @@ mount -t auto /dev/mapper/private-data   "${MOUNT_POINT}"/data/private/
 mount -t auto /dev/mapper/upgrade-data   "${MOUNT_POINT}"/data/upgrade/
 
 mount "${DISK}"8 "${MOUNT_POINT}"/data/public/
-
-mkdir -p "${MOUNT_POINT}"/{dev,proc,sys}
-mount -o bind /dev "${MOUNT_POINT}"/dev
-mount -t proc none "${MOUNT_POINT}"/proc
-mount -t sysfs none "${MOUNT_POINT}"/sys
