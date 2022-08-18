@@ -109,7 +109,7 @@ INITRD_CHECKSUM=`ruby /usr/local/sbin/gen_file_checksum.rb /boot/initrd.img 2044
 job=`cat /etc/concurrent-thinking/appliance/release.yml | grep "^job" | cut -f2- -d" "`
 if [ -z "$job" -o "$job" = "NONE" ]; then
     # If job is NONE then use the MAC address of eth0
-    mac=`cat $(ls -d /sys/class/net/en* | head -n 1)/address`
+    mac=`cat $([ -d /sys/class/net/eth0 ] && echo /sys/class/net/eth0 || ls -d /sys/class/net/en* | head -n 1)/address`
     LICENSEE="[$mac/00]"
 else
     # LICENSEE needs to be 22 bytes long
