@@ -13,8 +13,14 @@ The rough process is as follows:
 2. Create a RAW disk image from that safe-persistent image.
 3. Create a VMDK disk image from that RAW disk image.
 4. Create a suitable VirtualBox machine.
-5. Boot the VirtualBox machine from live cd and perform final configuration.
+5. Boot the VirtualBox machine from live cd and perform post-installation configuration.
 6. Boot the VirtualBox machine from the VMDK.
+7. Install guest additions.
+8. Fix SSL/TLS issues.
+9. Install the fake metric generator.
+
+The machine is then ready for the first-time setup wizard to be ran, or to be
+exported as an `OVF`/`OVA` for distribution.
 
 ## Download the safe-persistent image
 
@@ -162,9 +168,77 @@ silently.
 
 ## Boot machine from VMDK
 
+The machine should now be booted from the VMDK image.  To do so.
+
 1. Shut machine off.
-2. Remove live CD.
-2. Start machine.
+2. Remove live CD (or change boot order).
+3. Start machine.
+
+Once booted the VirutalBox guest additions can be installed.
+
+## Login to the VM
+
+Login to the VM as root, the password can be found be following the
+instructions given in docs/vanilla-passwords.md.  You could login either on
+the VirtualBox console or via SSH.
+
+
+Using SSH requires the file `ssh/config` to be edited with the VMs link local
+address.  You can then SSH into the appliance with 
+
+```
+ssh -F ssh/config command
+```
+
+You may need to adjust your laptop's routes to access the VM via SSH.
+
+## Install VirtualBox guest additions
+
+Installation of the VirtualBox guest additions is complicated by a number of
+issues.  Use the process below to install the guest additions.
+
+1. Ensure the VM can access the outside world.  Edit `/etc/network/interfaces`
+   and replace the line `iface eth0 inet manual` with `iface eth0 inet dhcp`.
+   ```
+   ifdown eth0
+   ifup eth0
+   ```
+
+2. Install build dependencies
+   ```
+   apt-get install -y dkms build-essential linux-headers-$(uname -r)
+   ```
+
+3. Fiddle about with `/usr/src`.  `/usr/src` is a symlink to
+   `/data/private/src`.  This symlink breaks relative path symlinks
+   installed by `linux-headers-$(uname -r)` which breaks the installation
+   of guest additions.
+   ```
+   rm /usr/src
+   mkdir /usr/src
+   cp -a /data/private/src/linux* /usr/src
+   ```
+
+4. Add VirtualBox guest additions to the VMs optical drive and mount the Guest
+   additions CD:
+   ```
+   mkdir /mnt/sr0
+   mount -t auto /dev/sr0 /mnt/sr0
+   ```
+
+5. Run guest additions installer
+   ```
+   /mnt/sr0/VBoxLinuxAdditions.run
+   ```
+
+6. Unfiddle with `/usr/src`.
+   ```
+   find /usr/src -type l -exec rm {} \;
+   rm -rf /usr/src
+   ln -s /data/private/src /usr/src
+   ```
+
+7. Undo the change made to `/etc/network/interfaces`.
 
 ## Fix TLSv1.0 issue
 
@@ -193,7 +267,7 @@ If the backport cannot be downloaded directly to the appliance, it could be
 downloaded to your laptop and shared with the appliance via a shared folder.
 In order to use shared folders the VirtualBox Guest Additiona need to be
 installed.  There are some issues with doing that; see the Guest Additions
-section below.
+section above.
 
 Once the backport has been downloaded to the appliance it can be built and
 installed.  To do so you will need to have a GPG key with which to sign the
@@ -236,6 +310,7 @@ be determined by running `ldd /usr/lib/apache2/modules/mod_ssl.so`.  To get
    apt-get install dpatch libaprutil1-dev libapr1-dev libpcre3-dev libcap-dev autoconf
    mkdir /root/apache2
    cd /root/apache2
+   apt-get update
    apt-get source apache2
    cd apache2-2.2.16
    dpkg-buildpackage -k<Patches Key ID>
@@ -250,60 +325,31 @@ be determined by running `ldd /usr/lib/apache2/modules/mod_ssl.so`.  To get
 
 ## Add fake metric generator
 
-1. Create a shared folder.
-2. `svn co //dev.concertim.com/svn/phoenix/src/share/demo/ganglia_data_generator/branches/uranus-concertim some/shared/folder/path`
-3. On mia install and run fake ganglia generator.
-   ```
-   cp -a /mnt/shared/folder/path /root/ganglia_data_generator
-   cd /root
-   chown -R root:root ganglia_data_generator
-   chmod -R o+r ganglia_data_generator
-   chmod o+x ganglia_data_generator
+The demo appliance needs a fake metric generator installing.  There is a
+suitable program available at the Subversion repo URL
+https://dev.concertim.com/svn/phoenix/src/share/demo/ganglia_data_generator/branches/uranus-concertim.
 
-   cd /root/ganglia_data_generator/AUTOSTART
-   ./Install.sh
-   /etc/init.d/fake-ganglia status
-   ```
-
-## Run First time setup wizard
-
-### Ensure Virtual box can access usb devices
+Either check this out directly on the appliance or check it out on your laptop
+and use shared folders to copy it to `/root/ganglia_data_generator`.  Either
+way, you will need suitable authentication and for the `dev.concertim.com` EC2
+instance to be running.
 
 ```
-sudo adduser $USER vboxusers
+svn co https://dev.concertim.com/svn/phoenix/src/share/demo/ganglia_data_generator/branches/uranus-concertim /root/ganglia_data_generator
+cd /root
+chown -R root:root ganglia_data_generator
+chmod -R o+r ganglia_data_generator
+chmod o+x ganglia_data_generator
+
+cd /root/ganglia_data_generator/AUTOSTART
+./Install.sh
 ```
 
-Log out and in again.  Perhaps even reboot the machine.
+The fake ganglia data generator will now be automatically started each time
+the appliance boots.  The status of the fake ganglia data generator can be
+determined with the following.  However, it is not instructive to do so until
+the appliance has had the first-time setup wizard ran.
 
-### Install virtual box guest additions
-
-1. Edit `/etc/network/interfaces` to have eth0 dhcp. `ifdown eth0`, `ifup
-   eth0`.
-2. `apt-get install -y dkms build-essential linux-headers-$(uname -r)`
-3. Mount Guest additions CD: `mount -t auto /dev/sr0 /mnt/sr0`.
-4. Fiddle about with `/usr/src`.  `/usr/src` is a symlink to
-   `/data/private/src`.  This symlink breaks relative path symlinks
-   installed by `linux-headers-$(uname -r)` which breaks the installation
-   of guest additions.
-   ```
-   rm /usr/src
-   mkdir /usr/src
-   cp -a /data/private/src/linux* /usr/src
-   ```
-5. Run guest additions installer; `/mnt/sr0/VBoxLinuxAdditions.run`.
-6. Unfiddle with `/usr/src`.
-   ```
-   find /usr/src -type l -exec rm {} \;
-   rm -rf /usr/src
-   ln -s /data/private/src /usr/src
-   ```
-7. Unedit `/etc/network/interfaces`.
-8. Reboot machine.
-
-### Run the setup wizard
-
-1. Find link local address of the machine: `avahi-browse -d appliance.local
-   --all --terminate --resolve`.
-2. Visit FTSW: `https://169.254.x.y`.
-3. Plug in USB key containing personality etc..
-
+```
+/etc/init.d/fake-ganglia status
+```
