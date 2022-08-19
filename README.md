@@ -45,11 +45,11 @@ once you have downloaded the image.
 ## Create RAW disk image from safe-persistent image
 
 Once the safe-persistent image has been downloaded, a RAW disk image can be
-created from it by running `safe-to-raw.sh` on your laptop.
+created from it by running `scripts/safe-to-raw.sh` on your laptop.
 
 This script emulates much of the work done by safe-persistent deploy.
 
-1. Run `sudo safe-to-raw.sh`.
+1. Run `sudo scripts/safe-to-raw.sh`.
 
 
 ## Create VMDK image from RAW disk image
