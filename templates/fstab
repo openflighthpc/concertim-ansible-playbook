@@ -6,7 +6,8 @@ proc            /proc           proc    defaults        0       0
 LABEL=_boot		/boot		ext3	defaults	0 0
 LABEL=_		/		ext4		defaults		0 0
 LABEL=_upgrade		/upgrade		ext4		defaults		0 0
-LABEL=SWAP-sda5		none		swap		defaults		0 0
+#LABEL=SWAP-sda5		none		swap		defaults		0 0
+/dev/mapper/swap		none		swap		defaults		0 0
 LABEL=_data_private		/data/private		ext4		defaults		0 0
 LABEL=_data_upgrade		/data/upgrade		ext4		defaults		0 0
 LABEL=_data_public		/data/public		ext4		defaults		0 0

@@ -111,6 +111,7 @@ setup_crypto_part() {
         key_file="${CRYPTO_TMPDIR}${3}" 
         mkdir -p "$(dirname "${key_file}")"
         /bin/dd if=/dev/urandom of="${key_file}" bs=1 count=32
+        chmod 600 "${key_file}"
     fi
 
     # Check to see if luks is already on this disk and openable.
