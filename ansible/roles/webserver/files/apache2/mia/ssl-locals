@@ -1,0 +1,3 @@
+SSLCertificateFile /etc/ssl/certs/apache_crt.pem
+SSLCertificateKeyFile /etc/ssl/private/apache_key.pem
+SSLCertificateChainFile /etc/ssl/certs/cacerts.pem

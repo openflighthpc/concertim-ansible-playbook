@@ -1,0 +1,8 @@
+# XXX This doesn't work as the debs are for i386 not x86_64.
+
+- name: Install WMI packages
+  ansible.builtin.apt:
+    deb: "{{ role_path }}/files/{{ item }}"
+  loop:
+    - libwmiclient1_1.3.14-3_i386.deb
+    - wmi-client_1.3.14-3_i386.deb

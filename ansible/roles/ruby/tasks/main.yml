@@ -1,0 +1,93 @@
+- name: Install ruby-build dependencies
+  ansible.builtin.apt:
+    name:
+      - autoconf
+      - bison
+      - build-essential
+      - libssl-dev
+      - libyaml-dev
+      - libreadline6-dev
+      - zlib1g-dev
+      - libncurses5-dev
+      - libffi-dev
+      - libgdbm6
+      - libgdbm-dev
+      - libdb-dev
+      - uuid-dev
+    state: latest
+
+- name: Install ruby-build
+  ansible.builtin.apt:
+    name: ruby-build
+    state: latest
+
+- name: Build Rubies
+  ansible.builtin.command:
+    cmd: ruby-build {{ item }} /opt/ruby-{{ item }}
+    creates: /opt/ruby-{{ item }}
+  loop:
+    - 1.8.7
+    - 1.9.1-p431
+
+- name: Link Rubies
+  ansible.builtin.file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  loop:
+    - src: /opt/ruby-1.8.7
+      dest: /usr/bin/ruby1.8
+    - src: /opt/ruby-1.9.1-p431
+      dest: /opt/ruby-1.9.1
+    - src: /opt/ruby-1.9.1-p431
+      dest: /usr/bin/ruby1.9.1
+    - src: /usr/bin/ruby1.9.1
+      dest: /usr/bin/ruby1.9
+
+- name: Install Ruby 1.8 gem build depedencies
+  ansible.builtin.apt:
+    name:
+      - librrd-dev
+      - libpq-dev
+      # - libgpgme11
+      # - libgpgme-dev
+      - libsnmp-dev
+
+- name: Install ruby 1.8 gems
+  ansible.builtin.command:
+    cmd: /opt/ruby-1.8.7/bin/gem install "{{ role_path }}/files/gems/1.8/{{ item }}*.gem" --no-rdoc --no-ri --local
+  loop:
+    - json_pure
+    - rubyforge
+    - rake
+    - hoe
+    - rails
+    - netaddr
+    - RubyRRDtool
+    - roxml
+    - sqlite3-ruby
+    - gruff
+    # - ferret
+    - date_time-duration
+    - phoenix-actionwebservice
+    - postgres
+    - libxml-ruby
+    - archive-tar-minitar
+    - highline
+    - slave
+    # - gpgme
+    - dbi
+    - pg
+    - dbd-pg
+    - bundler
+    - nokogiri
+    - memcache-client
+    - sequel
+    - eventmachine
+    - snmp
+    - net-snmp
+    - rack
+
+- name: Install ruby 1.9 gems
+  ansible.builtin.command:
+    cmd: /opt/ruby-1.9.1/bin/gem install "{{ role_path }}/files/gems/1.9/bundler*.gem" --no-rdoc --no-ri --local 

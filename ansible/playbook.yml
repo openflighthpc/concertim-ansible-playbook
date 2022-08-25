@@ -1,0 +1,31 @@
+---
+- name: Configure machine to be a Flight Concertim MIA
+  hosts: all
+  become: true
+  become_user: root
+  become_method: sudo
+  gather_facts: False
+  roles:
+    - base
+    # - certificates
+    - webserver
+    - database
+    - beanstalkd
+    - memcached
+    - ganglia
+    # - smp
+    # - wmi
+    - ruby
+
+#
+# - beanstalkd
+# - memcached
+# - monit (???)
+# - ganglia
+# - gmetad
+# - gmetad-agg (???)
+# - gmetad-sync (???)
+
+# ---
+#
+# - delayed_job: an emma thing. it runs jobs in the background.

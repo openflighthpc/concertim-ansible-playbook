@@ -1,0 +1,10 @@
+- name: Waiting for nodes to be reachable
+  wait_for_connection:
+    sleep: 10
+    timeout: 600
+
+- name: Gather System Info
+  setup:
+
+- name: Gather Installed Services
+  service_facts:

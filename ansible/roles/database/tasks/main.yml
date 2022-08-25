@@ -1,0 +1,26 @@
+- name: Ensure postgresql is at the latest version
+  ansible.builtin.apt:
+    name: postgresql
+    state: latest
+
+- name: Update configuration to log to syslog
+  ansible.builtin.replace:
+    path: /etc/postgresql/12/main/postgresql.conf
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+    backup: true
+  loop:
+    - regexp: "#log_destination = 'stderr'"
+      replace: "log_destination = 'syslog'"
+    - regexp: '#syslog_'
+      replace: 'syslog_'
+    # - regexp: 'max_connections = 100'
+    #   replace: 'max_connections = 145'
+    # - regexp: 'shared_buffers = 32MB'
+    #   replace: 'shared_buffers = 24MB'
+
+- name: Ensure that postgresql is started
+  ansible.builtin.service:
+    name: postgresql
+    state: restarted
+    enabled: yes

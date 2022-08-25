@@ -1,0 +1,51 @@
+# # We install this to ensure that the ssl-cert group is available.
+# - name: Install ssl-cert package
+#   ansible.builtin.apt:
+#     name: ssl-cert
+#     state: latest
+
+# XXX We should probably be installing the certificates from the
+# security-pack bundle.
+
+- name: Install default SSL cert
+  ansible.builtin.copy:
+    src: public/
+    dest: /etc/ssl/certs
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: Create symlink to default SSL cert
+  ansible.builtin.file:
+    src: /etc/ssl/certs/concertim-CA_crt.pem
+    dest: /etc/ssl/certs/apache_crt.pem
+    state: link
+
+# - name: Install private SSL certs
+#   ansible.builtin.copy:
+#     src: private/
+#     dest: /etc/ssl/private/
+
+# - name: Create symlink to default SSL cert
+#   ansible.builtin.file:
+#     src: /etc/ssl/private/command.appliance.local_key.pem
+#     dest: /etc/ssl/private/apache_key.pem
+#     state: link
+
+# - name: Set private SSL cert permissions
+#   ansible.builtin.file:
+#     path: /etc/ssl/private
+#     owner: root
+#     group: root
+#     # group: ssl-cert
+#     mode: u=rwx,g=x,o=
+
+# - name: Set private SSL cert permissions
+#   ansible.builtin.file:
+#     path: /etc/ssl/private/command.appliance.local_key.pem
+#     # owner: console
+#     # group: users
+#     owner: root
+#     group: root
+#     # group: ssl-cert
+#     mode: u=rw,g=r,o=r
