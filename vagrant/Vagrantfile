@@ -1,0 +1,29 @@
+ANSIBLE_DIR="../ansible"
+
+Vagrant.configure("2") do |config|
+  config.vm.provider "virtualbox" do |v|
+    # v.memory = 8192
+    v.memory = 2048
+  end
+
+  config.vm.define "ubuntu2204", primary: true do |v|
+    v.vm.box = 'ubuntu/focal64'
+    v.vm.network "forwarded_port", guest: 443, host: 9443, host_ip: '127.0.0.1'
+
+    v.vm.provision "ansible_local" do |ansible|
+      ansible.playbook = File.join(ANSIBLE_DIR, "playbook.yml")
+      ansible.verbose = to_boolean(ENV.fetch('ANSIBLE_VERBOSE', 'true'))
+    end
+
+    v.vm.synced_folder ANSIBLE_DIR, "/ansible"
+  end
+end
+
+def to_boolean(v)
+  case v
+  when /true/i, /yes/i, "1"
+    true
+  else
+    false
+  end
+end
