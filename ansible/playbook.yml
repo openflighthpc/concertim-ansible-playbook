@@ -16,13 +16,12 @@
     # - smp
     # - wmi
     - ruby
+    - gems
 
 #
 # - beanstalkd
 # - memcached
 # - monit (???)
-# - ganglia
-# - gmetad
 # - gmetad-agg (???)
 # - gmetad-sync (???)
 

@@ -1,0 +1,71 @@
+- name: Install Ruby 1.8 gem build depedencies
+  ansible.builtin.apt:
+    name:
+      - librrd-dev
+      - libpq-dev
+      # - libgpgme11
+      # - libgpgme-dev
+      - libsnmp-dev
+
+# There are some hoops to jump through to get the Ruby 1.8 gems installed.
+#
+# Ideally we would simply `gem install <gem>` and have rubygems download the
+# correct version and dependencies.  Unfortunately, this doesn't work for
+# many (all?) of our gems.  The dependencies (or transitive dependencies)
+# are resolved to recent versions that are not compatible with Ruby 1.8.
+#
+# Instead we need to install from the cached gem versions included in this
+# repo.  Ideally, that would be as simple as `gem install *.gem --local` and
+# rubygemns would resolve the dependencies from the cached version included
+# in this repo.  Unfortunately, rubygems seems unable to do that.
+#
+# What we need to do is find an installation order in which all dependencies
+# are installed before their dependent packages.  The order below is one
+# such ordering: DO NOT change it.
+- name: Install ruby 1.8 gems
+  ansible.builtin.command:
+    cmd: /opt/ruby-1.8.7/bin/gem install "{{ role_path }}/files/1.8/{{ item }}*.gem" --no-rdoc --no-ri --local
+  loop:
+    - json_pure
+    - rubyforge
+    - rake
+    - hoe
+    - activesupport
+    - activerecord-2.0.2  # Include version to increase specificity of the glob.
+    - actionpack
+    - actionmailer
+    - activeresource
+    - rails
+    - netaddr
+    - RubyRRDtool
+    - roxml
+    - sqlite3-ruby
+    - gruff
+    # - ferret
+    - date_time-duration
+    - phoenix-actionwebservice
+    - postgres
+    - libxml-ruby
+    - archive-tar-minitar
+    - highline
+    - slave
+    # - gpgme
+    - deprecated
+    - dbi
+    - pg
+    - dbd-pg
+    - bundler
+    - nokogiri
+    - memcache-client
+    - sequel
+    - eventmachine
+    - snmp
+    - net-snmp
+    - rack
+
+# For Ruby1.9 the only global gem we need is bundler.  Bundler is used to
+# install the other Ruby1.9 gems.
+- name: Install ruby 1.9 gems
+  ansible.builtin.command:
+    cmd: /opt/ruby-1.9.1/bin/gem install "{{ role_path }}/files/1.9/bundler*.gem" --no-rdoc --no-ri --local 
+
