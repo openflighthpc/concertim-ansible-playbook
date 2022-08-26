@@ -24,7 +24,7 @@
 # such ordering: DO NOT change it.
 - name: Install ruby 1.8 gems
   ansible.builtin.command:
-    cmd: /opt/ruby-1.8.7/bin/gem install "{{ role_path }}/files/1.8/{{ item }}*.gem" --no-rdoc --no-ri --local
+    cmd: gem1.8 install "{{ role_path }}/files/1.8/{{ item }}*.gem" --no-rdoc --no-ri --local
   loop:
     - json_pure
     - rubyforge
@@ -63,9 +63,35 @@
     - net-snmp
     - rack
 
-# For Ruby1.9 the only global gem we need is bundler.  Bundler is used to
-# install the other Ruby1.9 gems.
+    - beanstalk-client-free
+    - phoenix_utils
+    - data_source_core
+    - romance-1.1.0  # Include version to increase specificity of the glob.
+    - delia_client
+    - activerecord-rdbcp-adapter
+    - phoenix_validations
+    - phoenix_metrics
+    - phoenix_snmp
+    - phoenix_update_signaller
+
 - name: Install ruby 1.9 gems
   ansible.builtin.command:
-    cmd: /opt/ruby-1.9.1/bin/gem install "{{ role_path }}/files/1.9/bundler*.gem" --no-rdoc --no-ri --local 
+    cmd: gem1.9 install "{{ role_path }}/files/1.9/{{ item }}*.gem" --no-rdoc --no-ri --local
+  loop:
+    - bundler
+    - beanstalk-client-free
+    - phoenix_utils
+    - data_source_core
+    - romance-1.2.0  # Include version to increase specificity of the glob.
+    - delia_client
+    - phoenix_update_signaller
+    - phoenix_snmp
+    - mini_magick_pgc
+    - net-snmp
+    # - ct_modbus
+
+- name: Install delia client config
+  ansible.builtin.copy:
+    src: delia_client.yml
+    dest: /data/private/share/etc/concurrent-thinking/
 
