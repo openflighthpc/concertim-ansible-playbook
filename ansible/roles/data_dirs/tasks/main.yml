@@ -1,0 +1,62 @@
+- name: Make data directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    state: directory
+  loop:
+    - path: /data/
+      owner: root
+      group: root
+      mode: u=rwx,g=rwx,o=rx
+
+    - path: /data/private
+      owner: root
+      group: root
+      mode: 755
+
+    - path: /data/private/share
+      owner: root
+      group: root
+      mode: 755
+
+    - path: /data/private/share/etc
+      owner: root
+      group: root
+      mode: 755
+
+    - path: /data/public
+      owner: root
+      group: root
+      mode: 755
+
+    - path: /data/public/resources
+      owner: root
+      group: root
+      mode: u=rwx,g=rwx,o=rwx
+
+    - path: /data/public/resources/admin
+      owner: root
+      group: root
+      mode: u=rwx,g=,o=
+
+    - path: /data/public/resources/backup
+      owner: root
+      group: root
+      mode: u=rwx,g=rwx,o=rwx
+
+    - path: /data/public/resources/data
+      owner: root
+      group: root
+      mode: u=rwx,g=rwx,o=rwx
+
+    - path: /data/public/resources/tmp
+      owner: root
+      group: root
+      mode: 1777
+
+    - path: /data/public/resources/etc
+      owner: root
+      group: root
+      mode: 777

@@ -7,6 +7,7 @@
   gather_facts: False
   roles:
     - base
+    - data_dirs
     # - certificates
     - webserver
     - database
