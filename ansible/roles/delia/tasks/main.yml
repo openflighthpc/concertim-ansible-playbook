@@ -1,0 +1,51 @@
+- name: Install 1.8 gems
+  ansible.builtin.command:
+    cmd: gem1.8 install "{{ role_path }}/files/1.8/{{ item }}*.gem" --no-rdoc --no-ri --local
+  loop:
+    - daemons
+    - delia_daemon
+    - delia
+
+- name: Install 1.9 gems
+  ansible.builtin.command:
+    cmd: gem1.9 install "{{ role_path }}/files/1.9/{{ item }}*.gem" --no-rdoc --no-ri --local
+  loop:
+    - daemons
+    - delia_daemon
+
+- name: Make directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    state: directory
+  loop:
+    - path: /data/private/share/etc/concurrent-thinking
+      owner: www-data
+      group: www-data
+      mode: u=rwx,g=rx,o=rx
+    - path: /data/public/resources/etc/concurrent-thinking
+      owner: root
+      group: root
+      mode: u=rwx,g=rwx,o=rwx
+
+- name: Install delia configuration
+  ansible.builtin.copy:
+    src: delia.yml
+    dest: /data/private/share/etc/concurrent-thinking/
+    owner: www-data
+    group: www-data
+    mode: u=rw,g=r,o=r
+
+- name: Install delia client configuration
+  ansible.builtin.copy:
+    src: delia_client.yml
+    dest: /data/public/resources/etc/concurrent-thinking/
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+
+# - name: Install initrc file
+# - name: Add sudoers entry

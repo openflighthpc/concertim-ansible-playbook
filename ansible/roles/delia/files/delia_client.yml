@@ -1,0 +1,49 @@
+######################################################################
+## Configuration file for the DELIA client library.
+######################################################################
+## (c) Copyright 2000-2011 Concurrent Thinking Ltd.
+##
+## Many software packages included in this system are protected under
+## international copyright laws. Unauthorized copying, distribution or
+## modification is prohibited and authorized distribution, copying or
+## modification is subject to the copyright notice of each individual
+## package.
+##
+## THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT ANY EXPRESS OR IMPLIED
+## WARRANTY.  IN PARTICULAR, NEITHER THE AUTHORS NOR CONCURRENT
+## THINKING LTD MAKE ANY REPRESENTATION OR WARRANTY OF ANY KIND
+## CONCERNING THE FITNESS OF THIS SOFTWARE FOR ANY PARTICULAR PURPOSE.
+##
+## This file was written by Mark J. Titorenko of Concurrent Thinking
+## Ltd and is protected by copyright. Unauthorized copying,
+## distribution or modification is prohibited.
+######################################################################
+##
+## Default configuration settings for connections
+##  timeout - maximum time to wait for a response
+##  ssl - enable or disable SSL
+##  ca_file - certificate authority file in PEM format
+##  cert_file - SSL certificate in PEM format
+##  cert_key - SSL private key for certificate in PEM format
+default:
+  :timeout: 5
+  :ssl: false
+  :ca_file: 
+  :cert_file: 
+  :key_file: 
+
+## Enable or disable automatic multicast location of code service peers
+locatable_peers: true
+
+## Interface to use for multicast location of code service peers
+multicast_intf: eth0
+
+## IP address of interface to use for multicast location of code
+## service peers
+## NB. this takes priority over the multicast_intf option above
+# multicast_intf_ip: 192.168.1.1
+
+## List of peers to use when locatable_peers is false
+# peers:
+#  - cma:2000
+

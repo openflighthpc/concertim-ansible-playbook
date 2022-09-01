@@ -17,6 +17,7 @@
     # - wmi
     - ruby
     - gems
+    - delia
 
 #
 # - beanstalkd
