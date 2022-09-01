@@ -19,10 +19,9 @@
     - ruby
     - gems
     - delia
+    - emma
 
 #
-# - beanstalkd
-# - memcached
 # - monit (???)
 # - gmetad-agg (???)
 # - gmetad-sync (???)

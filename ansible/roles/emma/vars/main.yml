@@ -1,0 +1,3 @@
+dest_path: /data/private/share
+emma_path: "{{ dest_path }}/emma"
+core_path: "{{ emma_path }}/core"

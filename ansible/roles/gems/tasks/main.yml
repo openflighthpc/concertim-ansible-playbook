@@ -6,6 +6,8 @@
       # - libgpgme11
       # - libgpgme-dev
       - libsnmp-dev
+      - postgresql-server-dev-12
+      - nodejs
 
 # There are some hoops to jump through to get the Ruby 1.8 gems installed.
 #
@@ -89,6 +91,14 @@
     - mini_magick_pgc
     - net-snmp
     # - ct_modbus
+
+    # # These are required by emma, but not included in its vendor/cache FSR.
+    # - data_source_core
+    # - gem_plugin
+    # - safe_core
+    # - safe_libs
+    # - safe_api
+    # - RubyRRDtool
 
 - name: Install delia client config
   ansible.builtin.copy:

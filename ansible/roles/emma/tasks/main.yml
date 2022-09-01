@@ -1,0 +1,131 @@
+- name: Check for existing installation
+  ansible.builtin.command:
+    cmd: ls -d {{ emma_path }}
+  register: emma_dir
+  ignore_errors: yes
+
+- name: Install emma
+  when: emma_dir.stdout == ""
+  block:
+  - name: Download tar file
+    ansible.builtin.get_url:
+      url: https://api.github.com/repos/alces-flight/concertim-emma/tarball/main
+      dest: /tmp/emma.tgz
+      headers:
+        Authorization: token {{ github_token }}
+
+  - name: Extract tar file
+    ansible.builtin.unarchive:
+      src: /tmp/emma.tgz
+      dest: "{{ dest_path }}"
+
+  - name: Adjust path
+    ansible.builtin.shell:
+      cmd: |
+        mv {{ dest_path }}/alces-flight-concertim-emma-* {{ emma_path }}
+        chown -R www-data:www-data {{ emma_path }}
+      creates: "{{ emma_path }}"
+
+  - name: Sanity check (CT gems)
+    ansible.builtin.command:
+      cmd: "{{ role_path }}/files/scripts/check_emma_for_ct_gems.sh"
+
+- name: Install configuration
+  ansible.builtin.copy:
+    src: phoenix-emma.logrotate
+    dest: /etc/logrotate.d/phoenix-emma
+
+- name: Bundle install gems
+  block:
+    # FSR not all of the gems for Emma are included in vendor/cache.  We fix this
+    # by copying far too many gems across.
+    - name: Vendor missing gems
+      ansible.builtin.shell:
+        cmd: |
+          echo before
+          ls {{ core_path }}/vendor/cache/ | wc -l
+          cp -a {{ playbook_dir }}/roles/gems/files/1.9/*.gem {{ core_path }}/vendor/cache/
+          chown www-data:www-data {{ core_path }}/vendor/cache/*.gem
+          echo after
+          ls {{ core_path }}/vendor/cache/ | wc -l
+        executable: /bin/bash
+
+    # FSR the Gemfile.lock doesn't have the correct versions included.  We patch
+    # it here to correct.
+    # XXX The changes should be pushed to the git repo at some point, but its
+    # easier to iterate on the build if I'm making changes to a single place.
+    - name: Patch Gemfile.lock
+      ansible.builtin.patch:
+        src: Gemfile.lock.patch
+        dest: "{{ core_path }}/Gemfile.lock"
+        backup: yes
+
+    # The default version of Psych shipped with Ruby1.9 has problems with YAML
+    # references.  We install an updated version of Psych so that we can
+    # configure YAML to use Syck instead of Psych.  Seriously!  Go figure!
+    #
+    # XXX Move this to the repo.
+    - name: Add psych to Gemfile
+      ansible.builtin.lineinfile:
+        line: "gem 'psych', '~> 2.0.0'"
+        path: "{{ core_path }}/Gemfile"
+
+    - name: Bundle install gems
+      ansible.builtin.shell: |
+        cd "{{ core_path }}"
+        PATH=/opt/ruby-1.9/bin:$PATH
+        /opt/ruby-1.9/bin/bundle install --local
+
+    - name: Fix thin to use correct Ruby
+      ansible.builtin.replace:
+        path: /opt/ruby-1.9/lib/ruby/gems/1.9.1/gems/thin-1.5.1/bin/thin
+        regexp: "#!/usr/bin/env ruby"
+        replace: "#!/usr/bin/env ruby1.9"
+
+# XXX Move all of these to the emma git repo.
+- name: Patch and fixup
+  block:
+    - name: Monkey patch active record
+      ansible.builtin.copy:
+        src: monkey_patch_active_record.rb
+        dest: "{{ core_path }}/config/initializers/"
+        owner: www-data
+        group: www-data
+    - name: Load monkey patch when creating database
+      ansible.builtin.lineinfile:
+        line: "require File.join(Rails.root, 'config/initializers/monkey_patch_active_record')"
+        path: "{{ core_path }}/lib/tasks/database.rake"
+        insertbefore: BOF
+
+- name: Create database
+  ansible.builtin.shell:
+    cmd: |
+      export RAILS_ENV={{ rails_env }}
+      PATH=/opt/ruby-1.9/bin:$PATH
+      sudo -u www-data --preserve-env=RAILS_ENV,PATH /bin/bash -c 'bundle exec rake db:drop_and_create:emma --trace'
+    chdir: "{{ core_path }}"
+
+- name: Populate database
+  ansible.builtin.shell:
+    cmd: |
+      export RAILS_ENV={{ rails_env }}
+      PATH=/opt/ruby-1.9/bin:$PATH
+      sudo -u www-data --preserve-env=RAILS_ENV,PATH /bin/bash -c 'bundle exec rake db:migrate:emma --trace'
+    chdir: "{{ core_path }}"
+
+- name: Precompile assets
+  ansible.builtin.command:
+    become: yes
+    become_user: www-data
+    cmd: bundle exec rake1.9 assets:precompile
+    chdir: "{{ core_path }}"
+
+- name: Install tooling
+  ansible.builtin.copy:
+    src: scaleout-summary.rb
+    dest: /usr/local/sbin/
+    owner: root
+    group: staff
+    mode: 755
+
+# - name: Install initrc
