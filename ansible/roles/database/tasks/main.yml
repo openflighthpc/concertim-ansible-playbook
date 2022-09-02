@@ -24,3 +24,7 @@
     name: postgresql
     state: restarted
     enabled: yes
+
+- name: Create www-data role
+  ansible.builtin.command:
+    cmd: sudo -u postgres createuser www-data -A -R -d
