@@ -97,6 +97,43 @@
         path: "{{ core_path }}/lib/tasks/database.rake"
         insertbefore: BOF
 
+- name: Install personality
+  vars:
+    emma_personalty_folder: "/data/private/share/emma/core/config/personalities"
+    etc_personalty_folder: "/data/private/share/etc/concurrent-thinking/appliance"
+    branding: ct
+  block:
+    - name: Write branding.yml
+      ansible.builtin.copy:
+        dest: "/data/private/share/etc/concurrent-thinking/branding.yml"
+        content: ct
+        owner: www-data
+        group: www-data
+        mode: 644
+
+    - name: Make directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        owner: www-data
+        group: www-data
+        mode: 755
+        state: directory
+      loop:
+        - "{{ emma_personalty_folder }}"
+        - "{{ etc_personalty_folder }}"
+
+    - name: Copy personality metadata
+      ansible.builtin.copy:
+        src: personality.yml
+        dest: "{{ item }}"
+        owner: www-data
+        group: www-data
+        mode: 644
+      loop:
+        - "{{ emma_personalty_folder }}/{{ branding }}/personality.yml"
+        - "{{ etc_personalty_folder }}/personality.yml"
+
+
 - name: Create database
   ansible.builtin.shell:
     cmd: |
