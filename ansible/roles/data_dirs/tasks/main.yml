@@ -26,6 +26,11 @@
       group: root
       mode: 755
 
+    - path: /data/private/share/etc/concurrent-thinking
+      owner: www-data
+      group: www-data
+      mode: u=rwx,g=rx,o=rx
+
     - path: /data/public
       owner: root
       group: root
@@ -60,3 +65,17 @@
       owner: root
       group: root
       mode: 777
+
+    - path: /data/public/resources/etc/concurrent-thinking
+      owner: root
+      group: root
+      mode: u=rwx,g=rwx,o=rwx
+
+- name: Create symlinks
+  ansible.builtin.file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  loop:
+    - src: /data/private/share/etc/concurrent-thinking
+      dest: /etc/concurrent-thinking

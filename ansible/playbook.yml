@@ -7,7 +7,6 @@
   gather_facts: False
   roles:
     - base
-    - data_dirs
     # - certificates
     - webserver
     - database
@@ -16,6 +15,7 @@
     - ganglia
     # - smp
     # - wmi
+    - data_dirs
     - ruby
     - gems
     - delia
