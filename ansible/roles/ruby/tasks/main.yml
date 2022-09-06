@@ -13,6 +13,7 @@
       - libgdbm6
       - libgdbm-dev
       - libdb-dev
+      - subversion
       - uuid-dev
     state: latest
 
@@ -25,7 +26,7 @@
 # than 2.4.  We install an older version to link against.
 - name: Install openssl
   vars:
-    openssl_version: openssl-1.0.2u
+    openssl_version: "{{ item }}"
   ansible.builtin.shell:
     cmd: |
       apt install build-essential checkinstall zlib1g-dev
@@ -46,20 +47,30 @@
 
       rm -rf /opt/src/{{ openssl_version }}
     creates: /opt/{{ openssl_version }}
+  loop:
+    - openssl-1.0.2u
+    - openssl-1.0.2l
+    - openssl-1.0.1c
 
 - name: Build Rubies
-  vars:
-    openssl_version: openssl-1.0.2u
   ansible.builtin.command:
     cmd: ruby-build {{ item.version }} /opt/ruby-{{ item.version }}
     creates: /opt/ruby-{{ item.version }}
   environment:
     RUBY_CONFIGURE_OPTS: "{{ item.configure_opts }}"
   loop:
-    - version: 1.8.7
-      configure_opts: ""
+    - version: 1.8.7-p374
+      configure_opts: "--with-openssl-dir=/opt/openssl-1.0.2l"
     - version: 1.9.2-p0
-      configure_opts: "--with-openssl-dir=/opt/{{ openssl_version }}"
+      configure_opts: "--with-openssl-dir=/opt/openssl-1.0.2u"
+
+- name: Build Ruby 1.8.7
+  ansible.builtin.script:
+    cmd: "{{ role_path }}/scripts/build-1.8.7.sh /opt/ruby-1.8.7-p374.script"
+    creates: /opt/ruby-1.8.7-p374.script
+  environment:
+    RUBY_CONFIGURE_OPTS: "--with-openssl-dir=/opt/openssl-1.0.1c"
+
 
 - name: Link Rubies
   ansible.builtin.file:
@@ -67,6 +78,9 @@
     dest: "{{ item.dest }}"
     state: link
   loop:
+    - src: /opt/ruby-1.8.7-p374
+      dest: /opt/ruby-1.8.7
+
     - src: /opt/ruby-1.8.7
       dest: /opt/ruby-1.8
 
