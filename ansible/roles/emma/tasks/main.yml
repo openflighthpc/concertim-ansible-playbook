@@ -97,6 +97,19 @@
         path: "{{ core_path }}/lib/tasks/database.rake"
         insertbefore: BOF
 
+    - name: Patch config/boot.rb to deal with YAML/psych issue
+      ansible.builtin.lineinfile:
+        insertbefore: "require 'yaml'"
+        line: "Gem.load_yaml"
+        state: present
+        path: "{{ core_path }}/config/boot.rb"
+
+    - name: Patch config/boot.rb to deal with YAML/psych issue
+      ansible.builtin.lineinfile:
+        search_string: "require 'yaml'"
+        state: absent
+        path: "{{ core_path }}/config/boot.rb"
+
 - name: Install personality
   vars:
     emma_personalty_folder: "/data/private/share/emma/core/config/personalities"
