@@ -1,0 +1,13 @@
+mode: production
+dest_path: /data/private/share/rails
+integrator_password: integrator
+modules:
+  - hacor
+  # - nadia
+  - meca
+  - oobm
+  - sas
+  - scram
+  - uma
+bind_directory: /opt/concurrent-thinking
+dynamic_images: "/opt/concurrent-thinking/mia/public/images/dynamic/"

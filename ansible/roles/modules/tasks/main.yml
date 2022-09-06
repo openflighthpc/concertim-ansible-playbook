@@ -1,0 +1,99 @@
+- name: Verifying source code at "{{ role_path }}/files"
+  ansible.builtin.shell:
+    cmd: |
+      if [ ! -f {{ role_path }}/files/{{ item }}.tgz ] ; then
+        cat <<EOF
+          Could not find Phoenix src {{ item }}.tgz.
+          Download {{ item }}.tgz from dev.concertim to {{ role_path }}/files/ 
+      EOF
+        exit 1
+      fi
+  changed_when: False
+  loop: "{{ modules }}"
+
+- name: Make destination directory
+  ansible.builtin.file:
+    path: "{{ dest_path }}"
+    owner: www-data
+    group: www-data
+    mode: 755
+    state: directory
+
+- name: Extract tar files
+  ansible.builtin.unarchive:
+    src: "{{ item }}.tgz"
+    dest: "{{ dest_path }}"
+    creates: "{{ dest_path }}/{{ item }}"
+  loop: "{{ modules }}"
+
+- name: Correct ownership
+  ansible.builtin.file:
+    path: "{{ dest_path }}/{{ item }}"
+    owner: www-data
+    group: www-data
+    recurse: true
+  loop: "{{ modules }}"
+
+- name: bind rails modules into {{ bind_directory }}
+  when: bind_directory is defined
+  block:
+    - name: Make {{ bind_directory }} directory
+      ansible.builtin.file:
+        path: "{{ bind_directory }}"
+        owner: root
+        group: root
+        mode: u=rwx,g=rx,o=rx
+        state: directory
+
+    - name: Mount bind directory
+      ansible.posix.mount:
+        path: "{{ bind_directory }}"
+        src: "{{ dest_path }}"
+        opts: bind
+        fstype: "none"
+        state: mounted
+
+
+- name: configure modules
+  vars:
+    template_dest: "{{ dest_path }}/{{ module }}/config/local_environment.rb"
+    template_src: "{{ template_dest }}.tagged"
+    replacements:
+      - regexp: "%PASSWORD_ENCRYPTION_SALT%"
+        replace: "--ghtJU7hgKjh--"
+      - regexp: "%DYNAMIC_IMAGES%"
+        replace: "{{ dynamic_images }}"
+  include_tasks: install_tagged_configuration.yml
+  loop: "{{ modules }}"
+  loop_control:
+    loop_var: module
+
+
+
+# - name: configuring nadia
+#   when: '"nadia" in modules'
+#   ansible.builtin.copy:
+#     src: "{{ dest_path }}/nadia/
+#     dest: "{{ template_dest }}"
+#     remote_src: true
+
+- name: configuring uma
+  when: '"uma" in modules'
+  vars:
+    template_dest: "{{ dest_path }}/uma/db/fixtures/users.yml"
+    template_src: "{{ template_dest }}.tagged"
+    replacements:
+      - regexp: "%INTEGRTOR_PASSWORD%"
+        replace: "{{ integrator_password }}"
+  include_tasks: install_tagged_configuration.yml
+
+
+- name: Create database
+  vars:
+    rails_env: "{{ mode }}"
+  ansible.builtin.shell:
+    cmd: |
+      PATH=/opt/ruby-1.8/bin:$PATH
+      sudo -u www-data --preserve-env=PATH /bin/bash -c 'rake db:drop_and_create RAILS_ENV={{ rails_env }} PHOENIX_START=0 --trace'
+    chdir: "{{ dest_path }}/{{ item }}"
+  loop: "{{ modules }}"
