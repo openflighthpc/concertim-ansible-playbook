@@ -50,7 +50,6 @@
   loop:
     - openssl-1.0.2u
     - openssl-1.0.2l
-    - openssl-1.0.1c
 
 - name: Build Rubies
   ansible.builtin.command:
@@ -63,14 +62,6 @@
       configure_opts: "--with-openssl-dir=/opt/openssl-1.0.2l"
     - version: 1.9.2-p0
       configure_opts: "--with-openssl-dir=/opt/openssl-1.0.2u"
-
-- name: Build Ruby 1.8.7
-  ansible.builtin.script:
-    cmd: "{{ role_path }}/scripts/build-1.8.7.sh /opt/ruby-1.8.7-p374.script"
-    creates: /opt/ruby-1.8.7-p374.script
-  environment:
-    RUBY_CONFIGURE_OPTS: "--with-openssl-dir=/opt/openssl-1.0.1c"
-
 
 - name: Link Rubies
   ansible.builtin.file:
