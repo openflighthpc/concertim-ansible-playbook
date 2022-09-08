@@ -1,0 +1,27 @@
+- name: Install monit
+  ansible.builtin.apt:
+    name: monit
+    state: latest
+
+- name: Copy configuration
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - src: monit.default
+      dest: /etc/default/monit
+
+    - src: monitrc
+      dest: /etc/monit/monitrc
+      mode: 700
+
+    - src: monit.init
+      dest: /etc/init.d/monit
+      mode: 755
+
+- name: Add monit to inittab
+  ansible.builtin.lineinfile:
+    line: "mo:2345:respawn:/usr/sbin/monit -I -c /etc/monit/monitrc -s /var/lib/monit/monit.state"
+    path: "/etc/inittab"
+    insertbefore: EOF
+

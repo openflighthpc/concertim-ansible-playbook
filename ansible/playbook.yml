@@ -13,6 +13,7 @@
     - beanstalkd
     - memcached
     - ganglia
+    # - monit
     # - wmi
     - data_dirs
     - ruby
