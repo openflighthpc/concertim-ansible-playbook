@@ -2,7 +2,7 @@
   ansible.builtin.command:
     cmd: gem1.8 install "{{ role_path }}/files/1.8/{{ item }}*.gem" --no-rdoc --no-ri --local
   loop:
-    - daemons
+    # - daemons
     - delia_daemon
     - delia
 
