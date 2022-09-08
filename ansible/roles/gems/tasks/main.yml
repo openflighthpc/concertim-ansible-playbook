@@ -1,3 +1,19 @@
+# XXX Get this working so that we can remove the need to have all of the gems
+# committed in this repo.
+# It doesn't work at the moment as the concertim gem repository appears to be
+# broken.  It redirects to `dev.concertim.comgems`; I'm guessing that should
+# be `dev.concertim.com/gems`
+# - name: Configure gem source
+#   vars:
+#     gem_server_root: "http://build:Bu11dUS3R2000@src.concertim.com/gems/uranus-concertim"
+#   block:
+#     - name: Add concertim gem server
+#       ansible.builtin.command:
+#         cmd: gem1.8 sources --add {{ gem_server_root }}/gems/
+#     - name: Remove rubygems gem server
+#       ansible.builtin.command:
+#         cmd: gem1.8 sources --remove http://rubygems.org/
+
 - name: Install Ruby 1.8 gem build depedencies
   ansible.builtin.apt:
     name:
