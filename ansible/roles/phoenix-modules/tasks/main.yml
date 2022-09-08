@@ -87,6 +87,16 @@
         replace: "{{ integrator_password }}"
   include_tasks: install_tagged_configuration.yml
 
+# XXX Move all of these to the various phoenix-module repos.
+- name: Patch and fixup
+  block:
+    - name: Monkey patch active record
+      ansible.builtin.copy:
+        src: monkey_patch_active_record.rb
+        dest: "{{ dest_path }}/{{ item }}/config/initializers/"
+        owner: www-data
+        group: www-data
+      loop: "{{ modules }}"
 
 - name: Create database
   vars:
