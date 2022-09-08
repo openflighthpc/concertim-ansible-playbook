@@ -13,11 +13,11 @@
     - beanstalkd
     - memcached
     - ganglia
-    # - smp
     # - wmi
     - data_dirs
     - ruby
     - gems
+    - snmp
     - phoenix-mongrel
     - delia
     - phoenix-modules
