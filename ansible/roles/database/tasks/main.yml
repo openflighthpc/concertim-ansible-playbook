@@ -25,6 +25,16 @@
     state: restarted
     enabled: yes
 
-- name: Create www-data role
-  ansible.builtin.command:
-    cmd: sudo -u postgres createuser www-data -A -R -d
+- name: Configure database user
+  vars:
+    db_user: www-data
+  block:
+    - name: Check if {{ db_user }} role exists
+      ansible.builtin.command:
+        cmd: sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='{{ db_user }}'"
+      register: db_user_exist
+
+    - name: Create {{ db_user }} role
+      when: db_user_exist.stdout == ""
+      ansible.builtin.command:
+        cmd: sudo -u postgres createuser {{ db_user }} -A -R -d
