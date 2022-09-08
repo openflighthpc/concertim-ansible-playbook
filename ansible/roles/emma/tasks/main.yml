@@ -42,12 +42,8 @@
     - name: Vendor missing gems
       ansible.builtin.shell:
         cmd: |
-          echo before
-          ls {{ core_path }}/vendor/cache/ | wc -l
           cp -a {{ playbook_dir }}/roles/gems/files/1.9/*.gem {{ core_path }}/vendor/cache/
           chown www-data:www-data {{ core_path }}/vendor/cache/*.gem
-          echo after
-          ls {{ core_path }}/vendor/cache/ | wc -l
         executable: /bin/bash
 
     # FSR the Gemfile.lock doesn't have the correct versions included.  We patch
