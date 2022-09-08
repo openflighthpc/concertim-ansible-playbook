@@ -4,17 +4,17 @@
       - autoconf
       - bison
       - build-essential
+      - libdb-dev
+      - libffi-dev
+      - libgdbm-dev
+      - libgdbm6
+      - libncurses5-dev
+      - libreadline6-dev
       - libssl-dev
       - libyaml-dev
-      - libreadline6-dev
-      - zlib1g-dev
-      - libncurses5-dev
-      - libffi-dev
-      - libgdbm6
-      - libgdbm-dev
-      - libdb-dev
       - subversion
       - uuid-dev
+      - zlib1g-dev
     state: latest
 
 - name: Install ruby-build

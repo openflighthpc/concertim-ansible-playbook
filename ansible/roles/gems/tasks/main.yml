@@ -1,13 +1,16 @@
 - name: Install Ruby 1.8 gem build depedencies
   ansible.builtin.apt:
     name:
-      - librrd-dev
-      - libpq-dev
-      # - libgpgme11
       # - libgpgme-dev
+      # - libgpgme11
+      - imagemagick
+      - libmagickcore-dev
+      - libmagickwand-dev
+      - libpq-dev
+      - librrd-dev
       - libsnmp-dev
-      - postgresql-server-dev-11
       - nodejs
+      - postgresql-server-dev-11
 
 # There are some hoops to jump through to get the Ruby 1.8 gems installed.
 #
@@ -24,7 +27,7 @@
 # What we need to do is find an installation order in which all dependencies
 # are installed before their dependent packages.  The order below is one
 # such ordering: DO NOT change it.
-- name: Install ruby 1.8 gems
+- name: Install local ruby 1.8 gems
   ansible.builtin.command:
     cmd: gem1.8 install "{{ role_path }}/files/1.8/{{ item }}*.gem" --no-rdoc --no-ri --local
   loop:
@@ -79,7 +82,17 @@
     - safe_core
     - safe_libs
 
-- name: Install ruby 1.9 gems
+# Other Ruby1.8 gems were previously installed via `.deb` packages.  Those
+# packages obviously no longer work for Ruby1.8 on this OS.  Instead we need
+# to install them from remote sources.
+- name: Install remote ruby 1.8 gems
+  ansible.builtin.command:
+    cmd: gem1.8 install "{{ item.package }}" -v "{{ item.version }}" --no-rdoc --no-ri
+  loop:
+    - package: rmagick
+      version: 2.15.4
+
+- name: Install local ruby 1.9 gems
   ansible.builtin.command:
     cmd: gem1.9 install "{{ role_path }}/files/1.9/{{ item }}*.gem" --no-rdoc --no-ri --local
   loop:
