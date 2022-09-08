@@ -118,14 +118,14 @@
         content: ct
         owner: www-data
         group: www-data
-        mode: 644
+        mode: "644"
 
     - name: Make directories
       ansible.builtin.file:
         path: "{{ item }}"
         owner: www-data
         group: www-data
-        mode: 755
+        mode: "755"
         state: directory
       loop:
         - "{{ emma_personalty_folder }}"
@@ -137,7 +137,7 @@
         dest: "{{ item }}"
         owner: www-data
         group: www-data
-        mode: 644
+        mode: "644"
       loop:
         - "{{ emma_personalty_folder }}/{{ branding }}/personality.yml"
         - "{{ etc_personalty_folder }}/personality.yml"
@@ -172,6 +172,6 @@
     dest: /usr/local/sbin/
     owner: root
     group: staff
-    mode: 755
+    mode: "755"
 
 # - name: Install initrc
