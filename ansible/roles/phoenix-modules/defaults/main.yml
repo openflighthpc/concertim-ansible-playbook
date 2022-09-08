@@ -1,5 +1,5 @@
 mode: production
-dest_path: /data/private/share/rails
+phoenix_modules_root_dir: "/data/private/share/rails"
 integrator_password: integrator
 modules:
   - hacor

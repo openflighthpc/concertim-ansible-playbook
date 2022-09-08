@@ -76,6 +76,9 @@
     - phoenix_snmp
     - phoenix_update_signaller
 
+    - safe_core
+    - safe_libs
+
 - name: Install ruby 1.9 gems
   ansible.builtin.command:
     cmd: gem1.9 install "{{ role_path }}/files/1.9/{{ item }}*.gem" --no-rdoc --no-ri --local
