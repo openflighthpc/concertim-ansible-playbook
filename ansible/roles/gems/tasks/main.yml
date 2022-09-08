@@ -6,7 +6,7 @@
       # - libgpgme11
       # - libgpgme-dev
       - libsnmp-dev
-      - postgresql-server-dev-12
+      - postgresql-server-dev-11
       - nodejs
 
 # There are some hoops to jump through to get the Ruby 1.8 gems installed.

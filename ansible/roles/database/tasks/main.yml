@@ -1,11 +1,22 @@
-- name: Ensure postgresql is at the latest version
+- name: Import APT signing key
+  ansible.builtin.apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+
+- name: Add postgresql repository
+  ansible.builtin.apt_repository:
+    repo: deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main
+    state: present
+    filename: postgresql-pgdg
+
+- name: Install postgresql 11
   ansible.builtin.apt:
-    name: postgresql
-    state: latest
+    name: postgresql-11
+    state: present
 
 - name: Update configuration to log to syslog
   ansible.builtin.replace:
-    path: /etc/postgresql/12/main/postgresql.conf
+    path: /etc/postgresql/11/main/postgresql.conf
     regexp: "{{ item.regexp }}"
     replace: "{{ item.replace }}"
     backup: true
