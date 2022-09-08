@@ -14,17 +14,17 @@
     - path: /data/private
       owner: root
       group: root
-      mode: 755
+      mode: "755"
 
     - path: /data/private/share
       owner: root
       group: root
-      mode: 755
+      mode: "755"
 
     - path: /data/private/share/etc
       owner: root
       group: root
-      mode: 755
+      mode: "755"
 
     - path: /data/private/share/etc/concurrent-thinking
       owner: www-data
@@ -34,7 +34,7 @@
     - path: /data/public
       owner: root
       group: root
-      mode: 755
+      mode: "755"
 
     - path: /data/public/resources
       owner: root
@@ -59,17 +59,22 @@
     - path: /data/public/resources/tmp
       owner: root
       group: root
-      mode: 1777
+      mode: "1777"
 
     - path: /data/public/resources/etc
       owner: root
       group: root
-      mode: 777
+      mode: "777"
 
     - path: /data/public/resources/etc/concurrent-thinking
       owner: root
       group: root
       mode: u=rwx,g=rwx,o=rwx
+
+    - path: /data/public/tmp
+      owner: root
+      group: root
+      mode: "1777"
 
 - name: Create symlinks
   ansible.builtin.file:
