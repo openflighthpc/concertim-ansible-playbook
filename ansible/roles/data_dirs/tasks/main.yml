@@ -79,3 +79,14 @@
   loop:
     - src: /data/private/share/etc/concurrent-thinking
       dest: /etc/concurrent-thinking
+
+- name: Create bind mounts
+  ansible.posix.mount:
+    path: "{{ item.path }}"
+    src: "{{ item.src }}"
+    opts: bind
+    fstype: "none"
+    state: mounted
+  loop:
+    - path: /resources
+      src: /data/public/resources
