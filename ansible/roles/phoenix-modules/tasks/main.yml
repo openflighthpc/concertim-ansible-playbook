@@ -4,7 +4,11 @@
       if [ ! -f {{ role_path }}/files/tmp/{{ item }}.tgz ] ; then
         cat <<EOF
           Could not find Phoenix src {{ item }}.tgz.
-          Download {{ item }}.tgz from dev.concertim to {{ role_path }}/files/tmp/ 
+          Download {{ item }}.tgz from build.concertim to {{ role_path }}/files/tmp/ 
+
+          scp [OPTIONS] \
+              build:/data/build/uranus/concertim/6.4.0/packages/package-modules/{{ item }}.tgz \
+              {{ role_path }}/files/tmp/
       EOF
         exit 1
       fi
