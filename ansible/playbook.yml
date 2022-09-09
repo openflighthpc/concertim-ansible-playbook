@@ -6,26 +6,39 @@
   become_method: sudo
   gather_facts: False
   roles:
-    - base
-    # - certificates
-    - webserver
-    - database
-    - beanstalkd
-    - memcached
-    - ganglia
-    # - monit
-    # - wmi
-    - data_dirs
-    - ruby
-    - gems
-    - snmp
-    - phoenix-mongrel
-    - delia
-    - phoenix-modules
-    - emma
+    - role: base
+    # - role: certificates
+    #   tags: certificates
+    - role: webserver
+      tags: webserver
+    - role: database
+      tags: database
+    - role: beanstalkd
+      tags: beanstalkd
+    - role: memcached
+      tags: memcached
+    - role: ganglia
+      tags: ganglia
+    # - role: monit
+    #   tags: monit
+    - role: data_dirs
+      tags: data_dirs
+    - role: ruby
+      tags: ruby
+    - role: gems
+      tags: gems
+    - role: snmp
+      tags: snmp
+    - role: phoenix-mongrel
+      tags: phoenix-mongrel
+    - role: delia
+      tags: delia
+    - role: phoenix-modules
+      tags: phoenix-modules
+    - role: emma
+      tags: emma
 
 #
-# - monit (???)
 # - gmetad-agg (???)
 # - gmetad-sync (???)
 
