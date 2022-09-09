@@ -2,6 +2,7 @@
   ansible.builtin.command:
     cmd: mv db/migrate/{{ item }} db/migrate/{{ item }}.NOPE
     chdir: "{{ phoenix_modules_root_dir }}/hacor"
+    removes: "db/migrate/{{ item }}"
   loop: 
     - 106_add_eaton_mibs_to_database.rb
     - 107_add_tpt_mib_to_database.rb
