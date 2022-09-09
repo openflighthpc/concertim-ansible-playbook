@@ -69,14 +69,6 @@
      polyglot (0.3.5)
      pry (0.10.0)
        coderay (~> 1.1.0)
-@@ -349,6 +351,7 @@
-       slop (~> 3.4)
-     pry-rails (0.3.2)
-       pry (>= 0.9.10)
-+    psych (2.0.0)
-     rabl (0.10.1)
-       activesupport (>= 2.3.14)
-     rack (1.4.5)
 @@ -376,8 +379,8 @@
      rake (10.3.2)
      rdoc (3.12.2)
@@ -104,11 +96,3 @@
        safe_core (>= 3.1.0)
      safe_yaml (1.0.3)
      sass (3.3.9)
-@@ -484,6 +487,7 @@
-   pg
-   phoenix_utils
-   pry-rails
-+  psych (~> 2.0.0)
-   rabl
-   rails (= 3.2.18)
-   rspec-rails (~> 2.4)

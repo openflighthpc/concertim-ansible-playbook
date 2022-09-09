@@ -56,16 +56,6 @@
         dest: "{{ core_path }}/Gemfile.lock"
         backup: yes
 
-    # The default version of Psych shipped with Ruby1.9 has problems with YAML
-    # references.  We install an updated version of Psych so that we can
-    # configure YAML to use Syck instead of Psych.  Seriously!  Go figure!
-    #
-    # XXX Move this to the repo.
-    - name: Add psych to Gemfile
-      ansible.builtin.lineinfile:
-        line: "gem 'psych', '~> 2.0.0'"
-        path: "{{ core_path }}/Gemfile"
-
     - name: Bundle install gems
       ansible.builtin.shell: |
         cd "{{ core_path }}"
