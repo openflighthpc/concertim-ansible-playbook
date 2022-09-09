@@ -96,6 +96,19 @@
         state: absent
         path: "{{ core_path }}/config/boot.rb"
 
+    - name: Fix metadata.yml
+      ansible.builtin.lineinfile:
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+        path: "{{ core_path }}/config/metadata.yml"
+      loop:
+        - regexp: '  :build_rev:'
+          line:   '  :build_rev: "XXX"'
+        - regexp: '  :build_version:'
+          line:   '  :build_version: "XXX"'
+        - regexp: '  :build_date:'
+          line:   '  :build_date: "XXX"'
+
 - name: Install personality
   vars:
     emma_personalty_folder: "/data/private/share/emma/core/config/personalities"
@@ -136,24 +149,22 @@
 - name: Create database
   ansible.builtin.shell:
     cmd: |
-      export RAILS_ENV={{ rails_env }}
       PATH=/opt/ruby-1.9/bin:$PATH
-      sudo -u www-data --preserve-env=RAILS_ENV,PATH /bin/bash -c 'bundle exec rake db:drop_and_create:emma --trace'
+      sudo -u www-data --preserve-env=PATH /bin/bash -c 'bundle exec rake db:drop_and_create:emma RAILS_ENV={{ rails_env }} --trace'
     chdir: "{{ core_path }}"
 
 - name: Populate database
   ansible.builtin.shell:
     cmd: |
-      export RAILS_ENV={{ rails_env }}
       PATH=/opt/ruby-1.9/bin:$PATH
-      sudo -u www-data --preserve-env=RAILS_ENV,PATH /bin/bash -c 'bundle exec rake db:migrate:emma --trace'
+      sudo -u www-data --preserve-env=PATH /bin/bash -c 'bundle exec rake db:migrate:emma RAILS_ENV={{ rails_env }} --trace'
     chdir: "{{ core_path }}"
 
 - name: Precompile assets
-  ansible.builtin.command:
-    become: yes
-    become_user: www-data
-    cmd: bundle exec rake1.9 assets:precompile
+  ansible.builtin.shell:
+    cmd: |
+      PATH=/opt/ruby-1.9/bin:$PATH
+      sudo -u www-data --preserve-env=PATH /bin/bash -c 'bundle exec rake assets:precompile RAILS_ENV={{ rails_env }} --trace'
     chdir: "{{ core_path }}"
 
 - name: Install tooling
