@@ -1,3 +1,11 @@
+- name: Update ruby gems
+  vars:
+    rubygems_version: '1.8.24'
+    rubygems_update_gem: "rubygems-update-{{ rubygems_version }}.gem"
+  ansible.builtin.command:
+    cmd: gem1.8 install "{{ role_path }}/files/{{ rubygems_update_gem }}" --no-rdoc --no-ri --local
+
+
 # XXX Get this working so that we can remove the need to have all of the gems
 # committed in this repo.
 # It doesn't work at the moment as the concertim gem repository appears to be
