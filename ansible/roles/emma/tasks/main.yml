@@ -175,4 +175,11 @@
     group: staff
     mode: "755"
 
-# - name: Install initrc
+- name: Install init.d file
+  tags: focus
+  ansible.builtin.copy:
+    src: emma.init
+    dest: /etc/init.d/emma
+    owner: root
+    group: root
+    mode: "744"
