@@ -126,24 +126,27 @@
   loop: "{{ modules }}"
 
 
-# - name: Install mongrel config files
-#   vars:
-#     mongrel_conf_dir: 
-#     template_src: "{{ mongrel_conf_dir }}/{{ module }}.yml"
-#     template_src: "{{ phoenix_modules_root_dir }}/{{ module }}/config/mongrel_cluster.yml"
-#     replacements:
-#       - regexp: "%MONGREL_USER%"
-#         replace: "www-data"
-#       - regexp: "%MONGREL_GROUP%"
-#         replace: "www-data"
-#       - regexp: "%ENV%"
-#         replace: "{{ mode }}"
-#       - regexp: "{{ module | upper }}_ROOT"
-#         replace: "/opt/concurrent-thinking/{{ module }}"
-#   include_tasks: install_tagged_configuration.yml
-#   loop: "{{ modules }}"
-#   loop_control:
-#     loop_var: module
+- name: Install mongrel config files
+  vars:
+    mongrel_user: "www-data"
+    mongrel_conf_dir: "/etc/mongrel_cluster"
+    template_dest: "{{ mongrel_conf_dir }}/{{ module }}.yml"
+    template_src: "{{ phoenix_modules_root_dir }}/{{ module }}/config/mongrel_cluster.yml.tagged"
+    replacements:
+      - regexp: "%MONGREL_USER%"
+        replace: "{{ mongrel_user }}"
+      - regexp: "%MONGREL_GROUP%"
+        replace: "{{ mongrel_user }}"
+      - regexp: "%ENV%"
+        replace: "{{ mode }}"
+      - regexp: "%{{ module | upper }}_ROOT%"
+        replace: "/opt/concurrent-thinking/{{ module }}"
+  include_tasks: install_tagged_configuration.yml
+  loop: "{{ modules }}"
+  loop_control:
+    loop_var: module
 
+# - name: Install cron jobs
 # - name: Install logrotation
 # - name: Install various appliance scripts
+# - name: Add www-data to adm group
