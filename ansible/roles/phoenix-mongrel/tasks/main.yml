@@ -61,3 +61,9 @@
         insertafter: 'require.*rubygems'
         firstmatch: yes
         line: 'system("/usr/sbin/mongrel_rails_clear #{ARGV.join(" ")}")'
+
+- name: Ensure that mongrel_cluster is enabled
+  ansible.builtin.service:
+    name: mongrel_cluster
+    # state: started
+    enabled: yes

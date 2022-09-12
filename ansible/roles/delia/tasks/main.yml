@@ -59,3 +59,9 @@
 # place.  Or svn->git and fix properly.
 # - name: Patch check delia
 
+
+- name: Ensure that delia is enabled
+  ansible.builtin.service:
+    name: delia
+    # state: started
+    enabled: yes

@@ -183,3 +183,9 @@
     owner: root
     group: root
     mode: "744"
+
+- name: Ensure that emma is enabled
+  ansible.builtin.service:
+    name: emma
+    # state: started
+    enabled: yes

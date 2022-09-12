@@ -36,3 +36,8 @@
         remote_src: yes
         src: "{{ config_build_dir.path }}"
         validate: ruby1.8 -ryaml -e 'YAML.load_file("%s")'
+
+# - name: Restart delia
+#   ansible.builtin.service:
+#     name: delia
+#     state: restarted
