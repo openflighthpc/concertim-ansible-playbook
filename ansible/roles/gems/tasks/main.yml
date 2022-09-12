@@ -1,9 +1,15 @@
 - name: Update ruby gems
-  vars:
-    rubygems_version: '1.8.24'
-    rubygems_update_gem: "rubygems-update-{{ rubygems_version }}.gem"
-  ansible.builtin.command:
-    cmd: gem1.8 install "{{ role_path }}/files/{{ rubygems_update_gem }}" --no-rdoc --no-ri --local
+  block:
+    - name: Install rubygems-update gem
+      vars:
+        rubygems_version: '1.8.24'
+        rubygems_update_gem: "rubygems-update-{{ rubygems_version }}.gem"
+      ansible.builtin.command:
+        cmd: gem1.8 install "{{ role_path }}/files/{{ rubygems_update_gem }}" --no-rdoc --no-ri --local
+
+    - name: Update rubygems
+      ansible.builtin.shell:
+        cmd: PATH=/opt/ruby-1.8/bin:$PATH update_rubygems
 
 
 # XXX Get this working so that we can remove the need to have all of the gems
