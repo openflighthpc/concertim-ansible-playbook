@@ -1,0 +1,30 @@
+- name: Restart services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: restarted
+  loop:
+    - mongrel_cluster
+    - emma
+    - maggie
+    - martha
+    - theresa
+    - enid
+    - ct-capacity-daemon
+
+- name: Restart delia service
+  block:
+    # XXX Figure something better than this.
+    - name: Wait for other services to start
+      ansible.builtin.wait_for:
+        timeout: 120
+
+    - name: Restart delia
+      ansible.builtin.service:
+        name: delia
+        state: restarted
+
+    # XXX Figure something better than this.
+    - name: Give delia a moment or two
+      ansible.builtin.wait_for:
+        timeout: 120
+

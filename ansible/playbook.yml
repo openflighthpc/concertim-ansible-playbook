@@ -43,6 +43,8 @@
       tags: emma
     - role: package-mia
       tags: [package-mia, mia]
+    - role: finalization
+      tags: finalization
 
 #
 # - gmetad-agg (???)
