@@ -9,7 +9,13 @@
     - mongrel-1.1.3   # Include version to increase specificity of the glob.
     - mongrel_cluster
 
-# - name: Install initrc file
+- name: Install init.d file
+  ansible.builtin.template:
+    src: "mongrel_cluster.init"
+    dest: "/etc/init.d/mongrel_cluster"
+    owner: root
+    group: root
+    mode: "744"
 
 - name: Make pid directories
   ansible.builtin.file:

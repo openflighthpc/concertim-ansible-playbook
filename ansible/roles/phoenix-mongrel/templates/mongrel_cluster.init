@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# Copyright (c) 2007 Bradley Taylor, bradley@railsmachine.com
+#              
+### BEGIN INIT INFO
+# Provides:             mongrel_cluster
+# Required-Start:       memcached
+# Required-Stop:        memcached
+# Should-Start:         
+# Should-Stop:          
+# Default-Start:        2 3 4 5
+# Default-Stop:         0 1 6
+# Short-Description:    Startup script for Mongrel clusters.
+### END INIT INFO
+
+CONF_DIR={{ mongrel_conf_dir }}
+
+RETVAL=0
+
+# Gracefully exit if the controller is missing.
+which mongrel_cluster_ctl >/dev/null || exit 0
+
+# Go no further if config directory is missing.
+[ -d "$CONF_DIR" ] || exit 0
+
+case "$1" in
+    start)
+      mongrel_cluster_ctl start -c $CONF_DIR
+      RETVAL=$?
+  ;;
+    stop)
+      mongrel_cluster_ctl stop -c $CONF_DIR
+      RETVAL=$?
+  ;;
+    restart)
+      mongrel_cluster_ctl restart -c $CONF_DIR
+      RETVAL=$?
+  ;;
+    status)
+      mongrel_cluster_ctl status -c $CONF_DIR
+      RETVAL=$?
+  ;;
+    *)
+      echo "Usage: mongrel_cluster {start|stop|restart|status}"
+      exit 1
+  ;;
+esac      
+
+exit $RETVAL

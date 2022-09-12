@@ -30,5 +30,16 @@
     mode: u=rw,g=r,o=r
 
 
-# - name: Install initrc file
+- name: Install init.d file
+  ansible.builtin.copy:
+    src: delia.init
+    dest: /etc/init.d/delia
+    owner: root
+    group: root
+    mode: "744"
+
 # - name: Add sudoers entry
+#   ansible.builtin.lineinfile:
+#     line: "www-data ALL=NOPASSWD: /etc/init.d/delia"
+#     path: "/etc/sudoers"
+#     insertbefore: EOF

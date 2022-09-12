@@ -7,17 +7,28 @@
   ansible.builtin.copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+
   loop:
     - src: monit.default
       dest: /etc/default/monit
+      owner: root
+      group: root
+      mode: "644"
 
     - src: monitrc
       dest: /etc/monit/monitrc
-      mode: 700
+      owner: root
+      group: root
+      mode: "700"
 
     - src: monit.init
       dest: /etc/init.d/monit
-      mode: 755
+      owner: root
+      group: root
+      mode: "744"
 
 - name: Add monit to inittab
   ansible.builtin.lineinfile:
