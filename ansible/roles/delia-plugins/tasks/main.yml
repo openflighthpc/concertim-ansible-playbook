@@ -1,0 +1,38 @@
+- name: Install gems
+  ansible.builtin.command:
+    cmd: gem1.8 install "{{ role_path }}/files/1.8/{{ item }}*.gem" --no-rdoc --no-ri --local
+  loop: 
+    - appliance
+    - romance_matcher
+    - ebroker
+
+# XXX This is not idempotent.  Each run will add a new `:appliance:` section
+# to the config.  The new config section will override any previous ones so
+# this works as desired.  However, it would be nicer if it were idempotent.
+- name: Configuring appliance plugin
+  vars:
+    delia_config_file: /data/private/share/etc/concurrent-thinking/delia.yml
+  block:
+    - name: Create tmp dir
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: delia-plugins
+      register: config_build_dir
+
+    - name: Copy delia config
+      ansible.builtin.copy:
+        src: "{{ delia_config_file }}"
+        dest: "{{ config_build_dir.path }}"
+
+    - name: Copy appliance.yml
+      ansible.builtin.template:
+        src: delia_appliance.yml
+        dest: "{{ config_build_dir.path }}"
+
+    - name: Assemble configuration
+      ansible.builtin.assemble:
+        backup: yes
+        dest: "{{ delia_config_file }}"
+        remote_src: yes
+        src: "{{ config_build_dir.path }}"
+        validate: ruby1.8 -ryaml -e 'YAML.load_file("%s")'

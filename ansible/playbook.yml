@@ -33,6 +33,8 @@
       tags: phoenix-mongrel
     - role: delia
       tags: delia
+    - role: delia-plugins
+      tags: [delia, delia-plugins]
     - role: phoenix-modules
       tags: phoenix-modules
     - role: emma
