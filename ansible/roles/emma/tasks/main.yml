@@ -176,7 +176,6 @@
     mode: "755"
 
 - name: Install init.d file
-  tags: focus
   ansible.builtin.copy:
     src: emma.init
     dest: /etc/init.d/emma
