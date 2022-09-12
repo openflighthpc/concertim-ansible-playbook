@@ -121,7 +121,7 @@ RewriteRule ^/-/(.*)$ balancer://emma_cluster%{REQUEST_URI} [P,QSA,L]
 # Rewrite to check for Rails cached page
 RewriteRule ^([^.]+)$ $1.html [QSA]
 
-Include /etc/apache2/appliance/sian.rewrite_rules?conf
+#Include /etc/apache2/appliance/sian.rewrite_rules?conf
 
 # Redirect all non-static requests to cluster
 RewriteCond %{DOCUMENT_ROOT}/%{REQUEST_FILENAME} !-f

@@ -22,6 +22,7 @@
     - rewrite
     - socache_dbm
     - ssl
+    - lbmethod_byrequests
     # We have a PHP app somewhere that, IIRC, displays a boot progress bar.
     # IIRC, we can worry about these later.
     # - cgi
@@ -34,15 +35,13 @@
     - mia.proxy_cluster
     - mia.proxy_frontend
     - mia.server_name
-    # Not sure if these are needed at all.
-    # - sian.proxy_cluster
-    # - sian.rewrite_rules
 
 - name: Disable default sites
   ansible.builtin.command:
     cmd: a2dissite {{ item|quote }}
   loop:
     - default
+    - 000-default
 
 - name: Enable sites
   ansible.builtin.command:
