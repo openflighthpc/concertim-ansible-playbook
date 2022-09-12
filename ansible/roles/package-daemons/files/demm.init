@@ -1,0 +1,100 @@
+#!/bin/sh
+################################################################################
+# (c) Copyright 2000-2011 Concurrent Thinking Ltd.                             #
+#                                                                              #
+# PHOENIX DEMM                                                                 #
+#                                                                              #
+# Many software packages included in this system are protected under           #
+# international copyright laws. Unauthorized copying, distribution or          #
+# modification is prohibited and authorized distribution, copying or           #
+# modification is subject to the copyright notice of each individual package.  #
+#                                                                              #
+# THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT ANY EXPRESS OR IMPLIED WARRANTY.  #
+# IN PARTICULAR, NEITHER THE AUTHORS NOR CONCURRENT THINKING LTD MAKE ANY      #
+# REPRESENTATION OR WARRANTY OF ANY KIND CONCERNING THE FITNESS OF THIS        #
+# SOFTWARE FOR ANY PARTICULAR PURPOSE.                                         #
+#                                                                              #
+# This file was written by Mark J. Titorenko of Concurrent Thinking Ltd and is #
+# protected by copyright. Unauthorized copying, distribution or modification   #
+# is prohibited.                                                               #
+################################################################################
+#
+# description: DEMM performs periodic out-of-band metric polling
+#              
+### BEGIN INIT INFO
+# Provides:          demm
+# Required-Start:    $all
+# Required-Stop:     
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+### END INIT INFO
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+NAME=demm
+DESC="Phoenix DEMM"
+DIR=/data/private/share/daemons/demm
+DAEMON=$DIR/bin/demm
+PIDFILE=/var/run/$NAME.pid
+DAEMON_OPTS="--pidfile $PIDFILE start"
+
+. /lib/lsb/init-functions
+
+if ! [ -x $DAEMON ];then
+  echo "ERROR - Can't find $DAEMON"
+  exit 1 
+fi
+
+if [ $UID -gt 0 ]; then
+  echo "ERROR - must run as root"
+  exit 1
+fi
+
+cd $DIR
+
+case "$1" in
+  start)
+        log_daemon_msg "Starting $DESC"
+        # allow tcp sockets to be re-used otherwise demm keeps restarting 
+        start-stop-daemon --start --pidfile $PIDFILE --quiet --startas $DAEMON -- $DAEMON_OPTS
+        RETVAL=$?
+        log_end_msg $RETVAL
+        ;;
+    stop)
+        log_daemon_msg "Stopping $DESC"
+        start-stop-daemon -R TERM/15/KILL/5 --stop --quiet --pidfile $PIDFILE
+        rm -f $PIDFILE
+        RETVAL=$?
+        log_end_msg $RETVAL
+        ;;
+    restart)
+        log_daemon_msg "Restarting $DESC"
+        start-stop-daemon -R TERM/15/KILL/5 --stop --quiet --pidfile $PIDFILE
+        rm -f $PIDFILE
+        RETVAL=$?
+        log_end_msg $RETVAL
+        sleep 5
+        start-stop-daemon --start --pidfile $PIDFILE --quiet --startas $DAEMON -- $DAEMON_OPTS
+        RETVAL=$?
+        log_end_msg $RETVAL
+        ;;
+    status)
+        echo -n "Status of $DESC: "
+        if [ ! -r "$PIDFILE" ]; then
+            echo "$NAME is not running."
+            exit 3
+        fi
+        if read pid < "$PIDFILE" && ps -p "$pid" > /dev/null 2>&1; then
+            echo "$NAME is running - $pid."
+            exit 0
+        else
+            echo "$NAME is not running but $PIDFILE exists."
+            exit 1
+        fi
+        ;;
+    *)
+      echo "Usage: $0 {start|stop|restart|status}"
+      exit 1
+      ;;
+esac      
+
+exit $RETVAL

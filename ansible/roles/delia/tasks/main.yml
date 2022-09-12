@@ -10,7 +10,7 @@
   ansible.builtin.command:
     cmd: gem1.9 install "{{ role_path }}/files/1.9/{{ item }}*.gem" --no-rdoc --no-ri --local
   loop:
-    - daemons
+    # - daemons
     - delia_daemon
 
 - name: Link binaries

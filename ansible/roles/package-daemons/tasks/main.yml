@@ -1,0 +1,117 @@
+- name: Verifying source code at "{{ role_path }}/files/tmp"
+  ansible.builtin.shell:
+    cmd: |
+      if [ ! -f {{ role_path }}/files/tmp/{{ item }}.tgz ] ; then
+        cat <<EOF
+          Could not find daemon src {{ item }}.tgz.
+          Download {{ item }}.tgz from build.concertim to {{ role_path }}/files/tmp/ 
+
+          scp [OPTIONS] \
+              build:/data/build/uranus/concertim/6.4.0/packages/package-daemons/{{ item }}.tgz \
+              {{ role_path }}/files/tmp/
+      EOF
+        exit 1
+      fi
+  changed_when: False
+  loop: "{{ daemons }}"
+
+- name: Make destination directory
+  ansible.builtin.file:
+    path: "{{ daemon_installation_dir }}"
+    owner: root
+    group: root
+    mode: "755"
+    state: directory
+
+- name: Extract tar files
+  ansible.builtin.unarchive:
+    src: "tmp/{{ item }}.tgz"
+    dest: "{{ daemon_installation_dir }}"
+    creates: "{{ daemon_installation_dir }}/{{ item }}"
+  loop: "{{ daemons }}"
+
+# - name: Updating bunder to use {{ gem_source_url }}
+
+- name: Install gem dependencies
+  vars:
+    daemon_path: "{{ daemon_installation_dir}}/{{ item }}"
+  ansible.builtin.shell: |
+    cd "{{ daemon_path }}"
+    PATH=/opt/ruby-1.9/bin:$PATH
+    /opt/ruby-1.9/bin/bundle install --local
+  loop: "{{ daemons }}"
+
+- name: Install init.d files
+  ansible.builtin.copy:
+    src: "{{ item }}.init"
+    dest: /etc/init.d/{{ item }}
+    owner: root
+    group: root
+    mode: "744"
+  loop: "{{ daemons }}"
+  # XXX deal with UID check.
+
+# - name: Additional demm configuration
+#   vars:
+#     limits_dir: /data/private/share/etc/concurrent-thinking/appliance/limits
+#     demm_path: "{{ daemon_installation_dir }}/demm"
+#   block:
+#     - name: Make limits directory
+#       ansible.builtin.file:
+#         path: "{{ limits_dir }}"
+#         state: directory
+#         owner: www-data
+#         group: root
+#         mode: "755"
+
+#     - name: Copy demm limits
+#       ansible.builtin.copy:
+#         src: "{{ demm_path }}/config/demm.yml.limits"
+#         remote_src: true
+#         dest: "{{ limits_dir }}/demm.yml"
+#         owner: www-data
+#         group: root
+#         mode: "644"
+
+- name: Additional martha configuration
+  block:
+    - name: Make rrds directory
+      ansible.builtin.file:
+        path: "{{ daemon_installation_dir }}/martha/rrds"
+        state: directory
+        owner: root
+        group: root
+        mode: "755"
+
+    - name: Install martha number cruncher
+      ansible.builtin.command:
+        cmd: dpkg -i --force-architecture --force-overwrite {{ role_path }}/files/martha-number-cruncher.deb
+
+- name: Additional theresa configuration
+  block:
+    - name: Install theresa number cruncher
+      ansible.builtin.command:
+        cmd: dpkg -i --force-architecture --force-overwrite {{ role_path }}/files/theresa-number-cruncher.deb
+
+- name: Additional maggie configuration
+  block:
+    - name: Install maggie number cruncher
+      ansible.builtin.command:
+        cmd: dpkg -i --force-architecture --force-overwrite {{ role_path }}/files/maggie-number-cruncher.deb
+
+- name: Additional ct-capacity-daemon configuration
+  block:
+    - name: Install ct-capacity-daemon number cruncher
+      ansible.builtin.command:
+        cmd: dpkg -i --force-architecture --force-overwrite {{ role_path }}/files/ct-capacity-daemon-number-cruncher.deb
+
+# - name: Install clobber script
+# - name: Install hw.sh script
+# - name: Install delayed job init script
+
+- name: Ensure that daemons are enabled
+  ansible.builtin.service:
+    name: "{{ item }}"
+    # state: started
+    enabled: yes
+  loop: "{{ daemons }}"

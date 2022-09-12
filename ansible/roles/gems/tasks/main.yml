@@ -146,6 +146,39 @@
     # - safe_api
     # - RubyRRDtool
 
+    # These are required by various daemons, but not included in their
+    # vendor/cache FSR.
+    - phoenix_metrics
+    - psych-2.0.0
+    - safely
+    - multi_json-1.10.1
+    - activesupport-3.1.12
+    - rubigen-1.5.8
+    - thor
+    - eventmachine
+    - i18n
+    - daemon-kit
+    - memcache-client
+    - builder-3.2.2
+    - phoenix_distributed_map
+    - em-socksify
+    - http_parser
+    - cookiejar
+    - addressable
+    - em-http-request
+    - rack-1.4.5
+    - daemons
+    - thin
+    - json-1.8.1
+    - faye
+    - em-jack
+    - tilt
+    - sinatra
+    - netaddr-1.4.0
+
+    # - snmp-1.1.1
+    # - ct_modbus
+
 - name: Create bundler1.9 symlink
   ansible.builtin.file:
     src: /opt/ruby-1.9/bin/bundle

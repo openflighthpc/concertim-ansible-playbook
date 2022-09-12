@@ -35,6 +35,8 @@
       tags: delia
     - role: delia-plugins
       tags: [delia, delia-plugins]
+    - role: package-daemons
+      tags: package-daemons
     - role: phoenix-modules
       tags: phoenix-modules
     - role: emma

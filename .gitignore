@@ -8,3 +8,4 @@
 .vagrant
 /ansible/roles/phoenix-modules/files/tmp/*.tgz
 /ansible/roles/snmp/files/raw_mibs/
+/ansible/roles/package-daemons/files/tmp/*.tgz
