@@ -39,6 +39,8 @@
       tags: phoenix-modules
     - role: emma
       tags: emma
+    - role: package-mia
+      tags: [package-mia, mia]
 
 #
 # - gmetad-agg (???)

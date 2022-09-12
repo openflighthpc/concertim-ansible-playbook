@@ -1,0 +1,100 @@
+- name: Verifying source code at "{{ role_path }}/files/tmp"
+  ansible.builtin.shell:
+    cmd: |
+      if [ ! -f {{ role_path }}/files/tmp/mia.tgz ] ; then
+        cat <<EOF
+          Could not find MIA src mia.tgz.
+          Download mia.tgz from build.concertim to {{ role_path }}/files/tmp/ 
+
+          scp [OPTIONS] \
+              build:/data/build/uranus/concertim/6.4.0/packages/package-mia/mia.tgz \
+              {{ role_path }}/files/tmp/
+      EOF
+        exit 1
+      fi
+  changed_when: False
+
+
+- name: Make destination directory
+  ansible.builtin.file:
+    path: "{{ package_mia_root_dir }}"
+    owner: www-data
+    group: www-data
+    mode: "755"
+    state: directory
+
+- name: Extract tar files
+  ansible.builtin.unarchive:
+    src: "tmp/mia.tgz"
+    dest: "{{ package_mia_root_dir }}"
+    creates: "{{ package_mia_root_dir }}/mia"
+
+- name: Correct ownership
+  ansible.builtin.file:
+    path: "{{ phoenix_modules_root_dir }}/mia"
+    owner: www-data
+    group: www-data
+    recurse: true
+
+# XXX I think that this are not needed.  It appears to be used by the first
+# time setup wizard and hardware wizard.  I'm not sure that we want either of
+# those anymore.
+- name: Create control stream spool directory
+  ansible.builtin.file:
+    path: /var/spool/control_stream
+    owner: www-data
+    group: root
+    mode: "755"
+    state: directory
+
+- name: Install javascript optimization support libraries
+  ansible.builtin.unarchive:
+    src: "optimization-js.tgz"
+    dest: /opt
+    creates: /opt/js
+
+
+- name: Install local_environment.rb
+  ansible.builtin.copy:
+    remote_src: yes
+    src:  "{{ package_mia_root_dir }}/mia/config/local_environment.rb.tagged"
+    dest: "{{ package_mia_root_dir }}/mia/config/local_environment.rb"
+
+- name: Cache classes in development
+  ansible.builtin.replace:
+    path: "{{ package_mia_root_dir }}/mia/config/environments/development.rb"
+    regexp: "config.cache_classes = false"
+    replace: "config.cache_classes = true"
+
+
+- name: Install mongrel config files
+  vars:
+    mongrel_conf_dir: "/etc/mongrel_cluster"
+    template_dest: "{{ mongrel_conf_dir }}/mia.yml"
+    template_src: "{{ package_mia_root_dir }}/mia/config/mongrel_cluster.yml.tagged"
+    replacements:
+      - regexp: "%MONGREL_USER%"
+        replace: "{{ mongrel_user }}"
+      - regexp: "%MONGREL_GROUP%"
+        replace: "{{ mongrel_group }}"
+      - regexp: "%ENV%"
+        replace: "{{ mode }}"
+      - regexp: "%MIA_ROOT%"
+        replace: "/opt/concurrent-thinking/mia"
+      - regexp: "%SERVER_COUNT%"
+        replace: "{{ mia_server_count }}"
+  include_tasks: "{{ role_path }}/../phoenix-modules/tasks/install_tagged_configuration.yml"
+
+- name: Touch unconfigured file
+  ansible.builtin.copy:
+    dest: "/data/private/share/etc/concurrent-thinking/appliance/unconfigured"
+    content: ""
+    owner: www-data
+
+- name: Build MIA JS
+  ansible.builtin.command:
+    cmd: "{{ package_mia_root_dir }}/mia/public/scripts/src/meta/build.sh"
+
+# - name: Install logrotation
+# - name: Install create_selenium_chassis_template_list.rb
+# - name: Configure chassis templates
