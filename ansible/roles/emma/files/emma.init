@@ -46,10 +46,10 @@ if ! [ -x $DAEMON ];then
   exit 1 
 fi
 
-if [ $UID -gt 0 ]; then
-  echo "ERROR - must run as root"
-  exit 1
-fi
+# if [ $UID -gt 0 ]; then
+#   echo "ERROR - must run as root"
+#   exit 1
+# fi
 
 if [ -z "$2" ]; then
   DAEMON_OPTS=""

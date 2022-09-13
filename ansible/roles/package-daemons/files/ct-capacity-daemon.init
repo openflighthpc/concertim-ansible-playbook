@@ -30,7 +30,7 @@
 # Default-Stop:      0 1 6
 ### END INIT INFO
 
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
+PATH=/opt/ruby-1.9/bin:/sbin:/bin:/usr/sbin:/usr/bin
 NAME=ct-capacity-daemon
 DESC="ct-capacity-daemon"
 DIR=/data/private/share/daemons/ct-capacity-daemon
@@ -45,10 +45,10 @@ if ! [ -x $DAEMON ];then
   exit 1 
 fi
 
-if [ $UID -gt 0 ]; then
-  echo "ERROR - must run as root"
-  exit 1
-fi
+# if [ $UID -gt 0 ]; then
+#   echo "ERROR - must run as root"
+#   exit 1
+# fi
 
 cd $DIR
 
