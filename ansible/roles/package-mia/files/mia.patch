@@ -1,0 +1,9 @@
+diff -ur -x log -x tmp mia.orig/app/controllers/application.rb mia/app/controllers/application.rb
+--- mia.orig/app/controllers/application.rb	2015-02-05 13:56:49.000000000 +0000
++++ mia/app/controllers/application.rb	2022-09-13 14:06:45.336735537 +0000
+@@ -1,3 +1,5 @@
++require 'md5'
++
+ class ApplicationController < ActionController::Base
+   include LoginSystem::Auth
+   include Glue::Filters
