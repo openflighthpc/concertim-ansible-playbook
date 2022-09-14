@@ -1,0 +1,64 @@
+- name: Install ruby-build dependencies
+  ansible.builtin.apt:
+    name:
+      - autoconf
+      - bison
+      - build-essential
+      - libdb-dev
+      - libffi-dev
+      - libgdbm-dev
+      - libgdbm6
+      - libncurses5-dev
+      - libreadline6-dev
+      - libssl-dev
+      - libyaml-dev
+      - subversion
+      - uuid-dev
+      - zlib1g-dev
+    state: latest
+
+- name: Install ruby-build
+  ansible.builtin.apt:
+    name: ruby-build
+    state: latest
+
+# The system openssl version (1.1.1f) isn't compatible with Ruby versions less
+# than 2.4.  We install an older version to link against.
+- name: Install openssl
+  vars:
+    openssl_version: "{{ item }}"
+  ansible.builtin.shell:
+    cmd: |
+      apt install build-essential checkinstall zlib1g-dev
+
+      mkdir /opt/src
+      cd /opt/src
+      wget https://www.openssl.org/source/{{ openssl_version }}.tar.gz
+      tar xf {{ openssl_version }}.tar.gz
+      cd {{ openssl_version }}
+
+      ./config --prefix=/opt/{{ openssl_version }} --openssldir=/opt/{{ openssl_version }} shared zlib
+      make
+      make test
+      make install
+
+      rm -rf /opt/{{ openssl_version }}/certs
+      ln -s /etc/ssl/certs /opt/{{ openssl_version }}
+
+      rm -rf /opt/src/{{ openssl_version }}
+    creates: /opt/{{ openssl_version }}
+  loop:
+    - openssl-1.0.2u
+    - openssl-1.0.2l
+
+- name: Build Rubies
+  ansible.builtin.command:
+    cmd: ruby-build {{ item.version }} /opt/ruby-{{ item.version }}
+    creates: /opt/ruby-{{ item.version }}
+  environment:
+    RUBY_CONFIGURE_OPTS: "{{ item.configure_opts }}"
+  loop:
+    - version: 1.8.7-p374
+      configure_opts: "--with-openssl-dir=/opt/openssl-1.0.2l"
+    - version: 1.9.2-p0
+      configure_opts: "--with-openssl-dir=/opt/openssl-1.0.2u"

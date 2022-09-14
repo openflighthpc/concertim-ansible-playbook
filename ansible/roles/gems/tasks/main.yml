@@ -39,8 +39,28 @@
       - libpq-dev
       - librrd-dev
       - libsnmp-dev
+      - libsqlite3-dev
+      - libxslt1-dev
       - nodejs
       - postgresql-server-dev-11
+
+      # These were previously installed so that openssl and ruby could be
+      # built.  At least some of them are required for the gems too.
+      # XXX Find out which of these we need and remove those we don't.
+      - autoconf
+      - bison
+      - build-essential
+      - libdb-dev
+      - libffi-dev
+      - libgdbm-dev
+      - libgdbm6
+      - libncurses5-dev
+      - libreadline6-dev
+      - libssl-dev
+      - libyaml-dev
+      # - subversion
+      - uuid-dev
+      - zlib1g-dev
 
 # There are some hoops to jump through to get the Ruby 1.8 gems installed.
 #
