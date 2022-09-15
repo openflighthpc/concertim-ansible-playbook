@@ -16,7 +16,7 @@
     # XXX Figure something better than this.
     - name: Wait for other services to start
       ansible.builtin.wait_for:
-        timeout: 120
+        timeout: 60
 
     - name: Restart delia
       ansible.builtin.service:
@@ -26,5 +26,5 @@
     # XXX Figure something better than this.
     - name: Give delia a moment or two
       ansible.builtin.wait_for:
-        timeout: 120
+        timeout: 60
 
