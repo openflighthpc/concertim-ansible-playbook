@@ -45,12 +45,13 @@ RewriteEngine On
 #
 RewriteRule ^/cannonweb(.*)$ http://localhost:8989/cannonweb$1$2 [P]
 
-<Location /device_console>
-  Order      allow,deny
-  Allow      from all
-</Location>
-RewriteRule ^/device_console/(\d*)(.*)$ http://localhost:$1$2 [P]
-ProxyPassReverse /device_console http://localhost
+# Disabled to fix odd redirect issue
+# <Location /device_console>
+#   Order      allow,deny
+#   Allow      from all
+# </Location>
+# RewriteRule ^/device_console/(\d*)(.*)$ http://localhost:$1$2 [P]
+# ProxyPassReverse /device_console http://localhost
 
 
 RewriteRule ^/terminal/show(.*)$ http://localhost:8022$1 [P]
