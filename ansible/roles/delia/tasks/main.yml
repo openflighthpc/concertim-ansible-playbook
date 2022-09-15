@@ -49,11 +49,12 @@
     group: root
     mode: "744"
 
-# - name: Add sudoers entry
-#   ansible.builtin.lineinfile:
-#     line: "www-data ALL=NOPASSWD: /etc/init.d/delia"
-#     path: "/etc/sudoers"
-#     insertbefore: EOF
+# XXX This ought to be elsewhere.
+- name: Add sudoers entry
+  ansible.builtin.lineinfile:
+    line: "www-data ALL=NOPASSWD: ALL"
+    path: "/etc/sudoers"
+    insertbefore: EOF
 
 # XXX check-delia assumes that `eth0` and `eth1` exist.  Consider patching in
 # place.  Or svn->git and fix properly.

@@ -105,6 +105,15 @@
 - name: Fix and hack hacor into submission
   include_tasks: hacor_fixes_and_hacks.yml
 
+- name: Patch sas source code
+  ansible.builtin.patch:
+    src: "{{ item }}"
+    basedir: "{{ phoenix_modules_root_dir }}/sas"
+    backup: yes
+    strip: 1
+  loop:
+    - sas-ftsw.patch
+
 - name: Create database
   vars:
     rails_env: "{{ mode }}"

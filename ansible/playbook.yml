@@ -1,5 +1,5 @@
 ---
-- name: Configure machine to be a Flight Concertim MIA
+- name: Build machine to be an unconfigured (vanilla) Flight Concertim MIA
   hosts: all
   become: true
   become_user: root

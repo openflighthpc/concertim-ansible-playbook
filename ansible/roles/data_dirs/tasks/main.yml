@@ -31,6 +31,11 @@
       group: www-data
       mode: u=rwx,g=rx,o=rx
 
+    - path: /data/private/share/etc/concurrent-thinking/ssl
+      owner: www-data
+      group: www-data
+      mode: "755"
+
     - path: /data/public
       owner: root
       group: root

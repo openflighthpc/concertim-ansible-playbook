@@ -1,0 +1,75 @@
+Binary files sas.orig/app/models/.setup_manager.rb.swp and sas/app/models/.setup_manager.rb.swp differ
+diff -ur -x tmp -x log sas.orig/app/models/ntp_setting.rb sas/app/models/ntp_setting.rb
+--- sas.orig/app/models/ntp_setting.rb	2016-07-15 12:42:53.000000000 +0000
++++ sas/app/models/ntp_setting.rb	2022-09-15 11:32:38.772662228 +0000
+@@ -54,9 +54,10 @@
+   end
+ 
+   def do_timezone_set
+-    cmd = "sudo /usr/local/sbin/set_timezone.rb #{time_zone}" 
+-    system(cmd) 
+-    logger.info "SET TIME ZONE #{self.inspect}" 
++    #cmd = "sudo /usr/local/sbin/set_timezone.rb #{time_zone}" 
++    #system(cmd) 
++    #logger.info "SET TIME ZONE #{self.inspect}" 
++    logger.info "XXX SKIPPED TIME ZONE #{self.inspect}" 
+   end
+ 
+   def self::set_date_time(date_time)
+diff -ur -x tmp -x log sas.orig/app/models/setup_manager.rb sas/app/models/setup_manager.rb
+--- sas.orig/app/models/setup_manager.rb	2016-09-20 08:21:43.000000000 +0000
++++ sas/app/models/setup_manager.rb	2022-09-15 11:41:10.087602931 +0000
+@@ -423,8 +423,9 @@
+             File.open('/etc/concurrent-thinking/appliance/release.yml','w') do |io|
+               io.puts license.to_yaml
+             end
+-            update_integrator
+-            update_operator
++            # These are done in an ansible task now.
++            #update_integrator
++            #update_operator
+             send_event(:configured2)
+           else
+             failed "Failed to install security pack"
+@@ -539,7 +540,12 @@
+     #XXX Use the following line when we finally switch to EMMA#UMA
+     #
+     integrator = User.illuminate(:find_first_by_authorisation,'Integrator',:created_on => 'asc')
+-    puts "    -> found user: #{integrator.login}"
++    if integrator.nil?
++      puts "    -> integrator not found"
++      return
++    else
++      puts "    -> found user: #{integrator.login}"
++    end
+     #integrator = User.illuminate(:find_by_authorisation,'Integrator',:order => 'created_on ASC') 
+     integrator.clear_password!
+     security = YAML::load_file('/usr/src/concurrent-thinking/security.yml')
+@@ -597,7 +603,9 @@
+ 
+             # update cluster details
+             if @cluster.nil?
+-              success = false
++              # success = false
++              # Let's see why this is a bad idea.
++              success = true
+               puts "verify_cluster_data: could not access cluster details"
+             else
+               @cluster.management_network = "#{@eth0.ip}#{mask.netmask}"
+@@ -631,6 +639,7 @@
+   def update_cluster_data
+     threaded do
+       begin
++        unless @cluster.nil?
+         @cluster.update_appliance_configuration({
+           :appliance_ip_addr => @eth0.ip,
+           :appliance_hostname => @appliance_eth1.hostname,
+@@ -638,6 +647,7 @@
+         @cluster.update_network_configurations()
+         @cluster.update_pxe_configuration({
+           :appliance_ip_addr => @eth0.ip})
++        end
+         send_event(:updated)
+       rescue
+         failed
+Only in sas/lib: .setup_manager_automator.rb.swo
