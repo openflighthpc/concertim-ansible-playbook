@@ -30,6 +30,12 @@
     ansible.builtin.command:
       cmd: "{{ role_path }}/files/scripts/check_emma_for_ct_gems.sh"
 
+- name: Symlink emma
+  ansible.builtin.file:
+    src: "/data/private/share/rails/emma"
+    dest: "/data/private/share/emma"
+    state: link
+
 - name: Install configuration
   ansible.builtin.copy:
     src: phoenix-emma.logrotate
