@@ -61,7 +61,6 @@ provide credentials to clone it.
 ```
 cd /root
 git clone https://<GITHUB_TOKEN>@github.com/alces-flight/concertim-bootstrap.git
-git checkout alt/ansible
 ln -s /root/concertim-bootstrap/ansible /ansible
 ```
 
