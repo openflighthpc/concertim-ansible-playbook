@@ -1,0 +1,13 @@
+diff -ur -x tmp -x log emma.orig/core/app/helpers/help_helper.rb emma/core/app/helpers/help_helper.rb
+--- emma.orig/core/app/helpers/help_helper.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/core/app/helpers/help_helper.rb	2022-09-15 16:30:27.194930012 +0000
+@@ -7,7 +7,8 @@
+   # key out of ct.yml and reutrns a link to that page.
+   #
+   def link_to_help_page(key, text = 'Help', opts = {})
+-    link_to text, (url_for_help_index(key) || HELP_CONTENTS_URL), {class: :help}.merge(opts)
++    #link_to text, (url_for_help_index(key) || HELP_CONTENTS_URL), {class: :help}.merge(opts)
++    text
+   end
+ 
+   private

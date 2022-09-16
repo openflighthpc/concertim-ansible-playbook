@@ -1,0 +1,13 @@
+diff -ur -x tmp -x log emma.orig/core/config/initializers/session_store.rb emma/core/config/initializers/session_store.rb
+--- emma.orig/core/config/initializers/session_store.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/core/config/initializers/session_store.rb	2022-09-15 16:52:18.887990237 +0000
+@@ -1,6 +1,8 @@
+ # Be sure to restart your server when you modify this file.
+ 
+-Emma::Application.config.session_store :cookie_store, key: '_emma_session', :secure => true, :http_only => true
++# Remove `:secure => true` until SSL is working.
++# Emma::Application.config.session_store :cookie_store, key: '_emma_session', :secure => true, :http_only => true
++Emma::Application.config.session_store :cookie_store, key: '_emma_session', :http_only => true
+ 
+ # Use the database for sessions instead of the cookie-based default,
+ # which shouldn't be used to store highly confidential information

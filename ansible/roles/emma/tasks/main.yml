@@ -52,15 +52,19 @@
           chown www-data:www-data {{ core_path }}/vendor/cache/*.gem
         executable: /bin/bash
 
-    # FSR the Gemfile.lock doesn't have the correct versions included.  We patch
-    # it here to correct.
     # XXX The changes should be pushed to the git repo at some point, but its
     # easier to iterate on the build if I'm making changes to a single place.
-    - name: Patch Gemfile.lock
+    - name: Apply patches
       ansible.builtin.patch:
-        src: Gemfile.lock.patch
-        dest: "{{ core_path }}/Gemfile.lock"
+        src: "patches/{{ item }}"
+        basedir: "{{ emma_path }}"
         backup: yes
+        strip: 1
+      loop:
+        - update-locked-gems.patch
+        - hack-permit-http-sign-in.patch
+        - disable-help-links.patch
+        - disable-legacy-events-generator.patch
 
     - name: Bundle install gems
       ansible.builtin.shell: |
