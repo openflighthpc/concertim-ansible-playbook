@@ -1,0 +1,6 @@
+appliance_id: 0
+# XXX This should be read from `/dta/private/share/etc/concurrent-thinking/branding.yml`.
+appliance_name: "ct"
+appliance_url: "nil"
+appliance_host: "command"
+private_intf_name: "eth0"

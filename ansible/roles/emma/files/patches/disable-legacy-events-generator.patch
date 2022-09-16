@@ -1,0 +1,211 @@
+diff -ur -x tmp -x log emma.orig/ivy/app/controllers/ivy/checks_controller.rb emma/ivy/app/controllers/ivy/checks_controller.rb
+--- emma.orig/ivy/app/controllers/ivy/checks_controller.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/ivy/app/controllers/ivy/checks_controller.rb	2022-09-15 16:57:36.023972395 +0000
+@@ -52,7 +52,7 @@
+ 
+     def record_event(msg)
+       msg_without_tags = msg.gsub(/<\/?[^>]*>/, "")
+-      LegacyEventsGenerator.add_instantaneous_event(-1, "Appliance", msg_without_tags, {:category => "DHCP", :group_match_code => 'dhcp'})
++#      LegacyEventsGenerator.add_instantaneous_event(-1, "Appliance", msg_without_tags, {:category => "DHCP", :group_match_code => 'dhcp'})
+     rescue
+       e "An error occurred during event generation"
+       e $!
+diff -ur -x tmp -x log emma.orig/ivy/app/controllers/ivy/import_license_controller.rb emma/ivy/app/controllers/ivy/import_license_controller.rb
+--- emma.orig/ivy/app/controllers/ivy/import_license_controller.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/ivy/app/controllers/ivy/import_license_controller.rb	2022-09-15 16:57:36.023972395 +0000
+@@ -48,7 +48,7 @@
+ 
+       # complete
+       msg = issue ? "License import issue: #{issue}" : 'License imported'
+-      LegacyEventsGenerator.add_instantaneous_event(-1, "Appliance", msg, {:category => "Appliance"})
++#      LegacyEventsGenerator.add_instantaneous_event(-1, "Appliance", msg, {:category => "Appliance"})
+       redirect_to import_license_complete_path, notice: msg
+ 
+     end
+diff -ur -x tmp -x log emma.orig/ivy/app/models/ivy/chassis.rb emma/ivy/app/models/ivy/chassis.rb
+--- emma.orig/ivy/app/models/ivy/chassis.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/ivy/app/models/ivy/chassis.rb	2022-09-15 16:57:36.023972395 +0000
+@@ -204,7 +204,7 @@
+         end
+         actor = LegacyEventsGenerator.actor_object_from_type_and_id(chassis_type, actor_id)
+         @event = LegacyEventsGenerator.new_user_event("#{chassis_type} moved (#{Thread.current[:nice_name]})", {:happened_at => Time.now})
+-        LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, actor.source_type)
++#        LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, actor.source_type)
+       end
+       yield
+     end
+@@ -213,7 +213,7 @@
+       if self.complex? 
+         actor = LegacyEventsGenerator.actor_object_from_type_and_id(self.type, self.id) 
+         @event = LegacyEventsGenerator.new_user_event("Chassis deleted (#{Thread.current[:nice_name]})", {:happened_at => Time.now}) 
+-        LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, actor.source_type) 
++#        LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, actor.source_type) 
+       end 
+     end 
+   
+@@ -221,7 +221,7 @@
+       if self.complex? 
+         actor = LegacyEventsGenerator.actor_object_from_type_and_id(self.type, self.id) 
+         @event = LegacyEventsGenerator.new_user_event("Chassis created (#{Thread.current[:nice_name]})", {:happened_at => Time.now}) 
+-        LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, actor.source_type) 
++#        LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, actor.source_type) 
+       end 
+     end
+ 
+diff -ur -x tmp -x log emma.orig/ivy/app/models/ivy/device.rb emma/ivy/app/models/ivy/device.rb
+--- emma.orig/ivy/app/models/ivy/device.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/ivy/app/models/ivy/device.rb	2022-09-15 16:57:36.019972395 +0000
+@@ -232,7 +232,7 @@
+         if !self.new_record? and self.slot_id_changed?
+           actor = LegacyEventsGenerator.actor_object_from_name("Device", self.name)
+           @event = LegacyEventsGenerator.new_user_event("Device moved (#{Thread.current[:nice_name]})", {:happened_at => Time.now})
+-          LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, "Device")
++#          LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, "Device")
+         end
+       end
+       yield
+@@ -489,7 +489,7 @@
+       unless self.kind_of? Ivy::Device::TaggedDevice 
+         actor = LegacyEventsGenerator.actor_object_from_name("Device", self.name) 
+         @event = LegacyEventsGenerator.new_user_event("Device deleted (#{Thread.current[:nice_name]})", {:happened_at => Time.now}) 
+-        LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, "Device") 
++#        LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, "Device") 
+       end 
+     end 
+  
+@@ -497,7 +497,7 @@
+       unless self.kind_of? Ivy::Device::TaggedDevice 
+         actor = LegacyEventsGenerator.actor_object_from_name("Device", self.name) 
+         @event = LegacyEventsGenerator.new_user_event("Device created (#{Thread.current[:nice_name]})", {:happened_at => Time.now}) 
+-        LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, "Device") 
++#        LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, "Device") 
+       end 
+     end 
+ 
+diff -ur -x tmp -x log emma.orig/ivy/app/models/ivy/hw_rack.rb emma/ivy/app/models/ivy/hw_rack.rb
+--- emma.orig/ivy/app/models/ivy/hw_rack.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/ivy/app/models/ivy/hw_rack.rb	2022-09-15 16:57:36.023972395 +0000
+@@ -347,13 +347,13 @@
+     def destroy_event 
+       actor = LegacyEventsGenerator.actor_object_from_name("HwRack", self.name) 
+       @event = LegacyEventsGenerator.new_user_event("Rack deleted (#{Thread.current[:nice_name]})", {:happened_at => Time.now}) 
+-      LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, actor.source_type) 
++#      LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, actor.source_type) 
+     end 
+  
+     def create_event 
+       actor = LegacyEventsGenerator.actor_object_from_name("HwRack", self.name) 
+       @event = LegacyEventsGenerator.new_user_event("Rack created (#{Thread.current[:nice_name]})", {:happened_at => Time.now}) 
+-      LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, actor.source_type) 
++#      LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, actor.source_type) 
+     end 
+ 
+     #
+diff -ur -x tmp -x log emma.orig/ivy/app/models/ivy/power_supply.rb emma/ivy/app/models/ivy/power_supply.rb
+--- emma.orig/ivy/app/models/ivy/power_supply.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/ivy/app/models/ivy/power_supply.rb	2022-09-15 16:57:36.019972395 +0000
+@@ -59,7 +59,7 @@
+       if self.power_strip_id_changed? or self.power_strip_socket_id_changed?
+         actor = LegacyEventsGenerator.actor_object_from_name("power_supply", self.name)
+         @event = LegacyEventsGenerator.new_user_event("Power supply move", {:happened_at => Time.now})
+-        LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, "power_supply")
++#        LegacyEventsGenerator.set_actors_for_user_event(@event, actor.source_id, "power_supply")
+         #Ivy::ChangeEvent.new(:change_type => "power_supply_move", :power_supply_id => self.id, :user_id => 1, 
+         #                     :from_where => (self.power_strip_id_changed? and !self.changes[:power_strip_id][0].nil?) ? "power_strip" : nil, 
+         #                     :from_id => self.power_strip_id_changed? ? self.changes[:power_strip_id][0] : power_strip_id, 
+diff -ur -x tmp -x log emma.orig/ivy/app/services/ivy/protocol_services/modbus_set.rb emma/ivy/app/services/ivy/protocol_services/modbus_set.rb
+--- emma.orig/ivy/app/services/ivy/protocol_services/modbus_set.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/ivy/app/services/ivy/protocol_services/modbus_set.rb	2022-09-15 16:57:36.019972395 +0000
+@@ -65,7 +65,7 @@
+         reg = "#{modbus_register.reg_type_name}:#{modbus_register.address}:#{modbus_register.data_type_name}:#{modbus_register.reg_count}"
+         msg = "User #{user.nice_name} executed Modbus set " 
+         msg += "on register #{reg} with value #{new_value}" 
+-        LegacyEventsGenerator.add_instantaneous_event(device.id, "Device", msg, opts = {:evtype => "SYSTEM", :category => "Protocol Action"})
++#        LegacyEventsGenerator.add_instantaneous_event(device.id, "Device", msg, opts = {:evtype => "SYSTEM", :category => "Protocol Action"})
+       end
+ 
+     end
+diff -ur -x tmp -x log emma.orig/ivy/app/services/ivy/protocol_services/snmp_set.rb emma/ivy/app/services/ivy/protocol_services/snmp_set.rb
+--- emma.orig/ivy/app/services/ivy/protocol_services/snmp_set.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/ivy/app/services/ivy/protocol_services/snmp_set.rb	2022-09-15 16:57:36.019972395 +0000
+@@ -46,7 +46,7 @@
+       def self.create_event(device, snmp_mib, oid, new_value, user)
+         msg = "User #{user.nice_name} executed SNMP set "
+         msg += "on MIB #{snmp_mib.name} and oid #{oid} with value #{new_value}"
+-        LegacyEventsGenerator.add_instantaneous_event(device.id, "Device", msg, opts = {:evtype => "SYSTEM", :category => "Protocol Action"})
++#        LegacyEventsGenerator.add_instantaneous_event(device.id, "Device", msg, opts = {:evtype => "SYSTEM", :category => "Protocol Action"})
+       end
+ 
+     end
+diff -ur -x tmp -x log emma.orig/meca/app/controllers/meca/ranges_controller.rb emma/meca/app/controllers/meca/ranges_controller.rb
+--- emma.orig/meca/app/controllers/meca/ranges_controller.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/meca/app/controllers/meca/ranges_controller.rb	2022-09-15 16:57:36.027972395 +0000
+@@ -72,7 +72,7 @@
+       msg = "User #{me} executed threshold range #{op} on #{@range.threshold.name}"
+       id = @range.threshold.device_id.nil? ? @range.threshold.group_id : @range.threshold.device_id
+       type = @range.threshold.device_id.nil? ? 'Group' : 'Device'
+-      LegacyEventsGenerator.add_instantaneous_event(id, type, msg, opts = {:evtype => "SYSTEM", :category => "Threshold Action"})
++#      LegacyEventsGenerator.add_instantaneous_event(id, type, msg, opts = {:evtype => "SYSTEM", :category => "Threshold Action"})
+     end
+ 
+   end
+diff -ur -x tmp -x log emma.orig/meca/app/controllers/meca/threshold_breach_actions_controller.rb emma/meca/app/controllers/meca/threshold_breach_actions_controller.rb
+--- emma.orig/meca/app/controllers/meca/threshold_breach_actions_controller.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/meca/app/controllers/meca/threshold_breach_actions_controller.rb	2022-09-15 16:57:36.027972395 +0000
+@@ -102,7 +102,7 @@
+       id = th.device_id.nil? ? th.group_id : th.device_id
+       type = th.device_id.nil? ? 'Group' : 'Device'
+       Thread.new do
+-        LegacyEventsGenerator.add_instantaneous_event(id, type, msg, opts = {:evtype => "SYSTEM", :category => "Threshold Action"})
++#        LegacyEventsGenerator.add_instantaneous_event(id, type, msg, opts = {:evtype => "SYSTEM", :category => "Threshold Action"})
+       end
+     end
+ 
+diff -ur -x tmp -x log emma.orig/meca/app/controllers/meca/thresholds_controller.rb emma/meca/app/controllers/meca/thresholds_controller.rb
+--- emma.orig/meca/app/controllers/meca/thresholds_controller.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/meca/app/controllers/meca/thresholds_controller.rb	2022-09-15 16:57:36.027972395 +0000
+@@ -145,9 +145,9 @@
+       event_opts  = { evtype: "SYSTEM", category: "Threshold Action" }
+ 
+       if @threshold.source
+-        LegacyEventsGenerator.add_instantaneous_event(@threshold.source_id, @threshold.source_type, event_msg, event_opts)
++#        LegacyEventsGenerator.add_instantaneous_event(@threshold.source_id, @threshold.source_type, event_msg, event_opts)
+       else
+-        LegacyEventsGenerator.add_system_event(event_msg, event_opts)
++#        LegacyEventsGenerator.add_system_event(event_msg, event_opts)
+       end
+     end
+ 
+diff -ur -x tmp -x log emma.orig/sas/app/services/sas/event_services/find_events.rb emma/sas/app/services/sas/event_services/find_events.rb
+--- emma.orig/sas/app/services/sas/event_services/find_events.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/sas/app/services/sas/event_services/find_events.rb	2022-09-15 16:57:36.027972395 +0000
+@@ -16,7 +16,7 @@
+       # call
+       #
+       def self.call(start_time = (DateTime.now - 2.weeks), end_time = (DateTime.now + 2.weeks), filter_by = "-None-", filter_by_actor = "-None-")
+-        LegacyEventsGenerator.events_for_timeline(start_time, end_time, filter_by, filter_by_actor)
++#        LegacyEventsGenerator.events_for_timeline(start_time, end_time, filter_by, filter_by_actor)
+       end
+ 
+     end
+diff -ur -x tmp -x log emma.orig/uma/app/controllers/devise/sessions_controller.rb emma/uma/app/controllers/devise/sessions_controller.rb
+--- emma.orig/uma/app/controllers/devise/sessions_controller.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/uma/app/controllers/devise/sessions_controller.rb	2022-09-15 16:57:36.027972395 +0000
+@@ -26,7 +26,7 @@
+     resource.set_preferences(resource.get_preferences)
+     resource.save
+ 
+-    LegacyEventsGenerator.add_instantaneous_event(-1, "Appliance", "User #{resource.nice_name} logged on", {:category => "Appliance"})
++    #LegacyEventsGenerator.add_instantaneous_event(-1, "Appliance", "User #{resource.nice_name} logged on", {:category => "Appliance"})
+ 
+     sign_in(resource_name, resource)
+     respond_with resource, :location => after_sign_in_path_for(resource)
+@@ -34,7 +34,7 @@
+ 
+   # DELETE /resource/sign_out
+   def destroy
+-	  LegacyEventsGenerator.add_instantaneous_event(-1, "Appliance", "User #{current_user.nice_name} logged off", {:category => "Appliance"}) unless current_user.nil?
++	  #LegacyEventsGenerator.add_instantaneous_event(-1, "Appliance", "User #{current_user.nice_name} logged off", {:category => "Appliance"}) unless current_user.nil?
+ 
+     redirect_path = after_sign_out_path_for(resource_name)
+     signed_out = (Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name))

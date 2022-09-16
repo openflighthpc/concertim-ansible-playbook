@@ -1,0 +1,10 @@
+/data/private/share/emma/core/log/*.log {
+  daily
+  missingok
+  rotate 14
+  compress
+  delaycompress
+  notifempty
+  copytruncate
+  create 0666 www-data www-data
+}  

@@ -1,0 +1,152 @@
+- name: Download module packages from S3
+  amazon.aws.aws_s3:
+    bucket: alces-flight
+    object: /concertim/packages/modules/{{ item }}.tgz
+    dest: "{{ role_path }}/files/tmp/{{ item }}.tgz"
+    mode: get
+  loop: "{{ modules }}"
+
+- name: Make destination directory
+  ansible.builtin.file:
+    path: "{{ phoenix_modules_root_dir }}"
+    owner: www-data
+    group: www-data
+    mode: "755"
+    state: directory
+
+- name: Extract tar files
+  ansible.builtin.unarchive:
+    src: "tmp/{{ item }}.tgz"
+    dest: "{{ phoenix_modules_root_dir }}"
+    creates: "{{ phoenix_modules_root_dir }}/{{ item }}"
+  loop: "{{ modules }}"
+
+- name: Correct ownership
+  ansible.builtin.file:
+    path: "{{ phoenix_modules_root_dir }}/{{ item }}"
+    owner: www-data
+    group: www-data
+    recurse: true
+  loop: "{{ modules }}"
+
+- name: bind rails modules into {{ bind_directory }}
+  when: bind_directory is defined
+  block:
+    - name: Make {{ bind_directory }} directory
+      ansible.builtin.file:
+        path: "{{ bind_directory }}"
+        owner: root
+        group: root
+        mode: u=rwx,g=rx,o=rx
+        state: directory
+
+    - name: Mount bind directory
+      ansible.posix.mount:
+        path: "{{ bind_directory }}"
+        src: "{{ phoenix_modules_root_dir }}"
+        opts: bind
+        fstype: "none"
+        state: mounted
+
+
+- name: configure modules
+  vars:
+    template_dest: "{{ phoenix_modules_root_dir }}/{{ module }}/config/local_environment.rb"
+    template_src: "{{ template_dest }}.tagged"
+    replacements:
+      - regexp: "%PASSWORD_ENCRYPTION_SALT%"
+        replace: "--ghtJU7hgKjh--"
+      - regexp: "%DYNAMIC_IMAGES%"
+        replace: "{{ dynamic_images }}"
+  include_tasks: install_tagged_configuration.yml
+  loop: "{{ modules }}"
+  loop_control:
+    loop_var: module
+
+
+
+# - name: configuring nadia
+#   when: '"nadia" in modules'
+#   ansible.builtin.copy:
+#     src: "{{ phoenix_modules_root_dir }}/nadia/
+#     dest: "{{ template_dest }}"
+#     remote_src: true
+
+- name: configuring uma
+  when: '"uma" in modules'
+  vars:
+    template_dest: "{{ phoenix_modules_root_dir }}/uma/db/fixtures/users.yml"
+    template_src: "{{ template_dest }}.tagged"
+    replacements:
+      - regexp: "%INTEGRTOR_PASSWORD%"
+        replace: "{{ integrator_password }}"
+  include_tasks: install_tagged_configuration.yml
+
+# XXX Move all of these to the various phoenix-module repos.
+- name: Patch and fixup
+  block:
+    - name: Monkey patch active record
+      ansible.builtin.copy:
+        src: monkey_patch_active_record.rb
+        dest: "{{ phoenix_modules_root_dir }}/{{ item }}/config/initializers/"
+        owner: www-data
+        group: www-data
+      loop: "{{ modules }}"
+
+- name: Fix and hack hacor into submission
+  include_tasks: hacor_fixes_and_hacks.yml
+
+- name: Patch sas source code
+  ansible.builtin.patch:
+    src: "{{ item }}"
+    basedir: "{{ phoenix_modules_root_dir }}/sas"
+    backup: yes
+    strip: 1
+  loop:
+    - sas-ftsw.patch
+
+- name: Create database
+  vars:
+    rails_env: "{{ mode }}"
+  ansible.builtin.shell:
+    cmd: |
+      PATH=/opt/ruby-1.8/bin:$PATH
+      sudo -u www-data --preserve-env=PATH /bin/bash -c 'rake db:drop_and_create RAILS_ENV={{ rails_env }} PHOENIX_START=0 --trace'
+    chdir: "{{ phoenix_modules_root_dir }}/{{ item }}"
+  loop: "{{ modules }}"
+
+- name: Migrate database
+  vars:
+    rails_env: "{{ mode }}"
+  ansible.builtin.shell:
+    cmd: |
+      PATH=/opt/ruby-1.8/bin:$PATH
+      sudo -u www-data --preserve-env=PATH /bin/bash -c 'rake db:rebuild RAILS_ENV={{ rails_env }} PHOENIX_START=0 --trace'
+    chdir: "{{ phoenix_modules_root_dir }}/{{ item }}"
+  loop: "{{ modules }}"
+
+
+- name: Install mongrel config files
+  vars:
+    mongrel_user: "www-data"
+    mongrel_conf_dir: "/etc/mongrel_cluster"
+    template_dest: "{{ mongrel_conf_dir }}/{{ module }}.yml"
+    template_src: "{{ phoenix_modules_root_dir }}/{{ module }}/config/mongrel_cluster.yml.tagged"
+    replacements:
+      - regexp: "%MONGREL_USER%"
+        replace: "{{ mongrel_user }}"
+      - regexp: "%MONGREL_GROUP%"
+        replace: "{{ mongrel_user }}"
+      - regexp: "%ENV%"
+        replace: "{{ mode }}"
+      - regexp: "%{{ module | upper }}_ROOT%"
+        replace: "/opt/concurrent-thinking/{{ module }}"
+  include_tasks: install_tagged_configuration.yml
+  loop: "{{ modules }}"
+  loop_control:
+    loop_var: module
+
+# - name: Install cron jobs
+# - name: Install logrotation
+# - name: Install various appliance scripts
+# - name: Add www-data to adm group

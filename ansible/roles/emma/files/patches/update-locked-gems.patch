@@ -1,0 +1,102 @@
+--- emma.orig/core/Gemfile.lock.orig	2019-09-13 13:01:43.000000000 +0000
++++ emma/core/Gemfile.lock	2022-09-02 14:48:10.375069122 +0000
+@@ -37,7 +37,7 @@
+       activeresource (= 3.2.18)
+       activesupport (= 3.2.18)
+       beanstalk-client-free
+-      cancan (~> 1.6.6)
++      cancan (= 1.6.7)
+       delia_client
+       dm-active_model (~> 1.2.0)
+       dm-constraints (~> 1.2.0)
+@@ -52,6 +52,7 @@
+       dm-validations (~> 1.2.0)
+       netaddr
+       pg
++      phoenix_snmp
+       phoenix_update_signaller
+       phoenix_utils
+       rabl
+@@ -165,10 +166,10 @@
+     addressable (2.3.6)
+     ansi (1.4.3)
+     arel (3.0.3)
+-    bcrypt (3.1.7)
++    bcrypt (3.1.12)
+     bcrypt-ruby (3.1.5)
+       bcrypt (>= 3.1.3)
+-    beanstalk-client-free (1.0.0.30687)
++    beanstalk-client-free (1.0.0.41747)
+     better_errors (1.1.0)
+       coderay (>= 1.0.0)
+       erubis (>= 2.6.6)
+@@ -201,15 +202,15 @@
+     daemons (1.1.9)
+     data_objects (0.10.14)
+       addressable (~> 2.1)
+-    data_source_core (1.0.0.33325)
++    data_source_core (1.0.0.42053)
+     delayed_job (2.1.4)
+       activesupport (~> 3.0)
+       daemons
+-    delia_client (1.0.0.30694)
+-      phoenix_utils (= 1.0.0.31079)
+-    delia_daemon (1.0.0.30695)
++    delia_client (1.0.0.41754)
++      phoenix_utils (>= 1.0.0)
++    delia_daemon (1.0.0.41964)
+       daemons (>= 1.0.7)
+-      phoenix_utils (= 1.0.0.31079)
++      phoenix_utils (>= 1.0.0)
+     descendants_tracker (0.0.4)
+       thread_safe (~> 0.3, >= 0.3.1)
+     devise (2.0.4)
+@@ -322,7 +323,7 @@
+     memcache-client (1.8.5)
+     method_source (0.8.2)
+     mime-types (1.25.1)
+-    mini_magick_pgc (1.2.6.30698)
++    mini_magick_pgc (1.2.6.41758)
+     mini_portile (0.6.0)
+     minitest (4.7.5)
+     multi_json (1.10.1)
+@@ -339,9 +340,10 @@
+       rack (~> 1.2)
+     orm_adapter (0.0.7)
+     pg (0.17.1)
+-    phoenix_update_signaller (0.0.1.30706)
++    phoenix_snmp (0.0.1.41765)
++    phoenix_update_signaller (0.0.1.41766)
+       beanstalk-client-free
+-    phoenix_utils (1.0.0.31079)
++    phoenix_utils (1.0.0.43665)
+     polyglot (0.3.5)
+     pry (0.10.0)
+       coderay (~> 1.1.0)
+@@ -376,8 +378,8 @@
+     rake (10.3.2)
+     rdoc (3.12.2)
+       json (~> 1.4)
+-    romance (1.2.0.30884)
+-      phoenix_utils (= 1.0.0.31079)
++    romance (1.2.0.41771)
++      phoenix_utils (>= 1.0.0)
+     rspec-collection_matchers (1.0.0)
+       rspec-expectations (>= 2.99.0.beta1)
+     rspec-core (2.99.1)
+@@ -398,12 +400,12 @@
+     rubyzip (1.1.6)
+     rufus-scheduler (2.0.23)
+       tzinfo (>= 0.3.23)
+-    safe_api (3.2.0.30713)
++    safe_api (3.2.0.41773)
+       delia_daemon (>= 1.0.0)
+       gem_plugin (>= 0.2.2)
+       safe_libs (>= 3.1.0)
+-    safe_core (3.2.0.30715)
+-    safe_libs (3.2.0.30716)
++    safe_core (3.2.0.41775)
++    safe_libs (3.2.0.41776)
+       safe_core (>= 3.1.0)
+     safe_yaml (1.0.3)
+     sass (3.3.9)

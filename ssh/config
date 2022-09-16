@@ -1,8 +1,0 @@
-host command
-   Port 32620
-   User root
-   #Hostname 169.254.223.37
-   #Hostname 172.18.1.99
-   Hostname command.concertim.alces-flight.com
-   ForwardAgent no
-   ProxyCommand ssh/knock-simple-new.sh %h %p

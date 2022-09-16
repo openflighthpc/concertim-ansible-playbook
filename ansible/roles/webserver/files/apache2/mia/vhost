@@ -1,0 +1,161 @@
+ServerAdmin dev@concertim.com
+
+DocumentRoot /opt/concurrent-thinking/mia/public
+
+AddType application/vnd.ms-fontobject .eot
+# AddType application/x-woff .woff
+AddType font/opentype .woff
+AddType font/ttf .ttf
+AddType font/opentype .otf
+
+<Directory "/opt/concurrent-thinking/mia/public">
+  SetEnv APACHE_ERROR_LOG /var/log/apache2/web_ssl_error.log
+  Options FollowSymLinks
+  AllowOverride None
+  Order allow,deny
+  Allow from all
+</Directory>
+
+<Location "/">
+   Order deny,allow
+   Allow from all
+</Location>
+
+RewriteEngine On
+
+<Location "/terminal/show">
+   Order deny,allow
+   Allow from all
+   ErrorDocument 503 /errors/503-terminal.html
+</Location>
+
+<Location "/system/console/show">
+   Order deny,allow
+   Allow from all
+   ErrorDocument 503 /errors/503-terminal.html
+</Location>
+
+<Location "/errors">
+  Options +Includes
+</Location>
+
+#
+# CanonWeb - Third party tool that may be running on this server, listening
+# on port 8989.
+#
+RewriteRule ^/cannonweb(.*)$ http://localhost:8989/cannonweb$1$2 [P]
+
+# Disabled to fix odd redirect issue
+# <Location /device_console>
+#   Order      allow,deny
+#   Allow      from all
+# </Location>
+# RewriteRule ^/device_console/(\d*)(.*)$ http://localhost:$1$2 [P]
+# ProxyPassReverse /device_console http://localhost
+
+
+RewriteRule ^/terminal/show(.*)$ http://localhost:8022$1 [P]
+RewriteRule ^/terminal/superuser$ balancer://mongrel_cluster%{REQUEST_URI} [P,QSA,L]
+RewriteRule ^/terminal/(.*)$ http://localhost:8022/$1 [P]
+ProxyPassReverse /terminal/show http://localhost:8022
+
+RewriteRule ^/system/console/show(.*)$ http://localhost:8022$1 [P]
+RewriteRule ^/system/console/superuser$ balancer://mongrel_cluster%{REQUEST_URI} [P,QSA,L]
+RewriteRule ^/system/console/(.*)$ http://localhost:8022/$1 [P]
+ProxyPassReverse /system/console/show http://localhost:8022
+
+RewriteRule ^/control_stream/(.*)$ /control_stream.php?fn=$1 [PT]
+
+RewriteRule ^/sys/bayeux$ http://localhost:9292/bayeux [P]
+RewriteRule ^/sys/bayeux(.*)$ http://localhost:9292/bayeux$1 [P]
+RewriteRule ^/sys/bcache$ http://localhost:9292/cache [P]
+RewriteRule ^/sys/bcache(.*)$ http://localhost:9292/cache$1 [P]
+
+# Creating a data centre involves the upload of a possibly large image. In
+# order to prevent this from tying up a mongrel instance, we redirect it to a
+# thin instance, which will still be able to server other requests whilst
+# receiving the image. At present the thin instance is enid, but this should
+# migrate to emma once that is possible.
+RewriteRule ^/upload_data_centre_form(.*)$ http://localhost:9292/upload_data_centre_form [P]
+
+# Power dials poll for data every 15 seconds through a mongrel process, possibly tying up the instance.
+# Now have the request go through enid.
+RewriteRule ^/request_power_dial_data(.*)$ http://localhost:9292/request_power_dial_data$1 [P]
+RewriteRule ^/upload_snmp_mib_file(.*)$ http://localhost:9292/upload_snmp_mib_file [P]
+RewriteRule ^/request_metrics_widget_data(.*)$ http://localhost:9292/request_metrics_widget_data$1 [P]
+RewriteRule ^/control_update(.*)$ http://localhost:9293/control_update$1 [P]
+RewriteRule ^/control_handshake(.*)$ http://localhost:9293/control_handshake$1 [P]
+RewriteRule ^/control_maggie(.*)$ http://localhost:9293/control_maggie$1 [P]
+RewriteRule ^/control_notification(.*)$ http://localhost:9293/control_notification$1 [P]
+RewriteRule ^/sadee_results(.*)$ http://localhost:3004/sadee_results$1 [P]
+RewriteRule ^/power_action_results(.*)$ http://localhost:3007/power_action_results$1 [P]
+
+# static files always read from apache
+# RewriteRule ^/(.*\.(html|js|css))$ /$1 [PT]
+# RewriteRule ^/(.*\.(eot|ttf|woff|svg|png))$ /$1 [PT]
+RewriteRule ^/(.*\.var)$ /$1 [PT]
+
+# /sys URIs map to apache space
+RewriteRule ^/control_stream/(.*)$ /control_stream.php?fn=$1 [PT]
+RewriteRule ^/sys/control/(.*)/(.*)$ /control_stream.php?fn=$1&ticks=$2 [PT]
+RewriteRule ^/sys/control/(.*)$ /control_stream.php?fn=$1 [PT]
+RewriteRule ^/sys/date$ /date_responder.php [PT]
+RewriteRule ^/sys/render/(.*)$ /render_timer.php?r=$1 [PT]
+RewriteRule ^/sys/deferral/(.*)$ /deferral_reader.php?fn=$1 [PT]
+
+# Uncomment for rewrite debugging
+#RewriteLog /var/log/apache2/mia_rewrite.log
+#RewriteLogLevel 9 
+
+# Check for maintenance file and redirect all requests
+RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
+RewriteCond %{SCRIPT_FILENAME} !maintenance.html
+RewriteRule ^.*$ /system/maintenance.html [L]
+
+# Rewrite index to check for static
+RewriteRule ^/$ /index.html [QSA] 
+
+# Rewrite anything with the /-/ prefix to EMMA
+RewriteRule ^/-/(.*)$ balancer://emma_cluster%{REQUEST_URI} [P,QSA,L]
+
+
+# Rewrite to check for Rails cached page
+RewriteRule ^([^.]+)$ $1.html [QSA]
+
+#Include /etc/apache2/appliance/sian.rewrite_rules?conf
+
+# Redirect all non-static requests to cluster
+RewriteCond %{DOCUMENT_ROOT}/%{REQUEST_FILENAME} !-f
+RewriteRule ^/(.*)$ balancer://mongrel_cluster%{REQUEST_URI} [P,QSA,L]
+
+# Deflate
+AddOutputFilterByType DEFLATE text/html text/plain text/xml application/xml application/xhtml+xml text/javascript text/css
+BrowserMatch ^Mozilla/4 gzip-only-text/html
+BrowserMatch ^Mozilla/4.0[678] no-gzip
+BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+
+# Uncomment for deflate debugging
+#DeflateFilterNote Input input_info
+#DeflateFilterNote Output output_info
+#DeflateFilterNote Ratio ratio_info
+#LogFormat '"%r" %{output_info}n/%{input_info}n (%{ratio_info}n%%)' deflate
+#CustomLog /var/log/apache2/mia_deflate.log deflate
+
+ErrorDocument 500 /errors/500.html
+ErrorDocument 503 /errors/503.html
+
+<IfModule mod_include.c>
+AddType text/html .shtml
+AddHandler INCLUDES .shtml
+ErrorDocument 500 /errors/500.shtml
+ErrorDocument 503 /errors/503.shtml
+</IfModule>
+
+ExpiresActive On
+ExpiresDefault A0
+FileETag All
+
+<FilesMatch "\.(html|js|css|png|gif|swf|ttf|svg|otf|woff|eot)$">
+  ExpiresDefault A900
+  Header set Cache-Control "public, max-age=900"
+</FilesMatch>

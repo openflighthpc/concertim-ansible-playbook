@@ -1,0 +1,41 @@
+ANSIBLE_DIR="../ansible"
+BOXES = %w(command1 command2)
+ACCEPTANCE_BOXES = %w(command2)
+
+Vagrant.configure("2") do |config|
+  BOXES.each_with_index do |box, idx|
+    config.vm.provider "virtualbox" do |v|
+      # v.memory = 8192
+      v.memory = 2048
+    end
+
+    config.vm.define box, primary: true do |v|
+      v.vm.box = 'ubuntu/focal64'
+      v.vm.hostname = box
+      v.vm.network "forwarded_port", guest:  80, host: 9080 + idx, host_ip: '127.0.0.1'
+      v.vm.network "forwarded_port", guest: 443, host: 9443 + idx, host_ip: '127.0.0.1'
+
+      unless ACCEPTANCE_BOXES.include?(box)
+        v.vm.provision "ansible_local" do |ansible|
+          ansible.playbook = File.join(ANSIBLE_DIR, "build-playbook.yml")
+          ansible.verbose = to_boolean(ENV.fetch('ANSIBLE_VERBOSE', 'false'))
+
+          ansible.extra_vars = {
+            'github_token' => ENV.fetch('GH_TOKEN', ''),
+          }
+        end
+
+        v.vm.synced_folder ANSIBLE_DIR, "/ansible"
+      end
+    end
+  end
+end
+
+def to_boolean(v)
+  case v
+  when /true/i, /yes/i, "1"
+    true
+  else
+    false
+  end
+end

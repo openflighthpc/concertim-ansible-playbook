@@ -1,0 +1,212 @@
+- name: Update ruby gems
+  block:
+    - name: Install rubygems-update gem
+      vars:
+        rubygems_version: '1.8.24'
+        rubygems_update_gem: "rubygems-update-{{ rubygems_version }}.gem"
+      ansible.builtin.command:
+        cmd: gem1.8 install "{{ role_path }}/files/{{ rubygems_update_gem }}" --no-rdoc --no-ri --local
+
+    - name: Update rubygems
+      ansible.builtin.shell:
+        cmd: PATH=/opt/ruby-1.8/bin:$PATH update_rubygems
+
+
+# XXX Get this working so that we can remove the need to have all of the gems
+# committed in this repo.
+# It doesn't work at the moment as the concertim gem repository appears to be
+# broken.  It redirects to `dev.concertim.comgems`; I'm guessing that should
+# be `dev.concertim.com/gems`
+# - name: Configure gem source
+#   vars:
+#     gem_server_root: "http://build:Bu11dUS3R2000@src.concertim.com/gems/uranus-concertim"
+#   block:
+#     - name: Add concertim gem server
+#       ansible.builtin.command:
+#         cmd: gem1.8 sources --add {{ gem_server_root }}/gems/
+#     - name: Remove rubygems gem server
+#       ansible.builtin.command:
+#         cmd: gem1.8 sources --remove http://rubygems.org/
+
+- name: Install Ruby 1.8 gem build depedencies
+  ansible.builtin.apt:
+    name:
+      # - libgpgme-dev
+      # - libgpgme11
+      - imagemagick
+      - libmagickcore-dev
+      - libmagickwand-dev
+      - libpq-dev
+      - librrd-dev
+      - libsnmp-dev
+      - libsqlite3-dev
+      - libxslt1-dev
+      - nodejs
+      - postgresql-server-dev-11
+
+      # These were previously installed so that openssl and ruby could be
+      # built.  At least some of them are required for the gems too.
+      # XXX Find out which of these we need and remove those we don't.
+      - autoconf
+      - bison
+      - build-essential
+      - libdb-dev
+      - libffi-dev
+      - libgdbm-dev
+      - libgdbm6
+      - libncurses5-dev
+      - libreadline6-dev
+      - libssl-dev
+      - libyaml-dev
+      # - subversion
+      - uuid-dev
+      - zlib1g-dev
+
+# There are some hoops to jump through to get the Ruby 1.8 gems installed.
+#
+# Ideally we would simply `gem install <gem>` and have rubygems download the
+# correct version and dependencies.  Unfortunately, this doesn't work for
+# many (all?) of our gems.  The dependencies (or transitive dependencies)
+# are resolved to recent versions that are not compatible with Ruby 1.8.
+#
+# Instead we need to install from the cached gem versions included in this
+# repo.  Ideally, that would be as simple as `gem install *.gem --local` and
+# rubygemns would resolve the dependencies from the cached version included
+# in this repo.  Unfortunately, rubygems seems unable to do that.
+#
+# What we need to do is find an installation order in which all dependencies
+# are installed before their dependent packages.  The order below is one
+# such ordering: DO NOT change it.
+- name: Install local ruby 1.8 gems
+  ansible.builtin.command:
+    cmd: gem1.8 install "{{ role_path }}/files/1.8/{{ item }}*.gem" --no-rdoc --no-ri --local
+  loop:
+    - json_pure
+    - rubyforge
+    - rake
+    - hoe
+    - activesupport
+    - activerecord-2.0.2  # Include version to increase specificity of the glob.
+    - actionpack
+    - actionmailer
+    - activeresource
+    - rails
+    - netaddr
+    - RubyRRDtool
+    - roxml
+    - sqlite3-ruby
+    - gruff
+    # - ferret
+    - date_time-duration
+    - phoenix-actionwebservice
+    - postgres
+    - libxml-ruby
+    - archive-tar-minitar
+    - highline
+    - slave
+    # - gpgme
+    - deprecated
+    - dbi
+    - pg
+    - dbd-pg
+    - bundler
+    - nokogiri
+    - memcache-client
+    - sequel
+    - eventmachine
+    - snmp
+    - net-snmp
+    - rack
+
+    - beanstalk-client-free
+    - phoenix_utils
+    - data_source_core
+    - romance-1.1.0  # Include version to increase specificity of the glob.
+    - delia_client
+    - activerecord-rdbcp-adapter
+    - phoenix_validations
+    - phoenix_metrics
+    - phoenix_snmp
+    - phoenix_update_signaller
+
+    - safe_core
+    - safe_libs
+
+# Other Ruby1.8 gems were previously installed via `.deb` packages.  Those
+# packages obviously no longer work for Ruby1.8 on this OS.  Instead we need
+# to install them from remote sources.
+- name: Install remote ruby 1.8 gems
+  ansible.builtin.command:
+    cmd: gem1.8 install "{{ item.package }}" -v "{{ item.version }}" --no-rdoc --no-ri
+  loop:
+    - package: rmagick
+      version: 2.15.4
+
+- name: Install local ruby 1.9 gems
+  ansible.builtin.command:
+    cmd: gem1.9 install "{{ role_path }}/files/1.9/{{ item }}*.gem" --no-rdoc --no-ri --local
+  loop:
+    - bundler
+    - beanstalk-client-free
+    - phoenix_utils
+    - data_source_core
+    - romance-1.2.0  # Include version to increase specificity of the glob.
+    - delia_client
+    - phoenix_update_signaller
+    - phoenix_snmp
+    - mini_magick_pgc
+    - net-snmp
+    # - ct_modbus
+
+    # # These are required by emma, but not included in its vendor/cache FSR.
+    # - data_source_core
+    # - gem_plugin
+    # - safe_core
+    # - safe_libs
+    # - safe_api
+    # - RubyRRDtool
+
+    # These are required by various daemons, but not included in their
+    # vendor/cache FSR.
+    - phoenix_metrics
+    - psych-2.0.0
+    - safely
+    - multi_json-1.10.1
+    - activesupport-3.1.12
+    - rubigen-1.5.8
+    - thor
+    - eventmachine
+    - i18n
+    - daemon-kit
+    - memcache-client
+    - builder-3.2.2
+    - phoenix_distributed_map
+    - em-socksify
+    - http_parser
+    - cookiejar
+    - addressable
+    - em-http-request
+    - rack-1.4.5
+    - daemons
+    - thin
+    - json-1.8.1
+    - faye
+    - em-jack
+    - tilt
+    - sinatra
+    - netaddr-1.4.0
+
+    # - snmp-1.1.1
+    # - ct_modbus
+
+- name: Create bundler1.9 symlink
+  ansible.builtin.file:
+    src: /opt/ruby-1.9/bin/bundle
+    dest: /usr/bin/bundle1.9
+    state: link
+
+- name: Install delia client config
+  ansible.builtin.copy:
+    src: delia_client.yml
+    dest: /data/private/share/etc/concurrent-thinking/
+

@@ -1,0 +1,35 @@
+#!/usr/bin/ruby1.8
+
+require 'rubygems'
+require 'yaml'
+
+# load the yaml config file
+data = nil
+cmd = nil
+ARGV.each do |arg|
+  if arg.split('.')[1] == 'yml'
+    data = YAML.load_file(arg)
+  end
+  if regex = arg.match(/cluster::(.*)/)
+    cmd = regex[1]
+  end
+end
+
+# clear the romance file ready for monit to detect issues
+unless data.nil? || cmd != 'start'
+  cwd = data['cwd']
+  file = "#{cwd}/log/romance.none.log"
+  system ("cp /dev/null #{file}") rescue nil
+  system ("chown www-data:www-data #{file}")
+  system("logger -t mongrel_rails_clear \"Cleared rails file #{file}\"")
+end
+
+# kill off any rogue process still listening on our port
+unless data.nil? || cmd != 'start'
+  port = data['port']
+  pid=`netstat -anp 2>&1 | grep #{port} | grep LISTEN | awk '{print $7;}' | awk 'BEGIN { FS = "/" } ; { print $1 }'`.chomp.to_i
+  unless pid == 0
+    system("kill -9 #{pid}") 
+    system("logger -t mongrel_rails_clear \"Killed rogue rails process #{pid} listening on port #{port}\"")
+  end
+end

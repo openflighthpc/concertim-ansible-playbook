@@ -1,0 +1,11 @@
+diff -ur -x tmp -x log mia.orig/app/controllers/help_controller.rb mia/app/controllers/help_controller.rb
+--- mia.orig/app/controllers/help_controller.rb	2014-12-02 11:39:45.000000000 +0000
++++ mia/app/controllers/help_controller.rb	2022-09-14 12:18:03.954632975 +0000
+@@ -1,4 +1,6 @@
+-require 'ferret'
++# Ferret currently doesn't install due to native dependency issues.  We avoid
++# requiring it, which breaks help search functionality.
++#require 'ferret'
+ class HelpController < ApplicationController
+   skip_before_filter :ensure_desire!, :configure_if_unconfigured
+   prepend_before_filter :authorize, :except => [:support]

@@ -1,0 +1,68 @@
+- name: Install 1.8 gems
+  ansible.builtin.command:
+    cmd: gem1.8 install "{{ role_path }}/files/1.8/{{ item }}*.gem" --no-rdoc --no-ri --local
+  loop:
+    # - daemons
+    - delia_daemon
+    - delia-1.0.0
+
+- name: Install 1.9 gems
+  ansible.builtin.command:
+    cmd: gem1.9 install "{{ role_path }}/files/1.9/{{ item }}*.gem" --no-rdoc --no-ri --local
+  loop:
+    # - daemons
+    - delia_daemon
+
+- name: Link binaries
+  ansible.builtin.file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  loop:
+    - src: /opt/ruby-1.8/bin/delia
+      dest: /usr/bin/delia
+    - src: /opt/ruby-1.8/bin/check-delia
+      dest: /usr/bin/check-delia
+
+- name: Install delia configuration
+  ansible.builtin.copy:
+    src: delia.yml
+    dest: /data/private/share/etc/concurrent-thinking/
+    owner: www-data
+    group: www-data
+    mode: u=rw,g=r,o=r
+
+- name: Install delia client configuration
+  ansible.builtin.copy:
+    src: delia_client.yml
+    dest: /data/public/resources/etc/concurrent-thinking/
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+
+- name: Install init.d file
+  ansible.builtin.copy:
+    src: delia.init
+    dest: /etc/init.d/delia
+    owner: root
+    group: root
+    mode: "744"
+
+# XXX This ought to be elsewhere.
+- name: Add sudoers entry
+  ansible.builtin.lineinfile:
+    line: "www-data ALL=NOPASSWD: ALL"
+    path: "/etc/sudoers"
+    insertbefore: EOF
+
+# XXX check-delia assumes that `eth0` and `eth1` exist.  Consider patching in
+# place.  Or svn->git and fix properly.
+# - name: Patch check delia
+
+
+- name: Ensure that delia is enabled
+  ansible.builtin.service:
+    name: delia
+    # state: started
+    enabled: yes

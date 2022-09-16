@@ -1,0 +1,59 @@
+mode: production
+daemon_installation_dir: /data/private/share/daemons
+# gem_source_url: "http://build:Bu11dUS3R2000@src.concertim.com/gems/uranus-concertim/gems"
+
+daemons:
+  # Not sure what this is or why we would want it.  Something to do with
+  # executing jobs (scram) perhaps?
+  # - sadee
+
+  # We want meryl, but it has a dependency on a deb file that is likely not to
+  # install.
+  # - meryl
+
+  # Appliance Informatics and Local Setup Agent.  Might be important.  Or only
+  # important when ISLAs are present?
+  # - ailsa
+
+  # Does SNMP, MODBUS metric polling.  We want this. But a gem doesn't
+  # install due to native extension build issues.
+  # - demm
+
+  # Senna is the one-wire sensors processing daemon.  We want it, but we're
+  # going to skip for now.
+  # - senna
+
+  # Metric aggregation engine.  User defined metrics(?) and inferred metrics.
+  - maggie
+
+  # Another metric aggregation engine.
+  - martha
+
+  # Theresa Humbly Evaluates and REports State Alterations.
+  - theresa
+
+  # Polls power strips for metrics.
+  # - postie
+
+  # Sends notifications about threshold breaches.
+  # - norma
+
+  # Pub/sub based on FAYE.  Probbably important.
+  - enid
+
+  # Pub/sub based on FAYE again.  Something to do with ISLAs(?) (aka
+  # controls).
+  # - controls
+
+
+  # Some kind of appliance health check thing.  Has monit and beanstalk
+  # checkers.  No idea if this is needed.
+  # - florence
+
+  # Calculates rack (and PDU?) capacity.
+  - ct-capacity-daemon
+
+  # Another thing to do with metrics?  No idea if this is needed or not.  It
+  # might be nothing more than a rebranded `demm`?  Or it might be a demm
+  # specifically for virtual machines/virtual machine hosts?
+  # - ct-hypervisor-daemon

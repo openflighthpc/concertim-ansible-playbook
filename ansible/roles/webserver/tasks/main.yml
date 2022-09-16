@@ -1,0 +1,65 @@
+- name: Ensure apache is at the latest version
+  ansible.builtin.apt:
+    name: apache2
+    state: latest
+
+- name: Write the apache config files
+  ansible.builtin.copy:
+    src: apache2/
+    dest: /etc/apache2/
+
+- name: Enable mods
+  ansible.builtin.command:
+    cmd: a2enmod {{ item|quote }}
+  loop:
+    - deflate
+    - expires
+    - headers
+    - include
+    - proxy
+    - proxy_balancer
+    - proxy_http
+    - rewrite
+    - socache_dbm
+    - ssl
+    - lbmethod_byrequests
+    # We have a PHP app somewhere that, IIRC, displays a boot progress bar.
+    # IIRC, we can worry about these later.
+    # - cgi
+    # - php5
+
+- name: Enable conf
+  ansible.builtin.command:
+    cmd: a2enconf {{ item|quote }}
+  loop:
+    - mia.proxy_cluster
+    - mia.proxy_frontend
+    - mia.server_name
+
+- name: Disable default sites
+  ansible.builtin.command:
+    cmd: a2dissite {{ item|quote }}
+  loop:
+    - default
+    - 000-default
+
+- name: Enable sites
+  ansible.builtin.command:
+    cmd: a2ensite {{ item|quote }}
+  loop:
+    - allow-http
+    # These are enabled later once the appliance-config pack has been
+    # processed.
+    # - default-ssl
+    # - redirect-http-to-https
+    # - ssl
+
+# - name: Restart apache
+#   ansible.builtin.command:
+#     cmd: systemctl restart apache2
+
+- name: Ensure that apache2 is started
+  ansible.builtin.service:
+    name: apache2
+    state: restarted
+    enabled: yes

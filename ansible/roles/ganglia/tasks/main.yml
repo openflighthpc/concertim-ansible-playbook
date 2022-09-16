@@ -1,0 +1,45 @@
+- name: Ensure ganglia is at the latest version
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - ganglia-monitor
+    - gmetad
+    - rrdtool
+
+- name: Install gmond configuration
+  ansible.builtin.copy:
+    src: gmond.conf
+    dest: /etc/ganglia/gmond.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: Install gmetad configuration
+  ansible.builtin.copy:
+    src: gmetad.conf
+    dest: /etc/
+    owner: root
+    group: nogroup
+    mode: u=rw,g=r,o=r
+
+# - name: Update configuration to log to syslog
+#   ansible.builtin.replace:
+#     path: /etc/postgresql/12/main/postgresql.conf
+#     regexp: "{{ item.regexp }}"
+#     replace: "{{ item.replace }}"
+#     backup: true
+#   loop:
+#     - regexp: "#log_destination = 'stderr'"
+#       replace: "log_destination = 'syslog'"
+#      search_and_replace_in_file('/etc/init.d/gmetad','/etc/init.d/gmetad',{'$remote_fs $syslog'=>'ganglia-monitor'})
+#      search_and_replace_in_file('/etc/init.d/gmetad-agg','/etc/init.d/gmetad-agg',{'$remote_fs $syslog'=>'ganglia-monitor'})
+
+- name: Ensure that ganglia is started
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  loop:
+    - ganglia-monitor
+    - gmetad

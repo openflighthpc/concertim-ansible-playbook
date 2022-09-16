@@ -1,0 +1,110 @@
+- name: Verifying appliance config at "{{ role_path }}/files/tmp/ftsw-data"
+  ansible.builtin.shell:
+    cmd: |
+      if [ ! -f {{ role_path }}/files/tmp/ftsw-data/appliance-config.tgz ] ; then
+        cat <<EOF
+          Could not find appliance-config.tgz.
+          Follow instructions in {{ playbook_dir }}/README.md
+      EOF
+        exit 1
+      fi
+  changed_when: False
+
+- name: Verifying appliance setup data at "{{ role_path }}/files/tmp/ftsw-data"
+  ansible.builtin.shell:
+    cmd: |
+      if [ ! -f {{ role_path }}/files/tmp/ftsw-data/setup-data.yml ] ; then
+        cat <<EOF
+          Could not find setup-data.yml.
+          Follow instructions in {{ playbook_dir }}/README.md
+      EOF
+        exit 1
+      fi
+  changed_when: False
+
+- name: Copy appliance-config and setup data
+  ansible.builtin.copy:
+    src:  "{{ item.src }}"
+    dest: /usr/src/concurrent-thinking/
+    owner: root
+    group: root
+    mode: "644"
+  loop:
+    - src: tmp/ftsw-data/appliance-config.tgz
+    - src: tmp/ftsw-data/setup-data.yml
+
+# HACK: These should have been added by some other part of the build process.
+# I don't know which part that is at the moment, so hardcode values are added
+# here.
+- name: Add missing files
+  block:
+    - name: Add missing release.yml
+      ansible.builtin.copy:
+        dest: /etc/concurrent-thinking/appliance/release.yml
+        owner: www-data
+        mode: "644"
+        content: |
+          --- 
+          pack_date: "Tue Aug  9 19:07:33 BST 2022"
+          license_key: "KvMQe-ABjkP-cLUEt-iaZyR-aprd7"
+          client: "Alces Flight Ltd"
+          job: "AF01"
+          domain_name: "concertim.alces-flight.com"
+          appliances: 1
+          pack_version: 4
+          rack_limit: 3
+          device_limit: 10
+          nrad_limit: 3
+          sensor_limit: 5
+          vm_limit: 5
+          cable_limit: 10
+          asset_flag: false
+          expire_time: 1663780826
+          simulated: true
+
+    - name: Add missing version.yml
+      ansible.builtin.copy:
+        dest: /etc/concurrent-thinking/appliance/version.yml
+        owner: www-data
+        group: www-data
+        mode: "644"
+        content: |
+          ---
+          date: 2019-09-13 14:01:43
+          version: 6.4.0
+          revision: 44389
+          code_base: uranus-concertim
+          copyright: 2019
+          build_date: 2019-09-13 14:01:43
+          build_version: 6.4.0
+          build_revision: 44389
+
+- name: Copy FTSW scripts
+  ansible.builtin.copy:
+    src:  "{{ item }}"
+    dest: /usr/local/sbin/
+    owner: root
+    group: root
+    mode: "744"
+  loop:
+    - ftsw-automation.rb
+    - ftsw-users.rb
+    - setup.sh
+
+- name: Run FTSW automation script
+  vars:
+    rails_env: production
+  ansible.builtin.shell:
+    cmd: |
+      PATH=/opt/ruby-1.8/bin:$PATH
+      sudo -u www-data --preserve-env=PATH /bin/bash -c 'RAILS_ENV={{ rails_env }} script/runner /usr/local/sbin/ftsw-automation.rb'
+    chdir: /data/private/share/rails/sas
+
+- name: Configure users
+  vars:
+    rails_env: production
+  ansible.builtin.shell:
+    cmd: |
+      PATH=/opt/ruby-1.9/bin:$PATH
+      sudo -u www-data --preserve-env=PATH /bin/bash -c 'RAILS_ENV={{ rails_env }} ./script/rails runner /usr/local/sbin/ftsw-users.rb'
+    chdir: /data/private/share/rails/emma/core
