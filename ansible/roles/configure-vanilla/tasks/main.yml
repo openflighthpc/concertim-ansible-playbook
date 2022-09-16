@@ -1,25 +1,22 @@
-- name: Verifying appliance config at "{{ role_path }}/files/tmp"
+- name: Verifying appliance config at "{{ role_path }}/files/tmp/ftsw-data"
   ansible.builtin.shell:
     cmd: |
-      if [ ! -f {{ role_path }}/files/tmp/appliance-config.tgz ] ; then
+      if [ ! -f {{ role_path }}/files/tmp/ftsw-data/appliance-config.tgz ] ; then
         cat <<EOF
           Could not find appliance-config.tgz.
-          Create new appliance-config on dev.concertim and download to 
-          {{ role_path }}/files/tmp/.
+          Follow instructions in {{ playbook_dir }}/README.md
       EOF
         exit 1
       fi
   changed_when: False
 
-- name: Verifying appliance setup data at "{{ role_path }}/files/tmp"
+- name: Verifying appliance setup data at "{{ role_path }}/files/tmp/ftsw-data"
   ansible.builtin.shell:
     cmd: |
-      if [ ! -f {{ role_path }}/files/tmp/setup-data.yml ] ; then
+      if [ ! -f {{ role_path }}/files/tmp/ftsw-data/setup-data.yml ] ; then
         cat <<EOF
-          Could not find setup-data.yml.  Create and edit as appropriate.  Then reprovision.
-
-          cp {{ role_path }}/files/setup-data.ex.yml {{ role_path }}/files/tmp/setup-data.yml
-          vi {{ role_path }}/files/tmp/setup-data.yml
+          Could not find setup-data.yml.
+          Follow instructions in {{ playbook_dir }}/README.md
       EOF
         exit 1
       fi
@@ -33,8 +30,8 @@
     group: root
     mode: "644"
   loop:
-    - src: tmp/appliance-config.tgz
-    - src: tmp/setup-data.yml
+    - src: tmp/ftsw-data/appliance-config.tgz
+    - src: tmp/ftsw-data/setup-data.yml
 
 # HACK: These should have been added by some other part of the build process.
 # I don't know which part that is at the moment, so hardcode values are added

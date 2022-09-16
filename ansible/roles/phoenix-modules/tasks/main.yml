@@ -1,18 +1,9 @@
-- name: Verifying source code at "{{ role_path }}/files/tmp"
-  ansible.builtin.shell:
-    cmd: |
-      if [ ! -f {{ role_path }}/files/tmp/{{ item }}.tgz ] ; then
-        cat <<EOF
-          Could not find Phoenix src {{ item }}.tgz.
-          Download {{ item }}.tgz from build.concertim to {{ role_path }}/files/tmp/ 
-
-          scp [OPTIONS] \
-              build:/data/build/uranus/concertim/6.4.0/packages/package-modules/{{ item }}.tgz \
-              {{ role_path }}/files/tmp/
-      EOF
-        exit 1
-      fi
-  changed_when: False
+- name: Download module packages from S3
+  amazon.aws.aws_s3:
+    bucket: alces-flight
+    object: /concertim/packages/modules/{{ item }}.tgz
+    dest: "{{ role_path }}/files/tmp/{{ item }}.tgz"
+    mode: get
   loop: "{{ modules }}"
 
 - name: Make destination directory

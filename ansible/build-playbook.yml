@@ -1,0 +1,55 @@
+---
+- name: Build machine to be an unconfigured (vanilla) Flight Concertim MIA
+  hosts: all
+  become: true
+  become_user: root
+  become_method: sudo
+  gather_facts: False
+  roles:
+    - role: base
+    # - role: certificates
+    #   tags: certificates
+    - role: webserver
+      tags: webserver
+    - role: database
+      tags: database
+    - role: beanstalkd
+      tags: beanstalkd
+    - role: memcached
+      tags: memcached
+    - role: ganglia
+      tags: ganglia
+    # - role: monit
+    #   tags: monit
+    - role: data_dirs
+      tags: data_dirs
+    - role: ruby
+      tags: ruby
+    - role: gems
+      tags: gems
+    - role: snmp
+      tags: snmp
+    - role: phoenix-mongrel
+      tags: phoenix-mongrel
+    - role: delia
+      tags: delia
+    - role: delia-plugins
+      tags: [delia, delia-plugins]
+    - role: package-daemons
+      tags: package-daemons
+    - role: phoenix-modules
+      tags: phoenix-modules
+    - role: emma
+      tags: emma
+    - role: package-mia
+      tags: [package-mia, mia]
+    - role: finalization
+      tags: finalization
+
+#
+# - gmetad-agg (???)
+# - gmetad-sync (???)
+
+# ---
+#
+# - delayed_job: an emma thing. it runs jobs in the background.

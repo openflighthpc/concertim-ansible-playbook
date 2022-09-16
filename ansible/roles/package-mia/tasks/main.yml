@@ -1,19 +1,9 @@
-- name: Verifying source code at "{{ role_path }}/files/tmp"
-  ansible.builtin.shell:
-    cmd: |
-      if [ ! -f {{ role_path }}/files/tmp/mia.tgz ] ; then
-        cat <<EOF
-          Could not find MIA src mia.tgz.
-          Download mia.tgz from build.concertim to {{ role_path }}/files/tmp/ 
-
-          scp [OPTIONS] \
-              build:/data/build/uranus/concertim/6.4.0/packages/package-mia/mia.tgz \
-              {{ role_path }}/files/tmp/
-      EOF
-        exit 1
-      fi
-  changed_when: False
-
+- name: Download mia.tgz from S3
+  amazon.aws.aws_s3:
+    bucket: alces-flight
+    object: /concertim/packages/appliances/mia.tgz
+    dest: "{{ role_path }}/files/tmp/mia.tgz"
+    mode: get
 
 - name: Make destination directory
   ansible.builtin.file:
