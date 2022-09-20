@@ -4,8 +4,10 @@
     state: present
 
 - name: Add postgresql repository
+  vars:
+    repo_name: "{{ ansible_facts['lsb']['codename'] }}-pgdg"
   ansible.builtin.apt_repository:
-    repo: deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main
+    repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ repo_name }} main
     state: present
     filename: postgresql-pgdg
 
