@@ -32,7 +32,7 @@ installed.
 
 ```
 add-apt-repository ppa:ansible/ansible
-apt install ansible python3-boto3
+apt install ansible
 ```
 
 

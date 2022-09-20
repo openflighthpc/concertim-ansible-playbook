@@ -6,6 +6,8 @@
   become_method: sudo
   roles:
     - role: base
+    - role: misc_packages
+      tags: misc_packages
     # - role: certificates
     #   tags: certificates
     - role: webserver
