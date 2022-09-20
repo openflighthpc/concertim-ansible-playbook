@@ -32,6 +32,8 @@ Vagrant.configure("2") do |config|
 
           ansible.extra_vars = {
             'github_token' => ENV.fetch('GH_TOKEN', ''),
+            'aws_access_key_id' => ENV.fetch('AWS_ACCESS_KEY_ID', ''),
+            'aws_secret_access_key' => ENV.fetch('AWS_SECRET_ACCESS_KEY', ''),
           }
         end
 
