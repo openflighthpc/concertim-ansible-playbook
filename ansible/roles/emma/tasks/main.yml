@@ -2,7 +2,7 @@
   ansible.builtin.command:
     cmd: ls -d {{ emma_path }}
   register: emma_dir
-  ignore_errors: yes
+  failed_when: False
 
 - name: Install emma
   when: emma_dir.stdout == ""
