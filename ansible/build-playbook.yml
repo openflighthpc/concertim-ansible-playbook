@@ -4,9 +4,10 @@
   become: true
   become_user: root
   become_method: sudo
-  gather_facts: False
   roles:
     - role: base
+    - role: misc_packages
+      tags: misc_packages
     # - role: certificates
     #   tags: certificates
     - role: webserver

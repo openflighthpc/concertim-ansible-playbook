@@ -1,34 +1,85 @@
 ANSIBLE_DIR="../ansible"
-BOXES = %w(command1 command2)
-ACCEPTANCE_BOXES = %w(command2)
+MACHINES = [
+  {
+    name: "command1",
+    box: "bento/ubuntu-22.04",
+  },
+  {
+    name: "command2",
+    box: "ubuntu/focal64",
+  },
+  {
+    name: "command3",
+    box: "ubuntu/jammy64",
+  }
+]
+PLAYBOOKS = [
+  {
+    id: "build",
+    path: File.join(ANSIBLE_DIR, "build-playbook.yml"),
+    extra_vars: {
+      'github_token' => ENV.fetch('GH_TOKEN', ''),
+      'aws_access_key_id' => ENV.fetch('AWS_ACCESS_KEY_ID', ''),
+      'aws_secret_access_key' => ENV.fetch('AWS_SECRET_ACCESS_KEY', ''),
+    }
+  },
+  {
+    id: "configure",
+    path: File.join(ANSIBLE_DIR, "configure-playbook.yml"),
+    extra_vars: {}
+  },
+]
+
+class BadPlaybook < Vagrant::Errors::VagrantError
+  def error_message
+    pb = @extra_data[:playbook]
+    "The playbook '#{pb}' given in ANSIBLE_PLAYBOOK is not known.  " \
+      "Valid values are any of #{ PLAYBOOKS.map {|pb| pb[:id] }.join(":") }"
+  end
+end
 
 Vagrant.configure("2") do |config|
-  BOXES.each_with_index do |box, idx|
+  MACHINES.each_with_index do |box, idx|
     config.vm.provider "virtualbox" do |v|
       # v.memory = 8192
       v.memory = 2048
     end
 
-    config.vm.define box, primary: true do |v|
-      v.vm.box = 'ubuntu/focal64'
-      v.vm.hostname = box
+    config.vm.define box[:name], primary: idx == 0 do |v|
+      v.vm.box = box[:box]
+      v.vm.hostname = box[:name]
       v.vm.network "forwarded_port", guest:  80, host: 9080 + idx, host_ip: '127.0.0.1'
       v.vm.network "forwarded_port", guest: 443, host: 9443 + idx, host_ip: '127.0.0.1'
 
-      unless ACCEPTANCE_BOXES.include?(box)
-        v.vm.provision "ansible_local" do |ansible|
-          ansible.playbook = File.join(ANSIBLE_DIR, "build-playbook.yml")
-          ansible.verbose = to_boolean(ENV.fetch('ANSIBLE_VERBOSE', 'false'))
-
-          ansible.extra_vars = {
-            'github_token' => ENV.fetch('GH_TOKEN', ''),
-          }
-        end
-
+      unless to_boolean(ENV['ACCEPTANCE'])
         v.vm.synced_folder ANSIBLE_DIR, "/ansible"
+
+        playbooks.each do |playbook|
+          v.vm.provision "ansible_local" do |ansible|
+            ansible.playbook = playbook[:path]
+            ansible.verbose = to_boolean(ENV.fetch('ANSIBLE_VERBOSE', 'false'))
+            ansible.extra_vars = playbook[:extra_vars]
+
+            if ENV.key?('ANSIBLE_START_AT_TASK')
+              ansible.start_at_task = ENV['ANSIBLE_START_AT_TASK']
+            end
+            if ENV.key?('ANSIBLE_TAGS')
+              ansible.tags = ENV['ANSIBLE_TAGS']
+            end
+          end
+        end
       end
     end
   end
+end
+
+def playbooks
+  ids = PLAYBOOKS.map {|pb| pb[:id] }
+  ENV.fetch("ANSIBLE_PLAYBOOK", ids.join(":"))
+    .split(":")
+    .each {|pb| raise BadPlaybook, {playbook: pb} unless ids.include?(pb) }
+    .map {|pb| PLAYBOOKS.detect {|defn| defn[:id] == pb }}
+    .compact
 end
 
 def to_boolean(v)

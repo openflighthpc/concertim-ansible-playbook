@@ -21,18 +21,15 @@ The process can be
 
 Steps 2 through 6 are described in more detail below.
 
-## Install ansible and dependencies
+## Install ansible
 
 The ansible playbook has been tested against `ansible` version `5.10.0` other
 versions of ansible may work but have not been tested.  Ansible `5.10.0` can
 be installed with the following.
 
-There are also dependencies for some of the playbook tasks that need to be
-installed.
-
 ```
 add-apt-repository ppa:ansible/ansible
-apt install ansible python3-boto3
+apt install ansible
 ```
 
 
@@ -96,9 +93,14 @@ In the snippet below the following placeholders are used:
 Run the build playbook:
 
 ```
-export AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
-export AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
-ansible-playbook --inventory /ansible/inventory.ini --extra-vars github_token=<GITHUB_TOKEN> /ansible/build-playbook.yml
+AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
+AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
+GH_TOKEN=<GITHUB_TOKEN>
+
+ansible-playbook \
+  --inventory /ansible/inventory.ini \
+  --extra-vars "github_token=$GH_TOKEN aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
+  /ansible/build-playbook.yml
 ```
 
 Run the configure playbook:
