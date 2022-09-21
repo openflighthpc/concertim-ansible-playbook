@@ -72,8 +72,8 @@ case $STAGE in
     # pver=`/opt/ruby-1.8/bin/ruby -e "require 'rubygems'; require 'yaml'; info = YAML.load_file('/data/private/share/etc/concurrent-thinking/appliance/release.yml'); puts \"#{info['pack_version']}\""`
     # relocate $DOMAIN $pver
 
-    # a2dissite redirect-http-to-https
-    # a2ensite allow-http
+    a2dissite redirect-http-to-https
+    a2ensite allow-http
     cd /etc/apache2
     echo "Listen 80" > ports.conf
     # rm -f /etc/monit/conf.d/knockd-eth0
@@ -106,10 +106,10 @@ case $STAGE in
     ;;
 
     # ------------------------------------------------------------
-    # init)
+    init)
 
-    # a2dissite ssl
-    # /etc/init.d/apache2 reload
+    a2dissite ssl
+    /etc/init.d/apache2 reload
     # # stop gmond
     # /etc/init.d/ganglia-monitor stop
     # # remove any global address on eth1
@@ -124,10 +124,10 @@ case $STAGE in
     # done
     # # forcibly add a default route for LL routing to eth1 in case it's gone away for some reason
     # ip route add default metric 1000 dev eth1
-	# ;;
+	;;
 
     # ------------------------------------------------------------
-    # reopen)
+    reopen)
 
     # # now we are reopened, we can down any link local addresses 
     # LL=`ip -4 -o address show dev eth1 | grep "link" | awk '{print $4}'`
@@ -137,13 +137,13 @@ case $STAGE in
 	      # /usr/sbin/avahi-autoipd -k eth1
     # fi
     # # we are in the reopen stage, so now we disable http access
-    # a2dissite allow-http
-    # a2ensite redirect-http-to-https
-    # /etc/init.d/apache2 reload
+    a2dissite allow-http
+    a2ensite redirect-http-to-https
+    /etc/init.d/apache2 reload
     # # sync apache2 changes to upgrade rootfs
     # rm -rf /upgrade/etc/apache2
     # cp -a /etc/apache2 /upgrade/etc/apache2
-	# ;;
+	;;
 
     # ------------------------------------------------------------
     config)
@@ -192,7 +192,7 @@ case $STAGE in
     sed -i "s/ServerName .*/ServerName ${HOST}.${DOMAIN}/" mia.server_name.conf
     cd /etc/apache2/sites-available
     sed -i "s|RedirectMatch .*|RedirectMatch ^/(.*)$ \"https://${HOST}.${DOMAIN}/\$1\"|" redirect-http-to-https.conf
-    # a2ensite ssl
+    a2ensite ssl
     /etc/init.d/apache2 reload
     # cp /usr/local/etc/apache2-https.monit /etc/monit/conf.d/apache2
     # /usr/sbin/monit reload
