@@ -9,6 +9,11 @@ BOXES = [
     name: "command2",
     box: "ubuntu/focal64",
     acceptance: false,
+  },
+  {
+    name: "command3",
+    box: "ubuntu/jammy64",
+    acceptance: false,
   }
 ]
 
@@ -35,6 +40,9 @@ Vagrant.configure("2") do |config|
             'aws_access_key_id' => ENV.fetch('AWS_ACCESS_KEY_ID', ''),
             'aws_secret_access_key' => ENV.fetch('AWS_SECRET_ACCESS_KEY', ''),
           }
+
+          # ansible.start_at_task = ""
+          # ansible.tags = ""
         end
 
         v.vm.synced_folder ANSIBLE_DIR, "/ansible"
