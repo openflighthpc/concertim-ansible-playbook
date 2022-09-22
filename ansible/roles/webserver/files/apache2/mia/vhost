@@ -12,26 +12,19 @@ AddType font/opentype .otf
   SetEnv APACHE_ERROR_LOG /var/log/apache2/web_ssl_error.log
   Options FollowSymLinks
   AllowOverride None
-  Order allow,deny
-  Allow from all
+  Require all granted
 </Directory>
 
 <Location "/">
-   Order deny,allow
-   Allow from all
 </Location>
 
 RewriteEngine On
 
 <Location "/terminal/show">
-   Order deny,allow
-   Allow from all
    ErrorDocument 503 /errors/503-terminal.html
 </Location>
 
 <Location "/system/console/show">
-   Order deny,allow
-   Allow from all
    ErrorDocument 503 /errors/503-terminal.html
 </Location>
 
@@ -45,7 +38,9 @@ RewriteEngine On
 #
 RewriteRule ^/cannonweb(.*)$ http://localhost:8989/cannonweb$1$2 [P]
 
-# Disabled to fix odd redirect issue
+# Disabled to fix odd redirect issue.  The `Order` and `Allow` directives have
+# been kept, but should be updated to use `Require`.  Perhaps that update
+# woudl fix the odd redirect issue?
 # <Location /device_console>
 #   Order      allow,deny
 #   Allow      from all
