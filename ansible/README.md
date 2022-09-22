@@ -28,8 +28,8 @@ versions of ansible may work but have not been tested.  Ansible `5.10.0` can
 be installed with the following.
 
 ```
-add-apt-repository ppa:ansible/ansible
-apt install ansible
+add-apt-repository --yes ppa:ansible/ansible
+apt install --yes ansible
 ```
 
 
@@ -45,6 +45,17 @@ from S3.  The credentials need to allow downloading from
 
 Obtaining these credentials is left as an exercise for the reader.
 
+The following code snippets assume that these credentials are available in the
+following environment variables.  If you do this you can copy and past the
+code snippets.
+
+* `AWS_ACCESS_KEY_ID` is your AWS access key id allowing downloading from
+  the S3 bucket mentioned above.
+* `AWS_SECRET_ACCESS_KEY` is your secret AWS access key allowing downloading
+  from the S3 bucket mentioned above.
+* `GH_TOKEN` is your GitHub oath token that allows access to the
+  `alces-flight/concertim-emma` repository.
+
 
 ## Clone this git repository
 
@@ -57,13 +68,9 @@ provide credentials to clone it.
 
 ```
 cd /root
-git clone https://<GITHUB_TOKEN>@github.com/alces-flight/concertim-bootstrap.git
+git clone https://${GH_TOKEN}@github.com/alces-flight/concertim-bootstrap.git
 ln -s /root/concertim-bootstrap/ansible /ansible
 ```
-
-`<GITHUB_TOKEN>` is your GitHub oath token that allows access to the
-`alces-flight/concertim-bootstrap` repository.
-
 
 ## Configure the First Time Setup Wizard data
 
@@ -81,22 +88,9 @@ cp -a  /ansible/roles/configure-vanilla/files/ftsw-example-data/ \
 
 ## Run the build and configure playbooks
 
-In the snippet below the following placeholders are used:
-
-* `<AWS_ACCESS_KEY_ID>` is your AWS access key id allowing downloading from
-  the S3 bucket mentioned above.
-* `<AWS_SECRET_ACCESS_KEY>` is your secret AWS access key allowing downloading
-  from the S3 bucket mentioned above.
-* `<GITHUB_TOKEN>` is your GitHub oath token that allows access to the
-  `alces-flight/concertim-emma` repository.
-
 Run the build playbook:
 
 ```
-AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
-AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
-GH_TOKEN=<GITHUB_TOKEN>
-
 ansible-playbook \
   --inventory /ansible/inventory.ini \
   --extra-vars "github_token=$GH_TOKEN aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
