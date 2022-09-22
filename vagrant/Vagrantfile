@@ -2,15 +2,15 @@ ANSIBLE_DIR="../ansible"
 MACHINES = [
   {
     name: "command1",
-    box: "bento/ubuntu-22.04",
+    box: "ubuntu/jammy64",
   },
   {
     name: "command2",
-    box: "ubuntu/focal64",
+    box: "bento/ubuntu-22.04",
   },
   {
     name: "command3",
-    box: "ubuntu/jammy64",
+    box: "ubuntu/focal64",
   }
 ]
 PLAYBOOKS = [
@@ -48,8 +48,8 @@ Vagrant.configure("2") do |config|
     config.vm.define box[:name], primary: idx == 0 do |v|
       v.vm.box = box[:box]
       v.vm.hostname = box[:name]
-      v.vm.network "forwarded_port", guest:  80, host: 9080 + idx, host_ip: '127.0.0.1'
-      v.vm.network "forwarded_port", guest: 443, host: 9443 + idx, host_ip: '127.0.0.1'
+      v.vm.network "forwarded_port", guest:  80, host: 9080 + idx + 1, host_ip: '127.0.0.1'
+      v.vm.network "forwarded_port", guest: 443, host: 9443 + idx + 1, host_ip: '127.0.0.1'
 
       unless to_boolean(ENV['ACCEPTANCE'])
         v.vm.synced_folder ANSIBLE_DIR, "/ansible"
