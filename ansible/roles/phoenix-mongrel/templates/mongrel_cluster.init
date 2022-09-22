@@ -14,6 +14,7 @@
 ### END INIT INFO
 
 CONF_DIR={{ mongrel_conf_dir }}
+PID_DIR={{ mongrel_pid_dir }}
 
 RETVAL=0
 
@@ -22,6 +23,13 @@ which mongrel_cluster_ctl >/dev/null || exit 0
 
 # Go no further if config directory is missing.
 [ -d "$CONF_DIR" ] || exit 0
+
+# Create the PID directory if it is missing.
+if [ ! -d "$PID_DIR" ] ; then
+	mkdir "$PID_DIR"
+	chown {{ mongrel_user }}:root "$PID_DIR"
+	chmod 755 "$PID_DIR"
+fi
 
 case "$1" in
     start)
