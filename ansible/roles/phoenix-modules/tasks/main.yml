@@ -105,6 +105,9 @@
     backup: yes
     strip: 1
   loop:
+    # XXX The part of the patch that disables updating users is perhaps not
+    # needed anymore.  It was originally added to work around emma not
+    # publishing its models.
     - sas-ftsw.patch
 
 - name: Create database

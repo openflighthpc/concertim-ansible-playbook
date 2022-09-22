@@ -6,7 +6,7 @@
     mode: get
     aws_access_key: "{{ aws_access_key_id }}"
     aws_secret_key: "{{ aws_secret_access_key }}"
-  loop: "{{ daemons }}"
+  loop: "{{ packaged_daemons }}"
 
 - name: Make destination directory
   ansible.builtin.file:
@@ -21,7 +21,7 @@
     src: "tmp/{{ item }}.tgz"
     dest: "{{ daemon_installation_dir }}"
     creates: "{{ daemon_installation_dir }}/{{ item }}"
-  loop: "{{ daemons }}"
+  loop: "{{ packaged_daemons }}"
 
 # - name: Updating bunder to use {{ gem_source_url }}
 
@@ -32,7 +32,7 @@
     cd "{{ daemon_path }}"
     PATH=/opt/ruby-1.9/bin:$PATH
     /opt/ruby-1.9/bin/bundle install --local
-  loop: "{{ daemons }}"
+  loop: "{{ packaged_daemons }}"
 
 - name: Install init.d files
   ansible.builtin.copy:
@@ -41,7 +41,7 @@
     owner: root
     group: root
     mode: "744"
-  loop: "{{ daemons }}"
+  loop: "{{ packaged_daemons + init_only_daemons }}"
   # XXX deal with UID check.
 
 # - name: Additional demm configuration
@@ -100,11 +100,10 @@
 
 # - name: Install clobber script
 # - name: Install hw.sh script
-# - name: Install delayed job init script
 
 - name: Ensure that daemons are enabled
   ansible.builtin.service:
     name: "{{ item }}"
     # state: started
     enabled: yes
-  loop: "{{ daemons }}"
+  loop: "{{ packaged_daemons + init_only_daemons }}"
