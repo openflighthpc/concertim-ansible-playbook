@@ -5,33 +5,22 @@ configure a vanilla MIA.
 
 ## Prerequisites
 
-* An Ubuntu 2004 (focal) machine that will become the MIA machine.
+* An Ubuntu 22.04 (jammy) or 20.04 (focal) machine that will become the MIA
+  machine.
 * Root access on that Ubuntu machine.
 
 ## Overview
 
 The process can be 
 
-1. Log into your Ubuntu 2004 machine and gain root access.
-2. Install ansible and dependencies
-3. Gather GitHub and S3 credentials.
+1. Log into your Ubuntu machine and gain root access.
+2. Gather GitHub and S3 credentials.
+3. Install ansible and dependencies
 4. Clone this git repository.
 5. Configure the First Time Setup Wizard (FTSW) data.
 6. Run the build and configure playbooks.
 
 Steps 2 through 6 are described in more detail below.
-
-## Install ansible
-
-The ansible playbook has been tested against `ansible` version `5.10.0` other
-versions of ansible may work but have not been tested.  Ansible `5.10.0` can
-be installed with the following.
-
-```
-add-apt-repository --yes ppa:ansible/ansible
-apt install --yes ansible
-```
-
 
 ## Gather GitHub and S3 credentials
 
@@ -55,6 +44,18 @@ code snippets.
   from the S3 bucket mentioned above.
 * `GH_TOKEN` is your GitHub oath token that allows access to the
   `alces-flight/concertim-emma` repository.
+
+
+## Install ansible
+
+The ansible playbook has been tested against `ansible` version `5.10.0` other
+versions of ansible may work but have not been tested.  Ansible `5.10.0` can
+be installed with the following.
+
+```
+add-apt-repository --yes ppa:ansible/ansible
+apt install --yes ansible
+```
 
 
 ## Clone this git repository
