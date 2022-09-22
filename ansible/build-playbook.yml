@@ -44,6 +44,8 @@
       tags: emma
     - role: package-mia
       tags: [package-mia, mia]
+    - role: appliance-dev
+      tags: appliance-dev
     - role: finalization
       tags: finalization
 
