@@ -79,13 +79,14 @@
 
 - name: Patch mia source code
   ansible.builtin.patch:
-    src: "{{ item }}"
+    src: "patches/{{ item }}"
     basedir: "{{ package_mia_root_dir }}/mia"
     backup: yes
     strip: 1
   loop:
     - mia.patch
     - disable-ferret.patch
+    - disable-help-links.patch
 
 
 - name: Touch unconfigured file
