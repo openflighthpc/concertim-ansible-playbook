@@ -2,5 +2,5 @@
 /MIA-6-4-0-DEV.vmdk
 /tmp
 .vagrant
-/ansible/roles/*/files/tmp/*.tgz
+/ansible/roles/*/files/tmp/*
 /ansible/roles/snmp/files/raw_mibs/
