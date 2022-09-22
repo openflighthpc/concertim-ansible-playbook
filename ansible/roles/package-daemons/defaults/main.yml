@@ -2,7 +2,10 @@ mode: production
 daemon_installation_dir: /data/private/share/daemons
 # gem_source_url: "http://build:Bu11dUS3R2000@src.concertim.com/gems/uranus-concertim/gems"
 
-daemons:
+# List of daemons that have been packaged and need full installation.  That is
+# they have source code to download and extract; gem dependencies to install;
+# and init.d files to install and enable.
+packaged_daemons:
   # Not sure what this is or why we would want it.  Something to do with
   # executing jobs (scram) perhaps?
   # - sadee
@@ -57,3 +60,7 @@ daemons:
   # might be nothing more than a rebranded `demm`?  Or it might be a demm
   # specifically for virtual machines/virtual machine hosts?
   # - ct-hypervisor-daemon
+
+# List of daemons that have only an init.d file to install and enable.
+init_only_daemons:
+  - delayed_job

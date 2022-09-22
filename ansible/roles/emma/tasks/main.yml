@@ -62,7 +62,6 @@
         strip: 1
       loop:
         - update-locked-gems.patch
-        - hack-permit-http-sign-in.patch
         - disable-help-links.patch
         - disable-legacy-events-generator.patch
 

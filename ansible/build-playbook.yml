@@ -50,7 +50,3 @@
 #
 # - gmetad-agg (???)
 # - gmetad-sync (???)
-
-# ---
-#
-# - delayed_job: an emma thing. it runs jobs in the background.

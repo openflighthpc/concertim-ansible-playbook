@@ -10,6 +10,7 @@
     - theresa
     - enid
     - ct-capacity-daemon
+    - delayed_job
 
 - name: Restart delia service
   block:
