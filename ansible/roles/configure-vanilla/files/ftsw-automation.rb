@@ -20,6 +20,10 @@ class MySetupManagerAutomator < SetupManagerAutomator
     super
   end
 
+  def failed?
+    !!@failed
+  end
+
   def completed_callback
     @completed = true
     super
@@ -59,6 +63,10 @@ class AutomatorRunner
     @automator.run
   end
 
+  def failed?
+    @automator && @automator.failed?
+  end
+
   def untar_appliance_config
     cmd = "cd /usr/src/concurrent-thinking ; sudo tar xzf appliance-config.tgz ; sudo tar xzf security-pack.tgz"
     system(cmd)
@@ -74,4 +82,8 @@ class AutomatorRunner
   end
 end
 
-AutomatorRunner.new.call
+$stderr.reopen($stdout)
+
+runner = AutomatorRunner.new
+runner.call
+Process.exit(runner.failed? ? 1 : 0)
