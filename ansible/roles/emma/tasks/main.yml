@@ -64,6 +64,7 @@
         - update-locked-gems.patch
         - disable-help-links.patch
         - disable-legacy-events-generator.patch
+        - disable-vpn-and-pxe-config-updating.patch
 
     - name: Bundle install gems
       ansible.builtin.shell: |

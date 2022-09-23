@@ -7,3 +7,14 @@
     - 106_add_eaton_mibs_to_database.rb
     - 107_add_tpt_mib_to_database.rb
     - 108_add_eaton_mibs_to_database_immutable.rb
+
+
+# XXX These should be ported the hacor git repo when that becomes a thing.
+- name: Apply patches
+  ansible.builtin.patch:
+    src: "patches/hacor/{{ item }}"
+    basedir: "{{ phoenix_modules_root_dir }}/hacor"
+    backup: yes
+    strip: 1
+  loop:
+    - disable-vpn-and-pxe-config-updating.patch
