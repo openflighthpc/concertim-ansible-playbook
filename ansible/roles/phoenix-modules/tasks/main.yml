@@ -98,17 +98,8 @@
 - name: Fix and hack hacor into submission
   include_tasks: hacor_fixes_and_hacks.yml
 
-- name: Patch sas source code
-  ansible.builtin.patch:
-    src: "{{ item }}"
-    basedir: "{{ phoenix_modules_root_dir }}/sas"
-    backup: yes
-    strip: 1
-  loop:
-    # XXX The part of the patch that disables updating users is perhaps not
-    # needed anymore.  It was originally added to work around emma not
-    # publishing its models.
-    - sas-ftsw.patch
+- name: Fix and hack sas into submission
+  include_tasks: sas_fixes_and_hacks.yml
 
 - name: Create database
   vars:

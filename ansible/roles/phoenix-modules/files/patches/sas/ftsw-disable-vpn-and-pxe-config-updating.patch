@@ -1,0 +1,44 @@
+diff -x tmp -x log -ur -u sas.orig/app/models/setup_manager.rb sas/app/models/setup_manager.rb
+--- sas.orig/app/models/setup_manager.rb	2022-09-22 18:13:59.263231925 +0000
++++ sas/app/models/setup_manager.rb	2022-09-23 12:43:58.660951013 +0000
+@@ -20,7 +20,11 @@
+   end
+ 
+   class Cluster < Romance::Candle
+-    wax :management_network, :domain, :nis_domain_name, :update_attributes, :errors, :update_network_configurations, :update_appliance_configuration, :update_pxe_configuration #, :short_deferred_update_dns
++    wax :management_network, :domain, :nis_domain_name, :update_attributes, :errors,
++      :update_appliance_configuration
++      #:update_network_configurations,
++      #:update_pxe_configuration,
++      #:short_deferred_update_dns
+   end
+ 
+   UNCONFIGURED_FLAG_FILE = '/etc/concurrent-thinking/appliance/unconfigured'
+@@ -630,6 +634,8 @@
+           send_event(:invalid)
+         end
+       rescue
++        STDERR.puts $!.message
++        STDERR.puts $!.backtrace.join("\n")
+         failed(:invalid)
+         raise
+       end
+@@ -639,15 +645,13 @@
+   def update_cluster_data
+     threaded do
+       begin
+-        unless @cluster.nil?
+         @cluster.update_appliance_configuration({
+           :appliance_ip_addr => @eth0.ip,
+           :appliance_hostname => @appliance_eth1.hostname,
+           :usb_key_id => usb_key_id})
+-        @cluster.update_network_configurations()
+-        @cluster.update_pxe_configuration({
+-          :appliance_ip_addr => @eth0.ip})
+-        end
++        #@cluster.update_network_configurations()
++        #@cluster.update_pxe_configuration({
++        #  :appliance_ip_addr => @eth0.ip})
+         send_event(:updated)
+       rescue
+         failed

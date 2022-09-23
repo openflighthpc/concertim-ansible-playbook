@@ -1,0 +1,13 @@
+# XXX These should be ported the sas git repo when that becomes a thing.
+- name: Apply patches
+  ansible.builtin.patch:
+    src: "patches/sas/{{ item }}"
+    basedir: "{{ phoenix_modules_root_dir }}/sas"
+    backup: yes
+    strip: 1
+  loop:
+    # XXX The part of the patch that disables updating users is perhaps not
+    # needed anymore.  It was originally added to work around emma not
+    # publishing its models.
+    - initial-ftsw.patch
+    - ftsw-disable-vpn-and-pxe-config-updating.patch
