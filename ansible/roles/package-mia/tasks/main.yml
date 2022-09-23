@@ -99,6 +99,13 @@
   ansible.builtin.command:
     cmd: "{{ package_mia_root_dir }}/mia/public/scripts/src/meta/build.sh"
 
+- name: Configure default IRV images
+  vars:
+    rails_root: "{{ package_mia_root_dir }}"
+  ansible.builtin.file:
+    src: "{{ rails_root }}/hacor/app/models/chassis_templates/images"
+    dest: "{{ rails_root }}/mia/public/images/irv/concurrent-thinking"
+    state: link
+
 # - name: Install logrotation
 # - name: Install create_selenium_chassis_template_list.rb
-# - name: Configure chassis templates
