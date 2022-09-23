@@ -21,3 +21,8 @@
       group: www-data
       mode: u=rwx,g=rwx,o=rx
 
+    - path: /data/private/share/snmp/mibs
+      owner: www-data
+      group: www-data
+      mode: u=rwx,g=rwx,o=rx
+

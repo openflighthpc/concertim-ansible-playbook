@@ -142,7 +142,9 @@
   loop_control:
     loop_var: module
 
+- name: Install various appliance scripts
+  include_tasks: install_scripts.yml
+
 # - name: Install cron jobs
 # - name: Install logrotation
-# - name: Install various appliance scripts
 # - name: Add www-data to adm group

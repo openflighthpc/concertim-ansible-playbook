@@ -1,0 +1,9 @@
+- name: Install various appliance scripts
+  ansible.builtin.copy:
+    src: "scripts/{{ item }}"
+    dest: /usr/local/sbin/
+    mode: "755"
+    owner: root
+    group: root
+  loop:
+    - run_always_run_post_restoration_scripts.rb
