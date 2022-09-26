@@ -1,6 +1,8 @@
-- name: Ensure apache is at the latest version
+- name: Install apache and dependencies
   ansible.builtin.apt:
-    name: apache2
+    name:
+      - apache2
+      - libapache2-mod-php
     state: latest
 
 - name: Write the apache config files
@@ -23,10 +25,8 @@
     - socache_dbm
     - ssl
     - lbmethod_byrequests
-    # We have a PHP app somewhere that, IIRC, displays a boot progress bar.
-    # IIRC, we can worry about these later.
-    # - cgi
-    # - php5
+    - cgi
+    - php8.1
 
 - name: Enable conf
   ansible.builtin.command:
