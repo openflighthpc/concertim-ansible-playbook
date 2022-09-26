@@ -1,0 +1,91 @@
+diff -u ganglia_data_generator.orig/start_fake_gmond ganglia_data_generator/start_fake_gmond
+--- ganglia_data_generator.orig/start_fake_gmond	2016-01-15 17:36:02.000000000 +0000
++++ ganglia_data_generator/start_fake_gmond	2022-09-26 12:48:22.260503656 +0000
+@@ -27,86 +27,7 @@
+    /etc/init.d/gmetad restart
+ fi
+ 
+-##################################################################################
+-# Now if you are running fake ganglia, you must not want metric collectors to run
+-# shutdown all unnecessary daemons on a VM
+-for daemon in ct-hypervisor-daemon demm demm_log postie postie_log
+-do
+-   # Check to see whether we have already turned it off
+-   monit summary | grep "'${daemon}'" | grep "Not monitored" > /dev/null
+-   if [ $? != 0 ]; then
+-      # shutdown daemon and unmonitor if not already done
+-      echo "Stop and unmonitor ${daemon}"
+-      monit stop ${daemon}
+-      sleep 5 # need to sleep a little longer, only runs the once when you start it
+-      monit unmonitor ${daemon}
+-      if [ -f /etc/init.d/${daemon} ]; then
+-         insserv -r ${daemon}
+-      fi
+-      sleep 5
+-   else
+-      sleep 2 # sleep between monit summary checks for a wee while
+-   fi
+-done
+-
+-# Now if the appliance is DEV02 it is a VM, so do special things
+-if [ "${JOB}" = "DEV02" ]; then
+-   # shutdown all unnecessary daemons on a VM
+-   for daemon in named senna
+-   do
+-      # Check to see whether we have already turned it off
+-      monit summary | grep "'${daemon}'" | grep "Not monitored" > /dev/null
+-      if [ $? != 0 ]; then
+-         # shutdown daemon and unmonitor if not already done
+-         echo "Stop and unmonitor ${daemon}"
+-         monit stop ${daemon}
+-         sleep 5 # need to sleep a little longer, only runs the once when you start it
+-         monit unmonitor ${daemon}
+-         if [ -f /etc/init.d/${daemon} ]; then
+-            insserv -r ${daemon}
+-         fi
+-         sleep 5
+-      else
+-         sleep 2 # sleep between monit summary checks for a wee while
+-      fi
+-   done
+-fi
+-
+-##################################################################
+-# Stop cron jobs that you don't want running on a fake demo system
+-
+-# First do the ones that run every few minutes, as the config is the same
+-
+-for ct_cronjob in link_local_rejigger widgets
+-do
+-   grep "#\*" /etc/cron.d/${ct_cronjob} > /dev/null
+-   if [ $? != 0 ]; then
+-      echo "Stopping cron job ${ct_cronjob}"
+-      sed -i s/^*/#*/ /etc/cron.d/${ct_cronjob}
+-   fi
+-done
+-
+-# Then do ones you dont want on a VM
+-
+-if [ "${JOB}" = "DEV02" ]; then
+-   # This is required for sensors, so need to leave it on a demo system just in case
+-   for ct_cronjob in mount-serial-devices
+-   do
+-      grep "#\*" /etc/cron.d/${ct_cronjob} > /dev/null
+-      if [ $? != 0 ]; then
+-         echo "Stopping cron job ${ct_cronjob}"
+-         sed -i s/^*/#*/ /etc/cron.d/${ct_cronjob}
+-      fi
+-   done
+-fi
+-
+-# Then do ones with specific minute counts
+-
+-grep "#42" /etc/cron.d/gmetad-sync_cron > /dev/null
+-if [ $? != 0 ]; then
+-   echo "Stopping cron job gmetad-sync_cron"
+-   sed -i s/^42/#42/ /etc/cron.d/gmetad-sync_cron
+-fi
++# XXX Disable deamons and cron jobs that we don't want running in demo mode.
+ 
+ ##################################################################
+ 
