@@ -1,0 +1,41 @@
+- name: Write branding.yml
+  ansible.builtin.copy:
+    dest: "{{ branding_yaml_path }}"
+    content: "{{ branding_name }}"
+    owner: www-data
+    group: www-data
+    mode: "644"
+
+- name: Make directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: www-data
+    group: root
+    mode: "755"
+    state: directory
+  loop:
+    - "{{ emma_personalty_folder }}"
+    - "{{ etc_personalty_folder }}"
+
+- name: Copy personality metadata
+  ansible.builtin.copy:
+    src: personality.yml
+    dest: "{{ item }}"
+    owner: www-data
+    group: www-data
+    mode: "644"
+  loop:
+    - "{{ emma_personalty_folder }}/{{ branding_name }}/personality.yml"
+    - "{{ etc_personalty_folder }}/personality.yml"
+
+- name: Install personality giving script
+  ansible.builtin.copy:
+    src: scripts/give_appliance_chassis_templates_personality.rb
+    dest: /usr/local/sbin/
+    owner: root
+    group: root
+    mode: "755"
+
+- name: Run personality giving script
+  ansible.builtin.command:
+    cmd: /usr/local/sbin/give_appliance_chassis_templates_personality.rb

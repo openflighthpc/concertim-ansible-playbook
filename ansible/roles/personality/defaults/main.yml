@@ -1,0 +1,4 @@
+emma_personalty_folder: "/data/private/share/emma/core/config/personalities"
+etc_personalty_folder: "/data/private/share/etc/concurrent-thinking/appliance"
+branding_name: "ct"
+branding_yaml_path: "/data/private/share/etc/concurrent-thinking/branding.yml"
