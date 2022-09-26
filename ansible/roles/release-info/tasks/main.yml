@@ -1,0 +1,69 @@
+- name: Add release.info
+  ansible.builtin.copy:
+    src: release.info
+    dest: "{{ release_info_dest }}"
+    owner: www-data
+    group: www-data
+    mode: "644"
+
+- name: Add version.yml
+  ansible.builtin.copy:
+    src: version.yml
+    dest: "{{ version_yml_dest }}"
+    owner: www-data
+    group: www-data
+    mode: "644"
+
+- name: Append version.yml to release.yml
+  ansible.builtin.shell:
+    cmd: |
+      cat {{ version_yml_dest }} >> {{ release_yml_dest }}
+
+# - name: Install license creation script
+
+# Originally the "final" bundle installed a script which set the following
+# when the MIA was rebooted.  We now do this as part of the build process,
+# which is considerably earlier.  If we run into issues to do with these
+# values this might be the case.
+#
+# XXX Is there a better way of doing this.  The loop and registering is quite
+# unclear.
+- name: Add asset limits
+  vars:
+    entries:
+      - name: rack_limit
+        default: 3
+      - name: device_limit
+        default: 10
+      - name: nrad_limit
+        default: 3
+      - name: sensor_limit
+        default: 5
+      - name: vm_limit
+        default: 5
+      - name: cable_limit
+        default: 10
+      - name: asset_flag
+        default: false
+      - name: expire_time
+        default: "{{ ansible_date_time.epoch + license_expires_in }}"
+  block:
+    - name: Check for existing entry
+      ansible.builtin.shell:
+        cmd: |
+          grep -c "^{{ item.name }}:" "{{ release_yml_dest }}"
+      register: existing_entry_test
+      failed_when: False
+      loop: "{{ entries }}"
+
+    - name: debug
+      ansible.builtin.debug:
+        var: existing_entry_test
+
+    - name: Add asset limit entry
+      ansible.builtin.lineinfile:
+        path: "{{ release_yml_dest }}"
+        line: "{{ item.item.name }}: {{ item.item.default }}"
+        insertbefore: EOF
+      loop: "{{ existing_entry_test.results }}"
+      when: item.rc != 0
