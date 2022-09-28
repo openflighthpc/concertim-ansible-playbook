@@ -1,0 +1,6 @@
+version_yml_dest: /data/private/share/etc/concurrent-thinking/appliance/version.yml
+release_yml_dest: /data/private/share/etc/concurrent-thinking/appliance/release.yml
+release_info_dest: /data/private/share/release.info
+
+# 30 days in seconds.
+license_expires_in: "{{ 30 * 24 * 60 * 60 }}"

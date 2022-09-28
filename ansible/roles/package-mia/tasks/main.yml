@@ -89,6 +89,14 @@
     - disable-help-links.patch
 
 
+- name: Make appliance directory
+  ansible.builtin.file:
+    path: "/data/private/share/etc/concurrent-thinking/appliance"
+    owner: www-data
+    group: root
+    mode: "755"
+    state: directory
+
 - name: Touch unconfigured file
   ansible.builtin.copy:
     dest: "/data/private/share/etc/concurrent-thinking/appliance/unconfigured"
