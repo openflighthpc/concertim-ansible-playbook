@@ -56,10 +56,6 @@
       failed_when: False
       loop: "{{ entries }}"
 
-    - name: debug
-      ansible.builtin.debug:
-        var: existing_entry_test
-
     - name: Add asset limit entry
       ansible.builtin.lineinfile:
         path: "{{ release_yml_dest }}"
