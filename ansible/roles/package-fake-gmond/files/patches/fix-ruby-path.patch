@@ -1,0 +1,9 @@
+diff -u ganglia_data_generator.orig/fake-gmond.rb ganglia_data_generator/fake-gmond.rb
+--- ganglia_data_generator.orig/fake-gmond.rb	2013-11-28 13:30:15.000000000 +0000
++++ ganglia_data_generator/fake-gmond.rb	2022-09-29 12:28:04.226236226 +0000
+@@ -1,4 +1,4 @@
+-#!/usr/bin/ruby
++#!/usr/bin/ruby1.8
+ 
+ require 'socket'
+ 

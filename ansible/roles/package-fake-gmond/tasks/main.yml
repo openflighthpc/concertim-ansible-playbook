@@ -37,12 +37,19 @@
     backup: yes
     strip: 1
   loop:
-    - simplify.patch
+    - fix-ruby-path.patch
+
+# XXX Move to fake gmond git repo when available.
+- name: Install start_fake_gmond script
+  ansible.builtin.copy:
+    src: start_fake_gmond
+    dest: "{{ fake_gmond_src_dir }}"
+    owner: "{{ fake_gmond_owner }}"
+    group: "{{ fake_gmond_group }}"
+    mode: "755"
 
 - name: Install init.d file
   ansible.builtin.copy:
-    # src: "{{ fake_gmond_src_dir }}/AUTOSTART/fake-ganglia"
-    # remote_src: true
     src: fake-ganglia.init
     dest: /etc/init.d/fake-ganglia
     owner: root
@@ -52,7 +59,7 @@
 - name: Add entry to gmetad.conf
   ansible.builtin.lineinfile:
     line: "data_source fake_gmond localhost:{{ fake_gmond_port }}"
-    path: /etc/gmetad.conf
+    path: /etc/ganglia/gmetad.conf
     insertbefore: EOF
   register: gmetad_change
 
