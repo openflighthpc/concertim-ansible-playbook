@@ -12,7 +12,7 @@ packaged_daemons:
 
   # We want meryl, but it has a dependency on a deb file that is likely not to
   # install.
-  # - meryl
+  - meryl
 
   # Appliance Informatics and Local Setup Agent.  Might be important.  Or only
   # important when ISLAs are present?
@@ -64,3 +64,6 @@ packaged_daemons:
 # List of daemons that have only an init.d file to install and enable.
 init_only_daemons:
   - delayed_job
+
+number_crunchers:
+  - meryl

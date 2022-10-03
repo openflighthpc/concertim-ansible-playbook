@@ -23,6 +23,24 @@
     creates: "{{ daemon_installation_dir }}/{{ item }}"
   loop: "{{ packaged_daemons }}"
 
+- name: Install number crunchers
+  block:
+    - name: Download number cruncher from S3
+      amazon.aws.aws_s3:
+        bucket: alces-flight
+        object: /concertim/packages/daemons/{{ item }}-number-cruncher.deb
+        dest: "{{ role_path }}/files/tmp/{{ item }}-number-cruncher.deb"
+        mode: get
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+      loop: "{{ number_crunchers }}"
+
+    - name: Install number cruncher deb package
+      ansible.builtin.apt:
+        deb: "{{ role_path }}/files/tmp/{{ item }}-number-cruncher.deb"
+      loop: "{{ number_crunchers }}"
+
+
 # - name: Updating bunder to use {{ gem_source_url }}
 
 - name: Install gem dependencies
