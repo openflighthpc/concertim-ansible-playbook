@@ -60,5 +60,5 @@
   loop:
     - version: 1.8.7-p374
       configure_opts: "--with-openssl-dir=/opt/openssl-1.0.2l"
-    - version: 1.9.2-p0
+    - version: "{{ role_path }}/files/1.9.2-p0"
       configure_opts: "--with-openssl-dir=/opt/openssl-1.0.2u"
