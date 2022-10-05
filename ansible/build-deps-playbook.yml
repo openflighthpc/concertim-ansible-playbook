@@ -1,0 +1,18 @@
+---
+- name: |
+    Playbook to build dependencies required by MIA.
+
+    MIA has a number of dependencies that need to be custom built on a machine
+    similar to the MIA machine itself.  This playbook builds and packages
+    them.  Eventually it might also place those dependencies into S3 from
+    where other playbooks can download them.
+  hosts: localhost
+  become: true
+  become_user: root
+  become_method: sudo
+  roles:
+    - role: build-rubies
+      tags: build-rubies
+    - role: build-number-crunchers
+      tags: build-number-crunchers
+
