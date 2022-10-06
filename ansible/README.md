@@ -81,6 +81,15 @@ git clone https://${GH_TOKEN}@github.com/alces-flight/concertim-bootstrap.git
 ln -s /root/concertim-bootstrap/ansible /ansible
 ```
 
+Determine the correct tag to build from.  Unless you have reason not to you
+should build from the most recent `revival-X` tag.  That tag can be determined
+and checked out by running the following:
+
+```bash
+NUM=$( git tag -l | grep '^revival-' | sed 's/^revival-//' | sort -h -r | head -n 1 )
+git checkout revival-${NUM}
+```
+
 ## Configure the First Time Setup Wizard data
 
 The First Time Setup Wizard (FTSW) configures a vanilla appliance.  It uses
