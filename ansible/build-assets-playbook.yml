@@ -1,0 +1,19 @@
+---
+- name: |
+    Playbook to build assets required by MIA.
+
+    MIA has a number of assets that need to be built on a machine similar to
+    the MIA machine itself.  Such as `ruby` versions `1.8` and `1.9` and some
+    C++ Ruby extensions, aka "number crunchers".
+
+    This playbook builds them, packages them and uploads them to S3.
+  hosts: localhost
+  become: true
+  become_user: root
+  become_method: sudo
+  roles:
+    - role: build-rubies
+      tags: build-rubies
+    - role: build-number-crunchers
+      tags: build-number-crunchers
+
