@@ -3,3 +3,5 @@
 # - name: Compile
 # - name: Create deb package
 # - name: Upload deb package
+# - name: Copy gdb macros
+# - name: Copy gdb running script
