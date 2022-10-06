@@ -39,3 +39,24 @@
 - name: Run personality giving script
   ansible.builtin.command:
     cmd: /usr/local/sbin/give_appliance_chassis_templates_personality.rb
+
+- name: Download logos from S3
+  amazon.aws.aws_s3:
+    bucket: alces-flight
+    object: /concertim/assets/logos/{{ item }}
+    dest: "{{ role_path }}/files/tmp/{{ item }}"
+    mode: get
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+  loop: "{{ logo_files }}"
+
+- name: Copy Alces Flight logos
+  ansible.builtin.copy:
+    src: "tmp/{{ item[0] }}"
+    dest: "{{ item[1] }}"
+    owner: www-data
+    group: www-data
+    mode: "664"
+  with_nested:
+    - "{{ logo_files }}"
+    - "{{ logo_dirs }}"
