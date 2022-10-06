@@ -22,7 +22,7 @@ The process can be
 1. Log into your Ubuntu machine and gain root access.
 2. Gather GitHub and S3 credentials.
 3. Install ansible and dependencies
-4. Clone this git repository.
+4. Clone this git repository and checkout the correct tag.
 5. Configure the First Time Setup Wizard (FTSW) data.
 6. Optionally run the prep playbook to configure the network naming
    convention.
@@ -66,7 +66,7 @@ apt install --yes ansible
 ```
 
 
-## Clone this git repository
+## Clone this git repository and checkout the correct tag
 
 This git repository contains the ansible playbook to build and configure a
 Concertim MIA.  The playbook is intended to be ran on the MIA machine itself.
@@ -86,8 +86,10 @@ should build from the most recent `revival-X` tag.  That tag can be determined
 and checked out by running the following:
 
 ```bash
+cd /root/concertim-bootstrap
 NUM=$( git tag -l | grep '^revival-' | sed 's/^revival-//' | sort -h -r | head -n 1 )
-git checkout revival-${NUM}
+echo "Using tag revival-${NUM}"
+git checkout --quiet revival-${NUM}
 ```
 
 ## Configure the First Time Setup Wizard data
@@ -113,7 +115,7 @@ steps.
 ```bash
 if [ -d /sys/class/net/eth0 ]; then
   echo
-  echo "Your machine is correctly configured."
+  echo "Your machine is correctly prepared."
   echo "Proceed to running the build and configure playbooks."
   echo
 else
@@ -121,6 +123,7 @@ else
   echo "Your machine needs preparatory configuration."
   echo "Run the prep playbook"
   echo "Then reboot your machine and run the build and configure playbooks."
+  echo "Make sure to add your credentials again."
   echo
 fi
 ```
@@ -142,10 +145,14 @@ required.
 Run the build playbook:
 
 ```bash
-ansible-playbook \
-  --inventory /ansible/inventory.ini \
-  --extra-vars "github_token=$GH_TOKEN aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
-  /ansible/build-playbook.yml
+if [ "$GH_TOKEN" == "" -o "$AWS_ACCESS_KEY_ID" == "" -o "$AWS_SECRET_ACCESS_KEY" == "" ] ; then
+  echo "Some credentials are missing"
+else
+  ansible-playbook \
+    --inventory /ansible/inventory.ini \
+    --extra-vars "github_token=$GH_TOKEN aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
+    /ansible/build-playbook.yml
+fi
 ```
 
 Run the configure playbook:
