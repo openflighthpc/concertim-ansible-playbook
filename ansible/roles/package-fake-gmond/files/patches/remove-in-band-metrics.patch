@@ -1,0 +1,477 @@
+diff -ur ganglia_data_generator.orig/node ganglia_data_generator/node
+--- ganglia_data_generator.orig/node	2015-06-23 09:56:30.000000000 +0000
++++ ganglia_data_generator/node	2022-10-06 17:10:08.400646489 +0000
+@@ -1,12 +1,4 @@
+ <HOST NAME="GGG_hostname" IP="" REPORTED="GGG_reported" TN="23" TMAX="60" DMAX="180" LOCATION="unspecified" GMOND_STARTED="1286289816">
+-<METRIC NAME="swap_free" VAL="1097636" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="swap_total" VAL="2097636" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="bytes_in" VAL="2371.33" TYPE="float" UNITS="bytes/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="bytes_out" VAL="6153.14" TYPE="float" UNITS="bytes/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.ipmi.ambient_temp" VAL="GGG_ambient" TYPE="double" UNITS="C" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmetric">
+ </METRIC>
+ <METRIC NAME="ct.ipmi.cpu0.dietemp" VAL="GGG_die1temp" TYPE="double" UNITS="C" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmetric">
+@@ -61,12 +53,6 @@
+ </METRIC>
+ <METRIC NAME="ct.ipmi.temp.ps1_temperature" VAL="38" TYPE="int32" UNITS="degreesC" TN="8" TMAX="120" DMAX="180" SLOPE="both" SOURCE="IPMI">
+ </METRIC>
+-<METRIC NAME="cpu_num" VAL="8" TYPE="uint16" UNITS="CPUs" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_wio" VAL="3.5" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_speed" VAL="3400" TYPE="uint32" UNITS="MHz" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.mem.real.total" VAL="GGG_memtotal" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.mem.real.buffers" VAL="GGG_membuff" TYPE="float" UNITS="KB" TN="54" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+@@ -77,16 +63,6 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.mem.real.shared" VAL="GGG_memshared" TYPE="float" UNITS="KB" TN="54" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="mem_total" VAL="GGG_memtotal" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_buffers" VAL="GGG_membuff" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_cached" VAL="GGG_memcached" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_free" VAL="GGG_memfree" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_shared" VAL="GGG_memshared" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.cpu.aidle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.idle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+@@ -97,24 +73,6 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.user" VAL="GGG_user" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="cpu_aidle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_idle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_nice" VAL="GGG_nice" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_system" VAL="GGG_system" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_user" VAL="GGG_user" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="test_number" VAL="GGG_test" TYPE="int32" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_fifteen" VAL="GGG_fifteen" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_five" VAL="GGG_five" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_one" VAL="GGG_one" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.disk.disk0.iops" VAL="GGG_iops" TYPE="double" UNITS="io/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ </HOST>
+diff -ur ganglia_data_generator.orig/node1 ganglia_data_generator/node1
+--- ganglia_data_generator.orig/node1	2015-06-23 09:56:30.000000000 +0000
++++ ganglia_data_generator/node1	2022-10-06 17:10:56.801326675 +0000
+@@ -1,12 +1,4 @@
+ <HOST NAME="GGG_hostname" IP="" REPORTED="GGG_reported" TN="23" TMAX="60" DMAX="180" LOCATION="unspecified" GMOND_STARTED="1286289816">
+-<METRIC NAME="swap_free" VAL="1097636" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="swap_total" VAL="2097636" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="bytes_in" VAL="2371.33" TYPE="float" UNITS="bytes/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="bytes_out" VAL="6153.14" TYPE="float" UNITS="bytes/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.ipmi.ambient_temp" VAL="GGG_ambient" TYPE="double" UNITS="C" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmetric">
+ </METRIC>
+ <METRIC NAME="ct.ipmi.cpu0.dietemp" VAL="GGG_die1temp" TYPE="double" UNITS="C" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmetric">
+@@ -67,12 +59,6 @@
+ </METRIC>
+ <METRIC NAME="ct.ipmi.temp.ps2_temperature" VAL="40" TYPE="int32" UNITS="degreesC" TN="8" TMAX="120" DMAX="180" SLOPE="both" SOURCE="IPMI">
+ </METRIC>
+-<METRIC NAME="cpu_num" VAL="8" TYPE="uint16" UNITS="CPUs" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_wio" VAL="3.5" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_speed" VAL="3200" TYPE="uint32" UNITS="MHz" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.mem.real.total" VAL="GGG_memtotal" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.mem.real.buffers" VAL="GGG_membuff" TYPE="float" UNITS="KB" TN="54" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+@@ -83,16 +69,6 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.mem.real.shared" VAL="GGG_memshared" TYPE="float" UNITS="KB" TN="54" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="mem_total" VAL="GGG_memtotal" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_buffers" VAL="GGG_membuff" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_cached" VAL="GGG_memcached" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_free" VAL="GGG_memfree" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_shared" VAL="GGG_memshared" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.cpu.aidle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.idle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+@@ -103,24 +79,6 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.user" VAL="GGG_user" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="cpu_aidle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_idle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_nice" VAL="GGG_nice" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_system" VAL="GGG_system" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_user" VAL="GGG_user" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="test_number" VAL="GGG_test" TYPE="int32" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_fifteen" VAL="GGG_fifteen" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_five" VAL="GGG_five" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_one" VAL="GGG_one" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.disk.disk0.iops" VAL="GGG_iops" TYPE="double" UNITS="io/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ </HOST>
+diff -ur ganglia_data_generator.orig/node2 ganglia_data_generator/node2
+--- ganglia_data_generator.orig/node2	2015-06-23 09:56:30.000000000 +0000
++++ ganglia_data_generator/node2	2022-10-06 17:09:19.963985376 +0000
+@@ -1,12 +1,4 @@
+ <HOST NAME="GGG_hostname" IP="" REPORTED="GGG_reported" TN="23" TMAX="60" DMAX="180" LOCATION="unspecified" GMOND_STARTED="1286289816">
+-<METRIC NAME="swap_free" VAL="1097636" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="swap_total" VAL="2097636" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="bytes_in" VAL="2371.33" TYPE="float" UNITS="bytes/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="bytes_out" VAL="6153.14" TYPE="float" UNITS="bytes/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.ipmi.ambient_temp" VAL="GGG_ambient" TYPE="double" UNITS="C" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmetric">
+ </METRIC>
+ <METRIC NAME="ct.ipmi.cpu0.dietemp" VAL="GGG_die1temp" TYPE="double" UNITS="C" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmetric">
+@@ -59,12 +51,6 @@
+ </METRIC>
+ <METRIC NAME="ct.ipmi.temp.ps2_temperature" VAL="40" TYPE="int32" UNITS="degreesC" TN="8" TMAX="120" DMAX="180" SLOPE="both" SOURCE="IPMI">
+ </METRIC>
+-<METRIC NAME="cpu_num" VAL="8" TYPE="uint16" UNITS="CPUs" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_wio" VAL="3.5" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_speed" VAL="3200" TYPE="uint32" UNITS="MHz" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.mem.real.total" VAL="GGG_memtotal" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.mem.real.buffers" VAL="GGG_membuff" TYPE="float" UNITS="KB" TN="54" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+@@ -75,16 +61,6 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.mem.real.shared" VAL="GGG_memshared" TYPE="float" UNITS="KB" TN="54" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="mem_total" VAL="GGG_memtotal" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_buffers" VAL="GGG_membuff" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_cached" VAL="GGG_memcached" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_free" VAL="GGG_memfree" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_shared" VAL="GGG_memshared" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.cpu.aidle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.idle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+@@ -95,24 +71,6 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.user" VAL="GGG_user" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="cpu_aidle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_idle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_nice" VAL="GGG_nice" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_system" VAL="GGG_system" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_user" VAL="GGG_user" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="test_number" VAL="GGG_test" TYPE="int32" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_fifteen" VAL="GGG_fifteen" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_five" VAL="GGG_five" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_one" VAL="GGG_one" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.net.eth2.link" VAL="down" TYPE="string" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.net.eth2.mac" VAL="00:04:23:b0:1f:aa" TYPE="string" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="SNMP">
+diff -ur ganglia_data_generator.orig/node3 ganglia_data_generator/node3
+--- ganglia_data_generator.orig/node3	2015-06-23 09:56:30.000000000 +0000
++++ ganglia_data_generator/node3	2022-10-06 17:07:02.370232169 +0000
+@@ -1,12 +1,4 @@
+ <HOST NAME="GGG_hostname" IP="" REPORTED="GGG_reported" TN="23" TMAX="60" DMAX="180" LOCATION="unspecified" GMOND_STARTED="1286289816">
+-<METRIC NAME="swap_free" VAL="1097636" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="swap_total" VAL="2097636" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="bytes_in" VAL="2371.33" TYPE="float" UNITS="bytes/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="bytes_out" VAL="6153.14" TYPE="float" UNITS="bytes/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.ipmi.ambient_temp" VAL="GGG_ambient" TYPE="double" UNITS="C" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmetric">
+ </METRIC>
+ <METRIC NAME="ct.ipmi.cpu0.dietemp" VAL="GGG_die1temp" TYPE="double" UNITS="C" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmetric">
+@@ -51,12 +43,6 @@
+ </METRIC>
+ <METRIC NAME="ct.ipmi.temp.ps2_temperature" VAL="40" TYPE="int32" UNITS="degreesC" TN="8" TMAX="120" DMAX="180" SLOPE="both" SOURCE="IPMI">
+ </METRIC>
+-<METRIC NAME="cpu_num" VAL="8" TYPE="uint16" UNITS="CPUs" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_wio" VAL="3.5" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_speed" VAL="3200" TYPE="uint32" UNITS="MHz" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.mem.real.total" VAL="GGG_memtotal" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.mem.real.buffers" VAL="GGG_membuff" TYPE="float" UNITS="KB" TN="54" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+@@ -67,16 +53,6 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.mem.real.shared" VAL="GGG_memshared" TYPE="float" UNITS="KB" TN="54" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="mem_total" VAL="GGG_memtotal" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_buffers" VAL="GGG_membuff" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_cached" VAL="GGG_memcached" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_free" VAL="GGG_memfree" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_shared" VAL="GGG_memshared" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.cpu.aidle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.idle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+@@ -87,24 +63,6 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.user" VAL="GGG_user" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="cpu_aidle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_idle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_nice" VAL="GGG_nice" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_system" VAL="GGG_system" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_user" VAL="GGG_user" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="test_number" VAL="GGG_test" TYPE="int32" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_fifteen" VAL="GGG_fifteen" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_five" VAL="GGG_five" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_one" VAL="GGG_one" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.disk.disk0.iops" VAL="GGG_iops" TYPE="double" UNITS="io/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ </HOST>
+diff -ur ganglia_data_generator.orig/node4 ganglia_data_generator/node4
+--- ganglia_data_generator.orig/node4	2015-06-23 09:56:30.000000000 +0000
++++ ganglia_data_generator/node4	2022-10-06 17:08:50.615595156 +0000
+@@ -1,12 +1,4 @@
+ <HOST NAME="GGG_hostname" IP="" REPORTED="GGG_reported" TN="23" TMAX="60" DMAX="180" LOCATION="unspecified" GMOND_STARTED="1286289816">
+-<METRIC NAME="swap_free" VAL="1097636" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="swap_total" VAL="2097636" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="bytes_in" VAL="2371.33" TYPE="float" UNITS="bytes/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="bytes_out" VAL="6153.14" TYPE="float" UNITS="bytes/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.ipmi.ambient_temp" VAL="GGG_ambient" TYPE="double" UNITS="C" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmetric">
+ </METRIC>
+ <METRIC NAME="ct.ipmi.cpu0.dietemp" VAL="GGG_die1temp" TYPE="double" UNITS="C" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmetric">
+@@ -67,12 +59,6 @@
+ </METRIC>
+ <METRIC NAME="ct.ipmi.temp.ps2_temperature" VAL="40" TYPE="int32" UNITS="degreesC" TN="8" TMAX="120" DMAX="180" SLOPE="both" SOURCE="IPMI">
+ </METRIC>
+-<METRIC NAME="cpu_num" VAL="8" TYPE="uint16" UNITS="CPUs" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_wio" VAL="3.5" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_speed" VAL="3200" TYPE="uint32" UNITS="MHz" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.mem.real.total" VAL="GGG_memtotal" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.mem.real.buffers" VAL="GGG_membuff" TYPE="float" UNITS="KB" TN="54" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+@@ -83,16 +69,6 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.mem.real.shared" VAL="GGG_memshared" TYPE="float" UNITS="KB" TN="54" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="mem_total" VAL="GGG_memtotal" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_buffers" VAL="GGG_membuff" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_cached" VAL="GGG_memcached" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_free" VAL="GGG_memfree" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_shared" VAL="GGG_memshared" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.cpu.aidle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.idle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+@@ -103,24 +79,6 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.user" VAL="GGG_user" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="cpu_aidle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_idle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_nice" VAL="GGG_nice" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_system" VAL="GGG_system" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_user" VAL="GGG_user" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="test_number" VAL="GGG_test" TYPE="int32" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_fifteen" VAL="GGG_fifteen" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_five" VAL="GGG_five" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_one" VAL="GGG_one" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.disk.disk0.iops" VAL="GGG_iops" TYPE="double" UNITS="io/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ </HOST>
+diff -ur ganglia_data_generator.orig/node_vm ganglia_data_generator/node_vm
+--- ganglia_data_generator.orig/node_vm	2015-06-10 14:11:11.000000000 +0000
++++ ganglia_data_generator/node_vm	2022-10-06 17:10:31.064962673 +0000
+@@ -31,12 +31,6 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.mem.swap.free" VAL="2104420" TYPE="int32" UNITS="KB" TN="54" TMAX="120" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="cpu_num" VAL="8" TYPE="uint16" UNITS="CPUs" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_wio" VAL="3.5" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_speed" VAL="3200" TYPE="uint32" UNITS="MHz" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.mem.real.total" VAL="GGG_memtotal" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.mem.real.buffers" VAL="GGG_membuff" TYPE="float" UNITS="KB" TN="54" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+@@ -47,16 +41,6 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.mem.real.shared" VAL="GGG_memshared" TYPE="float" UNITS="KB" TN="54" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="mem_total" VAL="GGG_memtotal" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_buffers" VAL="GGG_membuff" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_cached" VAL="GGG_memcached" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_free" VAL="GGG_memfree" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_shared" VAL="GGG_memshared" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.cpu.aidle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.idle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+@@ -67,22 +51,6 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.user" VAL="GGG_user" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="cpu_aidle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_idle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_nice" VAL="GGG_nice" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_system" VAL="GGG_system" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_user" VAL="GGG_user" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_fifteen" VAL="GGG_fifteen" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_five" VAL="GGG_five" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_one" VAL="GGG_one" TYPE="float" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.wmi.user-wmi-selection1.win32_operatingsystem.version" VAL="6.1.7601" TYPE="string" UNITS="" TN="23" TMAX="120" DMAX="180" SLOPE="zero" SOURCE="WMI">
+ </METRIC>
+ <METRIC NAME="ct.wmi.user-wmi-selection1.win32_operatingsystem.buildnumber" VAL="7601" TYPE="int32" UNITS="" TN="23" TMAX="120" DMAX="180" SLOPE="both" SOURCE="WMI">
+diff -ur ganglia_data_generator.orig/node_vmhost ganglia_data_generator/node_vmhost
+--- ganglia_data_generator.orig/node_vmhost	2015-06-23 09:56:30.000000000 +0000
++++ ganglia_data_generator/node_vmhost	2022-10-06 17:08:23.127237241 +0000
+@@ -53,30 +53,6 @@
+ </METRIC>
+ <METRIC NAME="ct.ipmi.voltage.memory_voltage" VAL="1.802" TYPE="double" UNITS="Volts" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="IPMI">
+ </METRIC>
+-<METRIC NAME="cpu_num" VAL="8" TYPE="uint16" UNITS="CPUs" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_wio" VAL="3.5" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="bytes_in" VAL="1414.33" TYPE="float" UNITS="bytes/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="bytes_out" VAL="7294.14" TYPE="float" UNITS="bytes/sec" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_speed" VAL="3200" TYPE="uint32" UNITS="MHz" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="disk_total" VAL="29.586" TYPE="double" UNITS="GB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="disk_free" VAL="24.736" TYPE="double" UNITS="GB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_fifteen" VAL="GGG_fifteen" TYPE="float" UNITS=" " TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_five" VAL="GGG_five" TYPE="float" UNITS=" " TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="load_one" VAL="GGG_one" TYPE="float" UNITS=" " TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="swap_free" VAL="1097636" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="swap_total" VAL="2097636" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.mem.real.total" VAL="GGG_memtotal" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.mem.real.buffers" VAL="GGG_membuff" TYPE="float" UNITS="KB" TN="54" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+@@ -87,16 +63,6 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.mem.real.shared" VAL="GGG_memshared" TYPE="float" UNITS="KB" TN="54" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="mem_total" VAL="GGG_memtotal" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_buffers" VAL="GGG_membuff" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_cached" VAL="GGG_memcached" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_free" VAL="GGG_memfree" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="mem_shared" VAL="GGG_memshared" TYPE="float" UNITS="KB" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ <METRIC NAME="ct.snmp.cpu.aidle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.idle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+@@ -107,14 +73,4 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.user" VAL="GGG_user" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="cpu_aidle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_idle" VAL="GGG_idle" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_nice" VAL="GGG_nice" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_system" VAL="GGG_system" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+-<METRIC NAME="cpu_user" VAL="GGG_user" TYPE="float" UNITS="%" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="gmond">
+-</METRIC>
+ </HOST>
