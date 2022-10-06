@@ -195,6 +195,9 @@
     - tilt
     - sinatra
     - netaddr-1.4.0
+    - mini_portile
+    - nokogiri-1.5.10
+    - nokogiri-1.6.2.1
 
     # - snmp-1.1.1
     # - ct_modbus

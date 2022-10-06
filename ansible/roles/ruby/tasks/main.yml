@@ -1,6 +1,20 @@
+- name: Download packages from S3
+  amazon.aws.aws_s3:
+    bucket: alces-flight
+    object: /concertim/packages/misc/{{ item }}.tgz
+    dest: "{{ role_path }}/files/tmp/{{ item }}.tgz"
+    mode: get
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+  loop:
+    - openssl-1.0.2u
+    - openssl-1.0.2l
+    - ruby-1.8.7-p374
+    - ruby-1.9.2-p0
+
 - name: Extract tar file
   ansible.builtin.unarchive:
-    src: "{{ item }}.tgz"
+    src: "tmp/{{ item }}.tgz"
     dest: /
     creates: /opt/{{ item }}
   loop:

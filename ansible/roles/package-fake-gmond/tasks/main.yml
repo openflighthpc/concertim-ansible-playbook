@@ -1,0 +1,77 @@
+- name: Download source from S3
+  amazon.aws.aws_s3:
+    bucket: alces-flight
+    object: "{{ fake_gmond_s3_object }}"
+    dest: "{{ role_path }}/files/tmp/{{ fake_gmond_tar_file_name }}"
+    mode: get
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+
+- name: Make destination directory
+  ansible.builtin.file:
+    path: "{{ fake_gmond_extract_dir }}"
+    owner: "{{ fake_gmond_owner }}"
+    group: "{{ fake_gmond_group }}"
+    mode: "755"
+    state: directory
+
+- name: Extract tar files
+  ansible.builtin.unarchive:
+    src: "tmp/{{ fake_gmond_tar_file_name }}"
+    dest: "{{ fake_gmond_extract_dir }}"
+    creates: "{{ fake_gmond_src_dir }}"
+
+- name: Correct ownership
+  ansible.builtin.file:
+    path: "{{ fake_gmond_src_dir }}"
+    owner: "{{ fake_gmond_owner }}"
+    group: "{{ fake_gmond_group }}"
+    recurse: true
+    mode: "o+x"
+
+# XXX Move to fake gmond git repo when available.
+- name: Patch source code
+  ansible.builtin.patch:
+    src: "patches/{{ item }}"
+    basedir: "{{ fake_gmond_src_dir }}"
+    backup: yes
+    strip: 1
+  loop:
+    - fix-ruby-path.patch
+
+# XXX Move to fake gmond git repo when available.
+- name: Install start_fake_gmond script
+  ansible.builtin.copy:
+    src: start_fake_gmond
+    dest: "{{ fake_gmond_src_dir }}"
+    owner: "{{ fake_gmond_owner }}"
+    group: "{{ fake_gmond_group }}"
+    mode: "755"
+
+- name: Install init.d file
+  ansible.builtin.copy:
+    src: fake-ganglia.init
+    dest: /etc/init.d/fake-ganglia
+    owner: root
+    group: root
+    mode: "755"
+
+- name: Add entry to gmetad.conf
+  ansible.builtin.lineinfile:
+    line: "data_source fake_gmond localhost:{{ fake_gmond_port }}"
+    path: /etc/ganglia/gmetad.conf
+    insertbefore: EOF
+  register: gmetad_change
+
+- name: Restart gmetad
+  ansible.builtin.service:
+    name: gmetad
+    state: restarted
+  when: gmetad_change.changed
+
+- name: Ensure fake gmond is enabled
+  ansible.builtin.service:
+    name: fake-ganglia
+    state: started
+    enabled: yes
+

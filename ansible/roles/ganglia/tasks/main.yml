@@ -18,7 +18,7 @@
 - name: Install gmetad configuration
   ansible.builtin.copy:
     src: gmetad.conf
-    dest: /etc/
+    dest: /etc/ganglia/
     owner: root
     group: nogroup
     mode: u=rw,g=r,o=r

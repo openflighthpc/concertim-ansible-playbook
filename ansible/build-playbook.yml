@@ -50,6 +50,8 @@
       tags: release-info
     - role: appliance-dev
       tags: appliance-dev
+    - role: package-fake-gmond
+      tags: package-fake-gmond
     - role: finalization
       tags: finalization
 
