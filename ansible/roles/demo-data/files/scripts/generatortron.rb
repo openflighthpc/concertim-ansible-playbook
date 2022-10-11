@@ -114,7 +114,10 @@ module Generatortron
 
     def create_rack(data)
       rack = Ivy::HwRack.find_by_name(data[:name])
-      return rack if rack
+      if rack
+        puts "Found rack #{rack.name}"
+        return rack
+      end
 
       params = {
         :name => data[:name],
@@ -135,7 +138,10 @@ module Generatortron
 
     def create_management_appliance(rack)
       device = Ivy::Device.find_by_role('mia')
-      return if device
+      if device
+        puts "-> Found MIA #{device.name}"
+        return
+      end
 
       params = management_appliance_params(rack)
       res = Ivy::TemplatePersister.persist_one_with_changes(params)
@@ -171,7 +177,10 @@ module Generatortron
 
     def create_zero_u_device(rack, data)
       device = Ivy::Device.find_by_name(data[:name])
-      return if device
+      if device
+        puts "-> Found zero u device #{device.name}"
+        return
+      end
 
       params = zero_u_device_params(rack, data)
       res = Ivy::TemplatePersister.persist_one_with_changes(params)
@@ -215,7 +224,10 @@ module Generatortron
 
     def create_rack_device(rack, data)
       device = Ivy::Device.find_by_name(data[:name])
-      return if device
+      if device
+        puts "-> Found rack device #{device.name}"
+        return
+      end
 
       params = rack_device_params(rack, data)
       res = Ivy::TemplatePersister.persist_one_with_changes(params)
@@ -250,12 +262,15 @@ module Generatortron
 
     def create_chassis_server(chassis, data)
       server = chassis.devices.find_by_name(data[:name])
-      return if server
+      if server
+        puts "--> Found chassis server #{server.name}"
+        return
+      end
 
       params = chassis_server_params(chassis, data)
       server = Ivy::Device::Server.create(params)
       if server.persisted?
-        puts "-> Created chassis server #{server.name}"
+        puts "--> Created chassis server #{server.name}"
       else
         raise Errors::RecordNotSaved, server
       end
@@ -279,7 +294,10 @@ module Generatortron
 
     def create_sensor(data)
       device = Ivy::Device.find_by_name(data[:name])
-      return if device
+      if device
+        puts "-> Found sensor #{device.name}"
+        return
+      end
 
       params = sensor_params(data)
       res = Ivy::TemplatePersister.persist_one_with_changes(params)
@@ -335,16 +353,18 @@ module Generatortron
       generator = Generator.new(args.first)
       if generator.valid?
         generator.call
+        return 0
       else
         $stderr.puts generator.errors.full_messages
+        return 1
       end
     rescue Generatortron::Errors::GeneratortronError
-      puts $!.message
+      $stderr.puts $!.message
       return 1
     rescue
-      puts $!
-      puts $!.message
-      puts $!.backtrace
+      $stderr.puts $!
+      $stderr.puts $!.message
+      $stderr.puts $!.backtrace
       return 2
     end
   end
