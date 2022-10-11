@@ -8,5 +8,7 @@
   roles:
     - role: configure-vanilla
       tags: configure-vanilla
+    - role: demo-data
+      tags: demo-data
     - role: finalization
       tags: finalization
