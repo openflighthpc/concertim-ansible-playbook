@@ -1,0 +1,246 @@
+sensors:
+  - name: temp01
+    template_id: 678
+    sensor_type: temperature
+
+  - name: temp02
+    template_id: 678
+    sensor_type: temperature
+
+  - name: hum01
+    template_id: 678
+    sensor_type: humidity
+
+  - name: hum02
+    template_id: 678
+    sensor_type: humidity
+
+# XXX Add non-rack non-sensor devices.
+non_rack_devices: []
+
+racks:
+  - name: Rack-1
+    u_height: 20
+    template_id: 669
+
+    devices:
+      - name: switch01
+        template_id: 558
+        type: Switch
+        start_u: 19
+        facing: "b"
+
+      - name: comp10
+        template_id: 613
+        type: Server
+        start_u: 18
+        facing: "f"
+
+      - name: comp09
+        template_id: 613
+        type: Server
+        start_u: 17
+        facing: "f"
+
+      - name: comp08
+        template_id: 613
+        type: Server
+        start_u: 16
+        facing: "f"
+
+      - name: comp07
+        template_id: 613
+        type: Server
+        start_u: 15
+        facing: "f"
+
+      - name: comp06
+        template_id: 613
+        type: Server
+        start_u: 14
+        facing: "f"
+
+      - name: comp05
+        template_id: 613
+        type: Server
+        start_u: 13
+        facing: "f"
+
+      - name: comp04
+        template_id: 613
+        type: Server
+        start_u: 12
+        facing: "f"
+
+      - name: vdu01
+        template_id: 379
+        type: MiscellaneousDevice
+        start_u: 10
+        facing: "f"
+
+      - name: comp03
+        template_id: 613
+        type: Server
+        start_u: 9
+        facing: "f"
+
+      - name: comp02
+        template_id: 613
+        type: Server
+        start_u: 8
+        facing: "f"
+
+      - name: comp01
+        template_id: 613
+        type: Server
+        start_u: 7
+        facing: "f"
+
+      - name: ups01
+        template_id: 15
+        type: Server
+        start_u: 5
+        facing: "b"
+
+      - name: storage01
+        template_id: 681
+        type: Server
+        start_u: 1
+        facing: "f"
+
+    zero_u_devices:
+      - name: pdu01
+        template_id: 4
+        type: PowerStrip
+        location: top
+        facing: "b"
+        username: fake
+        password: fake
+
+      - name: pdu02
+        template_id: 4
+        type: PowerStrip
+        location: top
+        facing: "b"
+        username: fake
+        password: fake
+
+  - name: Rack-2
+    height: 20
+
+    devices:
+      - name: switch02
+        template_id: 558
+        type: Switch
+        start_u: 20
+        facing: "b"
+
+      - name: "HP Blade 01"
+        template_id: 172
+        type: Server
+        start_u: 14
+        facing: "f"
+
+        devices:
+          - name: comp25
+            template_id: 172
+            type: Server
+
+          - name: comp24
+            template_id: 172
+            type: Server
+
+      - name: comp23
+        template_id: 613
+        type: Server
+        start_u: 13
+        facing: "f"
+
+      - name: comp22
+        template_id: 613
+        type: Server
+        start_u: 12
+        facing: "f"
+
+      - name: comp21
+        template_id: 613
+        type: Server
+        start_u: 11
+        facing: "f"
+
+      - name: comp20
+        template_id: 613
+        type: Server
+        start_u: 10
+        facing: "f"
+
+      - name: comp19
+        template_id: 613
+        type: Server
+        start_u: 9
+        facing: "f"
+
+      - name: comp18
+        template_id: 613
+        type: Server
+        start_u: 8
+        facing: "f"
+
+      - name: comp17
+        template_id: 613
+        type: Server
+        start_u: 7
+        facing: "f"
+
+      - name: comp16
+        template_id: 613
+        type: Server
+        start_u: 6
+        facing: "f"
+
+      - name: comp15
+        template_id: 613
+        type: Server
+        start_u: 5
+        facing: "f"
+
+      - name: comp14
+        template_id: 613
+        type: Server
+        start_u: 4
+        facing: "f"
+
+      - name: comp13
+        template_id: 613
+        type: Server
+        start_u: 3
+        facing: "f"
+
+      - name: comp12
+        template_id: 613
+        type: Server
+        start_u: 2
+        facing: "f"
+
+      - name: comp11
+        template_id: 613
+        type: Server
+        start_u: 1
+        facing: "f"
+
+    zero_u_devices:
+      - name: pdu03
+        template_id: 4
+        type: PowerStrip
+        location: top
+        facing: "b"
+        username: fake
+        password: fake
+
+      - name: pdu04
+        template_id: 4
+        type: PowerStrip
+        location: top
+        facing: "b"
+        username: fake
+        password: fake
