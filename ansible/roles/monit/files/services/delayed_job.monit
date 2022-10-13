@@ -1,0 +1,13 @@
+# Checks to make sure emma's publishing daemon delayed_job is working
+check process delayed_job with pidfile /data/private/share/emma/core/tmp/delayed_job.pid
+  start program = "/bin/bash -c '/bin/sleep 5 && /usr/bin/systemctl start delayed_job'" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop delayed_job"
+  if totalmem > 8% for 5 cycles then restart   # eating up memory?
+  if totalcpu > 12% for 5 cycles then restart # hung process?
+  #depends on postgresql
+
+# Introduced to check when delayed_job stops publishing to mia and hangs its drb connection
+  check program emma_drb with path "/usr/local/sbin/check_emma_connection.sh"
+    if status != 0 for 5 cycles then restart
+    start program = "/bin/bash -c '/bin/sleep 5 && /usr/bin/systemctl start delayed_job'" with timeout 60 seconds
+    stop program = "/usr/bin/systemctl stop delayed_job"

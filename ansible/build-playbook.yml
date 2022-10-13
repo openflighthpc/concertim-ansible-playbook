@@ -20,8 +20,8 @@
       tags: memcached
     - role: ganglia
       tags: ganglia
-    # - role: monit
-    #   tags: monit
+    - role: monit
+      tags: monit
     - role: data_dirs
       tags: data_dirs
     - role: ruby

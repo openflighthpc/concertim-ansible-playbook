@@ -116,7 +116,14 @@
       ansible.builtin.command:
         cmd: dpkg -i --force-architecture --force-overwrite {{ role_path }}/files/ct-capacity-daemon-number-cruncher.deb
 
-# - name: Install clobber script
+- name: Install clobber script
+  ansible.builtin.copy:
+    src: scripts/clobber
+    dest: /usr/local/sbin/
+    owner: root
+    group: root
+    mode: "755"
+
 # - name: Install hw.sh script
 
 - name: Ensure that daemons are enabled
