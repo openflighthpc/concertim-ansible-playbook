@@ -3,6 +3,13 @@
     name: monit
     state: latest
 
+# We will enable monit after MIA is configured.
+- name: Stop monit
+  ansible.builtin.service:
+    name: monit
+    state: stopped
+    enabled: no
+
 - name: Install configuration
   ansible.builtin.copy:
     src: "{{ item.src }}"
@@ -24,7 +31,6 @@
       group: root
       mode: "700"
 
-
 - name: Install monitored services configuration
   ansible.builtin.copy:
     src: services/
@@ -38,7 +44,7 @@
     group: root
     mode: "755"
 
-- name: Create symlinks
+- name: Create monit utility script symlinks
   ansible.builtin.file:
     src: /usr/local/sbin/check_drb_connection.sh
     dest: "/usr/local/sbin/{{ item }}"
@@ -47,3 +53,33 @@
     - check_hacor_connection.sh
     - check_sas_connection.sh
     - check_meca_connection.sh
+
+# - name: Add monit to inittab
+#   ansible.builtin.lineinfile:
+#     line: "mo:2345:respawn:/usr/sbin/monit -I -c /etc/monit/monitrc -s /var/lib/monit/monit.state"
+#     path: "/etc/inittab"
+#     insertbefore: EOF
+
+# - name: Install apache monit scripts
+#   ansible.builtin.copy:
+#     src: "{{ item.src }}"
+#     dest: "{{ item.dest }}"
+#     owner: "{{ item.owner }}"
+#     group: "{{ item.group }}"
+#     mode: "{{ item.mode }}"
+#   loop:
+#     - src: apache2-http.monit
+#       dest: /etc/monit/conf.d/apache2
+#       owner: root
+#       group: root
+#       mode: "644"
+#     - src: apache2-http.monit
+#       dest: /usr/local/etc
+#       owner: root
+#       group: root
+#       mode: "644"
+#     - src: apache2-https.monit
+#       dest: /usr/local/etc
+#       owner: root
+#       group: root
+#       mode: "644"

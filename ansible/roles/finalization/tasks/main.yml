@@ -34,3 +34,11 @@
 - name: Restart mia again because of the reasons
   ansible.builtin.command:
     cmd: mongrel_rails cluster::restart -C /etc/mongrel_cluster/mia.yml --clean
+
+# We're now finally ready to monit our services.
+- name: Start monit
+  ansible.builtin.service:
+    name: monit
+    state: started
+    enabled: yes
+  when: start_monit == True
