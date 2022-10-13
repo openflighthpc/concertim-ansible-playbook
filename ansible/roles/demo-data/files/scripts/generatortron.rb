@@ -80,6 +80,10 @@ module Generatortron
           end
         end
       end
+
+      if data[:data_centre]
+        create_data_centre_plan_view(data[:data_centre])
+      end
     end
 
     def valid?
@@ -320,6 +324,77 @@ module Generatortron
           "stype" => data[:sensor_type],
         }
       }.with_indifferent_access
+    end
+
+    def create_data_centre_plan_view(data)
+      # Save image to mia public folder.
+      file_name = data[:image_path]
+      image = File.open(file_name)
+      image_dir = "/data/private/share/rails/mia/public"
+      rn = rand(2**16)
+      processed_image_path = "/images/data_centre/background_#{rn}.png"
+      thumbnail_path = "/images/data_centre/thumbnail_#{rn}.png"
+      system("/usr/bin/convert #{image.path} -resize 1000x1000 #{image_dir}#{processed_image_path}")
+      system("/usr/bin/convert #{image.path} -resize 100x100 #{image_dir}#{thumbnail_path}")
+      system("/bin/chown www-data:www-data #{image_dir}#{thumbnail_path} #{image_dir}#{processed_image_path}")
+      pixels_cmd = "identify -format \"%wx%h\" #{image_dir}#{processed_image_path}"
+      x_pixels, y_pixels = Open3.popen3(pixels_cmd) do |_, stdout, _|
+        stdout.read.chomp.split('x')
+      end
+
+      # Once image is saved, create the data centre plan view.
+      data_centre = Ivy::DataCentre.first
+      if data_centre.nil?
+        data_centre =  Ivy::DataCentre.new(
+          "x_dim" => data[:x_dim],
+          "y_dim" => data[:y_dim],
+          "image_dir" => image_dir,
+          "image_path" => processed_image_path,
+          "image_thumbnail_path" => thumbnail_path,
+          "x_pixels" => x_pixels,
+          "y_pixels" => y_pixels,
+          "file_name" => file_name,
+        )
+      end
+      unless data_centre.save
+        raise Errors::RecordNotSaved, data_centre
+      end
+
+      # Now position objects on data centre plan view.
+      data_centre.positions.destroy_all
+      additions = []
+      Ivy::HwRack.all.each_with_index do |rack, idx|
+        position_data = data[:rack_positions][idx]
+        break if position_data.nil?
+        additions << {
+          "item_id" => rack.id,
+          "item_type" => "racks",
+          "x_pos" => position_data[:x_pos],
+          "y_pos" => position_data[:y_pos],
+          "x_dim" => position_data[:x_dim],
+          "y_dim" => position_data[:y_dim],
+        }
+      end
+      Ivy::Device::Sensor.all.each_with_index do |sensor, idx|
+        position_data = data[:sensor_positions][idx]
+        break if position_data.nil?
+        additions << {
+          "item_id" => sensor.id,
+          "item_type" => "sensors",
+          "x_pos" => position_data[:x_pos],
+          "y_pos" => position_data[:y_pos],
+          "x_dim" => position_data[:x_dim],
+          "y_dim" => position_data[:y_dim],
+        }
+      end
+
+      params = {
+        "additions" => additions.each_with_index.reduce({}) do |accum, item|
+          accum[item[1]] = item[0]
+          accum
+        end
+      }
+      data_centre.set_positions(params)
     end
 
     def nice_log_name(data, res)
