@@ -48,15 +48,6 @@ if [ -n "${port}" ]; then
    fi
 fi
 
-# This now done in check_drb_connection.sh, which is a common shared test script
-# check with MIA that our service is still publishing its models
-# use 404 to distinguish between an error and MIA just not being up
-#wget -SO- -T 5 -t 1 --no-check-certificate https://localhost/monit/service/${daemon} 2>&1 | grep "ERROR 404"
-#if [ $? = 0 ]; then
-#   echo "${daemon} not publishing its models in MIA"
-#   exit 1
-#fi
-
 # also check if the group update kicker is unable to access the group_id method of other models
 log=/opt/concurrent-thinking/meca/log/group_update_kicker.log
 fails=$(tail -5 ${log} | grep "undefined method \`group_ids'" | wc -l)
