@@ -29,3 +29,12 @@
       failed_when: generatortron.rc != 0
       when: generatortron.rc != 0
 
+- name: Restart meryl
+  ansible.builtin.service:
+    name: meryl
+    state: restarted
+
+- name: Ensure fake gmond is running
+  ansible.builtin.service:
+    name: fake-ganglia
+    state: started
