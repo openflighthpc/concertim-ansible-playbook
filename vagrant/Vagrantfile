@@ -32,6 +32,21 @@ PLAYBOOKS = [
   },
 ]
 
+KNOWN_ENV_VARS = %w(
+  ANSIBLE_PLAYBOOK
+  ANSIBLE_START_AT_TASK
+  ANSIBLE_TAGS
+  ANSIBLE_VERBOSE
+)
+
+class BadEnvVars < Vagrant::Errors::VagrantError
+  def error_message
+    env_vars = @extra_data[:env_vars]
+    "Badly named environment variables #{env_vars}.  " \
+      "Valid values are #{KNOWN_ENV_VARS.join(', ')}"
+  end
+end
+
 class BadPlaybook < Vagrant::Errors::VagrantError
   def error_message
     pb = @extra_data[:playbook]
@@ -41,6 +56,8 @@ class BadPlaybook < Vagrant::Errors::VagrantError
 end
 
 Vagrant.configure("2") do |config|
+  assert_good_env_vars
+
   MACHINES.each_with_index do |box, idx|
     config.vm.provider "virtualbox" do |v|
       # v.memory = 8192
@@ -93,5 +110,12 @@ def to_boolean(v)
     true
   else
     false
+  end
+end
+
+def assert_good_env_vars
+  bad_vars = ENV.keys.grep(/^ansible/i) - KNOWN_ENV_VARS
+  unless bad_vars.empty?
+    raise BadEnvVars, {env_vars: bad_vars.join(', ')}
   end
 end
