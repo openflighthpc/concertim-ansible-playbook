@@ -1,6 +1,7 @@
 # Checks to make sure emma's publishing daemon delayed_job is working
 check process delayed_job with pidfile /data/private/share/emma/core/tmp/delayed_job.pid
-  start program = "/usr/local/sbin/monit-systemctl-restart.sh delayed_job.service" with timeout 60 seconds
+  start program = "/usr/bin/systemctl restart delayed_job.service" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart delayed_job.service" with timeout 60 seconds
   stop program = "/usr/bin/systemctl stop delayed_job.service"
   if totalmem > 8% for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
@@ -9,5 +10,6 @@ check process delayed_job with pidfile /data/private/share/emma/core/tmp/delayed
 # Introduced to check when delayed_job stops publishing to mia and hangs its drb connection
   check program emma_drb with path "/usr/local/sbin/check_emma_connection.sh"
     if status != 0 for 5 cycles then restart
-    start program = "/usr/local/sbin/monit-systemctl-restart.sh delayed_job.service" with timeout 60 seconds
+    start program = "/usr/bin/systemctl restart delayed_job.service" with timeout 60 seconds
+    restart program = "/usr/bin/systemctl restart delayed_job.service" with timeout 60 seconds
     stop program = "/usr/bin/systemctl stop delayed_job.service"
