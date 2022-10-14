@@ -1,5 +1,5 @@
 check process enid with pidfile /var/run/enid.pid
-  start program = "/usr/bin/systemctl start enid" with timeout 60 seconds
+  start program = "/usr/local/sbin/monit-systemctl-restart.sh enid" with timeout 60 seconds
   stop program = "/usr/bin/systemctl stop enid"
   if failed port 9292 type tcp
      with timeout 10 seconds
@@ -8,7 +8,7 @@ check process enid with pidfile /var/run/enid.pid
   # depends on memcached
 
 check file enid_log with path /var/log/enid.log
-  start program = "/usr/bin/systemctl start enid" with timeout 60 seconds
+  start program = "/usr/local/sbin/monit-systemctl-restart.sh enid" with timeout 60 seconds
   stop program = "/usr/bin/systemctl stop enid"
   if timestamp > 90 seconds then restart
   group server

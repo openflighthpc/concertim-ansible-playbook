@@ -1,5 +1,5 @@
 check process meryl with pidfile /var/run/meryl.pid
-  start program = "/bin/bash -c '/bin/sleep 5 && /usr/bin/systemctl start meryl'" with timeout 60 seconds
+  start program = "/usr/local/sbin/monit-systemctl-restart.sh meryl" with timeout 60 seconds
   stop program = "/usr/bin/systemctl stop meryl"
   # 16% for meryl, meryl has a fixed 50MB + size of data centre so use percentage #15727
   if totalmem > 16% for 5 cycles then restart   # eating up memory?
