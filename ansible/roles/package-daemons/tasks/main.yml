@@ -126,6 +126,19 @@
 
 # - name: Install hw.sh script
 
+
+# XXX Port these to git repo.
+- name: Patch daemons source code
+  ansible.builtin.patch:
+    src: "patches/{{ item.patch }}"
+    basedir: "{{ daemon_installation_dir }}/{{ item.daemon }}"
+    backup: yes
+    strip: 1
+  loop:
+    - daemon: meryl
+      patch: meryl-fix-monit-path.patch
+
+
 - name: Ensure that daemons are enabled
   ansible.builtin.service:
     name: "{{ item }}"
