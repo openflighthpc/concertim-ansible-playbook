@@ -1,0 +1,17 @@
+set daemon 60
+     with start delay 120
+
+set logfile syslog facility log_daemon                       
+
+set statefile /var/lib/monit/monit.state
+set idfile /var/lib/monit/monit.id
+set pidfile /var/lib/monit/monit.pid
+
+#set mmonit http://localhost/sys/monit_collector
+
+set httpd port 2812 and
+    use address 127.0.0.1  # only accept connection from localhost
+    allow localhost        # allow localhost to connect to the server and
+    allow admin:monit      # require user 'admin' with password 'monit
+
+include /etc/monit/conf.d/*

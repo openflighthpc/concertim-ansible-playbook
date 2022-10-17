@@ -1,0 +1,12 @@
+diff -ur meryl.orig/lib/parser.rb meryl/lib/parser.rb
+--- meryl.orig/lib/parser.rb	2014-08-12 14:14:08.000000000 +0000
++++ meryl/lib/parser.rb	2022-10-14 14:22:01.122276640 +0000
+@@ -98,7 +98,7 @@
+         if @gmetad_fails > 6
+           w "Restarting gmetad"
+           @gmetad_fails = 0
+-          `/usr/sbin/monit restart #{@aggregate ? 'gmetad-agg' : 'gmetad'}`
++          `/usr/bin/monit restart #{@aggregate ? 'gmetad-agg' : 'gmetad'}`
+         end
+       end
+     end

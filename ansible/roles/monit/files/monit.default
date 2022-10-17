@@ -1,0 +1,2 @@
+startup=0
+STATEFILE="/var/lib/monit/monit.state"

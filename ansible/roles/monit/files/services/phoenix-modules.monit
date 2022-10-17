@@ -1,0 +1,122 @@
+check process uma with pidfile /var/run/mongrel_cluster/uma.3001.pid
+  start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/uma.yml" with timeout 60 seconds
+  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/uma.yml"
+  if failed port 3001 type tcp
+     # proto http
+     with timeout 10 seconds
+     then restart
+  if totalmem > 70.0 MB for 5 cycles then restart   # eating up memory?
+  if totalcpu > 12% for 5 cycles then restart # hung process?
+  group mongrel
+
+check process hacor with pidfile /var/run/mongrel_cluster/hacor.3002.pid
+  start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/hacor.yml" with timeout 60 seconds
+  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/hacor.yml"
+  if failed port 3002 type tcp
+     proto http
+     request /monit/serialize_check
+     with timeout 10 seconds
+     then restart
+  # 512 MB for HACOR this is a fixed value, no work 100MB hard working 300MB+
+  if totalmem > 512.0 MB for 5 cycles then restart   # eating up memory?
+  if totalcpu > 12% for 5 cycles then restart # hung process?
+  group mongrel
+  # depends on memcached
+  # depends on postgresql
+
+# Introduced to check when hacor hangs its drb connection
+# Use restart, and always place a sleep 15 or more in your script, see script for why
+check program hacor_drb with path "/usr/local/sbin/check_hacor_connection.sh"
+  if status != 0 for 2 times within 2 cycles then restart
+  start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/hacor.yml" with timeout 60 seconds
+  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/hacor.yml"
+
+check process meca with pidfile /var/run/mongrel_cluster/meca.3003.pid
+  start program = "/bin/bash -c '/bin/sleep 5 && /usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/meca.yml'" with timeout 60 seconds
+  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/meca.yml"
+  if failed port 3003 type tcp
+     # proto http
+     with timeout 10 seconds
+     then restart
+  # 5% for MECA as it is affected by the size of the data centre, and therefore memory installed #18729
+  if totalmem > 5% for 5 cycles then restart   # eating up memory?
+  if totalcpu > 12% for 5 cycles then restart # hung process?
+  group mongrel
+  # depends on postgresql
+
+# # #26619 - Noticed that meca hung and ONLY a kill -9 would fix it
+# check file meca_log with path /opt/concurrent-thinking/meca/log/threshold_state_changes_recorder.log
+#   if timestamp > 300 seconds then exec "/usr/local/sbin/clobber_mongrel_daemon meca"
+
+# Introduced to check when meca hangs its drb connection
+# Use restart, and always place a sleep 15 or more in your script, see script for why
+check program meca_drb with path "/usr/local/sbin/check_meca.sh"
+  if status != 0 for 2 times within 2 cycles then restart
+  start program = "/bin/bash -c '/bin/sleep 5 && /usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/meca.yml'" with timeout 60 seconds
+  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/meca.yml"
+
+check process scram with pidfile /var/run/mongrel_cluster/scram.3004.pid
+  start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/scram.yml" with timeout 60 seconds
+  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/scram.yml"
+  if failed port 3004 type tcp
+     # proto http
+     with timeout 10 seconds
+     then restart
+  # 70 MB for module this is a fixed value, it rarely changes on size of data centre
+  if totalmem > 80.0 MB for 5 cycles then restart   # eating up memory?
+  if totalcpu > 12% for 5 cycles then restart # hung process?
+  group mongrel
+
+check process oobm with pidfile /var/run/mongrel_cluster/oobm.3005.pid
+  start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/oobm.yml" with timeout 60 seconds
+  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/oobm.yml"
+  if failed port 3005 type tcp
+     # proto http
+     with timeout 10 seconds
+     then restart
+  # 70 MB for module this is a fixed value, it rarely changes on size of data centre
+  if totalmem > 70.0 MB for 5 cycles then restart   # eating up memory?
+  if totalcpu > 12% for 5 cycles then restart # hung process?
+  group mongrel
+
+# check process nadia with pidfile /var/run/mongrel_cluster/nadia.3006.pid
+#   start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/nadia.yml" with timeout 60 seconds
+#   stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/nadia.yml"
+#   if failed port 3006 type tcp
+#      # proto http
+#      with timeout 10 seconds
+#      then restart
+#   # 70 MB for module this is a fixed value, it rarely changes on size of data centre
+#   if totalmem > 70.0 MB for 5 cycles then restart   # eating up memory?
+#   if totalcpu > 12% for 5 cycles then restart # hung process?
+#   group mongrel
+
+check process sas with pidfile /var/run/mongrel_cluster/sas.3007.pid
+  start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/sas.yml" with timeout 60 seconds
+  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/sas.yml"
+  if failed port 3007 type tcp
+     # proto http
+     with timeout 10 seconds
+     then restart
+  # 4% for module this is a fixed value, it rarely changes but does get slightly larger with DC #18796
+  # This is heavily used in backup restore, so make sure it can deal with a large data set restore like demo1
+  if totalmem > 4% for 5 cycles then restart   # eating up memory?
+  if totalcpu > 12% for 5 cycles then restart # hung process?
+  group mongrel
+
+# restart sas if a backup is not produced every 24 hours (plus an extra hour's grace) and make sure the file
+# is updated so it doesn't constantly restart it all day long, for ever and ever...... fighting with sas and sas_drb
+check file sas_log with path /opt/concurrent-thinking/sas/log/production.log
+  start program = "/bin/bash -c '/usr/bin/touch /opt/concurrent-thinking/sas/log/production.log && /usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/sas.yml'" with timeout 60 seconds
+  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/sas.yml"
+  if timestamp > 90000 seconds then restart
+  group mongrel
+
+# Introduced to check when sas hangs its drb connection
+# Use restart, and always place a sleep 15 or more in your script, see script for why
+check program sas_drb with path "/usr/local/sbin/check_sas_connection.sh"
+  if status != 0 for 2 times within 2 cycles then restart
+  start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/sas.yml" with timeout 60 seconds
+  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/sas.yml"
+  group mongrel
+

@@ -5,6 +5,8 @@
   become_user: root
   become_method: sudo
   gather_facts: False
+  vars:
+    start_monit: true
   roles:
     - role: configure-vanilla
       tags: configure-vanilla

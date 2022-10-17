@@ -1,0 +1,17 @@
+check process delia with pidfile /var/run/delia.pid
+  start program = "/usr/bin/systemctl restart delia" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart delia" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop delia"
+  if failed port 2000 type tcp
+     with timeout 5 seconds
+     then restart
+  if totalcpu > 12% for 5 cycles then restart # hung process?
+  if 8 restarts within 10 cycles then exec "/usr/local/sbin/clobber delia"
+  group daemon
+
+check file delia_log with path /var/log/delia.log
+  start program = "/usr/bin/systemctl restart delia" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart delia" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop delia"
+  if timestamp > 5 minutes then restart
+  group daemon
