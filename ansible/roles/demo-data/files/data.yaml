@@ -249,10 +249,10 @@ racks:
         start_u: 42
         facing: "b"
 
-      - name: "HP Blade 05"
+      - name: "HP Blade 03"
         template_id: 172
         type: Server
-        start_u: 36
+        start_u: 32
         facing: "f"
 
         devices:
@@ -264,13 +264,6 @@ racks:
             template_id: 172
             type: Server
 
-      - name: "HP Blade 04"
-        template_id: 172
-        type: Server
-        start_u: 32
-        facing: "f"
-
-        devices:
           - name: comp47
             template_id: 172
             type: Server
@@ -279,13 +272,6 @@ racks:
             template_id: 172
             type: Server
 
-      - name: "HP Blade 03"
-        template_id: 172
-        type: Server
-        start_u: 28
-        facing: "f"
-
-        devices:
           - name: comp45
             template_id: 172
             type: Server
@@ -297,7 +283,7 @@ racks:
       - name: "HP Blade 02"
         template_id: 172
         type: Server
-        start_u: 24
+        start_u: 26
         facing: "f"
 
         devices:
