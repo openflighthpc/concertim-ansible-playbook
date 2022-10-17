@@ -1,14 +1,3 @@
-check process uma with pidfile /var/run/mongrel_cluster/uma.3001.pid
-  start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/uma.yml" with timeout 60 seconds
-  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/uma.yml"
-  if failed port 3001 type tcp
-     # proto http
-     with timeout 10 seconds
-     then restart
-  if totalmem > 70.0 MB for 5 cycles then restart   # eating up memory?
-  if totalcpu > 12% for 5 cycles then restart # hung process?
-  group mongrel
-
 check process hacor with pidfile /var/run/mongrel_cluster/hacor.3002.pid
   start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/hacor.yml" with timeout 60 seconds
   stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/hacor.yml"
