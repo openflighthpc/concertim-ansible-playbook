@@ -1,0 +1,17 @@
+diff -ur '--exclude=log' '--exclude=tmp' emma.orig/core/config/expected_modules.yml emma/core/config/expected_modules.yml
+--- emma.orig/core/config/expected_modules.yml	2022-10-17 11:10:44.773011327 +0000
++++ emma/core/config/expected_modules.yml	2022-10-17 11:25:16.050740340 +0000
+@@ -4,4 +4,3 @@
+ - 'meca'
+ - 'scram'
+ - 'oobm'
+-- 'nadia'
+diff -ur '--exclude=log' '--exclude=tmp' emma.orig/core/config/services.yml emma/core/config/services.yml
+--- emma.orig/core/config/services.yml	2022-10-17 11:10:20.452485317 +0000
++++ emma/core/config/services.yml	2022-10-17 11:25:27.234826832 +0000
+@@ -3,5 +3,4 @@
+ - Estate management
+ - Hardware configuration repository
+ - Metric collection and monitoring
+-- Node image management
+ - Script repository and management
