@@ -1,0 +1,144 @@
+diff -ur '--exclude=tmp' '--exclude=log' mia.orig/app/helpers/hacor/snmp_mibs_helper.rb mia/app/helpers/hacor/snmp_mibs_helper.rb
+--- mia.orig/app/helpers/hacor/snmp_mibs_helper.rb	2015-11-16 17:25:04.000000000 +0000
++++ mia/app/helpers/hacor/snmp_mibs_helper.rb	2022-10-17 15:18:53.085208637 +0000
+@@ -88,7 +88,7 @@
+   #
+   def format_snmp_mib_provider(provider)
+     if provider == "CT"
+-      "Concertim Infrastructure Management Limited"
++      "Alces Flight Ltd"
+     elsif provider == "USER"
+       "User"
+     elsif provider == "UPLOAD"
+diff -ur '--exclude=tmp' '--exclude=log' mia.orig/app/helpers/sas/icr_helper.rb mia/app/helpers/sas/icr_helper.rb
+--- mia.orig/app/helpers/sas/icr_helper.rb	2015-11-16 17:25:04.000000000 +0000
++++ mia/app/helpers/sas/icr_helper.rb	2022-10-17 15:18:38.416995503 +0000
+@@ -15,7 +15,7 @@
+   end
+ 
+   def link_to_recipe
+-    link_to("View the Concertim #{icr_brand_name} recipe", :action => 'recipe')
++    link_to("View the Alces Concertim #{icr_brand_name} recipe", :action => 'recipe')
+   end
+ 
+   def link_to_certified_output(user_authorization)
+diff -ur '--exclude=tmp' '--exclude=log' mia.orig/app/views/about/index.rhtml mia/app/views/about/index.rhtml
+--- mia.orig/app/views/about/index.rhtml	2015-11-16 17:25:04.000000000 +0000
++++ mia/app/views/about/index.rhtml	2022-10-17 15:10:33.209904268 +0000
+@@ -35,7 +35,7 @@
+ 
+   <br />
+ 
+-  &copy; <%=h copyright %> Concertim Infrastructure Management Limited.  All Rights Reserved.
++  &copy; <%=h copyright %> Alces Flight Ltd.  All Rights Reserved.
+ 
+ </div>
+ 
+@@ -65,10 +65,10 @@
+ </table>
+ 
+ <h3>Licensing information</h3>
+-<p>This Concertim Appliance is copyright <%=h copyright %> Concertim Infrastructure Management Limited.  Unauthorized copying or distribution is not permitted.</p>
++<p>This Alces Concertim Appliance is copyright <%=h copyright %> Alces Flight Ltd.  Unauthorized copying or distribution is not permitted.</p>
+ 	<ul>
+ 		<li>This appliance contains and utilises open source technology.  Details of the open source software used by this appliance are listed below.</li>
+-	        <li>Concertim copyrights apply to the Concertim portions of this product and not to any of the open source software used within the product.</li>
++	        <li>Alces Concertim copyrights apply to the Alces Concertim portions of this product and not to any of the open source software used within the product.</li>
+ 		<li>For further information, copies of license terms
+ 		or to obtain, free of charge, any of the open source
+ 		packages used within this product please contact <%=h $appliance[:support_team] %> on <a href="mailto:<%=h $appliance[:support_mail] %>"><%=h $appliance[:support_mail] %></a>.</li>
+diff -ur '--exclude=tmp' '--exclude=log' mia.orig/app/views/layouts/mia.rhtml mia/app/views/layouts/mia.rhtml
+--- mia.orig/app/views/layouts/mia.rhtml	2022-10-17 12:40:00.029054805 +0000
++++ mia/app/views/layouts/mia.rhtml	2022-10-17 14:52:48.375181714 +0000
+@@ -172,7 +172,7 @@
+ <%= render :partial => 'share/taskbar' %>
+ <p>
+ &copy; <%= h $appliance[:metadata].release_attrs['copyright'] %>
+-  <a href="http://www.concertim.com">Powered by Concertim</a>
++  <a href="https://alces-flight.com">Powered by Alces Concertim</a>
+   
+   (<a href="/-/privacy">Privacy policy</a>)
+ </p>
+diff -ur '--exclude=tmp' '--exclude=log' mia.orig/app/views/sas/backup_manager/_initial_explanation.html.erb mia/app/views/sas/backup_manager/_initial_explanation.html.erb
+--- mia.orig/app/views/sas/backup_manager/_initial_explanation.html.erb	2016-12-01 10:20:44.000000000 +0000
++++ mia/app/views/sas/backup_manager/_initial_explanation.html.erb	2022-10-17 15:21:00.071046663 +0000
+@@ -3,7 +3,7 @@
+ backing up your appliance. The following will be backed up by this wizard:</p>
+ 
+ <ul>
+-  <li>All Concertim management appliance network settings</li>
++  <li>All Alces Concertim management appliance network settings</li>
+   <li>The hardware inventory</li>
+   <li>All historical metric data (RRD)</li>
+   <li>All user metric data</li>
+diff -ur '--exclude=tmp' '--exclude=log' mia.orig/app/views/sas/icr/index.html.erb mia/app/views/sas/icr/index.html.erb
+--- mia.orig/app/views/sas/icr/index.html.erb	2015-11-16 17:25:04.000000000 +0000
++++ mia/app/views/sas/icr/index.html.erb	2022-10-17 15:20:52.918943451 +0000
+@@ -9,8 +9,8 @@
+ <%= link_to(icr_in_full, "http://www.intel.com/go/cluster") %>
+ supported cluster. It was built to a specific configuration from both a
+ Hardware and Software reference point. The Intel&reg; "Certificate of
+-Compliance" and the Concertim <%= icr_brand_name %> recipe used by
+-Concertim to obtain the "Certificate of Compliance" are both shipped
++Compliance" and the Alces Concertim <%= icr_brand_name %> recipe used by
++Alces Concertim to obtain the "Certificate of Compliance" are both shipped
+ with the cluster and both can be viewed using the links below.  This
+ certification was obtained using the <%= icr_checker_in_full %> version
+ <%= icr_version %> software which all resides on the installed images of the
+@@ -36,7 +36,7 @@
+ <%= link_to("Overview page", "/") %>.  Once the cluster is deemed as compliant and the 
+ <%= icr_in_full %> logo has appeared a "Sales Report" will have been generated, available from the drop 
+ down menu under the "Regular User". This "Sales Report", when displayed, will have the option 
+-to submit an email to both Intel&reg; and Concertim, this will be used for sales and
++to submit an email to both Intel&reg; and Alces Concertim, this will be used for sales and
+ marketing purposes only and does not hold any confidential data. Please make sure this is 
+ sent as it helps both companies inmprove their products.
+ </p>
+diff -ur '--exclude=tmp' '--exclude=log' mia.orig/app/views/sas/icr/sales_report.html.erb mia/app/views/sas/icr/sales_report.html.erb
+--- mia.orig/app/views/sas/icr/sales_report.html.erb	2015-11-16 17:25:04.000000000 +0000
++++ mia/app/views/sas/icr/sales_report.html.erb	2022-10-17 15:19:59.210167244 +0000
+@@ -14,7 +14,7 @@
+   <div style="clear:both"></div>
+   
+   <p>Now your cluster is <%= icr_in_full %>, please send the information above
+-  to Concertim Infrastructure Management Limited and Intel Corporation by selecting <i>Submit
++  to Alces Flight Ltd and Intel Corporation by selecting <i>Submit
+     Email</i>.</p>
+   
+   <%= create_email_link(@sales_report_data) %>
+diff -ur '--exclude=tmp' '--exclude=log' mia.orig/app/views/sas/setup/_net.html.erb mia/app/views/sas/setup/_net.html.erb
+--- mia.orig/app/views/sas/setup/_net.html.erb	2015-11-16 17:25:04.000000000 +0000
++++ mia/app/views/sas/setup/_net.html.erb	2022-10-17 15:21:19.491326743 +0000
+@@ -7,7 +7,7 @@
+   your appliance.</div>
+ <h4>SSL certificate authority</h4>
+ <div>
+-  Your appliance certificates are generated by Concertim Infrastructure Management Limited,
++  Your appliance certificates are generated by Alces Flight Ltd,
+   using an SSL certificate authority.  If you have not yet done
+   so, you should <a href="/ca.crt">import the public key</a> of this
+   certificate authority into your browser so that secure connections
+diff -ur '--exclude=tmp' '--exclude=log' mia.orig/app/views/uma/account/_login_form.html.erb mia/app/views/uma/account/_login_form.html.erb
+--- mia.orig/app/views/uma/account/_login_form.html.erb	2015-12-22 16:24:28.000000000 +0000
++++ mia/app/views/uma/account/_login_form.html.erb	2022-10-17 14:52:28.482910850 +0000
+@@ -2,9 +2,9 @@
+ 
+ <div class = "widgetDescription">
+   <div class = "corporateLogos">
+-    <img src = "/-/personalities/ct/images/upper-login.png" title = "Concertim Command" class = "corporateLogo corporateLogoLeft" />
++    <img src = "/-/personalities/ct/images/upper-login.png" title = "Alces Concertim Command" class = "corporateLogo corporateLogoLeft" />
+     <br><p><span><strong>by</strong></span><br>
+-    <img src = "/-/personalities/ct/images/lower-login.png" title = "Concertim Command" class="corporateLogo corporateLogoRight" />
++    <img src = "/-/personalities/ct/images/lower-login.png" title = "Alces Concertim Command" class="corporateLogo corporateLogoRight" />
+   </div>
+ 
+   <% if Romance::Consumer::divorced?("emma") %>
+@@ -22,7 +22,7 @@
+        <br/>
+        <span style="font-size: 10px">
+          &copy; <%= h $appliance[:metadata].release_attrs['copyright'] %>
+-         <a href="http://www.concertim.com">Powered by Concertim</a>
++         <a href="https://alces-flight.com">Powered by Alces Concertim</a>
+        </span>
+      </center>
+   <% end %>

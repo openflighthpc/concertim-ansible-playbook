@@ -1,0 +1,26 @@
+diff -ur sas.orig/post_restoration_scripts/always_run/090_concurrent_appliances_default_group.rb sas/post_restoration_scripts/always_run/090_concurrent_appliances_default_group.rb
+--- sas.orig/post_restoration_scripts/always_run/090_concurrent_appliances_default_group.rb	2016-01-19 12:53:14.000000000 +0000
++++ sas/post_restoration_scripts/always_run/090_concurrent_appliances_default_group.rb	2022-10-17 15:05:51.713987419 +0000
+@@ -40,16 +40,16 @@
+           :ref_text => "all_concertim_appliances",
+           :aggregate_members_metrics => true,
+           :model_names => ['385', '386'],
+-          :manufacturer_names => ['Concertim Infrastructure Management'],
+-          :name => "Concertim Appliances",
+-          :description => "All Concertim Appliances"})
++          :manufacturer_names => ['Alces Concertim'],
++          :name => "Alces Concertim Appliances",
++          :description => "All Alces Concertim Appliances"})
+         rbg.save
+       else
+-        RuleBasedGroup.new(:name => "Concertim Appliances",
+-          :description => "All Concertim Appliances",
++        RuleBasedGroup.new(:name => "Alces Concertim Appliances",
++          :description => "All Alces Concertim Appliances",
+           :ref_text => "all_concertim_appliances",
+           :aggregate_members_metrics => true,
+-          :manufacturer_names => ['Concertim Infrastructure Management'],
++          :manufacturer_names => ['Alces Concertim'],
+           :model_names => ['385', '386'],
+           :immutable => true).save
+       end

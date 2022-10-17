@@ -67,6 +67,7 @@
         - disable-vpn-and-pxe-config-updating.patch
         - disable-legacy-events-generator-2.patch
         - nadia-is-not-expected.patch
+        - rebranding.patch
 
     - name: Bundle install gems
       ansible.builtin.shell: |

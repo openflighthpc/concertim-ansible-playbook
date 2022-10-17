@@ -11,3 +11,4 @@
     # publishing its models.
     - initial-ftsw.patch
     - ftsw-disable-vpn-and-pxe-config-updating.patch
+    - rebranding.patch
