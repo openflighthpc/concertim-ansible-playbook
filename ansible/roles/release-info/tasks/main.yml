@@ -20,6 +20,15 @@
       cat {{ version_yml_dest }} >> {{ release_yml_dest }}
 
 # - name: Install license creation script
+# XXX Replace below with above creation script.
+- name: Install fake licenses
+  ansible.builtin.copy:
+    content: |
+      {}
+    dest: "{{ licenses_yml_dest }}"
+    owner: www-data
+    group: www-data
+    mode: "644"
 
 # Originally the "final" bundle installed a script which set the following
 # when the MIA was rebooted.  We now do this as part of the build process,
