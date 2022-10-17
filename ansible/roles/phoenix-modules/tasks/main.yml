@@ -66,16 +66,7 @@
     loop_var: module
 
 
-
-# - name: configuring nadia
-#   when: '"nadia" in modules'
-#   ansible.builtin.copy:
-#     src: "{{ phoenix_modules_root_dir }}/nadia/
-#     dest: "{{ template_dest }}"
-#     remote_src: true
-
 - name: configuring uma
-  when: '"uma" in modules'
   vars:
     template_dest: "{{ phoenix_modules_root_dir }}/uma/db/fixtures/users.yml"
     template_src: "{{ template_dest }}.tagged"
