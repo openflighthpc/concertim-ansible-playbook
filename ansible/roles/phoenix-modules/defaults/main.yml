@@ -1,21 +1,13 @@
 mode: production
 phoenix_modules_root_dir: "/data/private/share/rails"
 integrator_password: integrator
-phoenix_modules:
-  - name: hacor
-    start: true
-  - name: meca
-    start: true
-  - name: oobm
-    start: true
-  - name: sas
-    start: true
-  - name: scram
-    start: true
-
-  # Uma is only wanted for its database migrations.
-  # XXX The migrations should be moved from uma to emma/uma.
-  - name: uma
-    start: false
+modules:
+  - hacor
+  # - nadia
+  - meca
+  - oobm
+  - sas
+  - scram
+  - uma
 bind_directory: /opt/concurrent-thinking
 dynamic_images: "/opt/concurrent-thinking/mia/public/images/dynamic/"
