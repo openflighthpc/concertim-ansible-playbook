@@ -1,4 +1,4 @@
-diff -ur '--exclude=tmp' '--exclude=log' emma.orig/core/app/views/home/about.haml emma/core/app/views/home/about.haml
+diff -ur emma.orig/core/app/views/home/about.haml emma/core/app/views/home/about.haml
 --- emma.orig/core/app/views/home/about.haml	2019-09-13 13:01:43.000000000 +0000
 +++ emma/core/app/views/home/about.haml	2022-10-17 15:27:00.152208240 +0000
 @@ -8,13 +8,13 @@
@@ -29,7 +29,7 @@ diff -ur '--exclude=tmp' '--exclude=log' emma.orig/core/app/views/home/about.ham
    %li For further information, copies of license terms or to obtain, free of charge, any of the open source packages used within this product please contact #{ current_personality_presenter.support_team } on #{ current_personality_presenter.support_mail_link }
    %li All company and product names are trademarks or registered trademarks of their respective owners.
    %li This appliance contains and utilises open source technology.  Details of the open source software used by this appliance are listed below.
-diff -ur '--exclude=tmp' '--exclude=log' emma.orig/core/app/views/home/privacy.haml emma/core/app/views/home/privacy.haml
+diff -ur emma.orig/core/app/views/home/privacy.haml emma/core/app/views/home/privacy.haml
 --- emma.orig/core/app/views/home/privacy.haml	2019-09-13 13:01:43.000000000 +0000
 +++ emma/core/app/views/home/privacy.haml	2022-10-17 15:27:42.904817609 +0000
 @@ -3,7 +3,7 @@
@@ -41,7 +41,7 @@ diff -ur '--exclude=tmp' '--exclude=log' emma.orig/core/app/views/home/privacy.h
  
  %h3 How we use cookies
  %p
-diff -ur '--exclude=tmp' '--exclude=log' emma.orig/core/app/views/layouts/shared/_footer.haml emma/core/app/views/layouts/shared/_footer.haml
+diff -ur emma.orig/core/app/views/layouts/shared/_footer.haml emma/core/app/views/layouts/shared/_footer.haml
 --- emma.orig/core/app/views/layouts/shared/_footer.haml	2019-09-13 13:01:43.000000000 +0000
 +++ emma/core/app/views/layouts/shared/_footer.haml	2022-10-17 14:53:28.559729691 +0000
 @@ -5,7 +5,7 @@
@@ -53,37 +53,7 @@ diff -ur '--exclude=tmp' '--exclude=log' emma.orig/core/app/views/layouts/shared
      (#{link_to "Privacy policy", privacy_path})
      \#{render :partial => 'share/google_analytics' if google_analytics_enabled?}
  / footer
-diff -ur '--exclude=tmp' '--exclude=log' emma.orig/core/config/personalities/ct/personality.yml emma/core/config/personalities/ct/personality.yml
---- emma.orig/core/config/personalities/ct/personality.yml	2022-10-17 12:39:40.084841023 +0000
-+++ emma/core/config/personalities/ct/personality.yml	2022-10-17 15:30:54.395540784 +0000
-@@ -1,17 +1,17 @@
- ---
- :personality: 'ct'
--:personality_name: 'WES LLC'
--:personality_url: 'http://www.wes.net/'
-+:personality_name: 'Alces Concertim'
-+:personality_url: 'https://alces-flight.com/'
- :name: 'Command %VERSION%'
- :about: 'Command Release: %RELEASE%'
- :short: 'Command'
- :title: 'Command Management Appliance'
--:subtitle: 'From WES LLC'
--:manufacturer: 'Concertim Infrastructure Management'
--:error_mail: 'concertim.support@wes.net'
--:support_team: 'WES LLC'
--:support_mail: 'concertim.support@wes.net'
--:support_web: 'http://www.wes.net/'
--:support_tel: '+1 215 619 0980'
-+:subtitle: 'From Alces Concertim'
-+:manufacturer: 'Alces Flight Ltd'
-+:error_mail: 'concertim.support@alces-flight.com'
-+:support_team: 'Alces Concertim'
-+:support_mail: 'concertim.support@alces-flight.com'
-+:support_web: 'https://alces-flight.com/'
-+:support_tel: ''
- :mia_chassis_template_name: 'Command'
- :isla_chassis_template_name: 'Control'
-diff -ur '--exclude=tmp' '--exclude=log' emma.orig/core/lib/generators/personality/personality_generator.rb emma/core/lib/generators/personality/personality_generator.rb
+diff -ur emma.orig/core/lib/generators/personality/personality_generator.rb emma/core/lib/generators/personality/personality_generator.rb
 --- emma.orig/core/lib/generators/personality/personality_generator.rb	2019-09-13 13:01:43.000000000 +0000
 +++ emma/core/lib/generators/personality/personality_generator.rb	2022-10-17 15:29:22.302232271 +0000
 @@ -1,7 +1,7 @@
@@ -104,7 +74,7 @@ diff -ur '--exclude=tmp' '--exclude=log' emma.orig/core/lib/generators/personali
      name = ask "> "
  
      return name.blank? ? DEFAULT_PERSONALITY_NAME : name
-diff -ur '--exclude=tmp' '--exclude=log' emma.orig/core/lib/generators/personality/templates/personality.yml emma/core/lib/generators/personality/templates/personality.yml
+diff -ur emma.orig/core/lib/generators/personality/templates/personality.yml emma/core/lib/generators/personality/templates/personality.yml
 --- emma.orig/core/lib/generators/personality/templates/personality.yml	2019-09-13 13:01:43.000000000 +0000
 +++ emma/core/lib/generators/personality/templates/personality.yml	2022-10-17 15:30:55.215552425 +0000
 @@ -1,17 +1,17 @@
@@ -133,7 +103,7 @@ diff -ur '--exclude=tmp' '--exclude=log' emma.orig/core/lib/generators/personali
 +:support_tel: ''
  :mia_chassis_template_name: 'Command'
  :isla_chassis_template_name: 'Control'
-diff -ur '--exclude=tmp' '--exclude=log' emma.orig/ivy/app/models/ivy/template.rb emma/ivy/app/models/ivy/template.rb
+diff -ur emma.orig/ivy/app/models/ivy/template.rb emma/ivy/app/models/ivy/template.rb
 --- emma.orig/ivy/app/models/ivy/template.rb	2019-09-13 13:01:43.000000000 +0000
 +++ emma/ivy/app/models/ivy/template.rb	2022-10-17 15:31:43.064231559 +0000
 @@ -1,6 +1,6 @@
@@ -144,7 +114,7 @@ diff -ur '--exclude=tmp' '--exclude=log' emma.orig/ivy/app/models/ivy/template.r
  
      include Emma::Searchable
  
-diff -ur '--exclude=tmp' '--exclude=log' emma.orig/ivy/config/locales/en.yml emma/ivy/config/locales/en.yml
+diff -ur emma.orig/ivy/config/locales/en.yml emma/ivy/config/locales/en.yml
 --- emma.orig/ivy/config/locales/en.yml	2019-09-13 13:01:43.000000000 +0000
 +++ emma/ivy/config/locales/en.yml	2022-10-17 15:31:29.592040396 +0000
 @@ -46,7 +46,7 @@
@@ -156,7 +126,7 @@ diff -ur '--exclude=tmp' '--exclude=log' emma.orig/ivy/config/locales/en.yml emm
        racks: 
          singular: "Rack"
          title: 'Rack Data'
-diff -ur '--exclude=tmp' '--exclude=log' emma.orig/meca/app/models/meca/metric.rb emma/meca/app/models/meca/metric.rb
+diff -ur emma.orig/meca/app/models/meca/metric.rb emma/meca/app/models/meca/metric.rb
 --- emma.orig/meca/app/models/meca/metric.rb	2019-09-13 13:01:43.000000000 +0000
 +++ emma/meca/app/models/meca/metric.rb	2022-10-17 15:23:47.389452499 +0000
 @@ -14,10 +14,10 @@
@@ -174,7 +144,7 @@ diff -ur '--exclude=tmp' '--exclude=log' emma.orig/meca/app/models/meca/metric.r
                           ["User Calculated Metrics"               , ["user.calc."],   :calc],
                           ["User Mapped Metrics"                   , ["user.mapped."], :mapped],
                           ["Cannon Technologies Metrics"           , ["cn."],          :cannon]
-diff -ur '--exclude=tmp' '--exclude=log' emma.orig/uma/app/models/uma/user.rb emma/uma/app/models/uma/user.rb
+diff -ur emma.orig/uma/app/models/uma/user.rb emma/uma/app/models/uma/user.rb
 --- emma.orig/uma/app/models/uma/user.rb	2019-09-13 13:01:43.000000000 +0000
 +++ emma/uma/app/models/uma/user.rb	2022-10-17 15:24:12.177807715 +0000
 @@ -396,7 +396,7 @@
@@ -186,7 +156,7 @@ diff -ur '--exclude=tmp' '--exclude=log' emma.orig/uma/app/models/uma/user.rb em
  
      self[:email] = default_email if read_attribute(:email).nil? || read_attribute(:email).empty?
      super
-diff -ur '--exclude=tmp' '--exclude=log' emma.orig/uma/app/views/devise/sessions/new.haml emma/uma/app/views/devise/sessions/new.haml
+diff -ur emma.orig/uma/app/views/devise/sessions/new.haml emma/uma/app/views/devise/sessions/new.haml
 --- emma.orig/uma/app/views/devise/sessions/new.haml	2019-09-13 13:01:43.000000000 +0000
 +++ emma/uma/app/views/devise/sessions/new.haml	2022-10-17 14:53:15.303548822 +0000
 @@ -7,9 +7,9 @@
