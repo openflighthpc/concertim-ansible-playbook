@@ -1,0 +1,19 @@
+# XXX Port these to git repo.
+- name: Patch ailsa source code
+  vars:
+    daemon: ailsa
+  ansible.builtin.patch:
+    src: "patches/{{ item }}"
+    basedir: "{{ daemon_installation_dir }}/{{ daemon }}"
+    backup: yes
+    strip: 1
+  loop:
+    - ailsa-remove-polly-dependency.patch
+    - ailsa-ignore-vpn-and-eth1.patch
+    - ailsa-disable-log-and-expires-monitors.patch
+
+- name: Copy config
+  ansible.builtin.copy:
+    src: "{{ daemon_installation_dir}}/ailsa/config/config.yml.mia.template"
+    remote_src: true
+    dest: "{{ daemon_installation_dir}}/ailsa/config/config.yml"
