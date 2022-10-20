@@ -22,4 +22,5 @@
   ansible.builtin.lineinfile:
     regexp: '^(\s*)owner: Concertim Infrastructure Management Limited'
     line: '\1owner: Alces Flight Ltd'
+    backrefs: true
     path: "{{ daemon_installation_dir}}/ailsa/config/config.yml"
