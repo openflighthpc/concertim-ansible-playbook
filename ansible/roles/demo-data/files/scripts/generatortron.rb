@@ -125,7 +125,7 @@ module Generatortron
 
       params = {
         :name => data[:name],
-        :u_height => data[:u_height] || 20,
+        :u_height => data[:u_height] || 42,
         :template_id => data[:template_id],
         :cluster_id => @cluster_id,
       }

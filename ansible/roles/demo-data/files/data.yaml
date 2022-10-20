@@ -20,80 +20,194 @@ non_rack_devices: []
 
 racks:
   - name: Rack-1
-    u_height: 20
+    u_height: 42
     template_id: 669
 
     devices:
       - name: switch01
         template_id: 558
         type: Switch
-        start_u: 19
+        start_u: 41
         facing: "b"
+
+      - name: comp29
+        template_id: 613
+        type: Server
+        start_u: 39
+        facing: "f"
+
+      - name: comp28
+        template_id: 613
+        type: Server
+        start_u: 38
+        facing: "f"
+
+      - name: comp27
+        template_id: 613
+        type: Server
+        start_u: 37
+        facing: "f"
+
+      - name: comp26
+        template_id: 613
+        type: Server
+        start_u: 36
+        facing: "f"
+
+      - name: comp25
+        template_id: 613
+        type: Server
+        start_u: 35
+        facing: "f"
+
+      - name: comp24
+        template_id: 613
+        type: Server
+        start_u: 34
+        facing: "f"
+
+      - name: comp23
+        template_id: 613
+        type: Server
+        start_u: 33
+        facing: "f"
+
+      - name: comp22
+        template_id: 613
+        type: Server
+        start_u: 32
+        facing: "f"
+
+      - name: comp21
+        template_id: 613
+        type: Server
+        start_u: 31
+        facing: "f"
+
+      - name: comp20
+        template_id: 613
+        type: Server
+        start_u: 30
+        facing: "f"
+
+      - name: comp19
+        template_id: 613
+        type: Server
+        start_u: 29
+        facing: "f"
+
+      - name: comp18
+        template_id: 613
+        type: Server
+        start_u: 28
+        facing: "f"
+
+      - name: comp17
+        template_id: 613
+        type: Server
+        start_u: 27
+        facing: "f"
+
+      - name: comp16
+        template_id: 613
+        type: Server
+        start_u: 26
+        facing: "f"
+
+      - name: comp15
+        template_id: 613
+        type: Server
+        start_u: 25
+        facing: "f"
+
+      - name: comp14
+        template_id: 613
+        type: Server
+        start_u: 24
+        facing: "f"
+
+      - name: comp13
+        template_id: 613
+        type: Server
+        start_u: 23
+        facing: "f"
+
+      - name: comp12
+        template_id: 613
+        type: Server
+        start_u: 22
+        facing: "f"
+
+      - name: comp11
+        template_id: 613
+        type: Server
+        start_u: 21
+        facing: "f"
 
       - name: comp10
         template_id: 613
         type: Server
-        start_u: 18
+        start_u: 20
         facing: "f"
 
       - name: comp09
         template_id: 613
         type: Server
-        start_u: 17
+        start_u: 19
         facing: "f"
 
       - name: comp08
         template_id: 613
         type: Server
-        start_u: 16
+        start_u: 18
         facing: "f"
 
       - name: comp07
         template_id: 613
         type: Server
-        start_u: 15
+        start_u: 17
         facing: "f"
 
       - name: comp06
         template_id: 613
         type: Server
-        start_u: 14
+        start_u: 16
         facing: "f"
 
       - name: comp05
         template_id: 613
         type: Server
-        start_u: 13
+        start_u: 15
         facing: "f"
 
       - name: comp04
         template_id: 613
         type: Server
-        start_u: 12
-        facing: "f"
-
-      - name: vdu01
-        template_id: 379
-        type: MiscellaneousDevice
-        start_u: 10
+        start_u: 14
         facing: "f"
 
       - name: comp03
         template_id: 613
         type: Server
-        start_u: 9
+        start_u: 13
         facing: "f"
 
       - name: comp02
         template_id: 613
         type: Server
-        start_u: 8
+        start_u: 12
         facing: "f"
 
       - name: comp01
         template_id: 613
         type: Server
-        start_u: 7
+        start_u: 11
+        facing: "f"
+
+      - name: vdu01
+        template_id: 379
+        type: MiscellaneousDevice
+        start_u: 9
         facing: "f"
 
       - name: ups01
@@ -126,103 +240,131 @@ racks:
         password: fake
 
   - name: Rack-2
-    height: 20
+    u_height: 42
 
     devices:
       - name: switch02
         template_id: 558
         type: Switch
-        start_u: 20
+        start_u: 42
         facing: "b"
+
+      - name: "HP Blade 03"
+        template_id: 172
+        type: Server
+        start_u: 32
+        facing: "f"
+
+        devices:
+          - name: comp49
+            template_id: 172
+            type: Server
+
+          - name: comp48
+            template_id: 172
+            type: Server
+
+          - name: comp47
+            template_id: 172
+            type: Server
+
+          - name: comp46
+            template_id: 172
+            type: Server
+
+          - name: comp45
+            template_id: 172
+            type: Server
+
+          - name: comp44
+            template_id: 172
+            type: Server
+
+      - name: "HP Blade 02"
+        template_id: 172
+        type: Server
+        start_u: 26
+        facing: "f"
+
+        devices:
+          - name: comp43
+            template_id: 172
+            type: Server
+
+          - name: comp42
+            template_id: 172
+            type: Server
 
       - name: "HP Blade 01"
         template_id: 172
         type: Server
-        start_u: 14
+        start_u: 20
         facing: "f"
 
         devices:
-          - name: comp25
+          - name: comp41
             template_id: 172
             type: Server
 
-          - name: comp24
+          - name: comp40
             template_id: 172
             type: Server
 
-      - name: comp23
-        template_id: 613
-        type: Server
-        start_u: 13
-        facing: "f"
-
-      - name: comp22
-        template_id: 613
-        type: Server
-        start_u: 12
-        facing: "f"
-
-      - name: comp21
-        template_id: 613
-        type: Server
-        start_u: 11
-        facing: "f"
-
-      - name: comp20
+      - name: comp39
         template_id: 613
         type: Server
         start_u: 10
         facing: "f"
 
-      - name: comp19
+      - name: comp38
         template_id: 613
         type: Server
         start_u: 9
         facing: "f"
 
-      - name: comp18
+      - name: comp37
         template_id: 613
         type: Server
         start_u: 8
         facing: "f"
 
-      - name: comp17
+      - name: comp36
         template_id: 613
         type: Server
         start_u: 7
         facing: "f"
 
-      - name: comp16
+      - name: comp35
         template_id: 613
         type: Server
         start_u: 6
         facing: "f"
 
-      - name: comp15
+      - name: comp34
         template_id: 613
         type: Server
         start_u: 5
         facing: "f"
 
-      - name: comp14
+      - name: comp33
         template_id: 613
         type: Server
         start_u: 4
         facing: "f"
 
-      - name: comp13
+      - name: comp32
         template_id: 613
         type: Server
         start_u: 3
         facing: "f"
 
-      - name: comp12
+      - name: comp31
         template_id: 613
         type: Server
         start_u: 2
         facing: "f"
 
-      - name: comp11
+      - name: comp30
         template_id: 613
         type: Server
         start_u: 1
@@ -251,33 +393,33 @@ data_centre:
   y_dim: 4
 
   rack_positions:
-    - x_pos: 0.73
-      y_pos: 0.69
-      x_dim: 0.6
-      y_dim: 1.2
+    - x_pos: 1.32
+      y_pos: 1.42
+      x_dim: 0.68
+      y_dim: 1.18
 
-    - x_pos: 1.43
-      y_pos: 0.69
-      x_dim: 0.6
-      y_dim: 1.2
+    - x_pos: 2.00
+      y_pos: 1.42
+      x_dim: 0.68
+      y_dim: 1.18
 
   sensor_positions:
-    - x_pos: "2.25"
-      y_pos: "0.55"
+    - x_pos: "2.85"
+      y_pos: "1.10"
       x_dim: "0.07023411371237458"
       y_dim: "0.07812470935748006"
 
-    - x_pos: "0.45"
-      y_pos: "2.05"
+    - x_pos: "1.05"
+      y_pos: "2.85"
       x_dim: "0.07023411371237458"
       y_dim: "0.07812470935748006"
 
-    - x_pos: "0.45"
-      y_pos: "0.55"
+    - x_pos: "1.05"
+      y_pos: "1.10"
       x_dim: "0.07023411371237458"
       y_dim: "0.07812470935748006"
 
-    - x_pos: "2.25"
-      y_pos: "2.05"
+    - x_pos: "2.85"
+      y_pos: "2.85"
       x_dim: "0.07023411371237458"
       y_dim: "0.07812470935748006"
