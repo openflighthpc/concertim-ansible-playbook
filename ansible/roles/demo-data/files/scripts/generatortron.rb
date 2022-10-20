@@ -84,8 +84,6 @@ module Generatortron
       if data[:data_centre]
         create_data_centre_plan_view(data[:data_centre])
       end
-
-      create_appliance_config
     end
 
     def valid?
@@ -397,68 +395,6 @@ module Generatortron
         end
       }
       data_centre.set_positions(params)
-    end
-
-    # Create a single appliance config representing the MIA appliance.
-    #
-    # If there are also, ISLA devices, they will need to be done via the UI.
-    def create_appliance_config
-      # This is what's stored in memcache.
-      #h = {"02:15:35:6d:49:d6"=>{"config"=>{:datatype=>"string", :units=>"internal", :source=>"config:02:15:35:6d:49:d6", :name=>"config", :value=>{"date"=>"2019-12-02 15:52:00 +0000", "host"=>"", "mtime"=>"1666262184", "url"=>"", "revision"=>"44391", "eui"=>"02:15:35:6d:49:d6", "mgmt_ip"=>"10.0.2.15", "eth0_eui"=>"02:15:35:6d:49:d6", "vpn_ip"=>"", "version"=>"6.4.0", "name"=>"Command", "appliance_type"=>"MIA"}, :nature=>"string_and_time", :dmax=>90, :timestamp=>1666262184, :stale=>false}}}
-
-      # These are the params that get sent with a HTML request to configure.
-      params = {
-        "eui" => "02:15:35:6d:49:d6",
-        "eth0_eui" => "02:15:35:6d:49:d6",
-        "id" => nil,
-        "appliance_config" => {
-          "group_id" => Ivy::Group.find_by_ref_text('all').id,
-          "device_id" => ManagedDevice.mias.first.id,
-        }
-      }.with_indifferent_access
-
-      # The request goes to MIA's/hacor's ApplianceConfigController#create_mia.
-      #
-      # Something, something, something
-      #
-      # * A new ApplianceConfig is created
-      # * The mia's management_interface (ApplianceNetworkInterfaceProxy) is
-      #   updated somehow.
-      # * The mia's public_interface is updated somehow.
-      # * A bunch of `Sensor`'s may or may not be created.  Perhaps this is
-      #   only for ISLAs?
-
-      # ----------------------------------------------------------------
-      # WARNING: The following code may or may not be the correct way to
-      # start achieving the above.  It certainly isn't complete.
-      # ----------------------------------------------------------------
-      # existing_config = ApplianceConfig.find(:all)
-      # return if existing_config
-
-      # memcache_config = MEMCACHE['appliances']
-      # if memcache_config.nil? || memcache_config.size == 0
-      #   @stderr.puts("Unable to create appliance config.  Entry not in memcache.")
-      #   return
-      # end
-      # if memcache_config.size > 1
-      #   @stderr.puts("Unable to create appliance config.  Multiple entries in memcache.")
-      #   return
-      # end
-
-      # mem_compact = {}
-      # mem.each do |eui,app|
-      #   mem_compact[eui]={}
-      #   val = app['config'][:value] rescue {}
-      #   val.each {|k,v| mem_compact[eui][k]=v}
-      # end
-      # appliance_metadata = mem_compact.values.map do |a|
-      #   OpenStruct.new(a) if Hash === a
-      # end.compact rescue []
-
-      # if appliance_metadata.empty?
-      #   @stderr.puts("Unable to create appliance config.")
-      #   return
-      # end
     end
 
     def nice_log_name(data, res)
