@@ -87,6 +87,7 @@
     - mia.patch
     - disable-ferret.patch
     - disable-help-links.patch
+    - rebranding.patch
 
 
 - name: Make appliance directory

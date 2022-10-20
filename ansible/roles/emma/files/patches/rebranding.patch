@@ -1,0 +1,180 @@
+diff -ur emma.orig/core/app/views/home/about.haml emma/core/app/views/home/about.haml
+--- emma.orig/core/app/views/home/about.haml	2019-09-13 13:01:43.000000000 +0000
++++ emma/core/app/views/home/about.haml	2022-10-17 15:27:00.152208240 +0000
+@@ -8,13 +8,13 @@
+ 
+ .row
+   .small-2.columns
+-    = tag(:img, src: '/-/personalities/ct/images/logo-left.png', title: "Concertim Infrastructure Management Command", class: :corporateLogo)
++    = tag(:img, src: '/-/personalities/ct/images/logo-left.png', title: "Alces Concertim Command", class: :corporateLogo)
+   .small-10.columns
+     = render partial: "home/about/appliance_release_details", locals: { release_details: @appliance_information_presenter.release_details }
+ %hr
+ .row
+   .small-2.columns
+-    = tag(:img, src: '/-/personalities/ct/images/logo-right.png', title: "Concertim Infrastructure Management Command", class: :corporateLogo)
++    = tag(:img, src: '/-/personalities/ct/images/logo-right.png', title: "Alces Concertim Command", class: :corporateLogo)
+   .small-10.columns
+     = render partial: "home/about/appliance_build_details", locals: { release_details: @appliance_information_presenter.release_details }
+ %hr
+@@ -52,9 +52,9 @@
+           %td.last=   item.last
+ %br
+ 
+-%p This Concertim Infrastructure Management Appliance is copyright #{ @appliance_information_presenter.copyright } WES LLC.  Unauthorized copying or distribution is not permitted.
++%p This Alces Concertim Appliance is copyright #{ @appliance_information_presenter.copyright } Alces Flight Ltd.  Unauthorized copying or distribution is not permitted.
+ %ul
+-  %li WES LLC copyrights apply to the Concertim Infrastructure Management portions of this product and not to any of the open source software used within the product.
++  %li Alces Flight Ltd copyrights apply to the Alces Concertim portions of this product and not to any of the open source software used within the product.
+   %li For further information, copies of license terms or to obtain, free of charge, any of the open source packages used within this product please contact #{ current_personality_presenter.support_team } on #{ current_personality_presenter.support_mail_link }
+   %li All company and product names are trademarks or registered trademarks of their respective owners.
+   %li This appliance contains and utilises open source technology.  Details of the open source software used by this appliance are listed below.
+diff -ur emma.orig/core/app/views/home/privacy.haml emma/core/app/views/home/privacy.haml
+--- emma.orig/core/app/views/home/privacy.haml	2019-09-13 13:01:43.000000000 +0000
++++ emma/core/app/views/home/privacy.haml	2022-10-17 15:27:42.904817609 +0000
+@@ -3,7 +3,7 @@
+ 
+ %p
+   We will never share any personal information with third parties and for more information our corporate Privacy Policy can be viewed 
+-  %a{href:'http://www.concertim.com/site/cookie_policies', target: '_blank'} here
++  %a{href:'https://alces-flight.com/privacy', target: '_blank'} here
+ 
+ %h3 How we use cookies
+ %p
+diff -ur emma.orig/core/app/views/layouts/shared/_footer.haml emma/core/app/views/layouts/shared/_footer.haml
+--- emma.orig/core/app/views/layouts/shared/_footer.haml	2019-09-13 13:01:43.000000000 +0000
++++ emma/core/app/views/layouts/shared/_footer.haml	2022-10-17 14:53:28.559729691 +0000
+@@ -5,7 +5,7 @@
+   %input#applianceLicensee{:type => "hidden", :value => appliance_meta[:metadata].release_attrs['client']}/
+   = render_cell :task_bar, :display, :user => current_user
+   %p
+-    \ &copy; #{appliance_meta[:metadata].release_attrs['copyright']}  #{link_to "Powered by Concertim", "http://www.concertim.com"}
++    \ &copy; #{appliance_meta[:metadata].release_attrs['copyright']}  #{link_to "Powered by Alces Concertim", "https://alces-flight.com"}
+     (#{link_to "Privacy policy", privacy_path})
+     \#{render :partial => 'share/google_analytics' if google_analytics_enabled?}
+ / footer
+diff -ur emma.orig/core/lib/generators/personality/personality_generator.rb emma/core/lib/generators/personality/personality_generator.rb
+--- emma.orig/core/lib/generators/personality/personality_generator.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/core/lib/generators/personality/personality_generator.rb	2022-10-17 15:29:22.302232271 +0000
+@@ -1,7 +1,7 @@
+ class PersonalityGenerator < Rails::Generators::NamedBase
+   source_root File.expand_path('../templates', __FILE__)
+   PERSONALITY_ROOT          = "config/personalities"
+-  DEFAULT_PERSONALITY_NAME  = "Concertim Infrastructure Management Limited"
++  DEFAULT_PERSONALITY_NAME  = "Alces Concertim"
+ 
+   DEFAULT_ACCENT_COLOR      = "#3b5168"
+   DEFAULT_FOREGROUND_COLOR  = "#fff"
+@@ -36,7 +36,7 @@
+   # gets the personality name from the user
+   # 
+   def get_personality_name
+-    say "Enter a name for this personality (e.g. 'Concertim Infrastructure Management Limited')", :yellow
++    say "Enter a name for this personality (e.g. 'Alces Concertim')", :yellow
+     name = ask "> "
+ 
+     return name.blank? ? DEFAULT_PERSONALITY_NAME : name
+diff -ur emma.orig/core/lib/generators/personality/templates/personality.yml emma/core/lib/generators/personality/templates/personality.yml
+--- emma.orig/core/lib/generators/personality/templates/personality.yml	2019-09-13 13:01:43.000000000 +0000
++++ emma/core/lib/generators/personality/templates/personality.yml	2022-10-17 15:30:55.215552425 +0000
+@@ -1,17 +1,17 @@
+ ---
+ :personality: '{{{PERSONALITY_CODE}}}'
+ :personality_name: '{{{PERSONALITY_NAME}}}'
+-:personality_url: 'http://www.wes.net/'
++:personality_url: 'https://alces-flight.com/'
+ :name: 'Command %VERSION%'
+ :about: 'Command Release: %RELEASE%'
+ :short: 'Command'
+ :title: 'Command Management Appliance'
+-:subtitle: 'From WES LLC'
+-:manufacturer: 'Concertim Infrastructure Management Limited'
+-:error_mail: 'concertim.support@wes.net'
+-:support_team: 'WES LLC'
+-:support_mail: 'concertim.support@wes.net'
+-:support_web: 'http://www.wes.net/'
+-:support_tel: '+1 215 619 0980'
++:subtitle: 'From Alces Concertim'
++:manufacturer: 'Alces Flight Ltd'
++:error_mail: 'concertim.support@alces-flight.com'
++:support_team: 'Alces Concertim'
++:support_mail: 'concertim.support@alces-flight.com'
++:support_web: 'https://alces-flight.com/'
++:support_tel: ''
+ :mia_chassis_template_name: 'Command'
+ :isla_chassis_template_name: 'Control'
+diff -ur emma.orig/ivy/app/models/ivy/template.rb emma/ivy/app/models/ivy/template.rb
+--- emma.orig/ivy/app/models/ivy/template.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/ivy/app/models/ivy/template.rb	2022-10-17 15:31:43.064231559 +0000
+@@ -1,6 +1,6 @@
+ module Ivy
+   class Template < Ivy::Model
+-    COMPANY_MANUFACTURER = "Concertim Infrastructure Management"
++    COMPANY_MANUFACTURER = "Alces Concertim"
+ 
+     include Emma::Searchable
+ 
+diff -ur emma.orig/ivy/config/locales/en.yml emma/ivy/config/locales/en.yml
+--- emma.orig/ivy/config/locales/en.yml	2019-09-13 13:01:43.000000000 +0000
++++ emma/ivy/config/locales/en.yml	2022-10-17 15:31:29.592040396 +0000
+@@ -46,7 +46,7 @@
+       templates:  
+         singular: "Template" 
+         title: 'Chassis Templates' 
+-        description: 'This import procedure will import an encrypted folder of chassis template files provided by Concertim.' 
++        description: 'This import procedure will import an encrypted folder of chassis template files provided by Alces Concertim.' 
+       racks: 
+         singular: "Rack"
+         title: 'Rack Data'
+diff -ur emma.orig/meca/app/models/meca/metric.rb emma/meca/app/models/meca/metric.rb
+--- emma.orig/meca/app/models/meca/metric.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/meca/app/models/meca/metric.rb	2022-10-17 15:23:47.389452499 +0000
+@@ -14,10 +14,10 @@
+                          ["SNMP Metrics"                          , ["ct.snmp."],     :snmp],
+                          ["WMI Metrics"                           , ["ct.wmi."],      :wmi],
+                          ["Modbus Metrics"                        , ["ct.modbus."],   :modbus],
+-                         ["Concertim Sensor Metrics"              , ["ct.sensor."],   :sensor],
+-                         ["Concertim Asset Metrics"               , ["ct.asset."],    :asset],
+-                         ["Concertim Capacity Metrics"            , ["ct.capacity."], :capacity],
+-                         ["Concertim Generated Metrics"           , ["ct."],          :ct],
++                         ["Alces Concertim Sensor Metrics"        , ["ct.sensor."],   :sensor],
++                         ["Alces Concertim Asset Metrics"         , ["ct.asset."],    :asset],
++                         ["Alces Concertim Capacity Metrics"      , ["ct.capacity."], :capacity],
++                         ["Alces Concertim Generated Metrics"     , ["ct."],          :ct],
+                          ["User Calculated Metrics"               , ["user.calc."],   :calc],
+                          ["User Mapped Metrics"                   , ["user.mapped."], :mapped],
+                          ["Cannon Technologies Metrics"           , ["cn."],          :cannon]
+diff -ur emma.orig/uma/app/models/uma/user.rb emma/uma/app/models/uma/user.rb
+--- emma.orig/uma/app/models/uma/user.rb	2019-09-13 13:01:43.000000000 +0000
++++ emma/uma/app/models/uma/user.rb	2022-10-17 15:24:12.177807715 +0000
+@@ -396,7 +396,7 @@
+   end
+ 
+   def email
+-    default_email = self.integrator? ? "support@concertim.com" : "#{login}@email.com"
++    default_email = self.integrator? ? "concertim.support@alces-flight.com" : "#{login}@email.com"
+ 
+     self[:email] = default_email if read_attribute(:email).nil? || read_attribute(:email).empty?
+     super
+diff -ur emma.orig/uma/app/views/devise/sessions/new.haml emma/uma/app/views/devise/sessions/new.haml
+--- emma.orig/uma/app/views/devise/sessions/new.haml	2019-09-13 13:01:43.000000000 +0000
++++ emma/uma/app/views/devise/sessions/new.haml	2022-10-17 14:53:15.303548822 +0000
+@@ -7,9 +7,9 @@
+         %h3 Login
+       .widgetDescription
+         .corporateLogos
+-          = tag(:img, src: '/-/personalities/ct/images/upper-login.png', title: "Concertim Command", class: [:corporateLogo, :corporateLogoLeft])
++          = tag(:img, src: '/-/personalities/ct/images/upper-login.png', title: "Alces Concertim Command", class: [:corporateLogo, :corporateLogoLeft])
+           %h3 <br/><strong>by</strong>
+-          = tag(:img, src: '/-/personalities/ct/images/lower-login.png', title: "Concertim Command", class: [:corporateLogo, :corporateLogoRight])
++          = tag(:img, src: '/-/personalities/ct/images/lower-login.png', title: "Alces Concertim Command", class: [:corporateLogo, :corporateLogoRight])
+ 
+       .widgetBody
+         = form_for(resource, :as => resource_name, :url => session_path(resource_name), html: { autocomple: :off, class: :no_border }) do |f|
+@@ -18,5 +18,5 @@
+           %center
+             = f.submit "Login", class: :button, name: :login
+             %br
+-            %span{ style: "font-size: 10px"} &copy; #{appliance_meta[:metadata].release_attrs['copyright']}  #{link_to "Powered by Concertim", "http://www.concertim.com"}
++            %span{ style: "font-size: 10px"} &copy; #{appliance_meta[:metadata].release_attrs['copyright']}  #{link_to "Powered by Alces Concertim", "https://alces-flight.com"}
+ 
