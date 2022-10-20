@@ -1,0 +1,41 @@
+diff -ur ailsa.orig/Gemfile ailsa/Gemfile
+--- ailsa.orig/Gemfile	2016-12-01 10:25:28.000000000 +0000
++++ ailsa/Gemfile	2022-10-19 16:07:46.643191853 +0000
+@@ -21,8 +21,8 @@
+ # isla authentification
+ gem 'delia_client'
+ gem 'delia_daemon'
+-gem 'gpgme', '~> 2.0.2'
+-gem 'polly'
++#gem 'gpgme', '~> 2.0.2'
++#gem 'polly'
+ 
+ # popups 
+ gem 'beanstalk-client-free'
+Only in ailsa/: Gemfile.lock
+diff -ur ailsa.orig/lib/webapp.rb ailsa/lib/webapp.rb
+--- ailsa.orig/lib/webapp.rb	2016-07-11 12:44:13.000000000 +0000
++++ ailsa/lib/webapp.rb	2022-10-19 16:08:21.259715852 +0000
+@@ -1,5 +1,5 @@
+ require 'sinatra/base'
+-require 'polly'
++#require 'polly'
+ require 'phoenix/meta_data'
+ 
+ module Ailsa
+@@ -45,10 +45,11 @@
+ 
+     def valid_auth
+       # use polly to unpack the usb key and validate the key
+-      Polly::Setup::retrieve_setup_data rescue nil
+-      valid = File.exists?('/data/private/src/concurrent-thinking/appliance-config.dat')
+-      system('rm -f /data/private/src/concurrent-thinking/appliance-config.*')
+-      valid
++      #Polly::Setup::retrieve_setup_data rescue nil
++      #valid = File.exists?('/data/private/src/concurrent-thinking/appliance-config.dat')
++      #system('rm -f /data/private/src/concurrent-thinking/appliance-config.*')
++      #valid
++      false
+     end
+     
+     get '/power' do

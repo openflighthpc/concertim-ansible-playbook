@@ -1,0 +1,42 @@
+diff -ur ailsa.orig/libexec/ailsa-daemon.rb ailsa/libexec/ailsa-daemon.rb
+--- ailsa.orig/libexec/ailsa-daemon.rb	2015-06-10 11:16:02.000000000 +0000
++++ ailsa/libexec/ailsa-daemon.rb	2022-10-19 17:20:34.703276236 +0000
+@@ -10,8 +10,8 @@
+   mgmt_ip = Ailsa::ip_addr(cfg[:mgmt_intf_fallback]) if mgmt_ip == ''
+   DaemonKit::logger.warn("AILSA"){"!Failed to determine the management IP address"} if mgmt_ip == ''
+ 
+-  vpn_ip = Ailsa::ip_addr(cfg[:vpn_intf])
+-  DaemonKit::logger.warn("AILSA"){"!Failed to determine the vpn IP address"} if vpn_ip == ''
++  #vpn_ip = Ailsa::ip_addr(cfg[:vpn_intf])
++  #DaemonKit::logger.warn("AILSA"){"!Failed to determine the vpn IP address"} if vpn_ip == ''
+ 
+   return mgmt_ip, vpn_ip
+ end
+@@ -63,13 +63,16 @@
+ 
+     # determine the management and vpn ip addresses
+     config[:mgmt_ip], config[:vpn_ip] = setup_networking(config)
+-    connected = true if !config[:vpn_ip].empty?
++    #connected = true if !config[:vpn_ip].empty?
++    connected = true
+ 
+     control = !File.exists?("/etc/concurrent-thinking/delia.yml")
+ 
+     # find the MAC addresses of eth0 and eth1
+     if connected
+-      config[:eui] = Ailsa::eui('eth1')
++      #config[:eui] = Ailsa::eui('eth1')
++      #config[:eth0_eui] = Ailsa::eui('eth0')
++      config[:eui] = Ailsa::eui('eth0')
+       config[:eth0_eui] = Ailsa::eui('eth0')
+       connected = false if config[:eui].empty? || config[:eth0_eui].empty?
+     end
+@@ -78,7 +81,7 @@
+     Ailsa::init(config, connected, control)
+     if connected
+       loop do
+-        collect_hw_info unless control
++        #collect_hw_info unless control
+         sleep 60
+       end
+     else

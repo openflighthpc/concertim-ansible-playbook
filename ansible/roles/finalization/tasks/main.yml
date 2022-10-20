@@ -5,11 +5,12 @@
   loop:
     - mongrel_cluster
     - emma
-    - maggie
-    - martha
-    - theresa
+    - ailsa
+    # - maggie
+    # - martha
+    # - theresa
     - enid
-    - ct-capacity-daemon
+    # - ct-capacity-daemon
     - delayed_job
 
 - name: Restart delia service

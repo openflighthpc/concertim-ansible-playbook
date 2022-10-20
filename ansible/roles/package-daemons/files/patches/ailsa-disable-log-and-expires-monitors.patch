@@ -1,0 +1,13 @@
+diff -ur ailsa.orig/lib/ailsa.rb ailsa/lib/ailsa.rb
+--- ailsa.orig/lib/ailsa.rb	2016-12-01 10:26:43.000000000 +0000
++++ ailsa/lib/ailsa.rb	2022-10-19 16:45:12.215946198 +0000
+@@ -20,8 +20,8 @@
+       # don't keep restarting the web server - just do it once
+       @webapp ||= Thread.new { Ailsa::Webapp.run! }
+     else
+-      Ailsa::LogMonitor::start(config) if connected
+-      Ailsa::ExpireMonitor::start(config) if connected
++      #Ailsa::LogMonitor::start(config) if connected
++      #Ailsa::ExpireMonitor::start(config) if connected
+     end
+   end
