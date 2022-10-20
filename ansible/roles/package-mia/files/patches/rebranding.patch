@@ -142,3 +142,14 @@ diff -ur '--exclude=tmp' '--exclude=log' mia.orig/app/views/uma/account/_login_f
         </span>
       </center>
    <% end %>
+diff -ur '--exclude=log' '--exclude=tmp' mia.orig/public/stylesheets/about.css mia/public/stylesheets/about.css
+--- mia.orig/public/stylesheets/about.css	2011-05-15 22:39:50.000000000 +0000
++++ mia/public/stylesheets/about.css	2022-10-20 15:29:19.157340833 +0000
+@@ -11,7 +11,7 @@
+   background-color: white;
+   clear: left;
+   float: left;
+-  height: 80px;
++  max-height: 80px;
+   width: 220px;
+ }

@@ -60,3 +60,20 @@
   with_nested:
     - "{{ logo_files }}"
     - "{{ logo_dirs }}"
+
+- name: Fix logos on about page
+  vars:
+    alces_concertim_logo: logo-left.png
+    alces_flight_logo: logo-right.png
+    image_dir: /data/private/share/rails/mia/public/images
+  ansible.builtin.copy:
+    src: "tmp/{{ item.src}}"
+    dest: "{{ image_dir }}/{{ item.dest }}"
+    owner: www-data
+    group: www-data
+    mode: "664"
+  loop:
+    - src: "{{ alces_concertim_logo }}"
+      dest: about-banner.png
+    - src: "{{ alces_flight_logo }}"
+      dest: ct.png
