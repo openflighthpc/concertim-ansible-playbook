@@ -17,3 +17,9 @@
     src: "{{ daemon_installation_dir}}/ailsa/config/config.yml.mia.template"
     remote_src: true
     dest: "{{ daemon_installation_dir}}/ailsa/config/config.yml"
+
+- name: Change cluster owner
+  ansible.builtin.lineinfile:
+    regexp: '^(\s*)owner: Concertim Infrastructure Management Limited'
+    line: '\1owner: Alces Flight Ltd'
+    path: "{{ daemon_installation_dir}}/ailsa/config/config.yml"
