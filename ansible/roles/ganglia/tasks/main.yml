@@ -7,6 +7,21 @@
     - gmetad
     - rrdtool
 
+- name: Install gmetad-agg
+  block:
+    - name: Download gmetad-agg from S3
+      amazon.aws.aws_s3:
+        bucket: alces-flight
+        object: "/concertim/packages/debs/{{ gmetad_agg_deb }}"
+        dest: "{{ role_path }}/files/tmp/{{ gmetad_agg_deb }}"
+        mode: get
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+
+    - name: Install gmetad-agg deb
+      ansible.builtin.apt:
+        deb: "{{ role_path }}/files/tmp/{{ gmetad_agg_deb }}"
+
 - name: Install gmond configuration
   ansible.builtin.copy:
     src: gmond.conf
@@ -18,6 +33,14 @@
 - name: Install gmetad configuration
   ansible.builtin.copy:
     src: gmetad.conf
+    dest: /etc/ganglia/
+    owner: root
+    group: nogroup
+    mode: u=rw,g=r,o=r
+
+- name: Install gmetad-agg configuration
+  ansible.builtin.copy:
+    src: gmetad-agg.conf
     dest: /etc/ganglia/
     owner: root
     group: nogroup
@@ -35,6 +58,25 @@
 #      search_and_replace_in_file('/etc/init.d/gmetad','/etc/init.d/gmetad',{'$remote_fs $syslog'=>'ganglia-monitor'})
 #      search_and_replace_in_file('/etc/init.d/gmetad-agg','/etc/init.d/gmetad-agg',{'$remote_fs $syslog'=>'ganglia-monitor'})
 
+- name: Install rrd file age monitoring script
+  block:
+    - name: Install script
+      ansible.builtin.copy:
+        src: check_rrd_age.sh
+        dest: /usr/local/sbin/
+        mode: "755"
+        owner: root
+        group: root
+
+    - name: Create symlinks
+      ansible.builtin.file:
+        src: /usr/local/sbin/check_rrd_age.sh
+        dest: "/usr/local/sbin/{{ item }}"
+        state: link
+      loop:
+        - check_gmetad_rrd_age.sh
+        - check_gmetad-agg_rrd_age.sh
+
 - name: Ensure that ganglia is started
   ansible.builtin.service:
     name: "{{ item }}"
@@ -43,3 +85,4 @@
   loop:
     - ganglia-monitor
     - gmetad
+    - gmetad-agg
