@@ -14,7 +14,7 @@
     - martha
     - meryl
     # - theresa
-    # - ct-capacity-daemon
+    - ct-capacity-daemon
     #
     # Other daemons 
     - delayed_job
