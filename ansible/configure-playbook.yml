@@ -4,12 +4,13 @@
   become: true
   become_user: root
   become_method: sudo
-  gather_facts: False
   vars:
     start_monit: true
   roles:
     - role: configure-vanilla
       tags: configure-vanilla
+    - role: license-limits
+      tags: license-limits
     - role: demo-data
       tags: demo-data
     - role: finalization
