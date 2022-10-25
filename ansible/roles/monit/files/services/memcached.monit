@@ -1,0 +1,10 @@
+check process memcached with pidfile /var/run/memcached.pid
+  start program = "/etc/init.d/memcached start" with timeout 60 seconds
+  stop program = "/etc/init.d/memcached stop"
+  if failed port 11211 and protocol memcache
+     with timeout 10 seconds
+     then restart
+  if totalmem > 4% for 5 cycles then restart   # eating up memory?
+  if totalcpu > 12% for 5 cycles then restart # hung process?
+  group server
+  group memcached
