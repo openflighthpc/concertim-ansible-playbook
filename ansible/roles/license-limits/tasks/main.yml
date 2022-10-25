@@ -15,7 +15,7 @@
       - name: rack_limit
         default: 3
       - name: device_limit
-        default: 10
+        default: 100
       - name: nrad_limit
         default: 3
       - name: sensor_limit
