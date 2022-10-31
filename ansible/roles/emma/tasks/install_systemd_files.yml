@@ -1,0 +1,23 @@
+- name: Install systemd generator
+  ansible.builtin.template:
+    src: systemd-generator
+    dest: /lib/systemd/system-generators/emma-generator
+    owner: root
+    group: root
+    mode: "755"
+
+- name: Install emma.service
+  ansible.builtin.copy:
+    src: emma.service
+    dest: "{{ emma_systemd_service }}"
+    owner: root
+    group: root
+    mode: "644"
+
+- name: Install emma@.service template
+  ansible.builtin.copy:
+    src: emma@.service
+    dest: "{{ emma_systemd_service_template }}"
+    owner: root
+    group: root
+    mode: "644"

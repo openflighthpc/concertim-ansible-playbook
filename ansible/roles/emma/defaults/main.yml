@@ -1,1 +1,7 @@
 rails_env: development
+emma_ports:
+  - 9000
+  - 9001
+  - 9002
+emma_systemd_service: /lib/systemd/system/emma.service
+emma_systemd_service_template: /lib/systemd/system/emma@.service

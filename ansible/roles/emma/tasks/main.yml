@@ -151,16 +151,10 @@
     group: staff
     mode: "755"
 
-- name: Install init.d file
-  ansible.builtin.copy:
-    src: emma.init
-    dest: /etc/init.d/emma
-    owner: root
-    group: root
-    mode: "744"
+- name: Install systemd files
+  include_tasks: install_systemd_files
 
 - name: Ensure that emma is enabled
   ansible.builtin.service:
     name: emma
-    # state: started
     enabled: yes

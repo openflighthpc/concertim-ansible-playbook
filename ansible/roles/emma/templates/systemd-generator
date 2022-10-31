@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# This systemd generator creates dependency symlinks that make all emma
+# instances be started/stopped/reloaded
+# when emma.service is started/stopped/reloaded.
+
+set -eu
+
+gendir="$1"
+wantdir="${gendir}/emma.service.wants"
+service_template="{{ emma_systemd_service_template }}"
+
+mkdir -p "${wantdir}"
+
+for port in {{ emma_ports | join(' ') }} ; do
+	ln -s "${service_template}" "${wantdir}/emma@${port}.service"
+done
+
+exit 0
