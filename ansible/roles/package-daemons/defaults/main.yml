@@ -32,9 +32,8 @@ packaged_daemons:
   # Needs a number cruncher.
   # - maggie
 
-  # Another metric aggregation engine.
-  # Needs a number cruncher.
-  # - martha
+  # Group metric aggregation engine.
+  - martha
 
   # Theresa Humbly Evaluates and REports State Alterations.
   # Needs a number cruncher.
@@ -73,3 +72,4 @@ init_only_daemons:
 
 number_crunchers:
   - meryl
+  - martha

@@ -3,14 +3,20 @@
     name: "{{ item }}"
     state: restarted
   loop:
+    # Rails apps
     - mongrel_cluster
     - emma
+    #
+    # Daemons
     - ailsa
-    # - maggie
-    # - martha
-    # - theresa
     - enid
+    # - maggie
+    - martha
+    - meryl
+    # - theresa
     # - ct-capacity-daemon
+    #
+    # Other daemons 
     - delayed_job
 
 - name: Restart delia service

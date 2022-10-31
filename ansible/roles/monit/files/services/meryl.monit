@@ -6,9 +6,11 @@ check process meryl with pidfile /var/run/meryl.pid
   if totalmem > 16% for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
   group daemon
+  group meryl
   group metrics
 
 check file meryl_log with path /var/log/meryl.log
   if timestamp > 90 seconds then exec "/usr/local/sbin/clobber meryl"
   group daemon
+  group meryl
   group metrics
