@@ -44,6 +44,7 @@
         dest: /etc/monit/conf.d/
       loop:
         - phoenix-emma.monit
+        - phoenix-mia.monit
 
 - name: Install monit utility scripts
   ansible.builtin.copy:
