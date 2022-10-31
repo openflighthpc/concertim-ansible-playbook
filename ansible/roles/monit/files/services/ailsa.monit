@@ -1,0 +1,5 @@
+check process ailsa with pidfile /var/run/ailsa.pid
+  start program = "/usr/bin/systemctl restart ailsa" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart ailsa" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop ailsa"
+  group daemon

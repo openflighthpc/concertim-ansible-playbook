@@ -1,0 +1,8 @@
+check process beanstalkd with pidfile /var/run/beanstalkd.pid
+  start program = "/etc/init.d/beanstalkd start" with timeout 60 seconds
+  stop program = "/etc/init.d/beanstalkd stop"
+  if failed port 11300 type tcp
+     with timeout 5 seconds
+     then restart
+  if totalcpu > 12% for 5 cycles then restart # hung process?
+  group server
