@@ -54,7 +54,3 @@
       tags: package-fake-gmond
     - role: finalization
       tags: finalization
-
-#
-# - gmetad-agg (???)
-# - gmetad-sync (???)

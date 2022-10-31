@@ -17,6 +17,11 @@ MACHINES = [
 ]
 PLAYBOOKS = [
   {
+    id: "prep",
+    path: File.join(ANSIBLE_DIR, "prep-playbook.yml"),
+    extra_vars: {}
+  },
+  {
     id: "build",
     path: File.join(ANSIBLE_DIR, "build-playbook.yml"),
     extra_vars: {
@@ -33,7 +38,6 @@ PLAYBOOKS = [
 ]
 
 KNOWN_ENV_VARS = %w(
-  ANSIBLE_PLAYBOOK
   ANSIBLE_START_AT_TASK
   ANSIBLE_TAGS
   ANSIBLE_VERBOSE
@@ -44,14 +48,6 @@ class BadEnvVars < Vagrant::Errors::VagrantError
     env_vars = @extra_data[:env_vars]
     "Badly named environment variables #{env_vars}.  " \
       "Valid values are #{KNOWN_ENV_VARS.join(', ')}"
-  end
-end
-
-class BadPlaybook < Vagrant::Errors::VagrantError
-  def error_message
-    pb = @extra_data[:playbook]
-    "The playbook '#{pb}' given in ANSIBLE_PLAYBOOK is not known.  " \
-      "Valid values are any of #{ PLAYBOOKS.map {|pb| pb[:id] }.join(":") }"
   end
 end
 
@@ -71,13 +67,20 @@ Vagrant.configure("2") do |config|
       v.vm.hostname = box[:name]
       v.vm.network "forwarded_port", guest:  80, host: 9080 + idx + 1, host_ip: '127.0.0.1'
       v.vm.network "forwarded_port", guest: 443, host: 9443 + idx + 1, host_ip: '127.0.0.1'
-      v.vm.provision "swap", type: "shell", path: "scripts/create-swap.sh"
+      v.vm.provision "swap",
+        type: "shell",
+        path: "scripts/create-swap.sh",
+        run: "never"
+      v.vm.provision "apt-upgrade",
+        type: "shell",
+        inline: "apt-get -y update && apt-get -y upgrade",
+        run: "never"
 
       unless to_boolean(ENV['ACCEPTANCE'])
         v.vm.synced_folder ANSIBLE_DIR, "/ansible"
 
         playbooks.each do |playbook|
-          v.vm.provision "ansible_local" do |ansible|
+          v.vm.provision "#{playbook[:id]}_playbook", type: "ansible_local", run: "never" do |ansible|
             ansible.playbook = playbook[:path]
             ansible.verbose = to_boolean(ENV.fetch('ANSIBLE_VERBOSE', 'false'))
             ansible.extra_vars = playbook[:extra_vars]
@@ -96,12 +99,7 @@ Vagrant.configure("2") do |config|
 end
 
 def playbooks
-  ids = PLAYBOOKS.map {|pb| pb[:id] }
-  ENV.fetch("ANSIBLE_PLAYBOOK", ids.join(":"))
-    .split(":")
-    .each {|pb| raise BadPlaybook, {playbook: pb} unless ids.include?(pb) }
-    .map {|pb| PLAYBOOKS.detect {|defn| defn[:id] == pb }}
-    .compact
+  PLAYBOOKS
 end
 
 def to_boolean(v)
