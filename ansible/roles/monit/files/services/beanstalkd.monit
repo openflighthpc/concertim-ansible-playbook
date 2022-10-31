@@ -1,6 +1,7 @@
-check process beanstalkd with pidfile /var/run/beanstalkd.pid
-  start program = "/etc/init.d/beanstalkd start" with timeout 60 seconds
-  stop program = "/etc/init.d/beanstalkd stop"
+check process beanstalkd matching "/usr/bin/beanstalkd"
+  start program = "/usr/bin/systemctl restart beanstalkd.service" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart beanstalkd.service" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop beanstalkd.service"
   if failed port 11300 type tcp
      with timeout 5 seconds
      then restart
