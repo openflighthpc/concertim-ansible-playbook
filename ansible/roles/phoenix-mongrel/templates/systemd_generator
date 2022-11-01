@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# This systemd generator creates dependency symlinks that make all mongrel
+# instances be started/stopped/reloaded
+# when phoenix-mongrel.service is started/stopped/reloaded.
+
+set -eu
+
+gendir="$1"
+wantdir="${gendir}/phoenix-mongrel.service.wants"
+service_template="{{ mongrel_systemd_service_template }}"
+
+mkdir -p "${wantdir}"
+
+for servername_port in {{ mongrel_servername_ports | join(' ') }} ; do
+	ln -s "${service_template}" "${wantdir}/phoenix-mongrel@${servername_port}.service"
+done
+
+exit 0
+

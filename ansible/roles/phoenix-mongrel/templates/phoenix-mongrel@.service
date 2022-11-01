@@ -1,0 +1,19 @@
+[Unit]
+Description=Phoenix mongrel %i
+PartOf=phoenix-mongrel.service
+ReloadPropagatedFrom=phoenix-mongrel.service
+Before=phoenix-mongrel.service
+# stop server before networking goes down on shutdown
+After=network.target
+
+[Service]
+Environment=PATH=/opt/ruby-1.8/bin:/sbin:/bin:/usr/sbin:/usr/bin
+Type=forking
+PIDFile={{ mongrel_pid_dir }}/%i.pid
+ExecStart=/bin/bash -c 'v=%i; exec /usr/sbin/mongrel_rails cluster::start -C {{ mongrel_conf_dir }}/$${v%.*}.yml --clean'
+ExecStop=/bin/bash  -c 'v=%i; exec /usr/sbin/mongrel_rails cluster::stop  -C {{ mongrel_conf_dir }}/$${v%.*}.yml'
+TimeoutSec=5min
+SyslogIdentifier=phoenix-mongrel@%i
+
+[Install]
+WantedBy=multi-user.target
