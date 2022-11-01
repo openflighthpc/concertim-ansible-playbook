@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# This systemd generator creates dependency symlinks that make all
+# {{systemd_service_name}} instances be started/stopped/reloaded
+# when {{systemd_service_name}}.service is started/stopped/reloaded.
+
+set -eu
+
+generator_dir="$1"
+want_dir="${generator_dir}/{{ systemd_service_name }}.service.wants"
+service_template="{{ systemd_service_template }}"
+
+mkdir -p "${want_dir}"
+
+for instance_name in {{ systemd_instance_names }} ; do
+	ln -s "${service_template}" "${want_dir}/{{ systemd_service_name }}@${instance_name}.service"
+done
+
+exit 0

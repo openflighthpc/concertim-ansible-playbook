@@ -152,7 +152,10 @@
     mode: "755"
 
 - name: Install systemd files
-  include_tasks: install_systemd_files
+  include_tasks: install_systemd_files.yml
+  vars:
+    systemd_service_name: emma
+    systemd_instance_names: "{{ emma_ports  | join(' ') }}"
 
 - name: Ensure that emma is enabled
   ansible.builtin.service:

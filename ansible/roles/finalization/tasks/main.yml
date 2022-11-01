@@ -4,7 +4,7 @@
     state: restarted
   loop:
     # Rails apps
-    - mongrel_cluster
+    - phoenix-mongrel
     - emma
     #
     # Daemons

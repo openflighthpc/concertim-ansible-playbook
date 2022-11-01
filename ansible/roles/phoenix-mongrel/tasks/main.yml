@@ -10,7 +10,10 @@
     - mongrel_cluster
 
 - name: Install systemd files
-  include_tasks: install_systemd_files
+  include_tasks: install_systemd_files.yml
+  vars:
+    systemd_service_name: phoenix-mongrel
+    systemd_instance_names: "{{ mongrel_servername_ports  | join(' ') }}"
 
 - name: Make config directory
   ansible.builtin.file:
@@ -55,6 +58,6 @@
 
 - name: Ensure that mongrel_cluster is enabled
   ansible.builtin.service:
-    name: mongrel_cluster
+    name: phoenix-mongrel
     # state: started
     enabled: yes
