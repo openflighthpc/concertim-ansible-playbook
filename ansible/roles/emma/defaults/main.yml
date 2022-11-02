@@ -1,5 +1,5 @@
 rails_env: development
 emma_ports:
-  - 9000
-  - 9001
-  - 9002
+  - 9900
+  - 9901
+  - 9902

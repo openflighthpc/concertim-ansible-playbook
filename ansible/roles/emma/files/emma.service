@@ -4,7 +4,7 @@
 #
 # The unit actually managing emma instances is emma@.service,
 # instantiated as emma@PORT.service for individual instances, e.g.,
-# emma@9000.service, etc..
+# emma@9900.service, etc..
 
 [Unit]
 Description=EMMA - the enhanced monitoring and management architecture
