@@ -12,7 +12,7 @@ Type=forking
 PIDFile=/data/private/share/emma/core/tmp/emma.%i.pid
 ExecStart=/opt/ruby-1.9/bin/thin start --only %i -C /data/private/share/emma/core/config/thin.yml
 ExecStop=/opt/ruby-1.9/bin/thin  stop  --only %i -C /data/private/share/emma/core/config/thin.yml
-TimeoutSec=5min
+TimeoutSec=1min
 SyslogIdentifier=emma@%i
 
 [Install]
