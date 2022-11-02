@@ -32,9 +32,19 @@
       mode: "700"
 
 - name: Install monitored services configuration
-  ansible.builtin.copy:
-    src: services/
-    dest: /etc/monit/conf.d/
+  block:
+    - name: Install monitored services configuration (copy)
+      ansible.builtin.copy:
+        src: services/
+        dest: /etc/monit/conf.d/
+
+    - name: Install monitored services configuration (template)
+      ansible.builtin.template:
+        src: services/{{ item }}
+        dest: /etc/monit/conf.d/
+      loop:
+        - phoenix-emma.monit
+        - phoenix-mia.monit
 
 - name: Install monit utility scripts
   ansible.builtin.copy:

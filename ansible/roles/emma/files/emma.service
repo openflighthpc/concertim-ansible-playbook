@@ -1,0 +1,19 @@
+# emma.service is the meta unit for managing all emma instances on
+# the system at once. Conceptually, this unit is more like a systemd target,
+# but we are using a service since targets cannot be reloaded.
+#
+# The unit actually managing emma instances is emma@.service,
+# instantiated as emma@PORT.service for individual instances, e.g.,
+# emma@9900.service, etc..
+
+[Unit]
+Description=EMMA - the enhanced monitoring and management architecture
+
+[Service]
+Type=oneshot
+ExecStart=/bin/true
+ExecReload=/bin/true
+RemainAfterExit=on
+
+[Install]
+WantedBy=multi-user.target

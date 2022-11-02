@@ -1,5 +1,8 @@
-rails_env: development
 emma_ports:
   - 9900
   - 9901
   - 9902
+mia_ports:
+  - 8000
+  - 8001
+  - 8002

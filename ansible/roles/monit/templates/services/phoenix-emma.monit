@@ -1,0 +1,17 @@
+{% for port in emma_ports %}
+# {{ port }}
+check process emma-{{ port }} with pidfile /data/private/share/emma/core/tmp/emma.{{ port }}.pid
+  start program = "/usr/bin/systemctl restart emma@{{ port }}.service" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart emma@{{ port }}.service" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop emma@{{ port }}.service"
+  if failed port {{ port }} type tcp
+     with timeout 20 seconds
+     then restart
+  if totalmem > 10% for 5 cycles then restart   # eating up memory?
+  if totalcpu > 12% for 5 cycles then restart # hung process?
+  group emma
+  group thin
+  group rails
+  depends on postgresql
+
+{% endfor %}

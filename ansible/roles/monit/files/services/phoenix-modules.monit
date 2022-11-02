@@ -1,6 +1,7 @@
 check process uma with pidfile /var/run/mongrel_cluster/uma.3001.pid
-  start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/uma.yml" with timeout 60 seconds
-  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/uma.yml"
+  start program = "/usr/bin/systemctl restart phoenix-mongrel@uma.3001.service" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart phoenix-mongrel@uma.3001.service" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop phoenix-mongrel@uma.3001.service"
   if failed port 3001 type tcp
      # proto http
      with timeout 10 seconds
@@ -10,8 +11,9 @@ check process uma with pidfile /var/run/mongrel_cluster/uma.3001.pid
   group mongrel
 
 check process hacor with pidfile /var/run/mongrel_cluster/hacor.3002.pid
-  start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/hacor.yml" with timeout 60 seconds
-  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/hacor.yml"
+  start program = "/usr/bin/systemctl restart phoenix-mongrel@hacor.3002.service" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart phoenix-mongrel@hacor.3002.service" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop phoenix-mongrel@hacor.3002.service"
   if failed port 3002 type tcp
      proto http
      request /monit/serialize_check
@@ -28,12 +30,14 @@ check process hacor with pidfile /var/run/mongrel_cluster/hacor.3002.pid
 # Use restart, and always place a sleep 15 or more in your script, see script for why
 check program hacor_drb with path "/usr/local/sbin/check_hacor_connection.sh"
   if status != 0 for 2 times within 2 cycles then restart
-  start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/hacor.yml" with timeout 60 seconds
-  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/hacor.yml"
+  start program = "/usr/bin/systemctl restart phoenix-mongrel@hacor.3002.service" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart phoenix-mongrel@hacor.3002.service" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop phoenix-mongrel@hacor.3002.service"
 
 check process meca with pidfile /var/run/mongrel_cluster/meca.3003.pid
-  start program = "/bin/bash -c '/bin/sleep 5 && /usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/meca.yml'" with timeout 60 seconds
-  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/meca.yml"
+  start program = "/usr/bin/systemctl restart phoenix-mongrel@meca.3003.service" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart phoenix-mongrel@meca.3003.service" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop phoenix-mongrel@meca.3003.service"
   if failed port 3003 type tcp
      # proto http
      with timeout 10 seconds
@@ -56,8 +60,9 @@ check program meca_drb with path "/usr/local/sbin/check_meca.sh"
   stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/meca.yml"
 
 check process scram with pidfile /var/run/mongrel_cluster/scram.3004.pid
-  start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/scram.yml" with timeout 60 seconds
-  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/scram.yml"
+  start program = "/usr/bin/systemctl restart phoenix-mongrel@scram.3004.service" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart phoenix-mongrel@scram.3004.service" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop phoenix-mongrel@scram.3004.service"
   if failed port 3004 type tcp
      # proto http
      with timeout 10 seconds
@@ -68,8 +73,9 @@ check process scram with pidfile /var/run/mongrel_cluster/scram.3004.pid
   group mongrel
 
 check process oobm with pidfile /var/run/mongrel_cluster/oobm.3005.pid
-  start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/oobm.yml" with timeout 60 seconds
-  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/oobm.yml"
+  start program = "/usr/bin/systemctl restart phoenix-mongrel@oobm.3005.service" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart phoenix-mongrel@oobm.3005.service" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop phoenix-mongrel@oobm.3005.service"
   if failed port 3005 type tcp
      # proto http
      with timeout 10 seconds
@@ -79,21 +85,10 @@ check process oobm with pidfile /var/run/mongrel_cluster/oobm.3005.pid
   if totalcpu > 12% for 5 cycles then restart # hung process?
   group mongrel
 
-# check process nadia with pidfile /var/run/mongrel_cluster/nadia.3006.pid
-#   start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/nadia.yml" with timeout 60 seconds
-#   stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/nadia.yml"
-#   if failed port 3006 type tcp
-#      # proto http
-#      with timeout 10 seconds
-#      then restart
-#   # 70 MB for module this is a fixed value, it rarely changes on size of data centre
-#   if totalmem > 70.0 MB for 5 cycles then restart   # eating up memory?
-#   if totalcpu > 12% for 5 cycles then restart # hung process?
-#   group mongrel
-
 check process sas with pidfile /var/run/mongrel_cluster/sas.3007.pid
-  start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/sas.yml" with timeout 60 seconds
-  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/sas.yml"
+  start program = "/usr/bin/systemctl restart phoenix-mongrel@sas.3007.service" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart phoenix-mongrel@sas.3007.service" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop phoenix-mongrel@sas.3007.service"
   if failed port 3007 type tcp
      # proto http
      with timeout 10 seconds
@@ -107,8 +102,9 @@ check process sas with pidfile /var/run/mongrel_cluster/sas.3007.pid
 # restart sas if a backup is not produced every 24 hours (plus an extra hour's grace) and make sure the file
 # is updated so it doesn't constantly restart it all day long, for ever and ever...... fighting with sas and sas_drb
 check file sas_log with path /opt/concurrent-thinking/sas/log/production.log
-  start program = "/bin/bash -c '/usr/bin/touch /opt/concurrent-thinking/sas/log/production.log && /usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/sas.yml'" with timeout 60 seconds
-  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/sas.yml"
+  start program = "/usr/bin/systemctl restart phoenix-mongrel@sas.3007.service" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart phoenix-mongrel@sas.3007.service" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop phoenix-mongrel@sas.3007.service"
   if timestamp > 90000 seconds then restart
   group mongrel
 
@@ -116,7 +112,7 @@ check file sas_log with path /opt/concurrent-thinking/sas/log/production.log
 # Use restart, and always place a sleep 15 or more in your script, see script for why
 check program sas_drb with path "/usr/local/sbin/check_sas_connection.sh"
   if status != 0 for 2 times within 2 cycles then restart
-  start program = "/usr/sbin/mongrel_rails cluster::start --clean -C /etc/mongrel_cluster/sas.yml" with timeout 60 seconds
-  stop program = "/usr/sbin/mongrel_rails cluster::stop -C /etc/mongrel_cluster/sas.yml"
+  start program = "/usr/bin/systemctl restart phoenix-mongrel@sas.3007.service" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart phoenix-mongrel@sas.3007.service" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop phoenix-mongrel@sas.3007.service"
   group mongrel
-
