@@ -15,6 +15,6 @@ check process postgresql with pidfile /var/run/postgresql/11-main.pid
   # if failed host localhost port 5432 protocol pgsql then restart 
   # if failed host localhost port 5432 protocol pgsql then alert
 
-  # 20% for Postgres - #26382
-  if totalmem > 20% for 5 cycles then restart   # eating up memory?
+  # XXX totalmem should be 20% or 1.5 GB whichever is largest.
+  if totalmem > 1.5 GB for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
