@@ -26,8 +26,8 @@ ExecStartPre=mkdir -p {{ mongrel_pid_dir }}
 ExecStartPre=chown {{mongrel_user}}:root {{ mongrel_pid_dir }}
 ExecStartPre=chmod 755 {{ mongrel_pid_dir }}
 
-ExecStart=/bin/bash -c 'v=%i; exec /usr/sbin/mongrel_rails cluster::start -C {{ mongrel_conf_dir }}/$${v%.*}.yml --clean'
-ExecStop=/bin/bash  -c 'v=%i; exec /usr/sbin/mongrel_rails cluster::stop  -C {{ mongrel_conf_dir }}/$${v%.*}.yml'
+ExecStart=/bin/bash -c 'v=%i; exec /usr/sbin/mongrel_rails cluster::start -C {{ mongrel_conf_dir }}/$${v%.*}.yml --only $${v#*.} --clean'
+ExecStop=/bin/bash  -c 'v=%i; exec /usr/sbin/mongrel_rails cluster::stop  -C {{ mongrel_conf_dir }}/$${v%.*}.yml --only $${v#*.}'
 TimeoutSec=1min
 SyslogIdentifier=phoenix-mongrel@%i
 
