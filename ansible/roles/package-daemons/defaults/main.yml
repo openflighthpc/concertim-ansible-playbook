@@ -36,8 +36,7 @@ packaged_daemons:
   - martha
 
   # Theresa Humbly Evaluates and REports State Alterations.
-  # Needs a number cruncher.
-  # - theresa
+  - theresa
 
   # Polls power strips for metrics.
   # - postie
@@ -72,3 +71,4 @@ number_crunchers:
   - ct-capacity-daemon
   - martha
   - meryl
+  - theresa
