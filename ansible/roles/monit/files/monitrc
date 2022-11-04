@@ -1,5 +1,5 @@
 set daemon 60
-     with start delay 120
+     with start delay 180
 
 set logfile syslog facility log_daemon                       
 
