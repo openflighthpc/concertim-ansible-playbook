@@ -28,16 +28,15 @@ packaged_daemons:
   # going to skip for now.
   # - senna
 
-  # Metric aggregation engine.  User defined metrics(?) and inferred metrics.
-  # Needs a number cruncher.
-  # - maggie
+  # Metric calculation engine.  Calculates, ct-defined metrics, e.g., power
+  # metrics, user-defined metrics and inferred metrics.
+  - maggie
 
   # Group metric aggregation engine.
   - martha
 
   # Theresa Humbly Evaluates and REports State Alterations.
-  # Needs a number cruncher.
-  # - theresa
+  - theresa
 
   # Polls power strips for metrics.
   # - postie
@@ -52,14 +51,12 @@ packaged_daemons:
   # controls).
   # - controls
 
-
   # Some kind of appliance health check thing.  Has monit and beanstalk
   # checkers.  No idea if this is needed.
   # - florence
 
-  # Calculates rack (and PDU?) capacity.
-  # Needs a number cruncher.
-  #- ct-capacity-daemon
+  # Calculates rack and PDU capacity.
+  - ct-capacity-daemon
 
   # Another thing to do with metrics?  No idea if this is needed or not.  It
   # might be nothing more than a rebranded `demm`?  Or it might be a demm
@@ -71,5 +68,8 @@ init_only_daemons:
   - delayed_job
 
 number_crunchers:
-  - meryl
+  - ct-capacity-daemon
+  - maggie
   - martha
+  - meryl
+  - theresa

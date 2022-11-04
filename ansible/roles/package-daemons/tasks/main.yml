@@ -57,8 +57,14 @@
 - name: Additional ailsa configuration
   include_tasks: ailsa_config.yml
 
+- name: Additional maggie configuration
+  include_tasks: maggie_config.yml
+
 - name: Additional martha configuration
   include_tasks: martha_config.yml
+
+- name: Additional ct-capacity-daemon configuration
+  include_tasks: ct-capacity-daemon_config.yml
 
 - name: Install gem dependencies
   vars:
@@ -100,24 +106,6 @@
 #         owner: www-data
 #         group: root
 #         mode: "644"
-
-# - name: Additional theresa configuration
-#   block:
-#     - name: Install theresa number cruncher
-#       ansible.builtin.command:
-#         cmd: dpkg -i --force-architecture --force-overwrite {{ role_path }}/files/theresa-number-cruncher.deb
-
-# - name: Additional maggie configuration
-#   block:
-#     - name: Install maggie number cruncher
-#       ansible.builtin.command:
-#         cmd: dpkg -i --force-architecture --force-overwrite {{ role_path }}/files/maggie-number-cruncher.deb
-
-# - name: Additional ct-capacity-daemon configuration
-#   block:
-#     - name: Install ct-capacity-daemon number cruncher
-#       ansible.builtin.command:
-#         cmd: dpkg -i --force-architecture --force-overwrite {{ role_path }}/files/ct-capacity-daemon-number-cruncher.deb
 
 - name: Install clobber script
   ansible.builtin.copy:
