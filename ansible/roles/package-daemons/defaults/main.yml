@@ -28,9 +28,9 @@ packaged_daemons:
   # going to skip for now.
   # - senna
 
-  # Metric aggregation engine.  User defined metrics(?) and inferred metrics.
-  # Needs a number cruncher.
-  # - maggie
+  # Metric calculation engine.  Calculates, ct-defined metrics, e.g., power
+  # metrics, user-defined metrics and inferred metrics.
+  - maggie
 
   # Group metric aggregation engine.
   - martha
@@ -69,6 +69,7 @@ init_only_daemons:
 
 number_crunchers:
   - ct-capacity-daemon
+  - maggie
   - martha
   - meryl
   - theresa

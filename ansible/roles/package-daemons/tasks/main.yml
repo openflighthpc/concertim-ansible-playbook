@@ -57,6 +57,9 @@
 - name: Additional ailsa configuration
   include_tasks: ailsa_config.yml
 
+- name: Additional maggie configuration
+  include_tasks: maggie_config.yml
+
 - name: Additional martha configuration
   include_tasks: martha_config.yml
 

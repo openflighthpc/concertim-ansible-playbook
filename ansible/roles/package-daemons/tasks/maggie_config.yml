@@ -1,0 +1,13 @@
+# XXX Port these to git repo.
+- name: Patch maggie source code
+  vars:
+    daemon: maggie
+  ansible.builtin.patch:
+    src: "patches/{{ item }}"
+    basedir: "{{ daemon_installation_dir }}/{{ daemon }}"
+    backup: yes
+    strip: 1
+  loop:
+    - maggie-hack-around-lack-of-eth1.patch
+    - maggie-hack-around-time-at-bug.patch
+
