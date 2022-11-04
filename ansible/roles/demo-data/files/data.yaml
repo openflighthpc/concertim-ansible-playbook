@@ -30,175 +30,175 @@ racks:
         start_u: 41
         facing: "b"
 
-      - name: comp29
+      - name: comp029
         template_id: 613
         type: Server
         start_u: 39
         facing: "f"
 
-      - name: comp28
+      - name: comp028
         template_id: 613
         type: Server
         start_u: 38
         facing: "f"
 
-      - name: comp27
+      - name: comp027
         template_id: 613
         type: Server
         start_u: 37
         facing: "f"
 
-      - name: comp26
+      - name: comp026
         template_id: 613
         type: Server
         start_u: 36
         facing: "f"
 
-      - name: comp25
+      - name: comp025
         template_id: 613
         type: Server
         start_u: 35
         facing: "f"
 
-      - name: comp24
+      - name: comp024
         template_id: 613
         type: Server
         start_u: 34
         facing: "f"
 
-      - name: comp23
+      - name: comp023
         template_id: 613
         type: Server
         start_u: 33
         facing: "f"
 
-      - name: comp22
+      - name: comp022
         template_id: 613
         type: Server
         start_u: 32
         facing: "f"
 
-      - name: comp21
+      - name: comp021
         template_id: 613
         type: Server
         start_u: 31
         facing: "f"
 
-      - name: comp20
+      - name: comp020
         template_id: 613
         type: Server
         start_u: 30
         facing: "f"
 
-      - name: comp19
+      - name: comp019
         template_id: 613
         type: Server
         start_u: 29
         facing: "f"
 
-      - name: comp18
+      - name: comp018
         template_id: 613
         type: Server
         start_u: 28
         facing: "f"
 
-      - name: comp17
+      - name: comp017
         template_id: 613
         type: Server
         start_u: 27
         facing: "f"
 
-      - name: comp16
+      - name: comp016
         template_id: 613
         type: Server
         start_u: 26
         facing: "f"
 
-      - name: comp15
+      - name: comp015
         template_id: 613
         type: Server
         start_u: 25
         facing: "f"
 
-      - name: comp14
+      - name: comp014
         template_id: 613
         type: Server
         start_u: 24
         facing: "f"
 
-      - name: comp13
+      - name: comp013
         template_id: 613
         type: Server
         start_u: 23
         facing: "f"
 
-      - name: comp12
+      - name: comp012
         template_id: 613
         type: Server
         start_u: 22
         facing: "f"
 
-      - name: comp11
+      - name: comp011
         template_id: 613
         type: Server
         start_u: 21
         facing: "f"
 
-      - name: comp10
+      - name: comp010
         template_id: 613
         type: Server
         start_u: 20
         facing: "f"
 
-      - name: comp09
+      - name: comp009
         template_id: 613
         type: Server
         start_u: 19
         facing: "f"
 
-      - name: comp08
+      - name: comp008
         template_id: 613
         type: Server
         start_u: 18
         facing: "f"
 
-      - name: comp07
+      - name: comp007
         template_id: 613
         type: Server
         start_u: 17
         facing: "f"
 
-      - name: comp06
+      - name: comp006
         template_id: 613
         type: Server
         start_u: 16
         facing: "f"
 
-      - name: comp05
+      - name: comp005
         template_id: 613
         type: Server
         start_u: 15
         facing: "f"
 
-      - name: comp04
+      - name: comp004
         template_id: 613
         type: Server
         start_u: 14
         facing: "f"
 
-      - name: comp03
+      - name: comp003
         template_id: 613
         type: Server
         start_u: 13
         facing: "f"
 
-      - name: comp02
+      - name: comp002
         template_id: 613
         type: Server
         start_u: 12
         facing: "f"
 
-      - name: comp01
+      - name: comp001
         template_id: 613
         type: Server
         start_u: 11
@@ -256,27 +256,27 @@ racks:
         facing: "f"
 
         devices:
-          - name: comp49
+          - name: comp049
             template_id: 172
             type: Server
 
-          - name: comp48
+          - name: comp048
             template_id: 172
             type: Server
 
-          - name: comp47
+          - name: comp047
             template_id: 172
             type: Server
 
-          - name: comp46
+          - name: comp046
             template_id: 172
             type: Server
 
-          - name: comp45
+          - name: comp045
             template_id: 172
             type: Server
 
-          - name: comp44
+          - name: comp044
             template_id: 172
             type: Server
 
@@ -287,11 +287,11 @@ racks:
         facing: "f"
 
         devices:
-          - name: comp43
+          - name: comp043
             template_id: 172
             type: Server
 
-          - name: comp42
+          - name: comp042
             template_id: 172
             type: Server
 
@@ -302,69 +302,69 @@ racks:
         facing: "f"
 
         devices:
-          - name: comp41
+          - name: comp041
             template_id: 172
             type: Server
 
-          - name: comp40
+          - name: comp040
             template_id: 172
             type: Server
 
-      - name: comp39
+      - name: comp039
         template_id: 613
         type: Server
         start_u: 10
         facing: "f"
 
-      - name: comp38
+      - name: comp038
         template_id: 613
         type: Server
         start_u: 9
         facing: "f"
 
-      - name: comp37
+      - name: comp037
         template_id: 613
         type: Server
         start_u: 8
         facing: "f"
 
-      - name: comp36
+      - name: comp036
         template_id: 613
         type: Server
         start_u: 7
         facing: "f"
 
-      - name: comp35
+      - name: comp035
         template_id: 613
         type: Server
         start_u: 6
         facing: "f"
 
-      - name: comp34
+      - name: comp034
         template_id: 613
         type: Server
         start_u: 5
         facing: "f"
 
-      - name: comp33
+      - name: comp033
         template_id: 613
         type: Server
         start_u: 4
         facing: "f"
 
-      - name: comp32
+      - name: comp032
         template_id: 613
         type: Server
         start_u: 3
         facing: "f"
 
-      - name: comp31
+      - name: comp031
         template_id: 613
         type: Server
         start_u: 2
         facing: "f"
 
-      - name: comp30
+      - name: comp030
         template_id: 613
         type: Server
         start_u: 1
