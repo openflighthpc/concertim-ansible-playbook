@@ -96,6 +96,13 @@
         path: "{{ core_path }}/lib/tasks/database.rake"
         insertbefore: BOF
 
+    - name: Fix issue with DateTime.now
+      ansible.builtin.copy:
+        src: monkey_patch_date_time_now.rb
+        dest: "{{ core_path }}/config/initializers/"
+        owner: www-data
+        group: www-data
+
     - name: Patch config/boot.rb to deal with YAML/psych issue
       ansible.builtin.lineinfile:
         insertbefore: "require 'yaml'"
