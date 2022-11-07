@@ -3,3 +3,12 @@ check process ct-capacity-daemon with pidfile /var/run/ct-capacity-daemon.pid
   restart program = "/usr/bin/systemctl restart ct-capacity-daemon" with timeout 60 seconds
   stop program = "/usr/bin/systemctl stop ct-capacity-daemon"
   group daemon
+  group ct-capacity-daemon
+
+check file ct-capacity-daemon_log with path /var/log/ct-capacity-daemon.log
+  start program = "/usr/bin/systemctl restart ct-capacity-daemon" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart ct-capacity-daemon" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop ct-capacity-daemon"
+  if timestamp > 5 minutes then restart
+  group daemon
+  group ct-capacity-daemon
