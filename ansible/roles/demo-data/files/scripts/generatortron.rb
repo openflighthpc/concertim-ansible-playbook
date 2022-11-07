@@ -122,12 +122,15 @@ module Generatortron
         puts "Found rack #{rack.name}"
         return rack
       end
+      name = data[:name]
 
       params = {
-        :name => data[:name],
+        :name => name,
         :u_height => data[:u_height] || 42,
         :template_id => data[:template_id],
         :cluster_id => @cluster_id,
+        :serial_number => "sn-#{name}-#{sprintf("%04d", Random.rand(999))}",
+        :asset_number => "an-#{name}-#{sprintf("%04d", Random.rand(999))}",
       }
       rack = Ivy::HwRackServices::Create::call(params, "generatortron")
 
@@ -205,6 +208,7 @@ module Generatortron
         else
           1
         end
+      name = data[:name]
 
       {
         "chassis" => {
@@ -217,11 +221,13 @@ module Generatortron
         },
 
         "devices" => {
-          "name" => data[:name],
+          "name" => name,
           "type" => data[:type],
           "template_id" => data[:template_id],
           "username" => data[:username],
           "password" => data[:password],
+          "serial_number" => "sn-#{name}-#{sprintf("%04d", Random.rand(999))}",
+          "asset_number" => "an-#{name}-#{sprintf("%04d", Random.rand(999))}",
         }
       }.with_indifferent_access
     end
@@ -246,6 +252,7 @@ module Generatortron
 
     def rack_device_params(rack, data)
       template = Ivy::Template.find(data[:template_id])
+      name = data[:name]
 
       {
         "chassis" => {
@@ -257,9 +264,11 @@ module Generatortron
         },
 
         "devices" => {
-          "name" => data[:name],
+          "name" => name,
           "type" => data[:type],
           "template_id" => data[:template_id],
+          "serial_number" => "sn-#{name}-#{sprintf("%04d", Random.rand(999))}",
+          "asset_number" => "an-#{name}-#{sprintf("%04d", Random.rand(999))}",
         }
       }.with_indifferent_access
     end
@@ -313,15 +322,18 @@ module Generatortron
     end
 
     def sensor_params(data)
+      name = data[:name]
       {
         "chassis" => {
           "nonrack" => true,
         },
         "devices" => {
-          "name" => data[:name],
+          "name" => name,
           "type" => "Sensor",
           "template_id" => data[:template_id],
           "stype" => data[:sensor_type],
+          "serial_number" => "sn-#{name}-#{sprintf("%04d", Random.rand(999))}",
+          "asset_number" => "an-#{name}-#{sprintf("%04d", Random.rand(999))}",
         }
       }.with_indifferent_access
     end
