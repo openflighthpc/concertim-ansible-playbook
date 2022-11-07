@@ -25,7 +25,7 @@
       - name: cable_limit
         default: 10
       - name: asset_flag
-        default: false
+        default: true
       - name: expire_time
         default: "{{ ansible_date_time.epoch + license_expires_in }}"
   block:
