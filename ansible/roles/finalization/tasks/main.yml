@@ -46,6 +46,6 @@
 - name: Start monit
   ansible.builtin.service:
     name: monit
-    state: started
+    state: restarted
     enabled: yes
   when: start_monit == True
