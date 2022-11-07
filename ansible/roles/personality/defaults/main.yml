@@ -11,3 +11,4 @@ logo_files:
   - logo-right.png
   - lower-login.png
   - upper-login.png
+mia_help_dir: "/data/private/share/rails/mia/help"

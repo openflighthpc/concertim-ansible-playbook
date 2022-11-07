@@ -77,3 +77,10 @@
       dest: about-banner.png
     - src: "{{ alces_flight_logo }}"
       dest: ct.png
+
+# XXX Not sure where this is supposed to come from, or how much it is related
+# to personality, but we need this to address some issues.
+- name: Add help/ct.yml file
+  ansible.builtin.copy:
+    src: "help-ct.yml"
+    dest: "{{ mia_help_dir }}/{{ branding_name }}.yml"
