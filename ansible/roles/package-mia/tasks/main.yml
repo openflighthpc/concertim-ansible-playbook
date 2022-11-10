@@ -88,6 +88,7 @@
     - disable-ferret.patch
     - disable-help-links.patch
     - rebranding.patch
+    - fix-monit-drb-check.patch
 
 
 - name: Make appliance directory

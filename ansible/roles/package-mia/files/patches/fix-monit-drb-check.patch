@@ -1,0 +1,68 @@
+diff -ur a/app/controllers/monit_controller.rb b/app/controllers/monit_controller.rb
+--- a/app/controllers/monit_controller.rb	2015-04-22 14:08:49.000000000 +0000
++++ b/app/controllers/monit_controller.rb	2022-11-10 15:24:41.888578381 +0000
+@@ -67,13 +67,18 @@
+   # but the application was still having trouble communicating over romance.
+   #
+   def get_romance_status(service_name) 
+-    arbitrary_class = arbitrary_class_for(service_name) 
+-
+-    return true unless arbitrary_class
+-
+-    DrbRomanceChecker.check_activerecord_class(arbitrary_class).tap do |status|
+-      log_monit_status("#{service_name} Romance Status", status)
+-      return status
++    begin
++      arbitrary_class = arbitrary_class_for(service_name) 
++    rescue NameError
++      # We don't have an arbitrary class defined, so we can't perform any meaningful checks.
++      log_monit_status("#{service_name} Romance Status unknowable (arbitrary class not defined)", true)
++      return true
++    else
++
++      DrbRomanceChecker.check_activerecord_class(arbitrary_class).tap do |status|
++        log_monit_status("#{service_name} Romance Status", status)
++        return status
++      end
+     end
+   end
+ 
+@@ -89,28 +94,21 @@
+ 
+ 
+   #
+-  # ARBITRARY_SERVICE_CLASS
++  # arbitrary_class_for
++  #
++  # Retrieve an arbitrary class that would be romanced by the given service name.
+   #
+   # To perform romance checks we just select an arbitrary class from the required module and 
+   # try to send it some messages. This constant defines those arbitrary classes for each 
+   # module/service.
+   #
+-  ARBITRARY_SERVICE_CLASS =
+-  {
+-    'hacor' => RuleBasedGroup,
+-    'meca' => Metric,
+-    'emma' => User
+-  }
+-
+-  #
+-  # arbitrary_class_for
+-  #
+-  # Retrieve an arbitrary class that would be romanced by the given service name.
+-  #
+   def arbitrary_class_for(service_name)
+-    ARBITRARY_SERVICE_CLASS[service_name]
++    arbitrary_service_classes = {
++      'hacor' => RuleBasedGroup,
++      'meca' => Metric,
++      'emma' => User,
++      'sas' => CostBand,
++    }
++    arbitrary_service_classes[service_name]
+   end
+-
+-
+ end
+-
