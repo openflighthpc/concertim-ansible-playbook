@@ -2,7 +2,6 @@
 # {{ port }}
 check process emma-{{ port }} with pidfile /data/private/share/emma/core/tmp/emma.{{ port }}.pid
   start program = "/bin/bash -c '/usr/bin/systemctl restart emma@{{ port }}.service && sleep 60'" with timeout 120 seconds
-  restart program = "/usr/bin/systemctl restart emma@{{ port }}.service" with timeout 60 seconds
   restart program = "/bin/bash -c '/usr/bin/systemctl restart emma@{{ port }}.service && sleep 60'" with timeout 120 seconds
   stop program = "/usr/bin/systemctl stop emma@{{ port }}.service"
   if failed port {{ port }} type tcp

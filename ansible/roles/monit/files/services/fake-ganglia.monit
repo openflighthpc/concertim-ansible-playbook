@@ -1,0 +1,7 @@
+check program fake-ganglia with path "/usr/local/sbin/check-fake-ganglia.sh"
+  if status != 0 then restart
+
+  start program = "/usr/bin/systemctl restart fake-ganglia" with timeout 60 seconds
+  stop program = "/bin/bash -c '/usr/bin/systemctl stop fake-ganglia && sleep 5 && /usr/bin/systemctl kill fake-ganglia && sleep 5'"
+
+  group metrics

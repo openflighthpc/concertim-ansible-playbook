@@ -1,0 +1,12 @@
+diff -ur a/lib/processor/submitter.rb b/lib/processor/submitter.rb
+--- a/lib/processor/submitter.rb	2014-06-27 13:28:18.000000000 +0000
++++ b/lib/processor/submitter.rb	2022-11-10 15:00:42.007318347 +0000
+@@ -5,6 +5,8 @@
+       require 'net/http'
+ 
+       def submit(data)
++        Log.info("Results submission disabled")
++        return true
+         Thread.new do
+           Log.debug("Submitting results #{data.inspect}")
+           host = vpn_ip
