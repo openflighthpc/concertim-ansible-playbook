@@ -39,6 +39,7 @@
   loop:
     - fix-ruby-path.patch
     - remove-in-band-metrics.patch
+    - rework-example-metrics.patch
 
 # XXX Move to fake gmond git repo when available.
 - name: Install start_fake_gmond script
