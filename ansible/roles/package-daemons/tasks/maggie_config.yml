@@ -10,4 +10,4 @@
   loop:
     - maggie-hack-around-lack-of-eth1.patch
     - maggie-hack-around-time-at-bug.patch
-
+    - maggie-disable-conflict-reporting.patch
