@@ -81,8 +81,29 @@ module Generatortron
         end
       end
 
+      # All PDUs and power supplies should have now been created.  Let's
+      # plug some stuff in.
+      data[:racks].each do |rack_data|
+        rack_data[:devices].each do |device_data|
+          connect_psus(device_data)
+        end
+      end
+
+      if data[:power_cost_bands]
+        Sas::CostBand.destroy_all
+        data[:power_cost_bands].each do |cost_band_data|
+          create_power_cost_band(cost_band_data)
+        end
+      end
+
       if data[:data_centre]
         create_data_centre_plan_view(data[:data_centre])
+      end
+
+      if data[:groups]
+        data[:groups].each do |group_data|
+          create_group(group_data)
+        end
       end
     end
 
@@ -420,6 +441,46 @@ module Generatortron
       return data_name unless data_name.blank?
       return chassis_name unless chassis_name.blank?
       "<UNKNOWN>"
+    end
+
+    def connect_psus(data)
+      return unless device_data.key?(:psu_connections)
+      device = Ivy::Device.find_by_name(data[:name])
+      return if device.nil?
+
+      device_data[:psu_connections].each do |psu_data|
+        psu = device.power_supplies.find_by_name(psu_data[:name])
+        pdu = Ivy::Device::PowerStrip.find_by_name(psu_data[:pdu])
+        socket_num = psu_data[:socket]
+        psu.update_attributes!(power_strip_id: pdu.id, power_strip_socket_id: socket_num)
+        puts "-> Plugged #{device.name}:#{psu.name} into #{pdu.name}:#{socket_num}"
+      end
+    end
+
+    def create_power_cost_band(data)
+      params = {
+        name: data[:name],
+        timefrom: Time.parse(data[:timefrom]),
+        timeto: Time.parse(data[:timeto]),
+        cost_pkwh: data[:cost_pkwh],
+        colour: data[:colour],
+        include_days: data[:include_days],
+      }
+      cost_band = Sas::CostBand.create(params)
+      if cost_band.persisted?
+        puts "--> Created cost band #{params[:name]}"
+      else
+        raise Errors::RecordNotSaved, cost_band
+      end
+    end
+
+    def create_group(data)
+      group = Ivy::Group::RuleBasedGroup.create(data)
+      if group.persisted?
+        puts "--> Created group #{params[:name]}"
+      else
+        raise Errors::RecordNotSaved, group
+      end
     end
   end
 
