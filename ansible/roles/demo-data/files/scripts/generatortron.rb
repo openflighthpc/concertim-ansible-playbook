@@ -105,6 +105,13 @@ module Generatortron
           create_group(group_data)
         end
       end
+
+      if data[:inferred_metrics]
+        Meca::InferredMetric.destroy!
+        data[:inferred_metrics].each do |metric_data|
+          create_inferred_metric(metric_data)
+        end
+      end
     end
 
     def valid?
@@ -480,6 +487,30 @@ module Generatortron
         puts "--> Created group #{params[:name]}"
       else
         raise Errors::RecordNotSaved, group
+      end
+    end
+
+    def create_inferred_metric(data)
+      params = data.slice(:name, :unit, :formula, :tag, :metric_type)
+      data[:sources].each_with_index do |src, idx|
+        letter = idx == 0 ? 'a' : 'b'
+        type = src[:type]
+        params["source_#{letter}_type"] = type
+        params["#{type.downcase}_#{letter}_id"] = src[:name]
+      end
+      data[:keys].each do |key_data|
+        params["keys"] ||= {}
+        h = {
+          "source" => key_data[:source],
+          "metric" => key_data[:metric],
+        }
+        params["keys"][key_data[:key]] = h
+      end
+      metric = Meca::InferredMetric.new(params)
+      if metric.save_and_validate_formula
+        puts "--> Created #{data[:metric_type]} metric #{data[:name]}"
+      else
+        raise Errors::RecordNotSaved, metric
       end
     end
   end
