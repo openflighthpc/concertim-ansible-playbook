@@ -489,9 +489,11 @@ module Generatortron
     end
 
     def create_group(data)
+      group = Ivy::Group::RuleBasedGroup.find_by_name(data[:name])
+      group.destroy unless group.nil?
       group = Ivy::Group::RuleBasedGroup.create(data)
       if group.persisted?
-        puts "--> Created group #{params[:name]}"
+        puts "-> Created group #{data[:name]}"
       else
         raise Errors::RecordNotSaved, group
       end
