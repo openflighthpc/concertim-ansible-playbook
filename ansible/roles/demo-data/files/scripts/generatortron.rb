@@ -79,6 +79,7 @@ module Generatortron
           sleep 1
           chassis = create_rack_device(rack, device_data)
           next unless device_data[:devices]
+          create_chassis_rbg(chassis)
 
           device_data[:devices].each do |chassis_server_data|
             # Ivy::Chassis#get_default_name assumes that two chassis would never
@@ -299,7 +300,28 @@ module Generatortron
           "serial_number" => "sn-#{name}-#{sprintf("%04d", Random.rand(999))}",
           "asset_number" => "an-#{name}-#{sprintf("%04d", Random.rand(999))}",
         }
-      }.with_indifferent_access
+      }.with_indifferent_access.tap do |h|
+        if data.key?(:devices)
+          # We're creating a blade center.
+          h["chassis"]["name"] = name
+          h["chassis"]["serial_number"] = h["devices"]["serial_number"]
+          h["chassis"]["asset_number"] = h["devices"]["asset_number"]
+        end
+      end
+    end
+
+    def create_chassis_rbg(chassis)
+      group = Ivy::Group::RuleBasedGroup.new(
+        name: "Devices in #{chassis.name}",
+        operator: "and",
+        chassis: [{invert_match: false, id: chassis.id}.with_indifferent_access],
+        aggregate_members_metrics: true,
+      )
+      if group.save
+        puts "--> Created group #{group.name}"
+      else
+        raise Errors::RecordNotSaved, group
+      end
     end
 
     def create_chassis_server(chassis, data)

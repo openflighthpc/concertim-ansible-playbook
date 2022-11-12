@@ -385,7 +385,7 @@ racks:
             pdu: pdu03
             socket: 24
 
-      - name: "HP Blade 03"
+      - name: "HP-Blade-03"
         template_id: 172
         type: Server
         start_u: 32
@@ -416,7 +416,7 @@ racks:
             template_id: 172
             type: Server
 
-      - name: "HP Blade 02"
+      - name: "HP-Blade-02"
         template_id: 172
         type: Server
         start_u: 26
@@ -431,7 +431,7 @@ racks:
             template_id: 172
             type: Server
 
-      - name: "HP Blade 01"
+      - name: "HP-Blade-01"
         template_id: 172
         type: Server
         start_u: 20
@@ -707,3 +707,77 @@ inferred_metrics:
         source: "a"
         metric: "user.calc.power.share"
 
+  - name: user.calc.power.share
+    unit: "W"
+    formula: "a / (b / c)"
+    tag: "SYSTEM"
+    metric_type: "inferred"
+    sources:
+      - type: Device
+        name: HP-Blade-1
+      - type: Group
+        name: "Devices in HP-Blade-1"
+    dest:
+      - type: Group
+        name: "Devices in HP-Blade-1"
+    keys:
+      - key: "a"
+        source: "a"
+        metric: "ct.calc.power.total"
+      - key: "b"
+        source: "b"
+        metric: "ct.snmp.load.1"
+        aggregate: "total"
+      - key: "c"
+        source: "b"
+        metric: "ct.snmp.load.1"
+
+  - name: user.calc.power.share
+    unit: "W"
+    formula: "a / (b / c)"
+    tag: "SYSTEM"
+    metric_type: "inferred"
+    sources:
+      - type: Device
+        name: HP-Blade-2
+      - type: Group
+        name: "Devices in HP-Blade-2"
+    dest:
+      - type: Group
+        name: "Devices in HP-Blade-2"
+    keys:
+      - key: "a"
+        source: "a"
+        metric: "ct.calc.power.total"
+      - key: "b"
+        source: "b"
+        metric: "ct.snmp.load.1"
+        aggregate: "total"
+      - key: "c"
+        source: "b"
+        metric: "ct.snmp.load.1"
+
+  - name: user.calc.power.share
+    unit: "W"
+    formula: "a / (b / c)"
+    tag: "SYSTEM"
+    metric_type: "inferred"
+    sources:
+      - type: Device
+        name: HP-Blade-3
+      - type: Group
+        name: "Devices in HP-Blade-3"
+    dest:
+      - type: Group
+        name: "Devices in HP-Blade-3"
+    keys:
+      - key: "a"
+        source: "a"
+        metric: "ct.calc.power.total"
+      - key: "b"
+        source: "b"
+        metric: "ct.snmp.load.1"
+        aggregate: "total"
+      - key: "c"
+        source: "b"
+        metric: "ct.snmp.load.1"
