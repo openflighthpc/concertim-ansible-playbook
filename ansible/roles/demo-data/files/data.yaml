@@ -651,11 +651,14 @@ groups:
     metrics:
       - {name: "ct.pdu.psu0.real_power", operator: "Exists"}
       - {name: "ct.pdu.psu1.real_power", operator: "Doesn't exist"}
+  - name: "Devices with user.calc.power.share metric"
+    metrics:
+      - {name: "user.calc.power.share", operator: "Exists"}
 
 inferred_metrics:
   - name: "ct.calc.power.total"
     unit: "W"
-    formual: "a"
+    formula: "a"
     tag: "SYSTEM"
     metric_type: "power"
     sources:
@@ -671,7 +674,7 @@ inferred_metrics:
 
   - name: "ct.calc.power.total"
     unit: "W"
-    formual: "a + b"
+    formula: "a + b"
     tag: "SYSTEM"
     metric_type: "power"
     sources:
@@ -685,5 +688,22 @@ inferred_metrics:
         source: "a"
         metric: "ct.pdu.psu0.real_power"
       - key: "b"
-        source: "b"
+        source: "a"
         metric: "ct.pdu.psu1.real_power"
+
+  - name: "ct.calc.power.total"
+    unit: "W"
+    formula: "a"
+    tag: "SYSTEM"
+    metric_type: "power"
+    sources:
+      - type: Group
+        name: "Devices with user.calc.power.share metric"
+    dest:
+      - type: Group
+        name: "Devices with user.calc.power.share metric"
+    keys:
+      - key: "a"
+        source: "a"
+        metric: "user.calc.power.share"
+

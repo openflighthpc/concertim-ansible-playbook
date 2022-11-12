@@ -9,6 +9,17 @@
     ruby_bin: /opt/ruby-1.9/bin
     chdir: /data/private/share/rails/emma/core
 
+- name: Run meca generatortron
+  import_tasks: generatortron.yml
+  vars:
+    description: meca
+    rails_env: production
+    rails_runner: ./script/runner
+    script_path: "{{ role_path }}/files/scripts/generatortron_meca.rb"
+    data_path: "{{ role_path }}/files/data.yaml"
+    ruby_bin: /opt/ruby-1.8/bin
+    chdir: /data/private/share/rails/meca
+
 - name: Restart meryl
   ansible.builtin.service:
     name: meryl
