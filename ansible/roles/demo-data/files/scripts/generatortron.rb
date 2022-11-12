@@ -17,6 +17,14 @@ module Generatortron
         "Error saving device in #{descriptor}: #{errors}"
       end
     end
+    class PsuNotFound < GeneratortronError
+      def message
+        record = super
+        descriptor = "#{record.class.name} #{record.name}"
+        errors = "unable to find empty slot"
+        "Error saving device in #{descriptor}: #{errors}"
+      end
+    end
   end
 
   class Generator
@@ -443,17 +451,23 @@ module Generatortron
       "<UNKNOWN>"
     end
 
-    def connect_psus(data)
+    def connect_psus(device_data)
       return unless device_data.key?(:psu_connections)
-      device = Ivy::Device.find_by_name(data[:name])
+      device = Ivy::Device.find_by_name(device_data[:name])
       return if device.nil?
 
       device_data[:psu_connections].each do |psu_data|
-        psu = device.power_supplies.find_by_name(psu_data[:name])
+        psu = device.power_supplies.detect(psu_data[:name]).first
+        raise GeneratortronError, "PSU not found: #{device.name}:#{psu_data[:name]}" if psu.nil?
         pdu = Ivy::Device::PowerStrip.find_by_name(psu_data[:pdu])
         socket_num = psu_data[:socket]
-        psu.update_attributes!(power_strip_id: pdu.id, power_strip_socket_id: socket_num)
-        puts "-> Plugged #{device.name}:#{psu.name} into #{pdu.name}:#{socket_num}"
+        psu.power_strip_id  = pdu.id
+        psu.power_strip_socket_id  = socket_num
+        if psu.save
+          pdu.set_modified_timestamp
+          pdu.save
+          puts "-> Plugged #{device.name}:#{psu.name} into #{pdu.name}:#{socket_num}"
+        end
       end
     end
 
