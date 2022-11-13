@@ -5,8 +5,8 @@ configure a vanilla MIA.
 
 ## Prerequisites
 
-* An Ubuntu 22.04 (jammy) or 20.04 (focal) machine that will become the MIA
-  machine.
+* An Ubuntu 22.04 (jammy) machine with at least 4GiB of memory and at least 2
+  CPUs.  This machine will become the MIA.
 * Root access on that Ubuntu machine.
 * The Ubuntu machine needs to be configured to not use "Predictable Network
   Interface Names".  That is to use `ethX` naming instead of `enpXsY` style
