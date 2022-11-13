@@ -52,6 +52,13 @@ module Generatortron
         params["source_#{letter}_type"] = type
         params["#{type.downcase}_#{letter}_id"] = src[:name]
       end
+
+      if data[:dest]
+        type = data[:dest][:type]
+        params["destination_type"] = type
+        params["#{type.downcase}_destination_id"] = data[:dest][:name]
+      end
+
       data[:keys].each do |key_data|
         params["keys"] ||= {}.with_indifferent_access
         h = {
@@ -60,11 +67,48 @@ module Generatortron
         }
         params["keys"][key_data[:key]] = h
       end
+
       metric = InferredMetric.new(params.with_indifferent_access)
       if metric.save_and_validate_formula
         puts "-> Created #{data[:metric_type]} metric #{data[:name]}"
       else
-        raise Errors::RecordNotSaved, metric
+        # Saving the metric might have failed due to Romance::Candles not
+        # working at the moment FSR.  It might also be the case that standard
+        # Romanced objects do work.  Let's give that a go.
+        source_a =
+          if metric.source_a_type
+            if metric.source_a_type.downcase == 'group'
+              Group.find_by_name(data[:sources][0][:name])
+            else
+              Device.find_by_name(data[:sources][0][:name])
+            end
+          end
+        source_b =
+          if metric.source_b_type
+            if metric.source_b_type.downcase == 'group'
+              Group.find_by_name(data[:sources][0][:name])
+            else
+              Device.find_by_name(data[:sources][0][:name])
+            end
+          end
+        destination =
+          if metric.destination_type
+            if metric.destination_type.downcase == 'group'
+              Group.find_by_name(data[:dest][:name])
+            else
+              Device.find_by_name(data[:dest][:name])
+            end
+          end
+
+        metric.source_a_id = source_a && source_a.id
+        metric.source_b_id = source_b && source_b.id
+        metric.destination_id = destination && destination.id
+
+        if metric.save_and_validate_formula
+          puts "-> Created #{data[:metric_type]} metric #{data[:name]}"
+        else
+          raise Errors::RecordNotSaved, metric
+        end
       end
     end
   end

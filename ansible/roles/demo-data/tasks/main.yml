@@ -3,22 +3,35 @@
   vars:
     description: main
     rails_env: production
+    additional_env: ""
     rails_runner: ./script/rails runner
     script_path: "{{ role_path }}/files/scripts/generatortron.rb"
     data_path: "{{ role_path }}/files/data.yaml"
     ruby_bin: /opt/ruby-1.9/bin
     chdir: /data/private/share/rails/emma/core
 
+- name: Stop meca
+  ansible.builtin.service:
+    name: phoenix-mongrel@meca.3003.service
+    state: stopped
+
 - name: Run meca generatortron
   import_tasks: generatortron.yml
   vars:
     description: meca
     rails_env: production
+    # additional_env: "PHOENIX_START=false"
+    additional_env: ""
     rails_runner: ./script/runner
     script_path: "{{ role_path }}/files/scripts/generatortron_meca.rb"
     data_path: "{{ role_path }}/files/data.yaml"
     ruby_bin: /opt/ruby-1.8/bin
     chdir: /data/private/share/rails/meca
+
+- name: Start meca
+  ansible.builtin.service:
+    name: phoenix-mongrel@meca.3003.service
+    state: started
 
 - name: Restart meryl
   ansible.builtin.service:
