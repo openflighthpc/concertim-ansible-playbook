@@ -1,0 +1,388 @@
+diff -ur a/merge_ganglia b/merge_ganglia
+--- a/merge_ganglia	2016-09-21 13:32:16.000000000 +0000
++++ b/merge_ganglia	2022-11-10 16:46:37.151982467 +0000
+@@ -181,6 +181,7 @@
+ 
+    # copy source file to tmp file ready for modification
+    cp node ${tmp_node}
++   template_name=node
+    # If you need to use a different source file than above then copy it to ${tmp_node} in the if/else/fi below
+    # DO NOT start modifying ${tmp_node} until after the if/else/fi below
+ 
+@@ -199,6 +200,7 @@
+          load15=$random_bit
+          cpu_system=$(${RAND} 33 45)
+          cp node_vm ${tmp_node}
++	 template_name=node_vm
+          ;;
+       Switch)
+       # All the Switches
+@@ -217,12 +219,27 @@
+             ;;
+          esac
+          cp node_switch ${tmp_node}
++	 template_name=node_switch
+          ;;
+       Server)
+       # All the servers
+          case ${device_name} in
++            comp0[01-14]|comp0[17-19])
++               # Servers in  Rack1
++               fanspeed=$(${RAND} 14000 14500)
++               power_temp=$(${RAND} 100 130)
++               real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
++               memtotal=4194304
++               ;;
+             comp015|comp016)
+-               fanspeed=$(${RAND} 12000 12500)
++               # Very hot servers.
++                if [ "${device_name}" == "comp015" ] ; then
++                    # A broken fan.
++                    fanspeed=$(${RAND} 2500 2700)
++                else
++                    # Fan works fine, but server below is making it hot.
++                    fanspeed=$(${RAND} 14200 14500)
++                fi
+                power_temp=$(${RAND} 100 120)
+                real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
+                random_bit=$(${RAND} 2.8 3.0)
+@@ -234,17 +251,16 @@
+                load5=$(echo $load5_static $random_bit | awk '{print $1+$2}')
+                load15=$(echo $load15_static $random_bit | awk '{print $1+$2}')
+                memtotal=4194304
+-               cp node1 ${tmp_node}
+                ;;
+-            comp01[7-9]|comp020)
++            comp02[0-6])
++               # More servers in  Rack1
+                fanspeed=$(${RAND} 14000 14500)
+                power_temp=$(${RAND} 100 130)
+                real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
+                memtotal=4194304
+-               cp node4 ${tmp_node}
+                ;;
+-            comp140|comp031|comp093|comp212|comp228|comp014|comp253)
+-            # My zero utilised servers
++            comp02[7-9])
++            # Zero utilised servers in Rack1
+                random_bit=$(${RAND} 0.0 0.3)
+                load1=$random_bit
+                random_bit=$(${RAND} 0.0 0.2)
+@@ -252,29 +268,51 @@
+                random_bit=$(${RAND} 0.0 0.1)
+                load15=$random_bit
+                cpu_system=$(${RAND} 0 3)
+-               memtotal=2097152
++               memtotal=4194304
++               ;;
++
++            comp03[0-9])
++               # Servers in  Rack2
++               fanspeed=$(${RAND} 14000 14500)
++               power_temp=$(${RAND} 100 130)
++               real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
++               memtotal=4194304
++               ;;
++
++            comp04[0-9])
++	    # Blade servers in rack 2.
++               fanspeed=$(${RAND} 14000 14500)
++               power_temp=$(${RAND} 100 130)
++               real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
++               memtotal=16777216
++	       cp node3 ${tmp_node}
+                ;;
++
+             oracle*|vmhost0[1-9]|vmhost2[0-9])
+             # My large VM hosts
+                ascend_values ${range}
+                cp node_vmhost ${tmp_node}
++	       template_name=node_vmhost
+                ;;
+-            comp02[3-9]|comp03[0-5])
+-               fanspeed=$(${RAND} 13500 13800)
+-               power_temp=$(${RAND} 100 110)
+-               real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
+-               cp node2 ${tmp_node}
+-               ;;
+-            comp03[6-9]|comp04[0-9]|comp050)
+-               fanspeed=$(${RAND} 13400 13800)
+-               power_temp=$(${RAND} 90 100)
+-               real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
+-               cp node2 ${tmp_node}
+-               ;;
++            #comp02[3-9]|comp03[0-5])
++            #   fanspeed=$(${RAND} 13500 13800)
++            #   power_temp=$(${RAND} 100 110)
++            #   real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
++            #   cp node2 ${tmp_node}
++	    #   template_name=node2
++            #   ;;
++            #comp03[6-9]|comp04[0-9]|comp050)
++            #   fanspeed=$(${RAND} 13400 13800)
++            #   power_temp=$(${RAND} 90 100)
++            #   real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
++            #   cp node2 ${tmp_node}
++	    #   template_name=node2
++            #   ;;
+             vmhost1[0-9]|vmhost3[0-9])
+             # My large VM hosts
+                descend_values ${range}
+                cp node_vmhost ${tmp_node}
++	       template_name=node_vmhost
+                ;;
+             bios0[1-4])
+             # My fan speed BIOS servers, require high values, then adjust for bios issue
+@@ -282,6 +320,7 @@
+                fanspeed=$(${RAND} 3800 4000)
+                memtotal=16777216
+                cp node4 ${tmp_node}
++	       template_name=node4
+                ;;
+             comp06[2-9]|comp07[0-4]|comp30[6-9])
+                fanspeed=$(${RAND} 13000 14000)
+@@ -329,6 +368,7 @@
+                load15=$(echo $load15_static $random_bit | awk '{print $1+$2}')
+                memtotal=33554432
+                cp node3 ${tmp_node}
++	       template_name=node3
+                ;;
+             comp14[4-9]|comp1[5-8][0-9]|comp19[0-1])
+             # The Dell blades
+@@ -337,6 +377,7 @@
+                real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
+                memtotal=16777216
+                cp node3 ${tmp_node}
++	       template_name=node3
+                ;;
+             Data-centre)
+             # This is to catahc the old Data-centre device of type=Server
+@@ -364,6 +405,7 @@
+                power_temp=$(${RAND} 1 5)
+                real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
+                cp node_control ${tmp_node}
++	       template_name=node_control
+                ;;
+             command*)
+             # Get real data off the command, it gets skipped by this clause
+@@ -375,6 +417,7 @@
+                random_bit=$(${RAND} 0.1 3.5)
+                current1=$(echo ${ambient_temp_static} $random_bit | awk '{print ($1+$2)/2}')
+                cp node_imeter ${tmp_node}
++	       template_name=node_imeter
+                # Now update the Current (iMeter)
+                AddSed s/GGG_current1/${current1}/
+                AddSed s/GGG_current2/${current1}/
+@@ -386,12 +429,14 @@
+                power_temp=$(${RAND} 4000 6000)
+                real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
+                cp node_storage ${tmp_node}
++	       template_name=node_storage
+                ;;
+             Stor*|stor*|IBM*|ibm*|EMC*|emc*|NETAPP*|netapp*)
+             # This is all the storage devices
+                power_temp=$(${RAND} 450 570)
+                real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
+                cp node_storage ${tmp_node}
++	       template_name=node_storage
+                ;;
+             *ups*)
+             # This is all the rack UPS systems which is a ManagedDevice
+@@ -400,6 +445,7 @@
+                power_temp=$(${RAND} 650 970)
+                real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
+                cp node_rack_ups ${tmp_node}
++	       template_name=node_rack_ups
+                # Now for a UPS you have run time in mins, base it on load
+                runtime=$(echo $load1_static $random_bit | awk '{print ($1+$2)*5}')
+                AddSed s/GGG_runtime/${runtime}/
+@@ -411,6 +457,7 @@
+                power_temp=$(${RAND} 2950 3550)
+                real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
+                cp node_aircon ${tmp_node}
++	       template_name=node_aircon
+                ;;
+             *cool*)
+             # This is all rack inline coolers
+@@ -419,6 +466,7 @@
+                power_temp=$(${RAND} 120 255)
+                real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
+                cp node_cooler ${tmp_node}
++	       template_name=node_cooler
+                ;;
+             *door*)
+             # This is all door coolers
+@@ -438,6 +486,7 @@
+                water_temp=$(${RAND} 20.0 20.7)
+ 
+                cp node_cooldoor ${tmp_node}
++	       template_name=node_cooldoor
+                # Now update the fan speeds
+                AddSed s/GGG_fanspeed1/${fanspeed1}/
+                AddSed s/GGG_fanspeed2/${fanspeed2}/
+@@ -450,6 +499,7 @@
+                power_temp=$(${RAND} 50 155)
+                real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
+                cp node_manageddevice ${tmp_node}
++	       template_name=node_manageddevice
+                ;;
+          esac
+          ;;
+@@ -469,6 +519,7 @@
+                random_bit=$(${RAND} 0.1 0.3)
+                ambient_temp=$(echo $ambient_temp $random_bit | awk '{print $1+$2}')
+                cp node_generator ${tmp_node}
++	       template_name=node_generator
+                # Now for a Generator you have run time in mins, base it on random number from 110-88, i have a threshold set at 90
+                runtime=$(${RAND} 88 98)
+                AddSed s/GGG_runtime/${runtime}/
+@@ -481,6 +532,7 @@
+                random_bit=$(${RAND} 0.1 0.3)
+                ambient_temp=$(echo $ambient_temp $random_bit | awk '{print $1+$2}')
+                cp node_ats ${tmp_node}
++	       template_name=node_ats
+                ;;
+             *PDU[1-9]|*PDU1[0-9]|*PDU|*PDB[1-9]|*PDB1[0-9]|*PDB)
+             #echo "PDU"
+@@ -490,6 +542,7 @@
+                random_bit=$(${RAND} 0.1 0.3)
+                ambient_temp=$(echo $ambient_temp $random_bit | awk '{print $1+$2}')
+                cp node_pdu ${tmp_node}
++	       template_name=node_pdu
+                ;;
+             *UPS[1-9]*|*UPS)
+             #echo "UPS"
+@@ -499,6 +552,7 @@
+                power_temp=$(${RAND} 3500 4700)
+                real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
+                cp node_ups ${tmp_node}
++	       template_name=node_ups
+                # Now for a UPS you have run time in mins, base it on load
+                runtime=$(echo $load1_static $random_bit | awk '{print ($1+$2)*20}')
+                AddSed s/GGG_runtime/${runtime}/
+@@ -511,6 +565,7 @@
+                power_temp=$(${RAND} 650 970)
+                real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
+                cp node_rack_ups ${tmp_node}
++	       template_name=node_rack_ups
+                # Now for a UPS you have run time in mins, base it on load
+                runtime=$(echo $load1_static $random_bit | awk '{print ($1+$2)*5}')
+                AddSed s/GGG_runtime/${runtime}/
+@@ -522,6 +577,7 @@
+                random_bit=$(${RAND} 0.1 0.5)
+                ambient_temp=$(echo $ambient_temp $random_bit | awk '{print $1+$2}')
+                cp node_powerstrip ${tmp_node}
++	       template_name=node_powerstrip
+       
+                current=$(echo ${real_power} ${voltage} ${powerfactor}| awk '{print $1/($2*$3)}')
+                AddSed s/GGG_voltage/${voltage}/
+@@ -534,10 +590,11 @@
+       ChassisTaggedDevice)
+       # This is all the Chassis tagged devices
+          power_temp=$(${RAND} 1000 2500)
+-         real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2}')
++         real_power=$(echo ${load1} ${power_temp} | awk '{print $1*50+$2/2}')
+          random_bit=$(${RAND} 0.1 0.6)
+          ambient_temp=$(echo $ambient_temp $random_bit | awk '{print $1+$2}')
+          cp node_chassis ${tmp_node}
++	 template_name=node_chassis
+          ;;
+       RackTaggedDevice)
+       # This is all the Rack tagged devices
+@@ -545,6 +602,7 @@
+           # This is for all the rack metrics, including doors
+ 	  # This is a special file as it is missing the termination </HOST>, its added at the end or in the extra data file
+            cp node_rack ${tmp_node}
++	   template_name=node_rack
+            # door open/closed every 23 (front) and 29 (rear) when load is low
+            let door_front_status=${door}%23
+            let door_rear_status=${door}%29
+@@ -588,6 +646,7 @@
+             *dae*|*DAE*)
+                # just add 2 x psu data
+                cp node_dae ${tmp_node}
++	       template_name=node_dae
+                ;;
+             shelf*|patch*|blank*|Shelf*|Patch*|Blank*)
+                # Do nothing for these
+@@ -597,6 +656,7 @@
+                # just add 1 x psu data
+                real_power=$(${RAND} 30 50)
+                cp node_misc ${tmp_node}
++	       template_name=node_misc
+                ;;
+          esac
+          ;;
+@@ -686,6 +746,8 @@
+    # and merge single device details with all the other devices
+    sed -f ${SEDFILE} ${tmp_node} >> ${tmp_out_file}
+ 
++   #echo "type:${device_type}; name:${device_name}; file:${template_name}" >> /tmp/fgd-debug.txt
++
+ done < ${tmp_location}/device.list
+ 
+ if [ -f ./sensor.list ]; then
+diff -ur a/node3 b/node3
+--- a/node3	2022-11-07 15:46:46.510782464 +0000
++++ b/node3	2022-11-10 12:41:00.068402459 +0000
+@@ -9,6 +9,10 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.ambient_temp" VAL="GGG_ambient" TYPE="double" UNITS="C" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
++<METRIC NAME="ct.snmp.mem.swap.free" VAL="2104420" TYPE="int32" UNITS="KB" TN="54" TMAX="120" DMAX="180" SLOPE="both" SOURCE="SNMP">
++</METRIC>
++<METRIC NAME="ct.snmp.mem.swap.total" VAL="2104504" TYPE="int32" UNITS="KB" TN="54" TMAX="120" DMAX="180" SLOPE="zero" SOURCE="SNMP">
++</METRIC>
+ <METRIC NAME="ct.snmp.load.15" VAL="GGG_fifteen" TYPE="double" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.net.eth0.link" VAL="up" TYPE="string" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="SNMP">
+@@ -19,26 +23,24 @@
+ </METRIC>
+ <METRIC NAME="ct.snmp.os.arch" VAL="x86_64" TYPE="string" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="ct.snmp.os.platform" VAL="Solaris" TYPE="string" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="SNMP">
++<METRIC NAME="ct.snmp.os.platform" VAL="Linux" TYPE="string" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="ct.snmp.os.release" VAL="8 p234" TYPE="string" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="SNMP">
++<METRIC NAME="ct.snmp.os.release" VAL="2.6.18-128.7.1.el5" TYPE="string" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.vendor" VAL="GenuineIntel" TYPE="string" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="ct.snmp.cpu.freq" VAL="3.6" TYPE="double" UNITS="GHz" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+-</METRIC>
+-<METRIC NAME="ct.snmp.cpu.model" VAL="Sun sparc(R) CPU 3.10GHz" TYPE="string" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="SNMP">
++<METRIC NAME="ct.snmp.cpu.model" VAL="Intel(R) Xeon(TM) CPU 3.60GHz" TYPE="string" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.cpu.cores" VAL="4" TYPE="int32" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
++<METRIC NAME="ct.snmp.cpu.freq" VAL="3.6" TYPE="double" UNITS="GHz" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
++</METRIC>
+ <METRIC NAME="ct.snmp.load.1" VAL="GGG_one" TYPE="double" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.net.eth0.mac" VAL="00:04:23:b0:1f:d4" TYPE="string" UNITS="" TN="23" TMAX="60" DMAX="180" SLOPE="zero" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.srv.snmpd.uptime" VAL="319590.07" TYPE="double" UNITS="s" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+-<METRIC NAME="ct.snmp.mem.swap.free" VAL="2104420" TYPE="int32" UNITS="KB" TN="54" TMAX="120" DMAX="180" SLOPE="both" SOURCE="SNMP">
+-</METRIC>
+ <METRIC NAME="ct.ipmi.temp.ps1_temperature" VAL="38" TYPE="int32" UNITS="degreesC" TN="8" TMAX="120" DMAX="180" SLOPE="both" SOURCE="IPMI">
+ </METRIC>
+ <METRIC NAME="ct.ipmi.temp.ps2_temperature" VAL="40" TYPE="int32" UNITS="degreesC" TN="8" TMAX="120" DMAX="180" SLOPE="both" SOURCE="IPMI">
+diff -ur a/node_chassis b/node_chassis
+--- a/node_chassis	2015-04-10 15:50:16.000000000 +0000
++++ b/node_chassis	2022-11-10 15:59:19.154175899 +0000
+@@ -7,14 +7,6 @@
+ </METRIC>
+ <METRIC NAME="ct.pdu.psu1.apparent_power" VAL="GGG_apparentpower" TYPE="float" UNITS="VA" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="PDU">
+ </METRIC>
+-<METRIC NAME="ct.pdu.psu2.real_power" VAL="GGG_realpower" TYPE="float" UNITS="W" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="PDU">
+-</METRIC>
+-<METRIC NAME="ct.pdu.psu2.apparent_power" VAL="GGG_apparentpower" TYPE="float" UNITS="VA" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="PDU">
+-</METRIC>
+-<METRIC NAME="ct.pdu.psu3.real_power" VAL="GGG_realpower" TYPE="float" UNITS="W" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="PDU">
+-</METRIC>
+-<METRIC NAME="ct.pdu.psu3.apparent_power" VAL="GGG_apparentpower" TYPE="float" UNITS="VA" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="PDU">
+-</METRIC>
+ <METRIC NAME="ct.snmp.ambient_temp" VAL="GGG_ambient" TYPE="double" UNITS="C" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">
+ </METRIC>
+ <METRIC NAME="ct.snmp.fan0.tach" VAL="GGG_fanspeed" TYPE="double" UNITS="RPM" TN="23" TMAX="60" DMAX="180" SLOPE="both" SOURCE="SNMP">

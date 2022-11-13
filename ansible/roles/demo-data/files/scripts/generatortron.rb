@@ -17,6 +17,14 @@ module Generatortron
         "Error saving device in #{descriptor}: #{errors}"
       end
     end
+    class PsuNotFound < GeneratortronError
+      def message
+        record = super
+        descriptor = "#{record.class.name} #{record.name}"
+        errors = "unable to find empty slot"
+        "Error saving device in #{descriptor}: #{errors}"
+      end
+    end
   end
 
   class Generator
@@ -71,6 +79,7 @@ module Generatortron
           sleep 1
           chassis = create_rack_device(rack, device_data)
           next unless device_data[:devices]
+          create_chassis_rbg(chassis)
 
           device_data[:devices].each do |chassis_server_data|
             # Ivy::Chassis#get_default_name assumes that two chassis would never
@@ -81,8 +90,29 @@ module Generatortron
         end
       end
 
+      # All PDUs and power supplies should have now been created.  Let's
+      # plug some stuff in.
+      data[:racks].each do |rack_data|
+        rack_data[:devices].each do |device_data|
+          connect_psus(device_data)
+        end
+      end
+
+      if data[:power_cost_bands]
+        Sas::CostBand.destroy_all
+        data[:power_cost_bands].each do |cost_band_data|
+          create_power_cost_band(cost_band_data)
+        end
+      end
+
       if data[:data_centre]
         create_data_centre_plan_view(data[:data_centre])
+      end
+
+      if data[:groups]
+        data[:groups].each do |group_data|
+          create_group(group_data)
+        end
       end
     end
 
@@ -270,7 +300,28 @@ module Generatortron
           "serial_number" => "sn-#{name}-#{sprintf("%04d", Random.rand(999))}",
           "asset_number" => "an-#{name}-#{sprintf("%04d", Random.rand(999))}",
         }
-      }.with_indifferent_access
+      }.with_indifferent_access.tap do |h|
+        if data.key?(:devices)
+          # We're creating a blade center.
+          h["chassis"]["name"] = name
+          h["chassis"]["serial_number"] = h["devices"]["serial_number"]
+          h["chassis"]["asset_number"] = h["devices"]["asset_number"]
+        end
+      end
+    end
+
+    def create_chassis_rbg(chassis)
+      group = Ivy::Group::RuleBasedGroup.new(
+        name: "Devices in #{chassis.name}",
+        operator: "and",
+        chassis: [{invert_match: false, id: chassis.id}.with_indifferent_access],
+        aggregate_members_metrics: true,
+      )
+      if group.save
+        puts "--> Created group #{group.name}"
+      else
+        raise Errors::RecordNotSaved, group
+      end
     end
 
     def create_chassis_server(chassis, data)
@@ -420,6 +471,54 @@ module Generatortron
       return data_name unless data_name.blank?
       return chassis_name unless chassis_name.blank?
       "<UNKNOWN>"
+    end
+
+    def connect_psus(device_data)
+      return unless device_data.key?(:psu_connections)
+      device = Ivy::Device.find_by_name(device_data[:name])
+      return if device.nil?
+
+      device_data[:psu_connections].each do |psu_data|
+        psu = device.power_supplies.detect(psu_data[:name]).first
+        raise GeneratortronError, "PSU not found: #{device.name}:#{psu_data[:name]}" if psu.nil?
+        pdu = Ivy::Device::PowerStrip.find_by_name(psu_data[:pdu])
+        socket_num = psu_data[:socket]
+        psu.power_strip_id  = pdu.id
+        psu.power_strip_socket_id  = socket_num
+        if psu.save
+          pdu.set_modified_timestamp
+          pdu.save
+          puts "-> Plugged #{device.name}:#{psu.name} into #{pdu.name}:#{socket_num}"
+        end
+      end
+    end
+
+    def create_power_cost_band(data)
+      params = {
+        name: data[:name],
+        timefrom: Time.parse(data[:timefrom]),
+        timeto: Time.parse(data[:timeto]),
+        cost_pkwh: data[:cost_pkwh],
+        colour: data[:colour],
+        include_days: data[:include_days],
+      }
+      cost_band = Sas::CostBand.create(params)
+      if cost_band.persisted?
+        puts "--> Created cost band #{params[:name]}"
+      else
+        raise Errors::RecordNotSaved, cost_band
+      end
+    end
+
+    def create_group(data)
+      group = Ivy::Group::RuleBasedGroup.find_by_name(data[:name])
+      group.destroy unless group.nil?
+      group = Ivy::Group::RuleBasedGroup.create(data)
+      if group.persisted?
+        puts "-> Created group #{data[:name]}"
+      else
+        raise Errors::RecordNotSaved, group
+      end
     end
   end
 
