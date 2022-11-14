@@ -8,24 +8,26 @@
     - rrdtool
 
 - name: Install gmetad-agg
+  vars:
+    download_dest: "{{ role_path }}/files/tmp/{{ gmetad_agg_deb }}"
   block:
     - name: Download gmetad-agg from S3
       amazon.aws.aws_s3:
-        bucket: alces-flight
-        object: "/concertim/packages/debs/{{ gmetad_agg_deb }}"
-        dest: "{{ role_path }}/files/tmp/{{ gmetad_agg_deb }}"
+        bucket: "{{ s3_bucket }}"
+        object: "{{ debs_prefix }}{{ gmetad_agg_deb }}"
+        dest: "{{ download_dest }}"
         mode: get
         aws_access_key: "{{ aws_access_key_id }}"
         aws_secret_key: "{{ aws_secret_access_key }}"
 
     - name: Install gmetad-agg deb
       ansible.builtin.apt:
-        deb: "{{ role_path }}/files/tmp/{{ gmetad_agg_deb }}"
+        deb: "{{ download_dest }}"
 
 - name: Install gmond configuration
   ansible.builtin.copy:
     src: gmond.conf
-    dest: /etc/ganglia/gmond.conf
+    dest: /etc/ganglia/gmond.conf.alces
     owner: root
     group: root
     mode: u=rw,g=r,o=r
@@ -45,18 +47,6 @@
     owner: root
     group: nogroup
     mode: u=rw,g=r,o=r
-
-# - name: Update configuration to log to syslog
-#   ansible.builtin.replace:
-#     path: /etc/postgresql/12/main/postgresql.conf
-#     regexp: "{{ item.regexp }}"
-#     replace: "{{ item.replace }}"
-#     backup: true
-#   loop:
-#     - regexp: "#log_destination = 'stderr'"
-#       replace: "log_destination = 'syslog'"
-#      search_and_replace_in_file('/etc/init.d/gmetad','/etc/init.d/gmetad',{'$remote_fs $syslog'=>'ganglia-monitor'})
-#      search_and_replace_in_file('/etc/init.d/gmetad-agg','/etc/init.d/gmetad-agg',{'$remote_fs $syslog'=>'ganglia-monitor'})
 
 - name: Install rrd file age monitoring script
   block:

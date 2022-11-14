@@ -1,4 +1,17 @@
 # ==================================================
+# S3 variables
+#
+# Some of our assets are stored in S3.  These are common variables for
+# accessing them.
+s3_bucket: alces-flight
+debs_prefix: /concertim/packages/debs/
+
+# The following are expected to be provided as `--extra-args` from the CLI.
+# aws_access_key_id
+# aws_secret_access_key
+
+
+# ==================================================
 # General variables
 #
 # The name of (1) the unix user used to run our rails apps; (2) the database
