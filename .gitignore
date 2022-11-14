@@ -5,3 +5,4 @@
 /ansible/roles/*/files/tmp/*
 /ansible/roles/snmp/files/raw_mibs/
 /ansible/secrets.enc
+/notes/*
