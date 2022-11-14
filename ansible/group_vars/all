@@ -1,0 +1,6 @@
+# ==================================================
+# General variables
+#
+# The name of (1) the unix user used to run our rails apps; (2) the database
+# user/role used.
+app_user: www-data
