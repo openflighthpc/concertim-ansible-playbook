@@ -121,17 +121,14 @@ ansible-playbook --inventory /ansible/inventory.ini /ansible/prep-playbook.yml
 
 ## Run the build and configure playbooks
 
-Run the build playbook:
+Run the build playbook (if you rebooted the machine after the above step,
+don't forget to ensure that your credentials have been gathered and exported).
 
 ```bash
-if [ "$GH_TOKEN" == "" -o "$AWS_ACCESS_KEY_ID" == "" -o "$AWS_SECRET_ACCESS_KEY" == "" ] ; then
-  echo "Some credentials are missing"
-else
-  ansible-playbook \
-    --inventory /ansible/inventory.ini \
-    --extra-vars "github_token=$GH_TOKEN aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
-    /ansible/build-playbook.yml
-fi
+ansible-playbook \
+  --inventory /ansible/inventory.ini \
+  --extra-vars "github_token=$GH_TOKEN aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
+  /ansible/build-playbook.yml
 ```
 
 Run the configure playbook:

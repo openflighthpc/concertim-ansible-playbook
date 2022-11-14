@@ -1,3 +1,14 @@
+- name: Assert credentials have been given
+  ansible.builtin.assert:
+    that:
+      - "{{ item }} is defined"
+    fail_msg: "{{ item }} credential has not been given"
+    quiet: true
+  loop:
+    - github_token
+    - aws_access_key_id
+    - aws_secret_access_key
+
 - name: Waiting for nodes to be reachable
   wait_for_connection:
     sleep: 10
