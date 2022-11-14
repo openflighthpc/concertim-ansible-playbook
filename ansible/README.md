@@ -105,40 +105,19 @@ cp -a  /ansible/roles/configure-vanilla/files/ftsw-example-data/ \
        /ansible/roles/configure-vanilla/files/tmp/ftsw-data
 ```
 
-## Optionally run the prep playbook to configure the network naming convention
+## Run the prep playbook to configure the network naming convention as needed
 
 Before the build and configure playbooks can be ran, the machine needs to be
-configured to use `ethX` style network naming convention.  The following
-snippet will detect if the playbook needs to be ran and inform you of the next
-steps.
+configured to use `ethX` style network naming convention.  Running the prep
+playbook will preform that configuration if needed and inform you of the next
+steps, which will be to either 1) reboot the machine and then run the build
+and configure playbooks; or 2) move straight on to running the build and
+configure playbooks.
 
-```bash
-if [ -d /sys/class/net/eth0 ]; then
-  echo
-  echo "Your machine is correctly prepared."
-  echo "Proceed to running the build and configure playbooks."
-  echo
-else
-  echo
-  echo "Your machine needs preparatory configuration."
-  echo "Run the prep playbook"
-  echo "Then reboot your machine and run the build and configure playbooks."
-  echo "Make sure to add your credentials again."
-  echo
-fi
-```
-
-If the above snippet informs you to run the prep playbook run the following,
-then reboot your machine.
 
 ```bash
 ansible-playbook --inventory /ansible/inventory.ini /ansible/prep-playbook.yml
 ```
-
-TODO: Simplify this section so that the playbook itself 1) detects if the
-correct naming convention is in use; 2) informs the user of the next steps; 3)
-automatically (perhaps requesting confirmation) reboots the machine only if
-required.
 
 ## Run the build and configure playbooks
 
