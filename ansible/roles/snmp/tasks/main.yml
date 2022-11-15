@@ -1,28 +1,13 @@
 - name: Create empty placeholder directories
   ansible.builtin.file:
-    path: "{{ item.path }}"
-    owner: "{{ item.owner }}"
-    group: "{{ item.group }}"
-    mode: "{{ item.mode }}"
+    path: "{{ item }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: u=rwx,g=rwx,o=rx
     state: directory
   loop:
-    - path: /data/private/share/snmp-system
-      owner: www-data
-      group: www-data
-      mode: u=rwx,g=rwx,o=rx
-
-    - path: /data/private/share/snmp-system/mibs
-      owner: www-data
-      group: www-data
-      mode: u=rwx,g=rwx,o=rx
-
-    - path: /data/private/share/snmp
-      owner: www-data
-      group: www-data
-      mode: u=rwx,g=rwx,o=rx
-
-    - path: /data/private/share/snmp/mibs
-      owner: www-data
-      group: www-data
-      mode: u=rwx,g=rwx,o=rx
+    - /data/private/share/snmp-system
+    - /data/private/share/snmp-system/mibs
+    - /data/private/share/snmp
+    - /data/private/share/snmp/mibs
 
