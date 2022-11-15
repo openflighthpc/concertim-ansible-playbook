@@ -2,7 +2,6 @@
   ansible.builtin.command:
     cmd: gem1.8 install "{{ role_path }}/files/1.8/{{ item }}*.gem" --no-rdoc --no-ri --local
   loop:
-    # - daemons
     - delia_daemon
     - delia-1.0.0
 
@@ -10,7 +9,6 @@
   ansible.builtin.command:
     cmd: gem1.9 install "{{ role_path }}/files/1.9/{{ item }}*.gem" --no-rdoc --no-ri --local
   loop:
-    # - daemons
     - delia_daemon
 
 - name: Link binaries
@@ -28,8 +26,8 @@
   ansible.builtin.copy:
     src: delia.yml
     dest: /data/private/share/etc/concurrent-thinking/
-    owner: www-data
-    group: www-data
+    owner: "{{app_user}}"
+    group: "{{app_user}}"
     mode: u=rw,g=r,o=r
 
 - name: Install delia client configuration
@@ -39,7 +37,6 @@
     owner: root
     group: root
     mode: u=rw,g=r,o=r
-
 
 - name: Install init.d file
   ansible.builtin.copy:
@@ -52,17 +49,11 @@
 # XXX This ought to be elsewhere.
 - name: Add sudoers entry
   ansible.builtin.lineinfile:
-    line: "www-data ALL=NOPASSWD: ALL"
+    line: "{{app_user}} ALL=NOPASSWD: ALL"
     path: "/etc/sudoers"
     insertbefore: EOF
-
-# XXX check-delia assumes that `eth0` and `eth1` exist.  Consider patching in
-# place.  Or svn->git and fix properly.
-# - name: Patch check delia
-
 
 - name: Ensure that delia is enabled
   ansible.builtin.service:
     name: delia
-    # state: started
     enabled: yes
