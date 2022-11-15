@@ -1,7 +1,7 @@
 - name: Download module packages from S3
   amazon.aws.aws_s3:
-    bucket: alces-flight
-    object: /concertim/packages/modules/{{ item }}.tgz
+    bucket: "{{ s3_bucket }}"
+    object: "{{ s3_modules_prefix}}{{ item }}.tgz"
     dest: "{{ role_path }}/files/tmp/{{ item }}.tgz"
     mode: get
     aws_access_key: "{{ aws_access_key_id }}"
@@ -11,8 +11,8 @@
 - name: Make destination directory
   ansible.builtin.file:
     path: "{{ phoenix_modules_root_dir }}"
-    owner: www-data
-    group: www-data
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
     mode: "755"
     state: directory
 
@@ -26,8 +26,8 @@
 - name: Correct ownership
   ansible.builtin.file:
     path: "{{ phoenix_modules_root_dir }}/{{ item }}"
-    owner: www-data
-    group: www-data
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
     recurse: true
   loop: "{{ modules }}"
 
@@ -50,7 +50,6 @@
         fstype: "none"
         state: mounted
 
-
 - name: configure modules
   vars:
     template_dest: "{{ phoenix_modules_root_dir }}/{{ module }}/config/local_environment.rb"
@@ -64,7 +63,6 @@
   loop: "{{ modules }}"
   loop_control:
     loop_var: module
-
 
 - name: configuring uma
   vars:
@@ -82,8 +80,8 @@
       ansible.builtin.copy:
         src: monkey_patch_active_record.rb
         dest: "{{ phoenix_modules_root_dir }}/{{ item }}/config/initializers/"
-        owner: www-data
-        group: www-data
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
       loop: "{{ modules }}"
 
 - name: Fix and hack hacor into submission
@@ -97,8 +95,8 @@
     rails_env: "{{ mode }}"
   ansible.builtin.shell:
     cmd: |
-      PATH=/opt/ruby-1.8/bin:$PATH
-      sudo -u www-data --preserve-env=PATH /bin/bash -c 'rake db:drop_and_create RAILS_ENV={{ rails_env }} PHOENIX_START=0 --trace'
+      PATH={{ruby_bin_dir}}:$PATH
+      sudo -u {{ app_user }} --preserve-env=PATH /bin/bash -c 'rake db:drop_and_create RAILS_ENV={{ rails_env }} PHOENIX_START=0 --trace'
     chdir: "{{ phoenix_modules_root_dir }}/{{ item }}"
   loop: "{{ modules }}"
 
@@ -107,15 +105,15 @@
     rails_env: "{{ mode }}"
   ansible.builtin.shell:
     cmd: |
-      PATH=/opt/ruby-1.8/bin:$PATH
-      sudo -u www-data --preserve-env=PATH /bin/bash -c 'rake db:rebuild RAILS_ENV={{ rails_env }} PHOENIX_START=0 --trace'
+      PATH={{ruby_bin_dir}}:$PATH
+      sudo -u {{ app_user }} --preserve-env=PATH /bin/bash -c 'rake db:rebuild RAILS_ENV={{ rails_env }} PHOENIX_START=0 --trace'
     chdir: "{{ phoenix_modules_root_dir }}/{{ item }}"
   loop: "{{ modules }}"
 
 
 - name: Install mongrel config files
   vars:
-    mongrel_user: "www-data"
+    mongrel_user: "{{app_user}}"
     mongrel_conf_dir: "/etc/mongrel_cluster"
     template_dest: "{{ mongrel_conf_dir }}/{{ module }}.yml"
     template_src: "{{ phoenix_modules_root_dir }}/{{ module }}/config/mongrel_cluster.yml.tagged"

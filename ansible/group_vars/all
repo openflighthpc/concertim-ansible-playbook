@@ -6,6 +6,7 @@
 s3_bucket: alces-flight
 s3_debs_prefix: /concertim/packages/debs/
 s3_misc_packages_prefix: /concertim/packages/misc/
+s3_modules_prefix: /concertim/packages/modules/
 
 # The following are expected to be provided as `--extra-args` from the CLI.
 # aws_access_key_id
