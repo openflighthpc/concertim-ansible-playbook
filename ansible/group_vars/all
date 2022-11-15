@@ -4,7 +4,8 @@
 # Some of our assets are stored in S3.  These are common variables for
 # accessing them.
 s3_bucket: alces-flight
-debs_prefix: /concertim/packages/debs/
+s3_debs_prefix: /concertim/packages/debs/
+s3_misc_packages_prefix: /concertim/packages/misc/
 
 # The following are expected to be provided as `--extra-args` from the CLI.
 # aws_access_key_id

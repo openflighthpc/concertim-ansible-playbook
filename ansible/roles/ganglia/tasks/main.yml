@@ -14,7 +14,7 @@
     - name: Download gmetad-agg from S3
       amazon.aws.aws_s3:
         bucket: "{{ s3_bucket }}"
-        object: "{{ debs_prefix }}{{ gmetad_agg_deb }}"
+        object: "{{ s3_debs_prefix }}{{ gmetad_agg_deb }}"
         dest: "{{ download_dest }}"
         mode: get
         aws_access_key: "{{ aws_access_key_id }}"
