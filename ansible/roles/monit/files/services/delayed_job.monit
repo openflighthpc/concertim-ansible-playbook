@@ -6,7 +6,7 @@ check process delayed_job with pidfile /data/private/share/emma/core/tmp/delayed
   if totalmem > 8% for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
   group emma_drb
-  #depends on postgresql
+  depends on postgresql
 
 # Introduced to check when delayed_job stops publishing to mia and hangs its drb connection
   check program emma_drb with path "/usr/local/sbin/check_emma_connection.sh"

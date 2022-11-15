@@ -5,12 +5,14 @@ check process enid with pidfile /var/run/enid.pid
   if failed port 9292 type tcp
      with timeout 10 seconds
      then restart
-  group daemon
-  # depends on memcached
+  group ct-daemon
+  group enid
+  depends on memcached
 
 check file enid_log with path /var/log/enid.log
   start program = "/usr/bin/systemctl restart enid" with timeout 60 seconds
   restart program = "/usr/bin/systemctl restart enid" with timeout 60 seconds
   stop program = "/usr/bin/systemctl stop enid"
   if timestamp > 90 seconds then restart
-  group daemon
+  group ct-daemon
+  group enid

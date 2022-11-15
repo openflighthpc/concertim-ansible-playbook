@@ -11,8 +11,8 @@ check process emma-{{ port }} with pidfile /data/private/share/emma/core/tmp/emm
   if totalmem > 10% for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
   group emma
-  group thin
-  group rails
+  group ct-www
+  depends on apache2
   depends on postgresql
 
 {% endfor %}

@@ -7,11 +7,11 @@ check process theresa with pidfile /var/run/theresa.pid
   if totalmem > 5% for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
 
-  group daemon
+  group ct-daemon
   group theresa
   depends on meca
 
 check file theresa_log with path /var/log/theresa.log
   if timestamp > 90 seconds then exec "/usr/local/sbin/clobber theresa"
-  group daemon
+  group ct-daemon
   group theresa

@@ -8,4 +8,3 @@ check process memcached with pidfile /var/run/memcached/memcached.pid
   if totalmem > 4% for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
   group server
-  group memcached

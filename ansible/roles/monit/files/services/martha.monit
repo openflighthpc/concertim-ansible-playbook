@@ -9,12 +9,12 @@ check process martha with pidfile /var/run/martha.pid
   if failed host 127.0.0.1 port 8658 type tcp
      with timeout 10 seconds
      then restart
-  group daemon
+  group ct-daemon
   group martha
   group metrics
 
 check file martha_log with path /var/log/martha.log
   if timestamp > 90 seconds then exec "/usr/local/sbin/clobber martha"
-  group daemon
+  group ct-daemon
   group martha
   group metrics

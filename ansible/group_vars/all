@@ -10,6 +10,19 @@ debs_prefix: /concertim/packages/debs/
 # aws_access_key_id
 # aws_secret_access_key
 
+# ==================================================
+# emma and mia variables
+#
+# These variables are used by a number of different roles, so they given here
+# where they can be shared.
+emma_ports:
+  - 9900
+  - 9901
+  - 9902
+mia_ports:
+  - 8000
+  - 8001
+  - 8002
 
 # ==================================================
 # General variables

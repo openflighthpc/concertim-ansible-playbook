@@ -6,5 +6,5 @@ check process maggie with pidfile /var/run/maggie.pid
   if totalmem > 7% for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
 
-  group daemon
+  group ct-daemon
   group metrics
