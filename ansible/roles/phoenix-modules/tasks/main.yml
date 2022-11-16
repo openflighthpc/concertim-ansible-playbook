@@ -91,21 +91,17 @@
   include_tasks: sas_fixes_and_hacks.yml
 
 - name: Create database
-  vars:
-    rails_env: "{{ mode }}"
   ansible.builtin.shell:
     cmd: |
-      PATH={{ruby_bin_dir}}:$PATH
+      PATH={{ruby_18_bin_dir}}:$PATH
       sudo -u {{ app_user }} --preserve-env=PATH /bin/bash -c 'rake db:drop_and_create RAILS_ENV={{ rails_env }} PHOENIX_START=0 --trace'
     chdir: "{{ phoenix_modules_root_dir }}/{{ item }}"
   loop: "{{ modules }}"
 
 - name: Migrate database
-  vars:
-    rails_env: "{{ mode }}"
   ansible.builtin.shell:
     cmd: |
-      PATH={{ruby_bin_dir}}:$PATH
+      PATH={{ruby_18_bin_dir}}:$PATH
       sudo -u {{ app_user }} --preserve-env=PATH /bin/bash -c 'rake db:rebuild RAILS_ENV={{ rails_env }} PHOENIX_START=0 --trace'
     chdir: "{{ phoenix_modules_root_dir }}/{{ item }}"
   loop: "{{ modules }}"

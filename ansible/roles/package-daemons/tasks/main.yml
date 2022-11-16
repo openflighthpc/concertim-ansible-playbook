@@ -71,8 +71,8 @@
     daemon_path: "{{ daemon_installation_dir}}/{{ item }}"
   ansible.builtin.shell: |
     cd "{{ daemon_path }}"
-    PATH=/opt/ruby-1.9/bin:$PATH
-    /opt/ruby-1.9/bin/bundle install --local
+    PATH={{ruby_19_bin_dir}}:$PATH
+    {{ruby_19_bin_dir}}/bundle install --local
   loop: "{{ packaged_daemons }}"
 
 - name: Install init.d files

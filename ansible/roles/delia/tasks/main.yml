@@ -17,9 +17,9 @@
     dest: "{{ item.dest }}"
     state: link
   loop:
-    - src: /opt/ruby-1.8/bin/delia
+    - src: "{{gem_18_bin_dir}}/delia"
       dest: /usr/bin/delia
-    - src: /opt/ruby-1.8/bin/check-delia
+    - src: "{{gem_18_bin_dir}}/check-delia"
       dest: /usr/bin/check-delia
 
 - name: Install delia configuration

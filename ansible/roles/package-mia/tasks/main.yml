@@ -66,11 +66,11 @@
     template_src: "{{ package_mia_root_dir }}/mia/config/mongrel_cluster.yml.tagged"
     replacements:
       - regexp: "%MONGREL_USER%"
-        replace: "{{ mongrel_user }}"
+        replace: "{{ app_user }}"
       - regexp: "%MONGREL_GROUP%"
-        replace: "{{ mongrel_group }}"
+        replace: "{{ app_user }}"
       - regexp: "%ENV%"
-        replace: "{{ mode }}"
+        replace: "{{ rails_env }}"
       - regexp: "%MIA_ROOT%"
         replace: "/opt/concurrent-thinking/mia"
       - regexp: "%SERVER_COUNT%"
@@ -94,7 +94,7 @@
 - name: Make appliance directory
   ansible.builtin.file:
     path: "/data/private/share/etc/concurrent-thinking/appliance"
-    owner: www-data
+    owner: "{{app_user}}"
     group: root
     mode: "755"
     state: directory
@@ -103,7 +103,7 @@
   ansible.builtin.copy:
     dest: "/data/private/share/etc/concurrent-thinking/appliance/unconfigured"
     content: ""
-    owner: www-data
+    owner: "{{app_user}}"
 
 - name: Build MIA JS
   ansible.builtin.command:

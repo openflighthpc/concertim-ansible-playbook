@@ -50,11 +50,9 @@
 - name: Run FTSW automation script
   block:
     - name: Run FTSW automation script
-      vars:
-        rails_env: production
       ansible.builtin.shell:
         cmd: |
-          PATH=/opt/ruby-1.8/bin:$PATH
+          PATH={{ruby_18_bin_dir}}:$PATH
           sudo -u www-data --preserve-env=PATH /bin/bash -c 'RAILS_ENV={{ rails_env }} script/runner /usr/local/sbin/ftsw-automation.rb'
         chdir: /data/private/share/rails/sas
       register:
@@ -76,10 +74,8 @@
       when: ftsw_automation.rc != 0
 
 - name: Configure users
-  vars:
-    rails_env: production
   ansible.builtin.shell:
     cmd: |
-      PATH=/opt/ruby-1.9/bin:$PATH
+      PATH={{ruby_19_bin_dir}}:$PATH
       sudo -u www-data --preserve-env=PATH /bin/bash -c 'RAILS_ENV={{ rails_env }} ./script/rails runner /usr/local/sbin/ftsw-users.rb'
     chdir: /data/private/share/rails/emma/core

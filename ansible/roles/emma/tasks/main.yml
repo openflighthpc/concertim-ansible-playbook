@@ -72,8 +72,8 @@
     - name: Bundle install gems
       ansible.builtin.shell: |
         cd "{{ core_path }}"
-        PATH=/opt/ruby-1.9/bin:$PATH
-        /opt/ruby-1.9/bin/bundle install --local
+        PATH={{ruby_19_bin_dir}}:$PATH
+        {{ruby_19_bin_dir}}/bundle install --local
 
     - name: Fix thin to use correct Ruby
       ansible.builtin.replace:
@@ -132,21 +132,21 @@
 - name: Create database
   ansible.builtin.shell:
     cmd: |
-      PATH=/opt/ruby-1.9/bin:$PATH
+      PATH={{ruby_19_bin_dir}}:$PATH
       sudo -u www-data --preserve-env=PATH /bin/bash -c 'bundle exec rake db:drop_and_create:emma RAILS_ENV={{ rails_env }} --trace'
     chdir: "{{ core_path }}"
 
 - name: Populate database
   ansible.builtin.shell:
     cmd: |
-      PATH=/opt/ruby-1.9/bin:$PATH
+      PATH={{ruby_19_bin_dir}}:$PATH
       sudo -u www-data --preserve-env=PATH /bin/bash -c 'bundle exec rake db:migrate:emma RAILS_ENV={{ rails_env }} --trace'
     chdir: "{{ core_path }}"
 
 - name: Precompile assets
   ansible.builtin.shell:
     cmd: |
-      PATH=/opt/ruby-1.9/bin:$PATH
+      PATH={{ruby_19_bin_dir}}:$PATH
       sudo -u www-data --preserve-env=PATH /bin/bash -c 'bundle exec rake assets:precompile RAILS_ENV={{ rails_env }} --trace'
     chdir: "{{ core_path }}"
 

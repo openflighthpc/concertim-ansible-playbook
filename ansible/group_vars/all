@@ -35,6 +35,8 @@ mia_ports:
 ruby_18_bin_dir: /opt/ruby-1.8/bin
 # The directory where `gem18` installs its binaries.
 gem_18_bin_dir: "{{ ruby_18_bin_dir }}"
+# The directory containing Ruby version 1.9.
+ruby_19_bin_dir: /opt/ruby-1.9/bin
 
 
 # ==================================================
@@ -43,3 +45,4 @@ gem_18_bin_dir: "{{ ruby_18_bin_dir }}"
 # The name of (1) the unix user used to run our rails apps; (2) the database
 # user/role used.
 app_user: www-data
+rails_env: production

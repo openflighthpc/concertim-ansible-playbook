@@ -7,11 +7,11 @@ Before=emma.service
 After=network.target
 
 [Service]
-Environment=PATH=/opt/ruby-1.9/bin:/sbin:/bin:/usr/sbin:/usr/bin
+Environment=PATH={{ruby_19_bin_dir}}:/sbin:/bin:/usr/sbin:/usr/bin
 Type=forking
 PIDFile=/data/private/share/emma/core/tmp/emma.%i.pid
-ExecStart=/opt/ruby-1.9/bin/thin start --only %i -C /data/private/share/emma/core/config/thin.yml
-ExecStop=/opt/ruby-1.9/bin/thin  stop  --only %i -C /data/private/share/emma/core/config/thin.yml
+ExecStart={{ruby_19_bin_dir}}/thin start --only %i -C /data/private/share/emma/core/config/thin.yml
+ExecStop={{ruby_19_bin_dir}}/thin  stop  --only %i -C /data/private/share/emma/core/config/thin.yml
 TimeoutSec=1min
 SyslogIdentifier=emma@%i
 
