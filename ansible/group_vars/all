@@ -27,6 +27,17 @@ mia_ports:
   - 8002
 
 # ==================================================
+# Ruby variables
+#
+# Variables related to our custom ruby installations.
+
+# The directory containing Ruby version 1.8.
+ruby_18_bin_dir: /opt/ruby-1.8/bin
+# The directory where `gem18` installs its binaries.
+gem_18_bin_dir: "{{ ruby_18_bin_dir }}"
+
+
+# ==================================================
 # General variables
 #
 # The name of (1) the unix user used to run our rails apps; (2) the database

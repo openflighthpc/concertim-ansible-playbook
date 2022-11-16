@@ -1,7 +1,6 @@
-gem_18_bin_dir: /opt/ruby-1.8/bin
 mongrel_conf_dir: /etc/mongrel_cluster
 mongrel_pid_dir: /run/mongrel_cluster
-mongrel_user: www-data
+mongrel_user: "{{app_user}}"
 mongrel_servername_ports:
   - uma.3001
   - hacor.3002
