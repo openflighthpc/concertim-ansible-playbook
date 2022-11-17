@@ -9,7 +9,7 @@
   block:
   - name: Download tar file
     ansible.builtin.get_url:
-      url: https://api.github.com/repos/alces-flight/concertim-emma/tarball/main
+      url: https://api.github.com/repos/alces-flight/concertim-emma/tarball/{{emma_git_tag}}
       dest: /tmp/emma.tgz
       headers:
         Authorization: token {{ github_token }}
