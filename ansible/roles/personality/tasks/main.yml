@@ -42,8 +42,8 @@
 
 - name: Download logos from S3
   amazon.aws.aws_s3:
-    bucket: alces-flight
-    object: /concertim/assets/logos/{{ item }}
+    bucket: "{{s3_bucket}}"
+    object: "{{s3_assets_prefix}}logos/{{ item }}"
     dest: "{{ role_path }}/files/tmp/{{ item }}"
     mode: get
     aws_access_key: "{{ aws_access_key_id }}"
