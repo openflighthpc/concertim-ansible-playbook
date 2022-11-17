@@ -39,6 +39,14 @@ gem_18_bin_dir: "{{ ruby_18_bin_dir }}"
 # The directory containing Ruby version 1.9.
 ruby_19_bin_dir: /opt/ruby-1.9/bin
 
+# ==================================================
+# Rails variables
+#
+rails_env: production
+# The directory containing our rails apps.
+rails_root_dir: /data/private/share/rails
+emma_core_dir: "{{rails_root_dir}}/emma/core"
+
 
 # ==================================================
 # General variables
@@ -46,4 +54,4 @@ ruby_19_bin_dir: /opt/ruby-1.9/bin
 # The name of (1) the unix user used to run our rails apps; (2) the database
 # user/role used.
 app_user: www-data
-rails_env: production
+ct_etc_dir: /data/private/share/etc/concurrent-thinking

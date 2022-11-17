@@ -7,7 +7,7 @@
     script_path: "{{ role_path }}/files/scripts/generatortron.rb"
     data_path: "{{ role_path }}/files/data.yaml"
     ruby_bin_dir: "{{ruby_19_bin_dir}}"
-    chdir: /data/private/share/rails/emma/core
+    chdir: "{{rails_root_dir}}/emma/core"
 
 - name: Stop meca
   ansible.builtin.service:
@@ -24,7 +24,7 @@
     script_path: "{{ role_path }}/files/scripts/generatortron_meca.rb"
     data_path: "{{ role_path }}/files/data.yaml"
     ruby_bin_dir: "{{ruby_18_bin_dir}}"
-    chdir: /data/private/share/rails/meca
+    chdir: "{{rails_root_dir}}/meca"
 
 - name: Start meca
   ansible.builtin.service:

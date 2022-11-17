@@ -2,16 +2,16 @@
   ansible.builtin.copy:
     src: release.info
     dest: "{{ release_info_dest }}"
-    owner: www-data
-    group: www-data
+    owner: "{{app_user}}"
+    group: "{{app_user}}"
     mode: "644"
 
 - name: Add version.yml
   ansible.builtin.copy:
     src: version.yml
     dest: "{{ version_yml_dest }}"
-    owner: www-data
-    group: www-data
+    owner: "{{app_user}}"
+    group: "{{app_user}}"
     mode: "644"
 
 - name: Append version.yml to release.yml
@@ -26,6 +26,6 @@
     content: |
       {}
     dest: "{{ licenses_yml_dest }}"
-    owner: www-data
-    group: www-data
+    owner: "{{app_user}}"
+    group: "{{app_user}}"
     mode: "644"

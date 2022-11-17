@@ -87,7 +87,7 @@
 
 # - name: Additional demm configuration
 #   vars:
-#     limits_dir: /data/private/share/etc/concurrent-thinking/appliance/limits
+#     limits_dir: "{{ct_etc_dir}}/appliance/limits"
 #     demm_path: "{{ daemon_installation_dir }}/demm"
 #   block:
 #     - name: Make limits directory

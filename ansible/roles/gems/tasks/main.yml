@@ -211,4 +211,4 @@
 - name: Install delia client config
   ansible.builtin.copy:
     src: delia_client.yml
-    dest: /data/private/share/etc/concurrent-thinking/
+    dest: "{{ct_etc_dir}}"

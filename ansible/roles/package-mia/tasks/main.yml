@@ -1,6 +1,6 @@
 - name: Make destination directory
   ansible.builtin.file:
-    path: "{{ package_mia_root_dir }}"
+    path: "{{ rails_root_dir }}"
     owner: "{{app_user}}"
     group: "{{app_user}}"
     mode: "755"
@@ -8,10 +8,12 @@
 
 - name: Install mia tarball from s3
   vars:
-    destination_dir: "{{ package_mia_root_dir }}"
+    destination_dir: "{{ rails_root_dir }}"
     s3_prefix: "{{s3_appliances_prefix}}"
     tarball_name: mia.tgz
     untarred_dir: mia
+    correct_owner: "{{app_user}}"
+    correct_group: "{{app_user}}"
   include_tasks: install_s3_tarball.yml
 
 - name: Create control stream spool directory
@@ -31,12 +33,12 @@
 - name: Install local_environment.rb
   ansible.builtin.copy:
     remote_src: yes
-    src:  "{{ package_mia_root_dir }}/mia/config/local_environment.rb.tagged"
-    dest: "{{ package_mia_root_dir }}/mia/config/local_environment.rb"
+    src:  "{{ rails_root_dir }}/mia/config/local_environment.rb.tagged"
+    dest: "{{ rails_root_dir }}/mia/config/local_environment.rb"
 
 - name: Cache classes in development
   ansible.builtin.replace:
-    path: "{{ package_mia_root_dir }}/mia/config/environments/development.rb"
+    path: "{{ rails_root_dir }}/mia/config/environments/development.rb"
     regexp: "config.cache_classes = false"
     replace: "config.cache_classes = true"
 
@@ -44,7 +46,7 @@
   vars:
     mongrel_conf_dir: "/etc/mongrel_cluster"
     template_dest: "{{ mongrel_conf_dir }}/mia.yml"
-    template_src: "{{ package_mia_root_dir }}/mia/config/mongrel_cluster.yml.tagged"
+    template_src: "{{ rails_root_dir }}/mia/config/mongrel_cluster.yml.tagged"
     replacements:
       - regexp: "%MONGREL_USER%"
         replace: "{{ app_user }}"
@@ -61,7 +63,7 @@
 - name: Patch mia source code
   ansible.builtin.patch:
     src: "patches/{{ item }}"
-    basedir: "{{ package_mia_root_dir }}/mia"
+    basedir: "{{ rails_root_dir }}/mia"
     backup: yes
     strip: 1
   loop:
@@ -74,7 +76,7 @@
 
 - name: Make appliance directory
   ansible.builtin.file:
-    path: "/data/private/share/etc/concurrent-thinking/appliance"
+    path: "{{ct_etc_dir}}/appliance"
     owner: "{{app_user}}"
     group: root
     mode: "755"
@@ -82,17 +84,17 @@
 
 - name: Touch unconfigured file
   ansible.builtin.copy:
-    dest: "/data/private/share/etc/concurrent-thinking/appliance/unconfigured"
+    dest: "{{ct_etc_dir}}/appliance/unconfigured"
     content: ""
     owner: "{{app_user}}"
 
 - name: Build MIA JS
   ansible.builtin.command:
-    cmd: "{{ package_mia_root_dir }}/mia/public/scripts/src/meta/build.sh"
+    cmd: "{{ rails_root_dir }}/mia/public/scripts/src/meta/build.sh"
 
 - name: Configure default IRV images
   vars:
-    rails_root: "{{ package_mia_root_dir }}"
+    rails_root: "{{ rails_root_dir }}"
   ansible.builtin.file:
     src: "{{ rails_root }}/hacor/app/models/chassis_templates/images"
     dest: "{{ rails_root }}/mia/public/images/irv/concurrent-thinking"

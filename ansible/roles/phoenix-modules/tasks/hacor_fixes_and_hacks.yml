@@ -1,7 +1,7 @@
 - name: Disable SNMP (MIB) migrations
   ansible.builtin.command:
     cmd: mv db/migrate/{{ item }} db/migrate/{{ item }}.NOPE
-    chdir: "{{ phoenix_modules_root_dir }}/hacor"
+    chdir: "{{ rails_root_dir }}/hacor"
     removes: "db/migrate/{{ item }}"
   loop: 
     - 106_add_eaton_mibs_to_database.rb
@@ -13,7 +13,7 @@
 - name: Apply patches
   ansible.builtin.patch:
     src: "patches/hacor/{{ item }}"
-    basedir: "{{ phoenix_modules_root_dir }}/hacor"
+    basedir: "{{ rails_root_dir }}/hacor"
     backup: yes
     strip: 1
   loop:

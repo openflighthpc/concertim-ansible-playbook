@@ -25,7 +25,7 @@
 - name: Install delia configuration
   ansible.builtin.copy:
     src: delia.yml
-    dest: /data/private/share/etc/concurrent-thinking/
+    dest: "{{ct_etc_dir}}"
     owner: "{{app_user}}"
     group: "{{app_user}}"
     mode: u=rw,g=r,o=r

@@ -16,6 +16,6 @@
 - name: Correct ownership
   ansible.builtin.file:
     path: "{{destination_dir}}/{{untarred_dir}}"
-    owner: "{{app_user}}"
-    group: "{{app_user}}"
+    owner: "{{correct_owner}}"
+    group: "{{correct_group}}"
     recurse: true

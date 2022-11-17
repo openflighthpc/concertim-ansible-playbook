@@ -2,7 +2,7 @@
 - name: Apply patches
   ansible.builtin.patch:
     src: "patches/sas/{{ item }}"
-    basedir: "{{ phoenix_modules_root_dir }}/sas"
+    basedir: "{{ rails_root_dir }}/sas"
     backup: yes
     strip: 1
   loop:

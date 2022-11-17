@@ -2,14 +2,14 @@
   ansible.builtin.copy:
     dest: "{{ branding_yaml_path }}"
     content: "{{ branding_name }}"
-    owner: www-data
-    group: www-data
+    owner: "{{app_user}}"
+    group: "{{app_user}}"
     mode: "644"
 
 - name: Make directories
   ansible.builtin.file:
     path: "{{ item }}"
-    owner: www-data
+    owner: "{{app_user}}"
     group: root
     mode: "755"
     state: directory
@@ -21,8 +21,8 @@
   ansible.builtin.copy:
     src: personality.yml
     dest: "{{ item }}"
-    owner: www-data
-    group: www-data
+    owner: "{{app_user}}"
+    group: "{{app_user}}"
     mode: "644"
   loop:
     - "{{ emma_personalty_folder }}/{{ branding_name }}/personality.yml"
@@ -54,8 +54,8 @@
   ansible.builtin.copy:
     src: "tmp/{{ item[0] }}"
     dest: "{{ item[1] }}"
-    owner: www-data
-    group: www-data
+    owner: "{{app_user}}"
+    group: "{{app_user}}"
     mode: "664"
   with_nested:
     - "{{ logo_files }}"
@@ -65,12 +65,12 @@
   vars:
     alces_concertim_logo: logo-left.png
     alces_flight_logo: logo-right.png
-    image_dir: /data/private/share/rails/mia/public/images
+    image_dir: "{{rails_root_dir}}/mia/public/images"
   ansible.builtin.copy:
     src: "tmp/{{ item.src}}"
     dest: "{{ image_dir }}/{{ item.dest }}"
-    owner: www-data
-    group: www-data
+    owner: "{{app_user}}"
+    group: "{{app_user}}"
     mode: "664"
   loop:
     - src: "{{ alces_concertim_logo }}"
