@@ -77,21 +77,22 @@
   include_tasks: sas_fixes_and_hacks.yml
 
 - name: Create database
-  ansible.builtin.shell:
-    cmd: |
-      PATH={{ruby_18_bin_dir}}:$PATH
-      sudo -u {{ app_user }} --preserve-env=PATH /bin/bash -c 'rake db:drop_and_create RAILS_ENV={{ rails_env }} PHOENIX_START=0 --trace'
+  include_tasks: run_rake_task.yml
+  vars:
+    ruby_bin_dir: "{{ruby_18_bin_dir}}"
+    rake_task: "db:drop_and_create"
+    additional_env: "PHOENIX_START=0"
     chdir: "{{ rails_root_dir }}/{{ item }}"
   loop: "{{ modules }}"
 
 - name: Migrate database
-  ansible.builtin.shell:
-    cmd: |
-      PATH={{ruby_18_bin_dir}}:$PATH
-      sudo -u {{ app_user }} --preserve-env=PATH /bin/bash -c 'rake db:rebuild RAILS_ENV={{ rails_env }} PHOENIX_START=0 --trace'
+  include_tasks: run_rake_task.yml
+  vars:
+    ruby_bin_dir: "{{ruby_18_bin_dir}}"
+    rake_task: "db:rebuild"
+    additional_env: "PHOENIX_START=0"
     chdir: "{{ rails_root_dir }}/{{ item }}"
   loop: "{{ modules }}"
-
 
 - name: Install mongrel config files
   vars:

@@ -1,0 +1,6 @@
+- name: Run rake task
+  ansible.builtin.shell:
+    cmd: |
+      PATH={{ruby_bin_dir}}:$PATH
+      sudo -u {{ app_user }} --preserve-env=PATH /bin/bash -c '{{additional_env}} rake {{rake_task}} RAILS_ENV={{ rails_env }} --trace'
+    chdir: "{{chdir}}"
