@@ -1,13 +1,3 @@
-- name: Download module packages from S3
-  amazon.aws.aws_s3:
-    bucket: "{{ s3_bucket }}"
-    object: "{{ s3_modules_prefix}}{{ item }}.tgz"
-    dest: "{{ role_path }}/files/tmp/{{ item }}.tgz"
-    mode: get
-    aws_access_key: "{{ aws_access_key_id }}"
-    aws_secret_key: "{{ aws_secret_access_key }}"
-  loop: "{{ modules }}"
-
 - name: Make destination directory
   ansible.builtin.file:
     path: "{{ phoenix_modules_root_dir }}"
@@ -16,19 +6,13 @@
     mode: "755"
     state: directory
 
-- name: Extract tar files
-  ansible.builtin.unarchive:
-    src: "tmp/{{ item }}.tgz"
-    dest: "{{ phoenix_modules_root_dir }}"
-    creates: "{{ phoenix_modules_root_dir }}/{{ item }}"
-  loop: "{{ modules }}"
-
-- name: Correct ownership
-  ansible.builtin.file:
-    path: "{{ phoenix_modules_root_dir }}/{{ item }}"
-    owner: "{{ app_user }}"
-    group: "{{ app_user }}"
-    recurse: true
+- name: Install phoenix modules tarballs from s3
+  vars:
+    destination_dir: "{{ phoenix_modules_root_dir }}"
+    s3_prefix: "{{s3_modules_prefix}}"
+    tarball_name: "{{item}}.tgz"
+    untarred_dir: "{{item}}"
+  include_tasks: install_s3_tarball.yml
   loop: "{{ modules }}"
 
 - name: bind rails modules into {{ bind_directory }}

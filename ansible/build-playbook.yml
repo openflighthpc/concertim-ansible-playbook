@@ -43,7 +43,7 @@
     - role: emma
       tags: emma
     - role: package-mia
-      tags: [package-mia, mia]
+      tags: package-mia
     - role: personality
       tags: personality
     - role: release-info
