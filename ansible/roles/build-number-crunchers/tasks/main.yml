@@ -1,7 +1,35 @@
-# - name: Download source
-# - name: Patch source
-# - name: Compile
-# - name: Create deb package
+- name: Download number cruncher source
+  ansible.builtin.get_url:
+    url: https://api.github.com/repos/alces-flight/concertim-number-crunchers/tarball/main
+    dest: /tmp/number-crunchers.tgz
+    headers:
+      Authorization: token {{ github_token }}
+
+- name: Extract tar file
+  ansible.builtin.unarchive:
+    src: /tmp/number-crunchers.tgz
+    dest: /tmp/number-crunchers
+
+- name: Warn that this is likely broken
+  ansible.builtin.debug:
+    msg: |
+      The compile and deb package build steps below will not work until 
+      https://github.com/alces-flight/concertim-number-crunchers/issues/1
+      https://github.com/alces-flight/concertim-number-crunchers/issues/2
+      are fixed.
+
+- name: Compile number crunchers
+  ansible.builtin.command:
+    cmd: make
+    chdir: /tmp/number-crunchers/{{item}}
+  loop: "{{ number_crunchers }}"
+
+- name: Build number cruncher deb packages
+  ansible.builtin.command:
+    cmd: make package
+    chdir: /tmp/number-crunchers/{{item}}
+  loop: "{{ number_crunchers }}"
+
 # - name: Upload deb package
 # - name: Copy gdb macros
 # - name: Copy gdb running script

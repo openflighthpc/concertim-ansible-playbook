@@ -1,8 +1,0 @@
-Package: meryl-number-cruncher
-Section: misc
-Priority: extra
-Maintainer: dev@concurrent-thinking.com
-Architecture: amd64
-Version: 1.0.1.1
-Description: Meryl number cruncher.
-Depends: libmemcached11
