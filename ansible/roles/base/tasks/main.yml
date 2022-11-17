@@ -2,6 +2,7 @@
   ansible.builtin.assert:
     that:
       - "{{ item }} is defined"
+      - "{{ item }} != ''"
     fail_msg: "{{ item }} credential has not been given"
     quiet: true
   loop:
