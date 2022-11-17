@@ -1,36 +1,24 @@
-- name: Add netplan config for eth0
-  block:
-    - name: Copy cloud init netplan
-      ansible.builtin.copy:
-        remote_src: true
-        src: "{{ cloud_init_netplan }}"
-        dest: "{{ eth0_netplan }}"
+- name: Check for ethX naming
+  ansible.builtin.command:
+    cmd: ls -d /sys/class/net/eth0
+  register: ethX_naming_check
+  failed_when: False
 
-    - name: Remove comments
-      ansible.builtin.lineinfile:
-        regexp: '^#'
-        state: absent
-        path: "{{ eth0_netplan }}"
+- name: Enable ethX naming
+  import_tasks: enable_ethX_naming.yml
+  when: ethX_naming_check.stdout == ""
 
-    - name: Set name to eth0
-      ansible.builtin.lineinfile:
-        regexp: '^(\s*)set-name:'
-        line: '\1set-name: eth0'
-        backrefs: true
-        path: "{{ eth0_netplan }}"
+- name: Inform of need to reboot
+  when: ethX_naming_check.stdout == ""
+  ansible.builtin.debug:
+    msg:
+      - "ethX naming for network interfaces has been enabled."
+      - "The machine must be rebooted for this to take affect."
+      - "The build and configure playbooks should not be ran until after the machine is rebooted."
 
-- name: Disable cloud-init's network configuration capabilities
-  block:
-    - name: Remove generated cloud-init netplan config
-      ansible.builtin.file:
-        path: "{{ cloud_init_netplan }}"
-        state: absent
-
-    - name: Prevent re-generation of cloud-init netplan config
-      ansible.builtin.copy:
-        dest: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
-        content: |
-          network: {config: disabled}
-        owner: root
-        group: root
-        mode: "644"
+- name: Inform OK to continue
+  when: ethX_naming_check.stdout != ""
+  ansible.builtin.debug:
+    msg:
+      - "ethX naming for network interfaces was already enabled."
+      - "The build and configure playbooks should now be ran."
