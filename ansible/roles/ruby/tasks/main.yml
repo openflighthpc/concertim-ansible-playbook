@@ -43,7 +43,7 @@
     dest: "{{ item.dest }}"
     state: link
   loop:
-    - src: "{{ruby_18_bin_dir}}ruby"
+    - src: "{{ruby_18_bin_dir}}/ruby"
       dest: /usr/bin/ruby1.8
 
     - src: "{{ruby_18_bin_dir}}/gem"

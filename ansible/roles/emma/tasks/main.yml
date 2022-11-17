@@ -39,7 +39,7 @@
     state: link
 
 - name: Install configuration
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: phoenix-emma.logrotate
     dest: /etc/logrotate.d/phoenix-emma
 
@@ -135,7 +135,7 @@
   import_tasks: run_rake_task.yml
   vars:
     ruby_bin_dir: "{{ruby_19_bin_dir}}"
-    rake_task: "db:drop_and_create"
+    rake_task: "db:drop_and_create:emma"
     additional_env: ""
     chdir: "{{ emma_core_dir }}"
 
