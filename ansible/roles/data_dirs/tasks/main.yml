@@ -26,14 +26,14 @@
       group: root
       mode: "755"
 
-    - path: /data/private/share/etc/concurrent-thinking
-      owner: www-data
-      group: www-data
+    - path: "{{ct_etc_dir}}"
+      owner: "{{app_user}}"
+      group: "{{app_user}}"
       mode: u=rwx,g=rx,o=rx
 
-    - path: /data/private/share/etc/concurrent-thinking/ssl
-      owner: www-data
-      group: www-data
+    - path: "{{ct_etc_dir}}/ssl"
+      owner: "{{app_user}}"
+      group: "{{app_user}}"
       mode: "755"
 
     - path: /data/public
@@ -87,7 +87,7 @@
     dest: "{{ item.dest }}"
     state: link
   loop:
-    - src: /data/private/share/etc/concurrent-thinking
+    - src: "{{ct_etc_dir}}"
       dest: /etc/concurrent-thinking
 
 - name: Create bind mounts

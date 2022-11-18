@@ -9,7 +9,7 @@
 
     - name: Update rubygems
       ansible.builtin.shell:
-        cmd: PATH=/opt/ruby-1.8/bin:$PATH update_rubygems
+        cmd: PATH={{ruby_18_bin_dir}}:$PATH update_rubygems
 
 
 # XXX Get this working so that we can remove the need to have all of the gems
@@ -204,12 +204,11 @@
 
 - name: Create bundler1.9 symlink
   ansible.builtin.file:
-    src: /opt/ruby-1.9/bin/bundle
+    src: "{{ruby_19_bin_dir}}/bundle"
     dest: /usr/bin/bundle1.9
     state: link
 
 - name: Install delia client config
   ansible.builtin.copy:
     src: delia_client.yml
-    dest: /data/private/share/etc/concurrent-thinking/
-
+    dest: "{{ct_etc_dir}}"

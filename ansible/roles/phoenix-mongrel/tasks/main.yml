@@ -59,5 +59,4 @@
 - name: Ensure that mongrel_cluster is enabled
   ansible.builtin.service:
     name: phoenix-mongrel
-    # state: started
     enabled: yes

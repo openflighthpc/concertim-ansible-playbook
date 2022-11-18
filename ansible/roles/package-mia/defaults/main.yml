@@ -1,5 +1,1 @@
-mode: production
-package_mia_root_dir: "/data/private/share/rails"
-mongrel_user: www-data
-mongrel_group: www-data
 mia_server_count: 3

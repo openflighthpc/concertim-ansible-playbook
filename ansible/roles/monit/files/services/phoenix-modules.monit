@@ -8,7 +8,7 @@ check process uma with pidfile /var/run/mongrel_cluster/uma.3001.pid
      then restart
   if totalmem > 70.0 MB for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
-  group mongrel
+  group phoenix-modules
 
 check process hacor with pidfile /var/run/mongrel_cluster/hacor.3002.pid
   start program = "/usr/bin/systemctl restart phoenix-mongrel@hacor.3002.service" with timeout 60 seconds
@@ -22,9 +22,9 @@ check process hacor with pidfile /var/run/mongrel_cluster/hacor.3002.pid
   # 512 MB for HACOR this is a fixed value, no work 100MB hard working 300MB+
   if totalmem > 512.0 MB for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
-  group mongrel
-  # depends on memcached
-  # depends on postgresql
+  group phoenix-modules
+  depends on memcached
+  depends on postgresql
 
 # Introduced to check when hacor hangs its drb connection
 # Use restart, and always place a sleep 15 or more in your script, see script for why
@@ -45,8 +45,8 @@ check process meca with pidfile /var/run/mongrel_cluster/meca.3003.pid
   # 5% for MECA as it is affected by the size of the data centre, and therefore memory installed #18729
   if totalmem > 5% for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
-  group mongrel
-  # depends on postgresql
+  group phoenix-modules
+  depends on postgresql
 
 # # #26619 - Noticed that meca hung and ONLY a kill -9 would fix it
 # check file meca_log with path /opt/concurrent-thinking/meca/log/threshold_state_changes_recorder.log
@@ -70,7 +70,7 @@ check process scram with pidfile /var/run/mongrel_cluster/scram.3004.pid
   # 70 MB for module this is a fixed value, it rarely changes on size of data centre
   if totalmem > 80.0 MB for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
-  group mongrel
+  group phoenix-modules
 
 check process oobm with pidfile /var/run/mongrel_cluster/oobm.3005.pid
   start program = "/usr/bin/systemctl restart phoenix-mongrel@oobm.3005.service" with timeout 60 seconds
@@ -83,7 +83,7 @@ check process oobm with pidfile /var/run/mongrel_cluster/oobm.3005.pid
   # 70 MB for module this is a fixed value, it rarely changes on size of data centre
   if totalmem > 70.0 MB for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
-  group mongrel
+  group phoenix-modules
 
 check process sas with pidfile /var/run/mongrel_cluster/sas.3007.pid
   start program = "/usr/bin/systemctl restart phoenix-mongrel@sas.3007.service" with timeout 60 seconds
@@ -97,7 +97,7 @@ check process sas with pidfile /var/run/mongrel_cluster/sas.3007.pid
   # This is heavily used in backup restore, so make sure it can deal with a large data set restore like demo1
   if totalmem > 4% for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
-  group mongrel
+  group phoenix-modules
 
 # restart sas if a backup is not produced every 24 hours (plus an extra hour's grace) and make sure the file
 # is updated so it doesn't constantly restart it all day long, for ever and ever...... fighting with sas and sas_drb
@@ -106,7 +106,7 @@ check file sas_log with path /opt/concurrent-thinking/sas/log/production.log
   restart program = "/usr/bin/systemctl restart phoenix-mongrel@sas.3007.service" with timeout 60 seconds
   stop program = "/usr/bin/systemctl stop phoenix-mongrel@sas.3007.service"
   if timestamp > 90000 seconds then restart
-  group mongrel
+  group phoenix-modules
 
 # Introduced to check when sas hangs its drb connection
 # Use restart, and always place a sleep 15 or more in your script, see script for why
@@ -115,4 +115,4 @@ check program sas_drb with path "/usr/local/sbin/check_sas_connection.sh"
   start program = "/usr/bin/systemctl restart phoenix-mongrel@sas.3007.service" with timeout 60 seconds
   restart program = "/usr/bin/systemctl restart phoenix-mongrel@sas.3007.service" with timeout 60 seconds
   stop program = "/usr/bin/systemctl stop phoenix-mongrel@sas.3007.service"
-  group mongrel
+  group phoenix-modules

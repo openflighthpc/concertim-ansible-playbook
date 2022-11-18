@@ -17,27 +17,29 @@
   - name: Extract tar file
     ansible.builtin.unarchive:
       src: /tmp/emma.tgz
-      dest: "{{ dest_path }}"
+      dest: "{{ rails_root_dir }}"
 
   - name: Adjust path
     ansible.builtin.shell:
       cmd: |
-        mv {{ dest_path }}/alces-flight-concertim-emma-* {{ emma_path }}
-        chown -R www-data:www-data {{ emma_path }}
+        mv {{ rails_root_dir }}/alces-flight-concertim-emma-* {{ emma_path }}
+        chown -R {{app_user}}:{{app_user}} {{ emma_path }}
       creates: "{{ emma_path }}"
 
   - name: Sanity check (CT gems)
     ansible.builtin.command:
       cmd: "{{ role_path }}/files/scripts/check_emma_for_ct_gems.sh"
+    environment:
+      EMMA_CORE_PATH: "{{emma_core_dir}}"
 
 - name: Symlink emma
   ansible.builtin.file:
-    src: "/data/private/share/rails/emma"
+    src: "{{rails_root_dir}}/emma"
     dest: "/data/private/share/emma"
     state: link
 
 - name: Install configuration
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: phoenix-emma.logrotate
     dest: /etc/logrotate.d/phoenix-emma
 
@@ -48,8 +50,8 @@
     - name: Vendor missing gems
       ansible.builtin.shell:
         cmd: |
-          cp -a {{ playbook_dir }}/roles/gems/files/1.9/*.gem {{ core_path }}/vendor/cache/
-          chown www-data:www-data {{ core_path }}/vendor/cache/*.gem
+          cp -a {{ playbook_dir }}/roles/gems/files/1.9/*.gem {{ emma_core_dir }}/vendor/cache/
+          chown {{app_user}}:{{app_user}} {{ emma_core_dir }}/vendor/cache/*.gem
         executable: /bin/bash
 
     # XXX The changes should be pushed to the git repo at some point, but its
@@ -71,9 +73,9 @@
 
     - name: Bundle install gems
       ansible.builtin.shell: |
-        cd "{{ core_path }}"
-        PATH=/opt/ruby-1.9/bin:$PATH
-        /opt/ruby-1.9/bin/bundle install --local
+        cd "{{ emma_core_dir }}"
+        PATH={{ruby_19_bin_dir}}:$PATH
+        {{ruby_19_bin_dir}}/bundle install --local
 
     - name: Fix thin to use correct Ruby
       ansible.builtin.replace:
@@ -87,40 +89,40 @@
     - name: Monkey patch active record
       ansible.builtin.copy:
         src: monkey_patch_active_record.rb
-        dest: "{{ core_path }}/config/initializers/"
-        owner: www-data
-        group: www-data
+        dest: "{{ emma_core_dir }}/config/initializers/"
+        owner: "{{app_user}}"
+        group: "{{app_user}}"
     - name: Load monkey patch when creating database
       ansible.builtin.lineinfile:
         line: "require File.join(Rails.root, 'config/initializers/monkey_patch_active_record')"
-        path: "{{ core_path }}/lib/tasks/database.rake"
+        path: "{{ emma_core_dir }}/lib/tasks/database.rake"
         insertbefore: BOF
 
     - name: Fix issue with DateTime.now
       ansible.builtin.copy:
         src: monkey_patch_date_time_now.rb
-        dest: "{{ core_path }}/config/initializers/"
-        owner: www-data
-        group: www-data
+        dest: "{{ emma_core_dir }}/config/initializers/"
+        owner: "{{app_user}}"
+        group: "{{app_user}}"
 
     - name: Patch config/boot.rb to deal with YAML/psych issue
       ansible.builtin.lineinfile:
         insertbefore: "require 'yaml'"
         line: "Gem.load_yaml"
         state: present
-        path: "{{ core_path }}/config/boot.rb"
+        path: "{{ emma_core_dir }}/config/boot.rb"
 
     - name: Patch config/boot.rb to deal with YAML/psych issue
       ansible.builtin.lineinfile:
         search_string: "require 'yaml'"
         state: absent
-        path: "{{ core_path }}/config/boot.rb"
+        path: "{{ emma_core_dir }}/config/boot.rb"
 
     - name: Fix metadata.yml
       ansible.builtin.lineinfile:
         regexp: "{{ item.regexp }}"
         line: "{{ item.line }}"
-        path: "{{ core_path }}/config/metadata.yml"
+        path: "{{ emma_core_dir }}/config/metadata.yml"
       loop:
         - regexp: '  :build_rev:'
           line:   '  :build_rev: "XXX"'
@@ -130,25 +132,28 @@
           line:   '  :build_date: "XXX"'
 
 - name: Create database
-  ansible.builtin.shell:
-    cmd: |
-      PATH=/opt/ruby-1.9/bin:$PATH
-      sudo -u www-data --preserve-env=PATH /bin/bash -c 'bundle exec rake db:drop_and_create:emma RAILS_ENV={{ rails_env }} --trace'
-    chdir: "{{ core_path }}"
+  import_tasks: run_rake_task.yml
+  vars:
+    ruby_bin_dir: "{{ruby_19_bin_dir}}"
+    rake_task: "db:drop_and_create:emma"
+    additional_env: ""
+    chdir: "{{ emma_core_dir }}"
 
 - name: Populate database
-  ansible.builtin.shell:
-    cmd: |
-      PATH=/opt/ruby-1.9/bin:$PATH
-      sudo -u www-data --preserve-env=PATH /bin/bash -c 'bundle exec rake db:migrate:emma RAILS_ENV={{ rails_env }} --trace'
-    chdir: "{{ core_path }}"
+  import_tasks: run_rake_task.yml
+  vars:
+    ruby_bin_dir: "{{ruby_19_bin_dir}}"
+    rake_task: "db:migrate:emma"
+    additional_env: ""
+    chdir: "{{ emma_core_dir }}"
 
 - name: Precompile assets
-  ansible.builtin.shell:
-    cmd: |
-      PATH=/opt/ruby-1.9/bin:$PATH
-      sudo -u www-data --preserve-env=PATH /bin/bash -c 'bundle exec rake assets:precompile RAILS_ENV={{ rails_env }} --trace'
-    chdir: "{{ core_path }}"
+  import_tasks: run_rake_task.yml
+  vars:
+    ruby_bin_dir: "{{ruby_19_bin_dir}}"
+    rake_task: "assets:precompile"
+    additional_env: ""
+    chdir: "{{ emma_core_dir }}"
 
 - name: Install tooling
   ansible.builtin.copy:

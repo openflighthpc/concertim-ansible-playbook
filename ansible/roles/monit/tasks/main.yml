@@ -3,7 +3,8 @@
     name: monit
     state: latest
 
-# We will enable monit after MIA is configured.
+# We will enable monit after MIA is configured.  Until then we don't
+# necessarily expect all of the services to work correctly.
 - name: Stop monit
   ansible.builtin.service:
     name: monit

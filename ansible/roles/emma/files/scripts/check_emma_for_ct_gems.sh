@@ -1,7 +1,8 @@
 #!/bin/bash
 
 ERR=0
-emmadir=/data/private/share/emma/core/vendor/cache
+EMMA_CORE_PATH=${EMMA_CORE_PATH:-/data/private/share/rails/emma/core}
+emmadir="${EMMA_CORE_PATH}/vendor/cache"
 
 for ruby in 1.8 1.9.1
 do

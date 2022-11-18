@@ -2,8 +2,8 @@ fake_gmond_extract_dir: /root
 fake_gmond_group: root
 fake_gmond_owner: root
 fake_gmond_s3_prefix: /concertim/packages/demo/
-fake_gmond_tar_file_name: ganglia_data_generator.tgz
+fake_gmond_tarball_name: ganglia_data_generator.tgz
+fake_gmond_untarred_dir: ganglia_data_generator
 fake_gmond_port: "8677"
 
-fake_gmond_src_dir: "{{ fake_gmond_extract_dir }}/ganglia_data_generator"
-fake_gmond_s3_object: "{{ fake_gmond_s3_prefix }}{{ fake_gmond_tar_file_name }}"
+fake_gmond_src_dir: "{{ fake_gmond_extract_dir }}/{{ fake_gmond_untarred_dir }}"

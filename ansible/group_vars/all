@@ -1,0 +1,58 @@
+# ==================================================
+# S3 variables
+#
+# Some of our assets are stored in S3.  These are common variables for
+# accessing them.
+s3_bucket: alces-flight
+s3_debs_prefix: /concertim/packages/debs/
+s3_misc_packages_prefix: /concertim/packages/misc/
+s3_modules_prefix: /concertim/packages/modules/
+s3_appliances_prefix: /concertim/packages/appliances/
+s3_assets_prefix: /concertim/assets/
+
+# The following are expected to be provided as `--extra-args` from the CLI.
+# aws_access_key_id
+# aws_secret_access_key
+
+# ==================================================
+# emma and mia variables
+#
+# These variables are used by a number of different roles, so they given here
+# where they can be shared.
+emma_ports:
+  - 9900
+  - 9901
+  - 9902
+mia_ports:
+  - 8000
+  - 8001
+  - 8002
+
+# ==================================================
+# Ruby variables
+#
+# Variables related to our custom ruby installations.
+
+# The directory containing Ruby version 1.8.
+ruby_18_bin_dir: /opt/ruby-1.8/bin
+# The directory where `gem18` installs its binaries.
+gem_18_bin_dir: "{{ ruby_18_bin_dir }}"
+# The directory containing Ruby version 1.9.
+ruby_19_bin_dir: /opt/ruby-1.9/bin
+
+# ==================================================
+# Rails variables
+#
+rails_env: production
+# The directory containing our rails apps.
+rails_root_dir: /data/private/share/rails
+emma_core_dir: "{{rails_root_dir}}/emma/core"
+
+
+# ==================================================
+# General variables
+#
+# The name of (1) the unix user used to run our rails apps; (2) the database
+# user/role used.
+app_user: www-data
+ct_etc_dir: /data/private/share/etc/concurrent-thinking

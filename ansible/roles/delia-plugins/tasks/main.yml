@@ -11,7 +11,7 @@
 # this works as desired.  However, it would be nicer if it were idempotent.
 - name: Configuring appliance plugin
   vars:
-    delia_config_file: /data/private/share/etc/concurrent-thinking/delia.yml
+    delia_config_file: "{{ct_etc_dir}}/delia.yml"
   block:
     - name: Create tmp dir
       ansible.builtin.tempfile:
@@ -36,8 +36,3 @@
         remote_src: yes
         src: "{{ config_build_dir.path }}"
         validate: ruby1.8 -ryaml -e 'YAML.load_file("%s")'
-
-# - name: Restart delia
-#   ansible.builtin.service:
-#     name: delia
-#     state: restarted

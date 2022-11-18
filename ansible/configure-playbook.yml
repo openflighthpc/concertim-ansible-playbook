@@ -5,7 +5,7 @@
   become_user: root
   become_method: sudo
   vars:
-    start_monit: true
+    finalization_start_monit: true
   roles:
     - role: configure-vanilla
       tags: configure-vanilla

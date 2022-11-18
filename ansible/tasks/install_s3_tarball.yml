@@ -1,0 +1,21 @@
+- name: Download {{tarball_name}} from S3
+  amazon.aws.aws_s3:
+    bucket: "{{s3_bucket}}"
+    object: "{{s3_prefix}}{{tarball_name}}"
+    dest: "{{ role_path }}/files/tmp/{{tarball_name}}"
+    mode: get
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+
+- name: Extract tar files
+  ansible.builtin.unarchive:
+    src: "tmp/{{tarball_name}}"
+    dest: "{{destination_dir}}"
+    creates: "{{destination_dir}}/{{untarred_dir}}"
+
+- name: Correct ownership
+  ansible.builtin.file:
+    path: "{{destination_dir}}/{{untarred_dir}}"
+    owner: "{{correct_owner}}"
+    group: "{{correct_group}}"
+    recurse: true

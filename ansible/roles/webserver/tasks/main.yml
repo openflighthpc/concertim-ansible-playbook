@@ -20,6 +20,7 @@
     - include
     - proxy
     - proxy_balancer
+    - lbmethod_bybusyness
     - proxy_http
     - rewrite
     - socache_dbm
@@ -48,15 +49,10 @@
     cmd: a2ensite {{ item|quote }}
   loop:
     - allow-http
-    # These are enabled later once the appliance-config pack has been
-    # processed.
+    # These are enabled later as part of the configure playbook/FTSW.
     # - default-ssl
     # - redirect-http-to-https
     # - ssl
-
-# - name: Restart apache
-#   ansible.builtin.command:
-#     cmd: systemctl restart apache2
 
 - name: Ensure that apache2 is started
   ansible.builtin.service:

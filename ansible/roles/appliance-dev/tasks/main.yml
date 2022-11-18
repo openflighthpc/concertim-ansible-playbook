@@ -12,8 +12,8 @@
     - "{{ replacements }}"
   vars:
     requirejs_boot_files:
-      - /data/private/share/rails/mia/app/views/layouts/mia.rhtml
-      - /data/private/share/rails/emma/core/app/views/layouts/application.html.erb
+      - "{{rails_root_dir}}/mia/app/views/layouts/mia.rhtml"
+      - "{{rails_root_dir}}/emma/core/app/views/layouts/application.html.erb"
     replacements:
       - regexp: '<script data-main="/scripts/lib/main" src="/scripts/lib/contrib/require.js"></script>'
         replace: '<%#<script data-main="/scripts/lib/main" src="/scripts/lib/contrib/require.js"></script>%>'

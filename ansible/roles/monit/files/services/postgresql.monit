@@ -18,3 +18,5 @@ check process postgresql with pidfile /var/run/postgresql/11-main.pid
   # XXX totalmem should be 20% or 1.5 GB whichever is largest.
   if totalmem > 1.5 GB for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
+
+  group server

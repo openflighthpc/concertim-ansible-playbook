@@ -1,8 +1,8 @@
 - name: Run {{description}} generatortron script
   ansible.builtin.shell:
     cmd: |
-      PATH={{ruby_bin}}:$PATH
-      sudo -u www-data --preserve-env=PATH /bin/bash -c '{{additional_env}} RAILS_ENV={{ rails_env }} {{ rails_runner }} {{ script_path }} {{ data_path }}'
+      PATH={{ruby_bin_dir}}:$PATH
+      sudo -u {{app_user}} --preserve-env=PATH /bin/bash -c '{{additional_env}} RAILS_ENV={{ rails_env }} {{ rails_runner }} {{ script_path }} {{ data_path }}'
     chdir: "{{ chdir }}"
   register: generatortron
   # The failure will become fatal after the stderr and stdout have been printed.

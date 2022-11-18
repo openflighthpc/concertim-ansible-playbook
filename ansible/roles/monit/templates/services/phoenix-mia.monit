@@ -10,10 +10,8 @@ check process mia-{{ port }} with pidfile /var/run/mongrel_cluster/mia.{{ port }
      then restart
   if totalmem > 5% for 5 cycles then restart   # eating up memory?
   if totalcpu > 12% for 5 cycles then restart # hung process?
-  group mongrel-mia
-  group mongrel
   group mia
-  group rails
+  group ct-www
   depends on apache2
 
 {% endfor %}

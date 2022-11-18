@@ -1,8 +1,7 @@
-emma_core_dir: "/data/private/share/emma/core"
 emma_personalty_folder: "{{ emma_core_dir }}/config/personalities"
-etc_personalty_folder: "/data/private/share/etc/concurrent-thinking/appliance"
+etc_personalty_folder: "{{ct_etc_dir}}/appliance"
 branding_name: "ct"
-branding_yaml_path: "/data/private/share/etc/concurrent-thinking/branding.yml"
+branding_yaml_path: "{{ct_etc_dir}}/branding.yml"
 logo_dirs:
   - "{{ emma_core_dir }}/config/personalities/ct/images/"
   - "{{ emma_core_dir }}/public/personalities/ct/images/"
@@ -11,4 +10,4 @@ logo_files:
   - logo-right.png
   - lower-login.png
   - upper-login.png
-mia_help_dir: "/data/private/share/rails/mia/help"
+mia_help_dir: "{{rails_root_dir}}/mia/help"

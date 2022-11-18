@@ -1,12 +1,3 @@
-- name: Download source from S3
-  amazon.aws.aws_s3:
-    bucket: alces-flight
-    object: "{{ fake_gmond_s3_object }}"
-    dest: "{{ role_path }}/files/tmp/{{ fake_gmond_tar_file_name }}"
-    mode: get
-    aws_access_key: "{{ aws_access_key_id }}"
-    aws_secret_key: "{{ aws_secret_access_key }}"
-
 - name: Make destination directory
   ansible.builtin.file:
     path: "{{ fake_gmond_extract_dir }}"
@@ -15,19 +6,15 @@
     mode: "755"
     state: directory
 
-- name: Extract tar files
-  ansible.builtin.unarchive:
-    src: "tmp/{{ fake_gmond_tar_file_name }}"
-    dest: "{{ fake_gmond_extract_dir }}"
-    creates: "{{ fake_gmond_src_dir }}"
-
-- name: Correct ownership
-  ansible.builtin.file:
-    path: "{{ fake_gmond_src_dir }}"
-    owner: "{{ fake_gmond_owner }}"
-    group: "{{ fake_gmond_group }}"
-    recurse: true
-    mode: "o+x"
+- name: Install fake-gmond tarball from s3
+  vars:
+    destination_dir: "{{ fake_gmond_extract_dir }}"
+    s3_prefix: "{{fake_gmond_s3_prefix}}"
+    tarball_name: "{{fake_gmond_tarball_name}}"
+    untarred_dir: "{{fake_gmond_untarred_dir}}"
+    correct_owner: "{{fake_gmond_owner}}"
+    correct_group: "{{fake_gmond_group}}"
+  include_tasks: install_s3_tarball.yml
 
 # XXX Move to fake gmond git repo when available.
 - name: Patch source code
