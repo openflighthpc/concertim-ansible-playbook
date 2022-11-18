@@ -74,8 +74,10 @@
       when: ftsw_automation.rc != 0
 
 - name: Configure users
-  ansible.builtin.shell:
-    cmd: |
-      PATH={{ruby_19_bin_dir}}:$PATH
-      sudo -u www-data --preserve-env=PATH /bin/bash -c 'RAILS_ENV={{ rails_env }} ./script/rails runner /usr/local/sbin/ftsw-users.rb'
+  import_tasks: run_rails_runner.yml
+  vars:
+    rails_runner: ./script/rails runner
+    runner_args: /usr/local/sbin/ftsw-users.rb
+    ruby_bin_dir: "{{ruby_19_bin_dir}}"
+    additional_env: ""
     chdir: "{{rails_root_dir}}/emma/core"
