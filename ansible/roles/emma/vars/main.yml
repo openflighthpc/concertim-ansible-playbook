@@ -1,3 +1,5 @@
+# The git tag (or branch, or commit) that emma should be built from.
+emma_git_tag: "sc-2022"
 dest_path: /data/private/share/rails
 emma_path: "{{ dest_path }}/emma"
 core_path: "{{ emma_path }}/core"
