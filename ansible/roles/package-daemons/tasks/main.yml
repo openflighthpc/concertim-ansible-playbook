@@ -63,9 +63,6 @@
 - name: Additional martha configuration
   include_tasks: martha_config.yml
 
-- name: Additional ct-capacity-daemon configuration
-  include_tasks: ct-capacity-daemon_config.yml
-
 - name: Install gem dependencies
   vars:
     daemon_path: "{{ daemon_installation_dir}}/{{ item }}"
