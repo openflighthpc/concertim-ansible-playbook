@@ -43,17 +43,6 @@
 
 # - name: Updating bunder to use {{ gem_source_url }}
 
-# XXX Port these to git repo.
-- name: Patch daemons source code
-  ansible.builtin.patch:
-    src: "patches/{{ item.patch }}"
-    basedir: "{{ daemon_installation_dir }}/{{ item.daemon }}"
-    backup: yes
-    strip: 1
-  loop:
-    - daemon: meryl
-      patch: meryl-fix-monit-path.patch
-
 - name: Additional ailsa configuration
   include_tasks: ailsa_config.yml
 
