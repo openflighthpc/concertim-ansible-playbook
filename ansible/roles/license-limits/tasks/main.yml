@@ -27,7 +27,7 @@
       - name: asset_flag
         default: true
       - name: expire_time
-        default: "{{ ansible_date_time.epoch + license_expires_in }}"
+        default: "{{ license_expiration_time }}"
   block:
     - name: Check for existing entry
       ansible.builtin.shell:
