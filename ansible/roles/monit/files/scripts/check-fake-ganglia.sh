@@ -17,7 +17,7 @@ HOST=comp001.concertim.alces-flight.com
 METRIC=ct.snmp.load.1
 
 OUT_FILE=/tmp/check-fake-ganglia.out
-XPATH="GANGLIA_XML/GRID/CLUSTER/HOST[@NAME='${DEVICE}']/METRIC[@NAME='${METRIC}']/@VAL"
+XPATH="GANGLIA_XML/GRID/CLUSTER/HOST[@NAME='${HOST}']/METRIC[@NAME='${METRIC}']/@VAL"
 VAL=$(nc -d localhost 8651 | xmlstarlet select --template  -v "${XPATH}")
 
 echo "${VAL}" >> "${OUT_FILE}"

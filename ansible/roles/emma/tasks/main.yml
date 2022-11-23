@@ -9,7 +9,7 @@
   block:
   - name: Download tar file
     ansible.builtin.get_url:
-      url: https://api.github.com/repos/alces-flight/concertim-emma/tarball/main
+      url: https://api.github.com/repos/alces-flight/concertim-emma/tarball/{{emma_git_tag}}
       dest: /tmp/emma.tgz
       headers:
         Authorization: token {{ github_token }}
@@ -54,82 +54,11 @@
           chown {{app_user}}:{{app_user}} {{ emma_core_dir }}/vendor/cache/*.gem
         executable: /bin/bash
 
-    # XXX The changes should be pushed to the git repo at some point, but its
-    # easier to iterate on the build if I'm making changes to a single place.
-    - name: Apply patches
-      ansible.builtin.patch:
-        src: "patches/{{ item }}"
-        basedir: "{{ emma_path }}"
-        backup: yes
-        strip: 1
-      loop:
-        - update-locked-gems.patch
-        - disable-help-links.patch
-        - disable-legacy-events-generator.patch
-        - disable-vpn-and-pxe-config-updating.patch
-        - disable-legacy-events-generator-2.patch
-        - nadia-is-not-expected.patch
-        - rebranding.patch
-
     - name: Bundle install gems
       ansible.builtin.shell: |
         cd "{{ emma_core_dir }}"
         PATH={{ruby_19_bin_dir}}:$PATH
         {{ruby_19_bin_dir}}/bundle install --local
-
-    - name: Fix thin to use correct Ruby
-      ansible.builtin.replace:
-        path: /opt/ruby-1.9/lib/ruby/gems/1.9.1/gems/thin-1.5.1/bin/thin
-        regexp: "#!/usr/bin/env ruby"
-        replace: "#!/usr/bin/env ruby1.9"
-
-# XXX Move all of these to the emma git repo.
-- name: Patch and fixup
-  block:
-    - name: Monkey patch active record
-      ansible.builtin.copy:
-        src: monkey_patch_active_record.rb
-        dest: "{{ emma_core_dir }}/config/initializers/"
-        owner: "{{app_user}}"
-        group: "{{app_user}}"
-    - name: Load monkey patch when creating database
-      ansible.builtin.lineinfile:
-        line: "require File.join(Rails.root, 'config/initializers/monkey_patch_active_record')"
-        path: "{{ emma_core_dir }}/lib/tasks/database.rake"
-        insertbefore: BOF
-
-    - name: Fix issue with DateTime.now
-      ansible.builtin.copy:
-        src: monkey_patch_date_time_now.rb
-        dest: "{{ emma_core_dir }}/config/initializers/"
-        owner: "{{app_user}}"
-        group: "{{app_user}}"
-
-    - name: Patch config/boot.rb to deal with YAML/psych issue
-      ansible.builtin.lineinfile:
-        insertbefore: "require 'yaml'"
-        line: "Gem.load_yaml"
-        state: present
-        path: "{{ emma_core_dir }}/config/boot.rb"
-
-    - name: Patch config/boot.rb to deal with YAML/psych issue
-      ansible.builtin.lineinfile:
-        search_string: "require 'yaml'"
-        state: absent
-        path: "{{ emma_core_dir }}/config/boot.rb"
-
-    - name: Fix metadata.yml
-      ansible.builtin.lineinfile:
-        regexp: "{{ item.regexp }}"
-        line: "{{ item.line }}"
-        path: "{{ emma_core_dir }}/config/metadata.yml"
-      loop:
-        - regexp: '  :build_rev:'
-          line:   '  :build_rev: "XXX"'
-        - regexp: '  :build_version:'
-          line:   '  :build_version: "XXX"'
-        - regexp: '  :build_date:'
-          line:   '  :build_date: "XXX"'
 
 - name: Create database
   import_tasks: run_rake_task.yml
