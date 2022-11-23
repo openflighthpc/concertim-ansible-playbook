@@ -1,7 +1,7 @@
 # Building and configuring a Concertim MIA
 
-This directory contains two ansible playbooks to 1) build a vanilla MIA and 2)
-configure a vanilla MIA.
+This directory contains ansible playbooks to build a vanilla MIA and configure
+a vanilla MIA.
 
 ## Prerequisites
 
