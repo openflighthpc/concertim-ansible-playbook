@@ -74,13 +74,20 @@ checkout_source() {
         pushd "${daemon}" > /dev/null
     fi
     tag="${TAGS[${daemon}]}"
-    echo "Using $(git_ref_type "${tag}") ${tag}"
+    local ref_type
+    ref_type=$(git_ref_type "${tag}")
+    if [ "${ref_type}" == "branch" ] ; then
+        echo "Using ${ref_type} ${tag} ($(git rev-parse HEAD))"
+    else
+        echo "Using ${ref_type} ${tag}"
+    fi
     git checkout --quiet "${tag}"
+    git merge --quiet @{upstream}
     popd > /dev/null
 }
 
 create_tar_file() {
-    echo "Creating tar file ${daemon_dir}/${daemon}.tgz"
+    echo "Creating tar file $( realpath --relative-to="." ${daemon_dir} )/${daemon}.tgz"
     git archive --format tar --prefix "${daemon}/" --output "${daemon_dir}/${daemon}.tar" HEAD
 }
 
