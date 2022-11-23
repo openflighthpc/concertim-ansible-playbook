@@ -16,12 +16,12 @@ declare -a DAEMONS=(
   theresa
 )
 declare -A TAGS=(
-  [ailsa]=chore/resurect
-  [ct-capacity-daemon]=chore/resurect
+  [ailsa]=main
+  [ct-capacity-daemon]=main
   [enid]=main
-  [maggie]=chore/resurrect
-  [martha]=chore/resurrect
-  [meryl]=chore/resurrect
+  [maggie]=main
+  [martha]=main
+  [meryl]=main
   [theresa]=main
 )
 

@@ -10,6 +10,14 @@
     - aws_access_key_id
     - aws_secret_access_key
 
+- name: Assert release tag given
+  ansible.builtin.assert:
+    that:
+      - "release_tag is defined"
+      - "release_tag != ''"
+    fail_msg: "release_tag has not been given"
+    quiet: true
+
 - name: Waiting for nodes to be reachable
   wait_for_connection:
     sleep: 10

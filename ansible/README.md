@@ -87,9 +87,9 @@ and checked out by running the following:
 
 ```bash
 cd /root/concertim-bootstrap
-NUM=$( git tag -l | grep '^revival-' | sed 's/^revival-//' | sort -h -r | head -n 1 )
-echo "Using tag revival-${NUM}"
-git checkout --quiet revival-${NUM}
+RELEASE_TAG=$( git tag -l --sort '-v:refname' 'revival-*' | head -n 1 )
+echo "Using tag ${RELEASE_TAG}"
+git checkout --quiet ${RELEASE_TAG}
 ```
 
 ## Configure the First Time Setup Wizard data
@@ -121,13 +121,24 @@ ansible-playbook --inventory /ansible/inventory.ini /ansible/prep-playbook.yml
 
 ## Run the build and configure playbooks
 
-Run the build playbook (if you rebooted the machine after the above step,
-don't forget to ensure that your credentials have been gathered and exported).
+Run the build playbook.
+
+If you rebooted the machine after the above step, don't forget to ensure that
+your credentials have been gathered and exported.
+
+You will also need to know the tag being built.  If building from the latest
+`revival-*` tag, you can determine that with the following:
+
+```
+RELEASE_TAG=$( git tag -l --sort '-v:refname' --points-at HEAD 'revival-*' | head -n 1)
+```
 
 ```bash
 ansible-playbook \
   --inventory /ansible/inventory.ini \
-  --extra-vars "github_token=$GH_TOKEN aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
+  --extra-vars "github_token=$GH_TOKEN" \
+  --extra-vars "aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
+  --extra-vars "release_tag=$RELEASE_TAG" \
   /ansible/build-playbook.yml
 ```
 
