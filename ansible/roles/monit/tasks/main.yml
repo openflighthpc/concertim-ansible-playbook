@@ -11,6 +11,14 @@
     state: stopped
     enabled: no
 
+# Some monit scripts depend on additional packages.
+- name: Install dependent packages
+  ansible.builtin.apt:
+    name:
+      # Used by fake ganglia monitor.
+      - xmlstarlet
+    state: latest
+
 - name: Install configuration
   ansible.builtin.copy:
     src: "{{ item.src }}"
