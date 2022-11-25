@@ -136,7 +136,7 @@ RELEASE_TAG=$( git tag -l --sort '-v:refname' --points-at HEAD 'revival-*' | hea
 ```bash
 ansible-playbook \
   --inventory /ansible/inventory.ini \
-  --extra-vars "github_token=$GH_TOKEN" \
+  --extra-vars "gh_token=$GH_TOKEN" \
   --extra-vars "aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
   --extra-vars "release_tag=$RELEASE_TAG" \
   /ansible/build-playbook.yml

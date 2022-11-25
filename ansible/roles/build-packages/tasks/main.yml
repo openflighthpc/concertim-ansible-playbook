@@ -1,0 +1,21 @@
+- name: Install require packages
+  ansible.builtin.apt:
+    name: awscli
+
+- name: Build packages
+  ansible.builtin.command:
+    cmd: "{{role_path}}/files/scripts/build-packages.sh {{build_packages_namespace}}"
+  environment:
+    DAEMONS: "{{ build_packages_daemons | join(' ') }}"
+    MODULES: "{{ build_packages_daemons | join(' ') }}"
+    GH_TOKEN: "{{gh_token}}"
+    BUILD_DIR:   /tmp/{{role_name}}/build
+    PACKAGE_DIR: /tmp/{{role_name}}/packages
+
+- name: Upload packages
+  ansible.builtin.command:
+    cmd: "{{role_path}}/files/scripts/upload-packages.sh --yes"
+  environment:
+    PACKAGE_DIR: /tmp/{{role_name}}/packages
+    AWS_ACCESS_KEY_ID: "{{ aws_access_key_id }}"
+    AWS_SECRET_ACCESS_KEY: "{{ aws_secret_access_key }}"

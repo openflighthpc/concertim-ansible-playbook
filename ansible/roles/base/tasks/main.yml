@@ -6,7 +6,7 @@
     fail_msg: "{{ item }} credential has not been given"
     quiet: true
   loop:
-    - github_token
+    - gh_token
     - aws_access_key_id
     - aws_secret_access_key
 
