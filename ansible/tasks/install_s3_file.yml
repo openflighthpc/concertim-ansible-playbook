@@ -1,0 +1,16 @@
+- name: Download {{file}} from S3
+  amazon.aws.aws_s3:
+    bucket: "{{s3_bucket}}"
+    object: "{{s3_prefix}}{{file}}"
+    dest: "{{dest}}"
+    mode: get
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+
+- name: Correct ownership
+  ansible.builtin.file:
+    path: "{{dest}}"
+    owner: "{{correct_owner}}"
+    group: "{{correct_group}}"
+    mode: "{{correct_mode}}"
+    recurse: true

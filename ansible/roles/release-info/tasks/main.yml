@@ -1,18 +1,26 @@
-- name: Add release.info
-  ansible.builtin.copy:
-    src: release.info
+- name: Install release.info from s3
+  vars:
     dest: "{{ release_info_dest }}"
-    owner: "{{app_user}}"
-    group: "{{app_user}}"
-    mode: "644"
+    file: release.info
+    s3_prefix: "{{s3_packages_prefix}}"
+    correct_owner: "{{app_user}}"
+    correct_group: "{{app_user}}"
+    correct_mode: "644"
+  include_tasks: install_s3_file.yml
 
-- name: Add version.yml
-  ansible.builtin.copy:
-    src: version.yml
+- name: Add missing values to release.info
+  ansible.builtin.shell:
+    cmd: "cat {{role_path}}/files/release.info >> {{release_info_dest}}"
+
+- name: Install version.yml from s3
+  vars:
     dest: "{{ version_yml_dest }}"
-    owner: "{{app_user}}"
-    group: "{{app_user}}"
-    mode: "644"
+    file: version.yml
+    s3_prefix: "{{s3_packages_prefix}}"
+    correct_owner: "{{app_user}}"
+    correct_group: "{{app_user}}"
+    correct_mode: "644"
+  include_tasks: install_s3_file.yml
 
 - name: Append version.yml to release.yml
   ansible.builtin.shell:

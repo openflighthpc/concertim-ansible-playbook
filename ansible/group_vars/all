@@ -14,6 +14,7 @@ modules_release_tag: "{{release_tag}}"
 # accessing them.
 s3_bucket: alces-flight
 s3_assets_prefix:        /concertim/assets/
+s3_packages_prefix:      /concertim/packages/{{release_tag}}/
 s3_appliances_prefix:    /concertim/packages/appliances/
 s3_daemons_prefix:       /concertim/packages/{{daemons_release_tag}}/daemons/
 s3_debs_prefix:          /concertim/packages/debs/
