@@ -3,9 +3,9 @@
 #
 # Used in configuring tags, S3 prefixes etc. for the installed assets.
 release_tag: ""
-daemon_release_tag: "{{release_tag}}"
+daemons_release_tag: "{{release_tag}}"
 # appliance_release_tag: "{{release_tag}}"
-# modules_release_tag: "{{release_tag}}"
+modules_release_tag: "{{release_tag}}"
 
 # ==================================================
 # S3 variables
@@ -13,12 +13,12 @@ daemon_release_tag: "{{release_tag}}"
 # Some of our assets are stored in S3.  These are common variables for
 # accessing them.
 s3_bucket: alces-flight
-s3_debs_prefix: /concertim/packages/debs/
+s3_assets_prefix:        /concertim/assets/
+s3_appliances_prefix:    /concertim/packages/appliances/
+s3_daemons_prefix:       /concertim/packages/{{daemons_release_tag}}/daemons/
+s3_debs_prefix:          /concertim/packages/debs/
 s3_misc_packages_prefix: /concertim/packages/misc/
-s3_modules_prefix: /concertim/packages/modules/
-s3_appliances_prefix: /concertim/packages/appliances/
-s3_assets_prefix: /concertim/assets/
-s3_daemons_prefix: /concertim/packages/daemons/{{daemon_release_tag}}/
+s3_modules_prefix:       /concertim/packages/{{modules_release_tag}}/modules/
 
 # The following are expected to be provided as `--extra-args` from the CLI.
 # aws_access_key_id
