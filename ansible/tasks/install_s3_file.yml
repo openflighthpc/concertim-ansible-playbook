@@ -13,4 +13,3 @@
     owner: "{{correct_owner}}"
     group: "{{correct_group}}"
     mode: "{{correct_mode}}"
-    recurse: true

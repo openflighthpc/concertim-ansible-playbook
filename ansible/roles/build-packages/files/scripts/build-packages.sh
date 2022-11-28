@@ -62,8 +62,8 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 GH_ORG=alces-flight
 PACKAGE_DIR="${PACKAGE_DIR:-${SCRIPT_DIR}/../tmp/packages}"
 BUILD_DIR="${BUILD_DIR:-${SCRIPT_DIR}/../tmp/repos}"
-RELEASE_FILE=${PACKAGE_DIR}/release.info
-VERSION_YML=${PACKAGE_DIR}/version.yml
+RELEASE_FILE=
+VERSION_YML=
 
 get_project_name() {
     echo "$1" | cut -d: -f1
@@ -262,6 +262,8 @@ main() {
         echo "Environment variable GH_TOKEN not found" >&2
         exit 1
     fi
+    RELEASE_FILE=${PACKAGE_DIR}/${release}/release.info
+    VERSION_YML=${PACKAGE_DIR}/${release}/version.yml
 
     remove_previous_builds
     mkdir -p "${BUILD_DIR}"
