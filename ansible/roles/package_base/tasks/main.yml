@@ -25,6 +25,3 @@
 
 - name: Gather System Info
   setup:
-
-- name: Gather Installed Services
-  service_facts:

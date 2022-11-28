@@ -5,7 +5,7 @@
   become_user: root
   become_method: sudo
   roles:
-    - role: base
+    - role: build_base
     - role: misc_packages
       tags: misc_packages
     # - role: certificates
