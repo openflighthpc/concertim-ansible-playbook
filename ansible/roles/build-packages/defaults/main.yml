@@ -17,5 +17,6 @@ build_packages_modules:
 
 build_packages_appliances:
   - emma:main
+  - mia:main
 
 build_packages_namespace: "dev-{{ansible_date_time.date}}"

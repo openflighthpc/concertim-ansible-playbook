@@ -197,6 +197,35 @@ create_release_and_version_files() {
     rm "${RELEASE_FILE}.sorted"
 }
 
+copy_module_controllers() {
+    # Copy across all of the module's controllers for mia.  This will fail if
+    # this build run isn't building all of the modules.
+    declare -a expected_modules=(sas hacor meca scram oobm)
+    declare -A actual_modules
+    local module
+    for tagged_module in "${MODULES[@]}" ; do
+        module=$( get_project_name "${tagged_module}" )
+        # actual_modules+=(${module})
+        actual_modules["${module}"]=1
+    done
+    for module in "${expected_modules[@]}" ; do
+        # Check if expected module is in actual modules.
+        if [ ! "${actual_modules[$module]+_}" ] ; then
+            echo "Expected module ${module} to be included in build"
+            exit 2
+        fi
+    done
+
+    local module_dir
+    for module in "${expected_modules[@]}" ; do
+        echo -e "Including ${module} controllers in tar file"
+        module_controlers="${BUILD_DIR}/${module}/app/controllers"
+        tar --append -f "${project_dir}/${project_name}.tar" \
+            --directory "${module_controlers}" . \
+            --transform "s/^/mia\/app\/controllers\/${module}\//"
+    done
+}
+
 package_projects() {
     local -n projects="$1"
     local loud_project_type project_dir project_type
@@ -215,6 +244,9 @@ package_projects() {
         create_build_yml
         create_tar_file
         popd > /dev/null
+        if [ "${project_name}" == "mia" ] ; then
+            copy_module_controllers
+        fi
         append_build_yml
     done
 }
@@ -235,9 +267,9 @@ main() {
     mkdir -p "${BUILD_DIR}"
     cd "${BUILD_DIR}"
 
-    package_projects APPLIANCES appliance
     package_projects DAEMONS daemon
     package_projects MODULES module
+    package_projects APPLIANCES appliance
     create_release_and_version_files
 }
 
