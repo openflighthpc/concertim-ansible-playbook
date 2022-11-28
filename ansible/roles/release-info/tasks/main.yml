@@ -8,10 +8,6 @@
     correct_mode: "644"
   include_tasks: install_s3_file.yml
 
-- name: Add missing values to release.info
-  ansible.builtin.shell:
-    cmd: "cat {{role_path}}/files/release.info >> {{release_info_dest}}"
-
 - name: Install version.yml from s3
   vars:
     dest: "{{ version_yml_dest }}"
