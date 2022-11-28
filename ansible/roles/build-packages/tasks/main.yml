@@ -4,7 +4,7 @@
 
 - name: Build packages
   ansible.builtin.command:
-    cmd: "{{role_path}}/files/scripts/build-packages.sh {{build_packages_namespace}}"
+    cmd: "{{role_path}}/files/scripts/build-packages.sh {{release_tag}}"
   environment:
     APPLIANCES: "{{ build_packages_appliances | join(' ') }}"
     DAEMONS: "{{ build_packages_daemons | join(' ') }}"
