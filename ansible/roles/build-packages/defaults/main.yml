@@ -1,0 +1,20 @@
+build_packages_daemons:
+  - ailsa:main
+  - ct-capacity-daemon:main
+  - enid:main
+  - maggie:main
+  - martha:main
+  - meryl:main
+  - theresa:main
+
+build_packages_modules:
+  - hacor:main
+  - meca:main
+  - oobm:main
+  - sas:main
+  - scram:main
+  - uma:main
+
+build_packages_appliances:
+  - emma:main
+  - mia:main

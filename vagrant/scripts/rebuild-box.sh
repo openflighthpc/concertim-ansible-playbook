@@ -5,17 +5,18 @@ set -o pipefail
 
 usage() {
     cat <<EOF
-Usage: $(basename $0) BOX_NAME
-Destroy, create and provision box BOX_NAME.
+Usage: $(basename $0) BOX_NAME RELEASE
+Rebuild BOX_NAME as a MIA using release RELEASE.
 EOF
 }
 
-if [ $# -lt 1 ] ; then
+if [ $# -lt 2 ] ; then
     usage
     exit 1
 fi
 
 BOX_NAME="$1"
+MIA_RELEASE_TAG="$2"
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 cd "${SCRIPT_DIR}"/..
@@ -29,5 +30,6 @@ vagrant provision --provision-with prep_playbook "${BOX_NAME}"
 # Reboot the machine so that changes configured in `prep_playbook` can take
 # place.
 vagrant reload --force "${BOX_NAME}"
+export MIA_RELEASE_TAG
 vagrant provision --provision-with build_playbook "${BOX_NAME}"
 vagrant provision --provision-with configure_playbook "${BOX_NAME}"

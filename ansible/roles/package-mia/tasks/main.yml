@@ -92,6 +92,17 @@
   ansible.builtin.command:
     cmd: "{{ rails_root_dir }}/mia/public/scripts/src/meta/build.sh"
 
+- name: Make image directories
+  ansible.builtin.file:
+    path: "{{ rails_root_dir }}/mia/public/images/{{item}}/"
+    owner: "{{app_user}}"
+    group: "{{app_user}}"
+    mode: "755"
+    state: directory
+  loop:
+    - irv
+    - data_centre
+
 - name: Configure default IRV images
   vars:
     rails_root: "{{ rails_root_dir }}"

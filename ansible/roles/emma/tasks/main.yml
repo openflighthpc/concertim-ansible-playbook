@@ -5,32 +5,8 @@
   failed_when: False
 
 - name: Install emma
+  include_tasks: install_emma_package.yml
   when: emma_dir.stdout == ""
-  block:
-  - name: Download tar file
-    ansible.builtin.get_url:
-      url: https://api.github.com/repos/alces-flight/concertim-emma/tarball/{{emma_git_tag}}
-      dest: /tmp/emma.tgz
-      headers:
-        Authorization: token {{ github_token }}
-
-  - name: Extract tar file
-    ansible.builtin.unarchive:
-      src: /tmp/emma.tgz
-      dest: "{{ rails_root_dir }}"
-
-  - name: Adjust path
-    ansible.builtin.shell:
-      cmd: |
-        mv {{ rails_root_dir }}/alces-flight-concertim-emma-* {{ emma_path }}
-        chown -R {{app_user}}:{{app_user}} {{ emma_path }}
-      creates: "{{ emma_path }}"
-
-  - name: Sanity check (CT gems)
-    ansible.builtin.command:
-      cmd: "{{ role_path }}/files/scripts/check_emma_for_ct_gems.sh"
-    environment:
-      EMMA_CORE_PATH: "{{emma_core_dir}}"
 
 - name: Symlink emma
   ansible.builtin.file:

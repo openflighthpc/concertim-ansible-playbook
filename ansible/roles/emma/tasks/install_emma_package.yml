@@ -1,0 +1,15 @@
+- name: Install emma tarball from s3
+  vars:
+    destination_dir: "{{ rails_root_dir }}"
+    s3_prefix: "{{s3_appliances_prefix}}"
+    tarball_name: emma.tgz
+    untarred_dir: emma
+    correct_owner: "{{app_user}}"
+    correct_group: "{{app_user}}"
+  include_tasks: install_s3_tarball.yml
+
+- name: Sanity check (CT gems)
+  ansible.builtin.command:
+    cmd: "{{ role_path }}/files/scripts/check_emma_for_ct_gems.sh"
+  environment:
+    EMMA_CORE_PATH: "{{emma_core_dir}}"
