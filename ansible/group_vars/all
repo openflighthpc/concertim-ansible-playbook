@@ -1,11 +1,9 @@
 # ==================================================
-# Release variables
+# Release tag
 #
-# Used in configuring tags, S3 prefixes etc. for the installed assets.
-release_tag: ""
-daemons_release_tag: "{{release_tag}}"
-# appliance_release_tag: "{{release_tag}}"
-modules_release_tag: "{{release_tag}}"
+# Used in configuring tags, S3 prefixes etc. for the installed assets.  E.g.,
+# `v8.0.0`, `resurect-10` or `dev-2022-11-28`.
+release_tag: "{{release_tag}}"
 
 # ==================================================
 # S3 variables
@@ -15,11 +13,11 @@ modules_release_tag: "{{release_tag}}"
 s3_bucket: alces-flight
 s3_assets_prefix:        /concertim/assets/
 s3_packages_prefix:      /concertim/packages/{{release_tag}}/
-s3_appliances_prefix:    /concertim/packages/appliances/
-s3_daemons_prefix:       /concertim/packages/{{daemons_release_tag}}/daemons/
+s3_appliances_prefix:    /concertim/packages/{{release_tag}}/appliances/
+s3_daemons_prefix:       /concertim/packages/{{release_tag}}/daemons/
 s3_debs_prefix:          /concertim/packages/debs/
 s3_misc_packages_prefix: /concertim/packages/misc/
-s3_modules_prefix:       /concertim/packages/{{modules_release_tag}}/modules/
+s3_modules_prefix:       /concertim/packages/{{release_tag}}/modules/
 
 # The following are expected to be provided as `--extra-args` from the CLI.
 # aws_access_key_id

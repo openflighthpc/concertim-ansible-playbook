@@ -4,6 +4,24 @@
 set -e
 set -o pipefail
 
+# APPLIANCES and the branch to build are read from the Environment variable
+# APPLIANCES.  It is a space separated list of NAME:TAG pairs.  E.g.,
+#
+#   APPLIANCES="emma:main mia:dev"
+#
+# The tag could be a tag, branch or commit.
+if declare -p APPLIANCES >/dev/null 2>&1 ; then
+    copy="${APPLIANCES}"
+    unset APPLIANCES
+    declare -a APPLIANCES
+    for tagged_project in ${copy}; do
+        APPLIANCES+=("${tagged_project}")
+    done
+    unset copy
+else
+    declare -a APPLIANCES=()
+fi
+
 # DAEMONS and the branch to build are read from the Environment variable
 # DAEMONS.  It is a space separated list of NAME:TAG pairs.  E.g.,
 #
@@ -55,6 +73,15 @@ get_project_tag() {
     echo "$1" | cut -d: -f2
 }
 
+# Return path to build.yml from project root.
+get_build_yaml() {
+    if [ "${project_name}" == "emma" ]; then
+        echo core/config/build.yml
+    else
+        echo config/build.yml
+    fi
+}
+
 remove_previous_builds() {
     if [ ! -d ${PACKAGE_DIR} ]; then
         mkdir -p ${PACKAGE_DIR}
@@ -64,7 +91,9 @@ remove_previous_builds() {
 }
 
 create_build_yml() {
-    echo -e "Creating config/build.yml"
+    local build_yml
+    build_yml="$(get_build_yaml)"
+    echo -e "Creating ${build_yml}"
     local version sha date
 
     version=$(
@@ -79,7 +108,7 @@ create_build_yml() {
     date=$(git log -1 --format=%cd --date iso)
 
     echo -e "${loud_project_type}: $project_name ($version@$sha $date)" >> $RELEASE_FILE
-    cat <<EOF > config/build.yml
+    cat <<EOF > "${build_yml}"
 ---
 build_version: "${version}"
 build_rev: "${sha}"
@@ -117,7 +146,7 @@ create_tar_file() {
 }
 
 append_build_yml() {
-    tar --append -f "${project_dir}/${project_name}.tar" "${project_name}/config/build.yml"
+    tar --append -f "${project_dir}/${project_name}.tar" "${project_name}/$(get_build_yaml)"
     gzip "${project_dir}/${project_name}.tar"
     mv "${project_dir}/${project_name}.tar.gz" "${project_dir}/${project_name}.tgz"
 }
@@ -202,11 +231,11 @@ main() {
         exit 1
     fi
 
-    cd "${SCRIPT_DIR}"
     remove_previous_builds
     mkdir -p "${BUILD_DIR}"
     cd "${BUILD_DIR}"
 
+    package_projects APPLIANCES appliance
     package_projects DAEMONS daemon
     package_projects MODULES module
     create_release_and_version_files

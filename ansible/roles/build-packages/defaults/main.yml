@@ -15,4 +15,7 @@ build_packages_modules:
   - scram:main
   - uma:main
 
+build_packages_appliances:
+  - emma:main
+
 build_packages_namespace: "dev-{{ansible_date_time.date}}"
