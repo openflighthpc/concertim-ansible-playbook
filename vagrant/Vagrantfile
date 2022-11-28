@@ -29,7 +29,6 @@ PLAYBOOKS = [
     id: "build",
     path: File.join(ANSIBLE_DIR, "build-playbook.yml"),
     extra_vars: {
-      'gh_token' => ENV.fetch('GH_TOKEN', ''),
       'aws_access_key_id' => ENV.fetch('AWS_ACCESS_KEY_ID', ''),
       'aws_secret_access_key' => ENV.fetch('AWS_SECRET_ACCESS_KEY', ''),
       'release_tag' => ENV.fetch('MIA_RELEASE_TAG', ''),

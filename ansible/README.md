@@ -32,9 +32,7 @@ Steps 2 through 7 are described in more detail below.
 
 ## Gather GitHub and S3 credentials
 
-You will need GitHub credentials to clone this repository and for the playbook
-to download a tarfile from the `alces-flight/concertim-emma` GitHub
-repository.
+You will need GitHub credentials to clone this repository.
 
 You will also need S3 credentials to allow the playbook to download packages
 from S3.  The credentials need to allow downloading from
@@ -43,7 +41,7 @@ from S3.  The credentials need to allow downloading from
 Obtaining these credentials is left as an exercise for the reader.
 
 The following code snippets assume that these credentials are available in the
-following environment variables.  If you do this you can copy and past the
+following environment variables.  If you do this you can copy and paste the
 code snippets.
 
 * `AWS_ACCESS_KEY_ID` is your AWS access key id allowing downloading from
@@ -136,7 +134,6 @@ RELEASE_TAG=$( git tag -l --sort '-v:refname' --points-at HEAD 'revival-*' | hea
 ```bash
 ansible-playbook \
   --inventory /ansible/inventory.ini \
-  --extra-vars "gh_token=$GH_TOKEN" \
   --extra-vars "aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
   --extra-vars "release_tag=$RELEASE_TAG" \
   /ansible/build-playbook.yml
