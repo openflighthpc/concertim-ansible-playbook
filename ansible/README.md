@@ -1,7 +1,7 @@
 # Building and configuring a Concertim MIA
 
 This directory contains ansible playbooks to build a vanilla MIA and configure
-a vanilla MIA.
+it.
 
 ## Prerequisites
 
@@ -10,25 +10,22 @@ a vanilla MIA.
 * Root access on that Ubuntu machine.
 * The Ubuntu machine needs to be configured to not use "Predictable Network
   Interface Names".  That is to use `ethX` naming instead of `enpXsY` style
-  naming.
-
-This repo ships with an ansible playbook that can be used to configure the
-machine to use `ethX` style network names.
+  naming.  This repo ships with an ansible playbook that can be used to
+  configure the machine to use `ethX` style network names.
 
 ## Overview
 
-The process can be 
+The process is as follows.  Steps 2 through 7 are described in more detail
+below.
 
 1. Log into your Ubuntu machine and gain root access.
 2. Gather GitHub and S3 credentials.
-3. Install ansible and dependencies
+3. Install ansible and dependencies.
 4. Clone this git repository and checkout the correct tag.
 5. Configure the First Time Setup Wizard (FTSW) data.
 6. Optionally run the prep playbook to configure the network naming
    convention.
 7. Run the build and configure playbooks.
-
-Steps 2 through 7 are described in more detail below.
 
 ## Gather GitHub and S3 credentials
 
@@ -41,8 +38,8 @@ from S3.  The credentials need to allow downloading from
 Obtaining these credentials is left as an exercise for the reader.
 
 The following code snippets assume that these credentials are available in the
-following environment variables.  If you do this you can copy and paste the
-code snippets.
+following environment variables.  If they are you can copy and paste the code
+snippets.
 
 * `AWS_ACCESS_KEY_ID` is your AWS access key id allowing downloading from
   the S3 bucket mentioned above.
@@ -70,8 +67,8 @@ This git repository contains the ansible playbook to build and configure a
 Concertim MIA.  The playbook is intended to be ran on the MIA machine itself.
 To that end it needs to be downloaded to the MIA machine.
 
-This git repository is currently a private repository, so you will need to
-provide credentials to clone it.
+This git repository is a private repository, so you will need to provide
+credentials to clone it.
 
 ```bash
 cd /root
