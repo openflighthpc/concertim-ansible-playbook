@@ -3,6 +3,9 @@
 This directory contains ansible playbooks to build a vanilla MIA and configure
 it.
 
+The instructions here will work for version `revival-11`, you're milage may
+vary with other versions.
+
 ## Prerequisites
 
 * An Ubuntu 22.04 (jammy) machine with at least 4GiB of memory and at least 2
@@ -71,18 +74,11 @@ This git repository is a private repository, so you will need to provide
 credentials to clone it.
 
 ```bash
+RELEASE_TAG="revival-11"
 cd /root
 git clone https://${GH_TOKEN}@github.com/alces-flight/concertim-bootstrap.git
 ln -s /root/concertim-bootstrap/ansible /ansible
-```
-
-Determine the correct tag to build from.  Unless you have reason not to you
-should build from the most recent `revival-X` tag.  That tag can be determined
-and checked out by running the following:
-
-```bash
 cd /root/concertim-bootstrap
-RELEASE_TAG=$( git tag -l --sort '-v:refname' 'revival-*' | head -n 1 )
 echo "Using tag ${RELEASE_TAG}"
 git checkout --quiet ${RELEASE_TAG}
 ```
@@ -121,11 +117,11 @@ Run the build playbook.
 If you rebooted the machine after the above step, don't forget to ensure that
 your credentials have been gathered and exported.
 
-You will also need to know the tag being built.  If building from the latest
-`revival-*` tag, you can determine that with the following:
+You will also need to set the release tag that is being built.  This needs to
+be consistent with the tag used in step 4.
 
 ```
-RELEASE_TAG=$( git tag -l --sort '-v:refname' --points-at HEAD 'revival-*' | head -n 1)
+RELEASE_TAG="revival-11"
 ```
 
 ```bash
