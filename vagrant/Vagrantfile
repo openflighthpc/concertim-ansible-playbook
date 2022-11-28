@@ -22,7 +22,7 @@ MACHINES = [
 PLAYBOOKS = [
   {
     id: "package",
-    path: File.join(ANSIBLE_DIR, "build-assets-playbook.yml"),
+    path: File.join(ANSIBLE_DIR, "package-assets-playbook.yml"),
     extra_vars: {
       'gh_token' => ENV.fetch('GH_TOKEN', ''),
       'aws_access_key_id' => ENV.fetch('AWS_ACCESS_KEY_ID', ''),
