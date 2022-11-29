@@ -70,9 +70,6 @@
         group: "{{ app_user }}"
       loop: "{{ modules }}"
 
-- name: Fix and hack hacor into submission
-  include_tasks: hacor_fixes_and_hacks.yml
-
 - name: Fix and hack sas into submission
   include_tasks: sas_fixes_and_hacks.yml
 
