@@ -18,7 +18,7 @@
     # The directory where the build takes place.
     package_assets_repo_dir: /tmp/concertim/package-assets/repos
     remove_prior_builds: true
-    dryrun_upload: true
+    dryrun: true
   roles:
     - role: package-base
     - role: package-assets

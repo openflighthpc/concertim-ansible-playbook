@@ -2,7 +2,7 @@
   ansible.builtin.command:
     cmd: "{{role_path}}/files/scripts/upload-packages.sh --yes {{is_dry_run}}"
   vars:
-    is_dry_run: "{{ dryrun_upload | ternary('--dryrun', '', '') }}"
+    is_dry_run: "{{ dryrun | bool | ternary('--dryrun', '', '') }}"
   environment:
     PACKAGE_DIR: "{{package_assets_package_dir}}"
     AWS_ACCESS_KEY_ID: "{{ aws_access_key_id }}"
