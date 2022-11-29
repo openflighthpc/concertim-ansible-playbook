@@ -16,3 +16,5 @@
     - role: package_base
     - role: build-packages
       tags: build-packages
+    - role: build-fake-gmond-package
+      tags: build-fake-gmond-package
