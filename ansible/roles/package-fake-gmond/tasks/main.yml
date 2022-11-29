@@ -16,27 +16,6 @@
     correct_group: "{{fake_gmond_group}}"
   include_tasks: install_s3_tarball.yml
 
-# XXX Move to fake gmond git repo when available.
-- name: Patch source code
-  ansible.builtin.patch:
-    src: "patches/{{ item }}"
-    basedir: "{{ fake_gmond_src_dir }}"
-    backup: yes
-    strip: 1
-  loop:
-    - fix-ruby-path.patch
-    - remove-in-band-metrics.patch
-    - rework-example-metrics.patch
-
-# XXX Move to fake gmond git repo when available.
-- name: Install start_fake_gmond script
-  ansible.builtin.copy:
-    src: start_fake_gmond
-    dest: "{{ fake_gmond_src_dir }}"
-    owner: "{{ fake_gmond_owner }}"
-    group: "{{ fake_gmond_group }}"
-    mode: "755"
-
 - name: Install init.d file
   ansible.builtin.copy:
     src: fake-ganglia.init
