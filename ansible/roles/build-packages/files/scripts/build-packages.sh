@@ -183,7 +183,7 @@ create_release_and_version_files() {
     release_time=$(echo "${most_recent}" | awk '{print $3}')
     # start_year=2015
     current_year=$(date '+%Y')
-    build_version="XXX" # This is the version number e.g., 8.0.1
+    build_version="${release}" # This is the version number e.g., 8.0.1
 
     echo "date: ${release_date} ${release_time}" > ${VERSION_YML}
     echo "version: ${build_version}" >> ${VERSION_YML}
