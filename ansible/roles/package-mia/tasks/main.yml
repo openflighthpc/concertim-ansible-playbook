@@ -60,20 +60,6 @@
         replace: "{{ mia_server_count }}"
   include_tasks: "{{ role_path }}/../phoenix-modules/tasks/install_tagged_configuration.yml"
 
-- name: Patch mia source code
-  ansible.builtin.patch:
-    src: "patches/{{ item }}"
-    basedir: "{{ rails_root_dir }}/mia"
-    backup: yes
-    strip: 1
-  loop:
-    - mia.patch
-    - disable-ferret.patch
-    - disable-help-links.patch
-    - rebranding.patch
-    - fix-monit-drb-check.patch
-
-
 - name: Make appliance directory
   ansible.builtin.file:
     path: "{{ct_etc_dir}}/appliance"
