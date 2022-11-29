@@ -70,9 +70,6 @@
         group: "{{ app_user }}"
       loop: "{{ modules }}"
 
-- name: Fix and hack sas into submission
-  include_tasks: sas_fixes_and_hacks.yml
-
 - name: Create database
   include_tasks: run_rake_task.yml
   vars:
