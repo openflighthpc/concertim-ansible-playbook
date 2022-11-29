@@ -1,2 +1,0 @@
-build_fake_gmond_package_tag: chore/incorporate-patches
-build_fake_gmond_package_name: ganglia-data-generator

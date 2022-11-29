@@ -12,9 +12,13 @@
   become: true
   become_user: root
   become_method: sudo
+  vars:
+    # The directory where built packages are placed.
+    package_assets_package_dir: /tmp/concertim/package-assets/packages
+    # The directory where the build takes place.
+    package_assets_repo_dir: /tmp/concertim/package-assets/repos
+    remove_prior_builds: true
+    dryrun_upload: true
   roles:
-    - role: package_base
-    - role: build-packages
-      tags: build-packages
-    - role: build-fake-gmond-package
-      tags: build-fake-gmond-package
+    - role: package-base
+    - role: package-assets

@@ -1,4 +1,4 @@
-build_packages_daemons:
+package_assets_daemons:
   - ailsa:main
   - ct-capacity-daemon:main
   - enid:main
@@ -7,7 +7,7 @@ build_packages_daemons:
   - meryl:main
   - theresa:main
 
-build_packages_modules:
+package_assets_modules:
   - hacor:main
   - meca:main
   - oobm:main
@@ -15,6 +15,8 @@ build_packages_modules:
   - scram:main
   - uma:main
 
-build_packages_appliances:
+package_assets_appliances:
   - emma:main
   - mia:main
+
+package_assets_fake_gmond_tag: chore/incorporate-patches

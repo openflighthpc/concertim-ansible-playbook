@@ -1,0 +1,22 @@
+- name: Upload packages
+  ansible.builtin.command:
+    cmd: "{{role_path}}/files/scripts/upload-packages.sh --yes {{is_dry_run}}"
+  vars:
+    is_dry_run: "{{ dryrun_upload | ternary('--dryrun', '', '') }}"
+  environment:
+    PACKAGE_DIR: "{{package_assets_package_dir}}"
+    AWS_ACCESS_KEY_ID: "{{ aws_access_key_id }}"
+    AWS_SECRET_ACCESS_KEY: "{{ aws_secret_access_key }}"
+  register: upload_packages
+
+- name: "Upload packages stderr"
+  ansible.builtin.debug:
+    var: upload_packages.stderr_lines
+  failed_when: upload_packages.rc != 0
+  ignore_errors: True
+  when: upload_packages.rc != 0
+
+- name: "Upload packages stdout"
+  ansible.builtin.debug:
+    var: upload_packages.stdout_lines
+  failed_when: upload_packages.rc != 0

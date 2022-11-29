@@ -1,0 +1,27 @@
+- name: Install required packages
+  ansible.builtin.apt:
+    name: awscli
+
+- name: Build standard packages
+  ansible.builtin.command:
+    cmd: "{{role_path}}/files/scripts/build-standard-packages.sh {{release_tag}}"
+  environment:
+    APPLIANCES: "{{ package_assets_appliances | join(' ') }}"
+    DAEMONS: "{{ package_assets_daemons | join(' ') }}"
+    MODULES: "{{ package_assets_modules | join(' ') }}"
+    GH_TOKEN: "{{gh_token}}"
+    BUILD_DIR:   "{{package_assets_repo_dir}}"
+    PACKAGE_DIR: "{{package_assets_package_dir}}"
+  register: build_standard_packages
+
+- name: "Build packages stderr"
+  ansible.builtin.debug:
+    var: build_standard_packages.stderr_lines
+  failed_when: build_standard_packages.rc != 0
+  ignore_errors: True
+  when: build_standard_packages.rc != 0
+
+- name: "Build packages stdout"
+  ansible.builtin.debug:
+    var: build_standard_packages.stdout_lines
+  failed_when: build_standard_packages.rc != 0

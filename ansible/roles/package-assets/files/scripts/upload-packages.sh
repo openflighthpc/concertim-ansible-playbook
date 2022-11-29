@@ -31,7 +31,7 @@ main() {
         esac
     done
 
-    echo "Looking for packages in $( realpath --relative-to="." ${PACKAGE_DIR} )"
+    echo "Looking for packages in ${PACKAGE_DIR}"
     echo -e "The following packages will be synced to ${BUCKET}\n"
     find "${PACKAGE_DIR}" -type f -exec realpath --relative-to="${PACKAGE_DIR}" '{}' \;
 

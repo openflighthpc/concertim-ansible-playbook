@@ -1,0 +1,26 @@
+- name: Remove prior builds
+  ansible.builtin.file:
+    path: "{{ package_assets_package_dir }}"
+    state: absent
+  when: remove_prior_builds == True
+
+- name: Create build and package directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: "755"
+    state: directory
+  loop:
+    - "{{ package_assets_package_dir }}"
+    - "{{ package_assets_repo_dir }}"
+
+- name: Build standard packages
+  import_tasks: build-standard-packages.yml
+  tags: standard-packages
+
+- name: Build fake gmond package
+  import_tasks: build-fake-gmond-package.yml
+  tags: fake-gmond
+
+- name: Upload packages
+  import_tasks: upload-packages.yml
+  tags: upload

@@ -63,14 +63,6 @@ git_ref_type() {
     return 0
 }
 
-remove_previous_builds() {
-    if [ ! -d ${PACKAGE_DIR} ]; then
-        mkdir -p ${PACKAGE_DIR}
-    else
-        rm -rf ${PACKAGE_DIR}/*
-    fi
-}
-
 main() {
     local release project_name project_tag
     project_name="${1}"
@@ -92,8 +84,8 @@ main() {
         exit 1
     fi
 
-    remove_previous_builds
     mkdir -p "${BUILD_DIR}"
+    mkdir -p ${PACKAGE_DIR}
     cd "${BUILD_DIR}"
     checkout_source
     cd "${project_name}"
