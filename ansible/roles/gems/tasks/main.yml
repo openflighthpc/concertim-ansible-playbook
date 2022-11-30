@@ -93,6 +93,7 @@
     - "net-snmp -v 0.2.1"
     - "rack -v 1.5.2"
     - safe_libs
+    - "rmagick -v 2.15.4"
 
     - beanstalk-client-free
     - phoenix_utils
@@ -104,16 +105,6 @@
     - phoenix_metrics
     - phoenix_snmp
     - phoenix_update_signaller
-
-# Other Ruby1.8 gems were previously installed via `.deb` packages.  Those
-# packages obviously no longer work for Ruby1.8 on this OS.  Instead we need
-# to install them from remote sources.
-- name: Install remote ruby 1.8 gems
-  ansible.builtin.command:
-    cmd: gem1.8 install "{{ item.package }}" -v "{{ item.version }}" --no-rdoc --no-ri --source http://rubygems.org/
-  loop:
-    - package: rmagick
-      version: 2.15.4
 
 - name: Install local ruby 1.9 gems
   tags: focus
