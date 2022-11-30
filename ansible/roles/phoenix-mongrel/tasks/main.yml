@@ -1,12 +1,12 @@
 - name: Install mongrel gems
   ansible.builtin.command:
-    cmd: gem1.8 install "{{ role_path }}/files/{{ item }}*.gem" --no-rdoc --no-ri --local
+    cmd: gem1.8 install --no-rdoc --no-ri "{{item}}"
   loop:
     - gem_plugin
     - daemons
     - fastthread
     - cgi_multipart_eof_fix
-    - mongrel-1.1.3   # Include version to increase specificity of the glob.
+    - mongrel
     - mongrel_cluster
 
 - name: Install systemd files

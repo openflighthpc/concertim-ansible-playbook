@@ -40,8 +40,12 @@
         deb: "{{ role_path }}/files/tmp/{{ item }}-number-cruncher.deb"
       loop: "{{ number_crunchers }}"
 
-
-# - name: Updating bunder to use {{ gem_source_url }}
+- name: Patch bundler source
+  vars:
+    gemfile: "{{daemon_installation_dir}}/{{item}}/Gemfile"
+    original_source: ":gemcutter"
+  include_tasks: patch_bundler_source.yml
+  loop: "{{packaged_daemons}}"
 
 - name: Additional ailsa configuration
   include_tasks: ailsa_config.yml
@@ -52,7 +56,7 @@
   ansible.builtin.shell: |
     cd "{{ daemon_path }}"
     PATH={{ruby_19_bin_dir}}:$PATH
-    {{ruby_19_bin_dir}}/bundle install --local
+    {{ruby_19_bin_dir}}/bundle install
   loop: "{{ packaged_daemons }}"
 
 - name: Install init.d files
