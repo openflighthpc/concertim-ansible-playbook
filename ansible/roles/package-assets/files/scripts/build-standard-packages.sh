@@ -82,14 +82,6 @@ get_build_yaml() {
     fi
 }
 
-remove_previous_builds() {
-    if [ ! -d ${PACKAGE_DIR} ]; then
-        mkdir -p ${PACKAGE_DIR}
-    else
-        rm -rf ${PACKAGE_DIR}/*
-    fi
-}
-
 create_build_yml() {
     local build_yml
     build_yml="$(get_build_yaml)"
@@ -265,7 +257,7 @@ main() {
     RELEASE_FILE=${PACKAGE_DIR}/${release}/release.info
     VERSION_YML=${PACKAGE_DIR}/${release}/version.yml
 
-    remove_previous_builds
+    mkdir -p ${PACKAGE_DIR}
     mkdir -p "${BUILD_DIR}"
     cd "${BUILD_DIR}"
 
