@@ -21,20 +21,17 @@
 
 - name: Bundle install gems
   block:
-    # FSR not all of the gems for Emma are included in vendor/cache.  We fix this
-    # by copying far too many gems across.
-    - name: Vendor missing gems
-      ansible.builtin.shell:
-        cmd: |
-          cp -a {{ playbook_dir }}/roles/gems/files/1.9/*.gem {{ emma_core_dir }}/vendor/cache/
-          chown {{app_user}}:{{app_user}} {{ emma_core_dir }}/vendor/cache/*.gem
-        executable: /bin/bash
+    - name: Patch bundler source
+      vars:
+        gemfile: "{{emma_core_dir}}/Gemfile"
+        original_source: "'http://rubygems.org'"
+      include_tasks: patch_bundler_source.yml
 
     - name: Bundle install gems
       ansible.builtin.shell: |
         cd "{{ emma_core_dir }}"
         PATH={{ruby_19_bin_dir}}:$PATH
-        {{ruby_19_bin_dir}}/bundle install --local
+        {{ruby_19_bin_dir}}/bundle install
 
 - name: Create database
   import_tasks: run_rake_task.yml

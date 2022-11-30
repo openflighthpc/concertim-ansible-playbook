@@ -1,6 +1,6 @@
 - name: Install gems
   ansible.builtin.command:
-    cmd: gem1.8 install "{{ role_path }}/files/1.8/{{ item }}*.gem" --no-rdoc --no-ri --local
+    cmd: gem1.8 install --no-rdoc --no-ri "{{item}}"
   loop: 
     - appliance
     - romance_matcher
