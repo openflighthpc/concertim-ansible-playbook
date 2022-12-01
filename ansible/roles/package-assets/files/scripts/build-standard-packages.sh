@@ -192,7 +192,7 @@ create_release_and_version_files() {
 copy_module_controllers() {
     # Copy across all of the module's controllers for mia.  This will fail if
     # this build run isn't building all of the modules.
-    declare -a expected_modules=(sas hacor meca scram oobm)
+    declare -a expected_modules=(sas hacor meca scram oobm uma)
     declare -A actual_modules
     local module
     for tagged_module in "${MODULES[@]}" ; do
