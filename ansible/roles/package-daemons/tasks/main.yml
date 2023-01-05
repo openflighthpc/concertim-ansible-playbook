@@ -6,7 +6,7 @@
     mode: get
     aws_access_key: "{{ aws_access_key_id }}"
     aws_secret_key: "{{ aws_secret_access_key }}"
-  loop: "{{ packaged_daemons }}"
+  loop: "{{ packaged_daemons + static_daemons }}"
 
 - name: Make destination directory
   ansible.builtin.file:
@@ -21,7 +21,7 @@
     src: "tmp/{{ item }}.tgz"
     dest: "{{ daemon_installation_dir }}"
     creates: "{{ daemon_installation_dir }}/{{ item }}"
-  loop: "{{ packaged_daemons }}"
+  loop: "{{ packaged_daemons + static_daemons }}"
 
 - name: Install number crunchers
   block:
@@ -68,6 +68,23 @@
     mode: "744"
   loop: "{{ packaged_daemons + init_only_daemons }}"
   # XXX deal with UID check.
+
+- name: Install systemd {{item}}.service file
+  ansible.builtin.copy:
+    src: "{{ item }}.service"
+    dest: /lib/systemd/system/{{ item }}.service
+    owner: root
+    group: root
+    mode: "644"
+  loop: "{{ static_daemons }}"
+
+# Not entirely decided on the correct naming for the daemon.  Should all new
+# daemons be prefixed with ct-?
+- name: Fix issue with metric-reporting-daemon name
+  ansible.builtin.file:
+    src: "{{daemon_installation_dir}}/metric-reporting-daemon"
+    dest: "{{daemon_installation_dir}}/ct-metric-reporting-daemon"
+    state: link
 
 # - name: Additional demm configuration
 #   vars:

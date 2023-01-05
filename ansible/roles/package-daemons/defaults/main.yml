@@ -2,6 +2,11 @@ mode: production
 daemon_installation_dir: /data/private/share/daemons
 # gem_source_url: "http://build:Bu11dUS3R2000@src.concertim.com/gems/uranus-concertim/gems"
 
+# List of statically compiled daemons.  Their tarball needs downloading and
+# extracting and a systemd unit file installing.
+static_daemons:
+  - metric-reporting-daemon
+
 # List of daemons that have been packaged and need full installation.  That is
 # they have source code to download and extract; gem dependencies to install;
 # and init.d files to install and enable.

@@ -1,0 +1,15 @@
+check process metric-reporting-daemon with pidfile /run/metric-reporting-daemon.pid
+  start program = "/usr/bin/systemctl restart metric-reporting-daemon" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart metric-reporting-daemon" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop metric-reporting-daemon"
+  group ct-daemon
+  group metric-reporting-daemon
+
+check file metric-reporting-daemon_log with path /var/log/metric-reporting-daemon.log
+  start program = "/usr/bin/systemctl restart metric-reporting-daemon" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart metric-reporting-daemon" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop metric-reporting-daemon"
+  if timestamp > 5 minutes then restart
+  group ct-daemon
+  group metric-reporting-daemon
+

@@ -15,6 +15,7 @@
     - meryl
     - theresa
     - ct-capacity-daemon
+    - metric-reporting-daemon
     #
     # Other daemons 
     - delayed_job
