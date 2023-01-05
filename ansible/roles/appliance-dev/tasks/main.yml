@@ -19,3 +19,20 @@
         replace: '<%#<script data-main="/scripts/lib/main" src="/scripts/lib/contrib/require.js"></script>%>'
       - regexp: '<%#<script data-main="/scripts/src/meta/dev" src="/scripts/src/javascript/contrib/require.js"></script>%>' 
         replace: => '<script data-main="/scripts/src/meta/dev" src="/scripts/src/javascript/contrib/require.js"></script>'
+
+- name: Install useful dev tools
+  ansible.builtin.apt:
+    name:
+      - jq
+    state: latest
+
+- name: Install useful dev scripts
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /usr/local/sbin/
+    owner: root
+    group: root
+    mode: "0755"
+  loop:
+    - get-memcache-key.rb
+    - list-memcache-keys.rb
