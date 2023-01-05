@@ -1,0 +1,25 @@
+- name: Install required packages
+  ansible.builtin.apt:
+    name: golang
+
+- name: Build golang packages
+  ansible.builtin.command:
+    cmd: "{{role_path}}/files/scripts/build-golang-packages.sh {{release_tag}}"
+  environment:
+    BUILD_DIR:   "{{package_assets_repo_dir}}"
+    GH_TOKEN: "{{gh_token}}"
+    PACKAGE_DIR: "{{package_assets_package_dir}}"
+    PROJECTS: "{{ package_assets_golang_projects | join(' ') }}"
+  register: build_golang_packages
+
+- name: "Build packages stderr"
+  ansible.builtin.debug:
+    var: build_golang_packages.stderr_lines
+  failed_when: build_golang_packages.rc != 0
+  ignore_errors: True
+  when: build_golang_packages.rc != 0
+
+- name: "Build packages stdout"
+  ansible.builtin.debug:
+    var: build_golang_packages.stdout_lines
+  failed_when: build_golang_packages.rc != 0

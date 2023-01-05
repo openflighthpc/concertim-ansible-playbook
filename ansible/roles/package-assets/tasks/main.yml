@@ -17,6 +17,10 @@
   import_tasks: build-standard-packages.yml
   tags: standard-packages
 
+- name: Build golang packages
+  import_tasks: build-golang-packages.yml
+  tags: golang-packages
+
 - name: Build fake gmond package
   import_tasks: build-fake-gmond-package.yml
   tags: fake-gmond

@@ -20,3 +20,6 @@ package_assets_appliances:
   - mia:main
 
 package_assets_fake_gmond_tag: main
+
+package_assets_golang_projects:
+  - daemon:metric-reporting-daemon:main
