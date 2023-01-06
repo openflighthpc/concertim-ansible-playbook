@@ -107,7 +107,6 @@
     - phoenix_update_signaller
 
 - name: Install local ruby 1.9 gems
-  tags: focus
   ansible.builtin.command:
     cmd: gem1.9 install --no-rdoc --no-ri {{item}}
   loop:
