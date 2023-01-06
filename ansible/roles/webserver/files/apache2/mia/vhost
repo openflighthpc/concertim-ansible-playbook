@@ -54,6 +54,9 @@ RewriteRule ^/terminal/superuser$ balancer://mongrel_cluster%{REQUEST_URI} [P,QS
 RewriteRule ^/terminal/(.*)$ http://localhost:8022/$1 [P]
 ProxyPassReverse /terminal/show http://localhost:8022
 
+# Rewrite anything with the /mrd/ prefix to the metric reporting daemon.
+RewriteRule ^/mrd/(.*)$ http://localhost:3000/$1 [P]
+
 RewriteRule ^/system/console/show(.*)$ http://localhost:8022$1 [P]
 RewriteRule ^/system/console/superuser$ balancer://mongrel_cluster%{REQUEST_URI} [P,QSA,L]
 RewriteRule ^/system/console/(.*)$ http://localhost:8022/$1 [P]
