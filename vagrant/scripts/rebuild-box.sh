@@ -23,8 +23,10 @@ cd "${SCRIPT_DIR}"/..
 source "${SCRIPT_DIR}"/prepare-env.sh
 vagrant destroy --force "${BOX_NAME}"
 
-# FSR, this is much more reliable if separated into two separate runs.
-vagrant up --provision-with swap,apt-upgrade "${BOX_NAME}"
+# FSR, this is much more reliable if separated into multiple separate runs.
+vagrant up --no-provision "${BOX_NAME}"
+vagrant provision --provision-with swap "${BOX_NAME}"
+vagrant provision --provision-with apt-upgrade "${BOX_NAME}"
 vagrant provision --provision-with prep_playbook "${BOX_NAME}"
 
 # Reboot the machine so that changes configured in `prep_playbook` can take
