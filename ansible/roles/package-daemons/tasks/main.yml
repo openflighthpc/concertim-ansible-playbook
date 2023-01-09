@@ -78,13 +78,8 @@
     mode: "644"
   loop: "{{ static_daemons }}"
 
-# Not entirely decided on the correct naming for the daemon.  Should all new
-# daemons be prefixed with ct-?
-- name: Fix issue with metric-reporting-daemon name
-  ansible.builtin.file:
-    src: "{{daemon_installation_dir}}/metric-reporting-daemon"
-    dest: "{{daemon_installation_dir}}/ct-metric-reporting-daemon"
-    state: link
+- name: Additional metric reporting daemon configuration
+  include_tasks: metric_reporting_daemon_config.yml
 
 # - name: Additional demm configuration
 #   vars:
