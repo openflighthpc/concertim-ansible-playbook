@@ -3,7 +3,7 @@
 This directory contains ansible playbooks to build a vanilla MIA and configure
 it.
 
-The instructions here will work for version `revival-11`, you're milage may
+The instructions here will work for version `revival-12`, you're milage may
 vary with other versions.
 
 ## Prerequisites
@@ -74,7 +74,7 @@ This git repository is a private repository, so you will need to provide
 credentials to clone it.
 
 ```bash
-RELEASE_TAG="revival-11"
+RELEASE_TAG="revival-12"
 cd /root
 git clone https://${GH_TOKEN}@github.com/alces-flight/concertim-bootstrap.git
 ln -s /root/concertim-bootstrap/ansible /ansible
@@ -121,7 +121,7 @@ You will also need to set the release tag that is being built.  This needs to
 be consistent with the tag used in step 4.
 
 ```
-RELEASE_TAG="revival-11"
+RELEASE_TAG="revival-12"
 ```
 
 ```bash
