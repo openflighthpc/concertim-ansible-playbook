@@ -7,9 +7,3 @@
     correct_owner: "{{app_user}}"
     correct_group: "{{app_user}}"
   include_tasks: install_s3_tarball.yml
-
-- name: Sanity check (CT gems)
-  ansible.builtin.command:
-    cmd: "{{ role_path }}/files/scripts/check_emma_for_ct_gems.sh"
-  environment:
-    EMMA_CORE_PATH: "{{emma_core_dir}}"
