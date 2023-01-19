@@ -13,6 +13,8 @@
     BUILD_DIR:   "{{package_assets_repo_dir}}"
     PACKAGE_DIR: "{{package_assets_package_dir}}"
   register: build_standard_packages
+  # The failure will become fatal after the stderr and stdout have been printed.
+  ignore_errors: True
 
 - name: "Build packages stderr"
   ansible.builtin.debug:

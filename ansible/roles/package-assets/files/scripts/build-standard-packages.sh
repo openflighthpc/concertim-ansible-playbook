@@ -128,7 +128,9 @@ checkout_source() {
         echo "Using ${ref_type} ${project_tag}"
     fi
     git checkout --quiet "${project_tag}"
-    git merge --quiet @{upstream}
+    if [ "${ref_type}" == "branch" ] ; then
+	    git merge --quiet @{upstream}
+    fi
     popd > /dev/null
 }
 

@@ -11,6 +11,8 @@
     PACKAGE_DIR: "{{package_assets_package_dir}}"
     PROJECTS: "{{ package_assets_golang_projects | join(' ') }}"
   register: build_golang_packages
+  # The failure will become fatal after the stderr and stdout have been printed.
+  ignore_errors: True
 
 - name: "Build packages stderr"
   ansible.builtin.debug:
