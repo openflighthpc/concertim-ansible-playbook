@@ -4,9 +4,9 @@ ERR=0
 EMMA_CORE_PATH=${EMMA_CORE_PATH:-/data/private/share/rails/emma/core}
 emmadir="${EMMA_CORE_PATH}/vendor/cache"
 
-for ruby in 1.8 1.9.1
+for ruby in 1.8 1.9
 do
-   gemdir="/opt/ruby-${ruby}/lib/ruby/gems/${ruby}/gems/"
+   gemdir="/opt/ruby-${ruby}/lib/ruby/gems/${ruby}*/gems/"
    cd ${gemdir}
    for gem in *
    do
@@ -29,5 +29,5 @@ do
 done
 
 exit ${ERR}
-  
+
 # eof
