@@ -75,7 +75,7 @@ get_project_tag() {
 
 # Return path to build.yml from project root.
 get_build_yaml() {
-    if [ "${project_name}" == "emma" ]; then
+    if [ "${project_name}" == "emma" -o "${project_name}" == "ct-visualisation-app" ]; then
         echo core/config/build.yml
     else
         echo config/build.yml

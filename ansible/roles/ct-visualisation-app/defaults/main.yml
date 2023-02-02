@@ -1,0 +1,3 @@
+ct_vis_app_path: "{{ rails_root_dir }}/ct-visualisation-app"
+ct_vis_app_core_dir: "{{ rails_root_dir }}/ct-visualisation-app/core"
+ct_vis_app_log_file: /var/log/ct-visualisation-app.log

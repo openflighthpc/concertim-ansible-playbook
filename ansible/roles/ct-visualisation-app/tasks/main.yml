@@ -1,0 +1,39 @@
+- name: Check for existing installation
+  ansible.builtin.command:
+    cmd: ls -d {{ ct_vis_app_path }}
+  register: ct_vis_app_dir
+  failed_when: False
+
+- name: Install ct-visualisation-app
+  include_tasks: install_ct_vis_app_package.yml
+  when: ct_vis_app_dir.stdout == ""
+
+- name: Install configuration
+  ansible.builtin.template:
+    src: ct-visualisation-app.logrotate
+    dest: /etc/logrotate.d/ct-visualisation-app
+
+- name: Bundle install gems
+  ansible.builtin.shell: |
+    cd "{{ ct_vis_app_core_dir }}"
+    ./bin/bundle install
+
+- name: Precompile assets
+  import_tasks: run_rake_task.yml
+  vars:
+    ruby_bin_dir: "{{ruby_30_bin_dir}}"
+    rake_task: "assets:precompile"
+    chdir: "{{ ct_vis_app_core_dir }}"
+
+- name: Install ct-visualisation-app.service
+  ansible.builtin.copy:
+    src: ct-visualisation-app.service
+    dest: /lib/systemd/system/ct-visualisation-app.service
+    owner: root
+    group: root
+    mode: "644"
+
+- name: Ensure that ct-vis-app is enabled
+  ansible.builtin.service:
+    name: ct-vis-app
+    enabled: yes

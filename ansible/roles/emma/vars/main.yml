@@ -1,3 +1,1 @@
-# The git tag (or branch, or commit) that emma should be built from.
-emma_git_tag: "main"
 emma_path: "{{ rails_root_dir }}/emma"

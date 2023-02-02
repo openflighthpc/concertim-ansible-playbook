@@ -116,6 +116,8 @@ RewriteRule ^/$ /index.html [QSA]
 # Rewrite anything with the /-/ prefix to EMMA
 RewriteRule ^/-/(.*)$ balancer://emma_cluster%{REQUEST_URI} [P,QSA,L]
 
+# Rewrite anything with the /--/ prefix to ct-visualisation-app
+RewriteRule ^/(--/.*)$ http://localhost:7000/$1 [P,QSA,L]
 
 # Rewrite to check for Rails cached page
 RewriteRule ^([^.]+)$ $1.html [QSA]

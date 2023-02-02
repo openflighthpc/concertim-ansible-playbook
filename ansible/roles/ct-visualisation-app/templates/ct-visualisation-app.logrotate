@@ -1,0 +1,10 @@
+/var/log/{{ct_vis_app_log_file}} {
+  daily
+  missingok
+  rotate 14
+  compress
+  delaycompress
+  notifempty
+  copytruncate
+  create 0666 {{app_user}} {{app_user}}
+}

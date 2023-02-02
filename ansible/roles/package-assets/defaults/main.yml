@@ -18,6 +18,7 @@ package_assets_modules:
 package_assets_appliances:
   - emma:main
   - mia:main
+  - ct-visualisation-app:main
 
 package_assets_fake_gmond_tag: main
 

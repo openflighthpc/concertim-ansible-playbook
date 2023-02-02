@@ -6,6 +6,7 @@
     # Rails apps
     - phoenix-mongrel
     - emma
+    - ct-visualisation-app
     #
     # Daemons
     - ailsa

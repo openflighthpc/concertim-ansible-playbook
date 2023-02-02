@@ -1,0 +1,12 @@
+[Unit]
+Description=CT Visualisation App - Web app providing visualiation of metrics
+
+[Service]
+Type=exec
+ExecStart={{ct_vis_app_core_dir}}/bin/rails server -p 7000 -b 0.0.0.0
+TimeoutSec=10sec
+StandardOutput=append:{{ct_vis_app_log_file}}
+StandardError=append:{{ct_vis_app_log_file}}
+
+[Install]
+WantedBy=multi-user.target
