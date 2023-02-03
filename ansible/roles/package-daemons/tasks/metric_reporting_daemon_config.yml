@@ -33,3 +33,8 @@
         owner: root
         group: "{{app_user}}"
         mode: "640"
+
+- name: Install logrotate configuration
+  ansible.builtin.copy:
+    src: ct-metric-reporting-daemon.logrotate
+    dest: /etc/logrotate.d/ct-metric-reporting-daemon

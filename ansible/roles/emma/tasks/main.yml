@@ -14,7 +14,7 @@
     dest: "/data/private/share/emma"
     state: link
 
-- name: Install configuration
+- name: Install logrotate configuration
   ansible.builtin.template:
     src: phoenix-emma.logrotate
     dest: /etc/logrotate.d/phoenix-emma
