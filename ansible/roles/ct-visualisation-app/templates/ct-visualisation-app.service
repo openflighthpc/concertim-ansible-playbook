@@ -7,6 +7,8 @@ ExecStart={{ct_vis_app_core_dir}}/bin/rails server -p 7000 -b 0.0.0.0 -e product
 TimeoutSec=10sec
 StandardOutput=append:{{ct_vis_app_log_file}}
 StandardError=append:{{ct_vis_app_log_file}}
+User={{app_user}}
+Group={{app_user}}
 
 [Install]
 WantedBy=multi-user.target
