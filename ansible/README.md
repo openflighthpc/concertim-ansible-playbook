@@ -3,7 +3,7 @@
 This directory contains ansible playbooks to build a vanilla MIA and configure
 it.
 
-The instructions here will work for version `revival-13`, you're milage may
+The instructions here will work for version `revival-14`, you're milage may
 vary with other versions.
 
 ## Prerequisites
@@ -74,7 +74,7 @@ This git repository is a private repository, so you will need to provide
 credentials to clone it.
 
 ```bash
-RELEASE_TAG="revival-13"
+RELEASE_TAG="revival-14"
 cd /root
 git clone https://${GH_TOKEN}@github.com/alces-flight/concertim-bootstrap.git
 ln -s /root/concertim-bootstrap/ansible /ansible
@@ -123,18 +123,10 @@ AWS_SECRET_ACCESS_KEY=...
 GH_TOKEN=...
 ```
 
-You will also need to set the release tag that is being built.  This needs to
-be consistent with the tag used in step 4.
-
-```
-RELEASE_TAG="revival-13"
-```
-
 ```bash
 ansible-playbook \
   --inventory /ansible/inventory.ini \
   --extra-vars "aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
-  --extra-vars "release_tag=$RELEASE_TAG" \
   /ansible/build-playbook.yml
 ```
 
