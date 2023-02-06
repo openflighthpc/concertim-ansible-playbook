@@ -44,6 +44,8 @@
       tags: emma
     - role: package-mia
       tags: package-mia
+    - role: ct-visualisation-app
+      tags: ct-visualisation-app
     - role: personality
       tags: personality
     - role: release-info

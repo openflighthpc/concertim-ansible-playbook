@@ -23,17 +23,18 @@
   vars:
     ruby_bin_dir: "{{ruby_30_bin_dir}}"
     rake_task: "assets:precompile"
+    additional_env: ""
     chdir: "{{ ct_vis_app_core_dir }}"
 
 - name: Install ct-visualisation-app.service
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: ct-visualisation-app.service
     dest: /lib/systemd/system/ct-visualisation-app.service
     owner: root
     group: root
     mode: "644"
 
-- name: Ensure that ct-vis-app is enabled
+- name: Ensure that ct-visualisation-app is enabled
   ansible.builtin.service:
-    name: ct-vis-app
+    name: ct-visualisation-app
     enabled: yes

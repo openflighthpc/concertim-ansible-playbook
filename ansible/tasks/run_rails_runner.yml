@@ -1,4 +1,4 @@
-- name: Run rails runnner {{rails_runner}} {{runner_args}} (in {{chdir}})
+- name: Run rails runnner {{rails_runner}} {{runner_args}}
   ansible.builtin.shell:
     cmd: |
       PATH={{ruby_bin_dir}}:$PATH

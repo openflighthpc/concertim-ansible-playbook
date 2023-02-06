@@ -1,9 +1,9 @@
-- name: Install ct-visualiation-app tarball from s3
+- name: Install ct-visualisation-app tarball from s3
   vars:
     destination_dir: "{{ rails_root_dir }}"
     s3_prefix: "{{s3_appliances_prefix}}"
-    tarball_name: ct-visualiation-app.tgz
-    untarred_dir: ct-visualiation-app
+    tarball_name: ct-visualisation-app.tgz
+    untarred_dir: ct-visualisation-app
     correct_owner: "{{app_user}}"
     correct_group: "{{app_user}}"
   include_tasks: install_s3_tarball.yml
