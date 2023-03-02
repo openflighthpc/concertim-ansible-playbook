@@ -18,6 +18,40 @@
     cd "{{ ct_vis_app_core_dir }}"
     ./bin/bundle install
 
+- name: Create config/master.key and credentials
+  block:
+    - name: Generate master key
+      ansible.builtin.command:
+        cmd: "{{ruby_30_bin_dir}}/ruby -r securerandom -e 'print SecureRandom.hex(64)'"
+      register: ct_vis_master_key
+
+    - name: Write config/master.key
+      ansible.builtin.copy:
+        dest: "{{ct_vis_app_core_dir}}/config/master.key"
+        content: "{{ct_vis_master_key.stdout}}"
+        owner: "{{app_user}}"
+        group: "{{app_user}}"
+        mode: "600"
+
+    - name: Generate secret key base
+      ansible.builtin.command:
+        cmd: "{{ruby_30_bin_dir}}/ruby -r securerandom -e 'print SecureRandom.hex(64)'"
+      register: ct_vis_secret_key_base
+
+    - name: Create credentials
+      ansible.builtin.shell:
+        chdir: "{{ ct_vis_app_core_dir }}"
+        cmd: |
+          EDITOR='echo "secret_key_base: {{ct_vis_secret_key_base.stdout}}" >> ' ./bin/rails credentials:edit
+# ' A magic comment to fix syntax highlighting following the above cmd.
+
+    - name: Fix permissions
+      ansible.builtin.file:
+        path: "{{ct_vis_app_core_dir}}/config/credentials.yml.enc"
+        owner: "{{app_user}}"
+        group: "{{app_user}}"
+        mode: "644"
+
 - name: Precompile assets
   import_tasks: run_rake_task.yml
   vars:
