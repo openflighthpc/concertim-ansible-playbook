@@ -22,46 +22,6 @@ data_centre:
 
   sensor_positions: []
 
-power_cost_bands:
-  - name: 'Off peak (am)'
-    timefrom: '2000-01-01 00:00:00 UTC'
-    timeto:   '2000-01-01 07:00:00 UTC'
-    cost_pkwh: 25
-    colour: '#82ff37'
-    include_days:
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6
-      - 7
-  - name: 'Peak'
-    timefrom: '2000-01-01 07:00:00 UTC'
-    timeto:   '2000-01-01 21:00:00 UTC'
-    cost_pkwh: 35
-    colour: '#ff3d3d'
-    include_days:
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6
-      - 7
-  - name: 'Off peak (pm)'
-    timefrom: '2000-01-01 21:00:00 UTC'
-    timeto:   '2000-01-01 23:59:59 UTC'
-    cost_pkwh: 25
-    colour: '#82ff37'
-    include_days:
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6
-      - 7
-
+power_cost_bands: []
 groups: []
 inferred_metrics: []
