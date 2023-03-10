@@ -1,0 +1,6 @@
+integrator_password: integrator
+integrator_email: integrator@test.com
+admin_password: admin
+admin_email: admin@test.com
+operator_password: operator
+operator_email: operator@test.com
