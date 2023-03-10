@@ -11,7 +11,5 @@
       tags: configure-vanilla
     - role: license-limits
       tags: license-limits
-    - role: demo-data
-      tags: demo-data
     - role: finalization
       tags: finalization
