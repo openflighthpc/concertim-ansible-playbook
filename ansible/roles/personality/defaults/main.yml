@@ -1,10 +1,6 @@
-emma_personalty_folder: "{{ emma_core_dir }}/config/personalities"
 etc_personalty_folder: "{{ct_etc_dir}}/appliance"
 branding_name: "ct"
 branding_yaml_path: "{{ct_etc_dir}}/branding.yml"
-logo_dirs:
-  - "{{ emma_core_dir }}/config/personalities/ct/images/"
-  - "{{ emma_core_dir }}/public/personalities/ct/images/"
 logo_files:
   - logo-left.png
   - logo-right.png
