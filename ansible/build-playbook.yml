@@ -54,5 +54,6 @@
       tags: appliance-dev
     - role: fake-gmond
       tags: fake-gmond
+      when: want_fake_metrics | bool
     - role: finalization
       tags: finalization

@@ -55,6 +55,13 @@
         - phoenix-emma.monit
         - phoenix-mia.monit
 
+    - name: Remove fake ganglia monit configuration
+      ansible.builtin.file:
+        path: /etc/monit/conf.d/fake-ganglia.monit
+        state: absent
+      when: not want_fake_metrics | bool
+
+
 - name: Install monit utility scripts
   ansible.builtin.copy:
     src: scripts/

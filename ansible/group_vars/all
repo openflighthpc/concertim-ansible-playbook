@@ -84,3 +84,9 @@ emma_core_dir: "{{rails_root_dir}}/emma/core"
 # user/role used.
 app_user: www-data
 ct_etc_dir: /data/private/share/etc/concurrent-thinking
+
+# ==================================================
+# Configuration for which parts of the build we want.
+#
+# At the moment we don't want any demo data or fake metrics.
+want_fake_metrics: false
