@@ -6,6 +6,7 @@
   become_method: sudo
   vars:
     finalization_start_monit: true
+    finalization_stop_legacy_services: true
   roles:
     - role: configure-vanilla
       tags: configure-vanilla

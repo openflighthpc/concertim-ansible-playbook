@@ -38,11 +38,25 @@
       ansible.builtin.wait_for:
         timeout: 60
 
-# XXX FSR, mia needs restarting *again* for the hardware setup wizard to work.
-# We may need some kind of sleep before hand.
-- name: Restart mia again because of the reasons
-  ansible.builtin.command:
-    cmd: mongrel_rails cluster::restart -C /etc/mongrel_cluster/mia.yml --clean
+# We can now stop the legacy services.
+- name: Stop legacy services
+  ansible.builtin.service:
+    name: "{{item}}"
+    state: stopped
+    enabled: no
+  loop:
+    - phoenix-mongrel
+    - emma
+    - delayed_job
+    - delia
+
+    - ailsa
+    - enid
+    - maggie
+    - martha
+    - theresa
+    - ct-capacity-daemon
+  when: finalization_stop_legacy_services == True
 
 # We're now finally ready to monit our services.
 - name: Start monit
