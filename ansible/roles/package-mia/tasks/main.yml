@@ -42,24 +42,6 @@
     regexp: "config.cache_classes = false"
     replace: "config.cache_classes = true"
 
-- name: Install mongrel config files
-  vars:
-    mongrel_conf_dir: "/etc/mongrel_cluster"
-    template_dest: "{{ mongrel_conf_dir }}/mia.yml"
-    template_src: "{{ rails_root_dir }}/mia/config/mongrel_cluster.yml.tagged"
-    replacements:
-      - regexp: "%MONGREL_USER%"
-        replace: "{{ app_user }}"
-      - regexp: "%MONGREL_GROUP%"
-        replace: "{{ app_user }}"
-      - regexp: "%ENV%"
-        replace: "{{ rails_env }}"
-      - regexp: "%MIA_ROOT%"
-        replace: "/opt/concurrent-thinking/mia"
-      - regexp: "%SERVER_COUNT%"
-        replace: "{{ mia_server_count }}"
-  include_tasks: "{{ role_path }}/../phoenix-modules/tasks/install_tagged_configuration.yml"
-
 - name: Make appliance directory
   ansible.builtin.file:
     path: "{{ct_etc_dir}}/appliance"

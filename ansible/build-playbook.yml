@@ -28,12 +28,14 @@
       tags: gems
     - role: snmp
       tags: snmp
-    - role: phoenix-mongrel
-      tags: phoenix-mongrel
-    - role: delia
-      tags: delia
-    - role: delia-plugins
-      tags: delia-plugins
+
+    # - role: phoenix-mongrel
+    #   tags: phoenix-mongrel
+
+    # - role: delia
+    #   tags: delia
+    # - role: delia-plugins
+    #   tags: delia-plugins
     - role: package-daemons
       tags: package-daemons
     - role: phoenix-modules

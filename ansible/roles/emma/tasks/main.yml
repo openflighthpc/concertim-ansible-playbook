@@ -74,4 +74,5 @@
 - name: Ensure that emma is enabled
   ansible.builtin.service:
     name: emma
-    enabled: yes
+    enabled: no
+    state: stopped

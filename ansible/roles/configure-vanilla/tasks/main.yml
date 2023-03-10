@@ -1,38 +1,3 @@
-- name: Verifying appliance config at "{{ role_path }}/files/tmp/ftsw-data"
-  ansible.builtin.shell:
-    cmd: |
-      if [ ! -f {{ role_path }}/files/tmp/ftsw-data/appliance-config.tgz ] ; then
-        cat <<EOF
-          Could not find appliance-config.tgz.
-          Follow instructions in {{ playbook_dir }}/README.md
-      EOF
-        exit 1
-      fi
-  changed_when: False
-
-- name: Verifying appliance setup data at "{{ role_path }}/files/tmp/ftsw-data"
-  ansible.builtin.shell:
-    cmd: |
-      if [ ! -f {{ role_path }}/files/tmp/ftsw-data/setup-data.yml ] ; then
-        cat <<EOF
-          Could not find setup-data.yml.
-          Follow instructions in {{ playbook_dir }}/README.md
-      EOF
-        exit 1
-      fi
-  changed_when: False
-
-- name: Copy appliance-config and setup data
-  ansible.builtin.copy:
-    src:  "{{ item.src }}"
-    dest: /usr/src/concurrent-thinking/
-    owner: root
-    group: root
-    mode: "644"
-  loop:
-    - src: tmp/ftsw-data/appliance-config.tgz
-    - src: tmp/ftsw-data/setup-data.yml
-
 - name: Copy FTSW scripts
   ansible.builtin.copy:
     src:  "{{ item }}"
@@ -41,9 +6,7 @@
     group: root
     mode: "744"
   loop:
-    - ftsw-automation.rb
     - ftsw-users.rb
-    - setup.sh
 
 - name: Copy FTSW data files
   ansible.builtin.template:
@@ -54,34 +17,6 @@
     mode: "640"
   loop:
     - ftsw-user-data.yml
-
-# Failures with the FTSW automation script can be complicated to debug.  The
-# following blocks provide more readable error messages should the script fail.
-- name: Run FTSW automation script
-  block:
-    - name: Run FTSW automation script
-      ansible.builtin.shell:
-        cmd: |
-          PATH={{ruby_18_bin_dir}}:$PATH
-          sudo -u www-data --preserve-env=PATH /bin/bash -c 'RAILS_ENV={{ rails_env }} script/runner /usr/local/sbin/ftsw-automation.rb'
-        chdir: "{{rails_root_dir}}/sas"
-      register:
-        ftsw_automation
-      # The failure will become fatal after the stderr and stdout have been printed.
-      ignore_errors: True
-
-    - name: FTSW automation stderr
-      ansible.builtin.debug:
-        var: ftsw_automation.stderr_lines
-      failed_when: ftsw_automation.rc != 0
-      ignore_errors: True
-      when: ftsw_automation.rc != 0
-
-    - name: FTSW automation stdout
-      ansible.builtin.debug:
-        var: ftsw_automation.stdout_lines
-      failed_when: ftsw_automation.rc != 0
-      when: ftsw_automation.rc != 0
 
 - name: Run post migration scripts
   vars:

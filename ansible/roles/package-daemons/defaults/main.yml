@@ -19,9 +19,7 @@ packaged_daemons:
   - meryl
 
 # List of daemons that have only an init.d file to install and enable.
-# Need this for the FTSW.
-init_only_daemons:
-  - delayed_job
+init_only_daemons: []
 
 number_crunchers:
   - meryl

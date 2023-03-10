@@ -3,43 +3,9 @@
     name: "{{ item }}"
     state: restarted
   loop:
-    # Legacy apps required for FTSW.
-    - phoenix-mongrel
-    - delayed_job
-
     - ct-visualisation-app
     - meryl
     - metric-reporting-daemon
-
-- name: Restart delia service
-  block:
-    # XXX Figure something better than this.
-    - name: Wait for other services to start
-      ansible.builtin.wait_for:
-        timeout: 60
-
-    - name: Restart delia
-      ansible.builtin.service:
-        name: delia
-        state: restarted
-
-    # XXX Figure something better than this.
-    - name: Give delia a moment or two
-      ansible.builtin.wait_for:
-        timeout: 60
-
-# We can now stop the legacy services.
-- name: Stop legacy services
-  ansible.builtin.service:
-    name: "{{item}}"
-    state: stopped
-    enabled: no
-  loop:
-    - phoenix-mongrel
-    - emma
-    - delayed_job
-    - delia
-  when: finalization_stop_legacy_services == True
 
 # We're now finally ready to monit our services.
 - name: Start monit
