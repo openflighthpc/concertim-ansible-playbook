@@ -45,6 +45,23 @@
     additional_env: ""
     chdir: "{{ ct_vis_app_core_dir }}"
 
+- name: Make IRV chassis template image directories
+  ansible.builtin.file:
+    path: "{{ct_vis_app_core_dir}}/public/images/{{item}}/"
+    owner: "{{app_user}}"
+    group: "{{app_user}}"
+    mode: "755"
+    state: directory
+  loop:
+    - irv
+    # - data_centre
+
+- name: Configure default IRV images
+  ansible.builtin.file:
+    src: "{{rails_root_dir}}/hacor/app/models/chassis_templates/images"
+    dest: "{{ct_vis_app_core_dir}}/public/images/irv/concurrent-thinking"
+    state: link
+
 - name: Install systemd service files
   ansible.builtin.template:
     src: "{{item}}.service"
