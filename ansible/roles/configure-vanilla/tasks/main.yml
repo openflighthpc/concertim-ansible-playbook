@@ -83,6 +83,33 @@
       failed_when: ftsw_automation.rc != 0
       when: ftsw_automation.rc != 0
 
+- name: Run post migration scripts
+  vars:
+    post_migration_script_dir: "{{rails_root_dir}}/sas/post_restoration_scripts/always_run"
+    post_migration_script: /usr/local/sbin/run_always_run_post_restoration_scripts.rb
+  block:
+    - name: Run post migration scripts
+      ansible.builtin.shell:
+        cmd: |
+          PATH={{ruby_18_bin_dir}}:$PATH
+          sudo -u {{app_user}} --preserve-env=PATH {{post_migration_script}} {{post_migration_script_dir}}
+      register: post_migration
+      # The failure will become fatal after the stderr and stdout have been printed.
+      ignore_errors: True
+
+    - name: post migration scripts stderr
+      ansible.builtin.debug:
+        var: post_migration.stderr_lines
+      failed_when: post_migration.rc != 0
+      ignore_errors: true
+      when: post_migration.rc != 0
+
+    - name: post migration scripts stdout
+      ansible.builtin.debug:
+        var: post_migration.stdout_lines
+      failed_when: post_migration.rc != 0
+      when: post_migration.rc != 0
+
 - name: Configure users
   import_tasks: run_rails_runner.yml
   vars:

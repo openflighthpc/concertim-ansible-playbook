@@ -51,9 +51,6 @@ case $STAGE in
     # ------------------------------------------------------------
     run_post_migration_scripts)
 
-    POST_ALWAYS_RUN_RESTORATION_SCRIPTS_DIR=$3
-    PATH=/opt/ruby-1.8/bin:$PATH
-    sudo -u www-data --preserve-env=PATH /usr/local/sbin/run_always_run_post_restoration_scripts.rb $POST_ALWAYS_RUN_RESTORATION_SCRIPTS_DIR
   ;;
 
     # ------------------------------------------------------------
