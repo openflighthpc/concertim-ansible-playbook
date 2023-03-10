@@ -45,15 +45,21 @@
     additional_env: ""
     chdir: "{{ ct_vis_app_core_dir }}"
 
-- name: Install ct-visualisation-app.service
+- name: Install systemd service files
   ansible.builtin.template:
-    src: ct-visualisation-app.service
-    dest: /lib/systemd/system/ct-visualisation-app.service
+    src: "{{item}}.service"
+    dest: /lib/systemd/system/{{item}}.service
     owner: root
     group: root
     mode: "644"
+  loop:
+    - ct-visualisation-app
+    - ct-visualisation-job-runner
 
-- name: Ensure that ct-visualisation-app is enabled
+- name: Enable visualisation app
   ansible.builtin.service:
-    name: ct-visualisation-app
+    name: "{{item}}"
     enabled: yes
+  loop:
+    - ct-visualisation-app
+    - ct-visualisation-job-runner

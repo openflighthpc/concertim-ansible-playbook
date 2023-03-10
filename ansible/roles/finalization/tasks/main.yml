@@ -6,6 +6,7 @@
     - ct-visualisation-app
     - meryl
     - metric-reporting-daemon
+    - ct-visualisation-job-runner
 
 # We're now finally ready to monit our services.
 - name: Start monit
