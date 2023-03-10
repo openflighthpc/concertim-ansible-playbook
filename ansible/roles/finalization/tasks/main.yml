@@ -3,23 +3,13 @@
     name: "{{ item }}"
     state: restarted
   loop:
-    # Rails apps
+    # Legacy apps required for FTSW.
     - phoenix-mongrel
-    - emma
-    - ct-visualisation-app
-    #
-    # Daemons
-    - ailsa
-    - enid
-    - maggie
-    - martha
-    - meryl
-    - theresa
-    - ct-capacity-daemon
-    - metric-reporting-daemon
-    #
-    # Other daemons 
     - delayed_job
+
+    - ct-visualisation-app
+    - meryl
+    - metric-reporting-daemon
 
 - name: Restart delia service
   block:
@@ -49,13 +39,6 @@
     - emma
     - delayed_job
     - delia
-
-    - ailsa
-    - enid
-    - maggie
-    - martha
-    - theresa
-    - ct-capacity-daemon
   when: finalization_stop_legacy_services == True
 
 # We're now finally ready to monit our services.

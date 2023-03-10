@@ -47,9 +47,6 @@
   include_tasks: patch_bundler_source.yml
   loop: "{{packaged_daemons}}"
 
-- name: Additional ailsa configuration
-  include_tasks: ailsa_config.yml
-
 - name: Install gem dependencies
   vars:
     daemon_path: "{{ daemon_installation_dir}}/{{ item }}"
@@ -81,28 +78,6 @@
 - name: Additional metric reporting daemon configuration
   include_tasks: metric_reporting_daemon_config.yml
 
-# - name: Additional demm configuration
-#   vars:
-#     limits_dir: "{{ct_etc_dir}}/appliance/limits"
-#     demm_path: "{{ daemon_installation_dir }}/demm"
-#   block:
-#     - name: Make limits directory
-#       ansible.builtin.file:
-#         path: "{{ limits_dir }}"
-#         state: directory
-#         owner: www-data
-#         group: root
-#         mode: "755"
-
-#     - name: Copy demm limits
-#       ansible.builtin.copy:
-#         src: "{{ demm_path }}/config/demm.yml.limits"
-#         remote_src: true
-#         dest: "{{ limits_dir }}/demm.yml"
-#         owner: www-data
-#         group: root
-#         mode: "644"
-
 - name: Install clobber script
   ansible.builtin.copy:
     src: scripts/clobber
@@ -111,12 +86,9 @@
     group: root
     mode: "755"
 
-# - name: Install hw.sh script
-
-
 - name: Ensure that daemons are enabled
   ansible.builtin.service:
     name: "{{ item }}"
     # state: started
     enabled: yes
-  loop: "{{ packaged_daemons + init_only_daemons }}"
+  loop: "{{ packaged_daemons + init_only_daemons + static_daemons }}"

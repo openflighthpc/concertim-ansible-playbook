@@ -11,10 +11,6 @@ static_daemons:
 # they have source code to download and extract; gem dependencies to install;
 # and init.d files to install and enable.
 packaged_daemons:
-  # Not sure what this is or why we would want it.  Something to do with
-  # executing jobs (scram) perhaps?
-  # - sadee
-
   # Parses `gmetad` output and updates memcache.  Memcache data includes
   # * for each device, its current metrics and values.
   # * for each metric, list of devices currently reporting that metric.
@@ -22,59 +18,10 @@ packaged_daemons:
   # * for each "appliance" reported by ailsa, details of that appliance.
   - meryl
 
-  # Appliance Informatics and Local Setup Agent.
-  - ailsa
-
-  # Does SNMP, MODBUS metric polling.  We want this. But a gem doesn't
-  # install due to native extension build issues.
-  # - demm
-
-  # Senna is the one-wire sensors processing daemon.  We want it, but we're
-  # going to skip for now.
-  # - senna
-
-  # Metric calculation engine.  Calculates, ct-defined metrics, e.g., power
-  # metrics, user-defined metrics and inferred metrics.
-  - maggie
-
-  # Group metric aggregation engine.
-  - martha
-
-  # Theresa Humbly Evaluates and REports State Alterations.
-  - theresa
-
-  # Polls power strips for metrics.
-  # - postie
-
-  # Sends notifications about threshold breaches.
-  # - norma
-
-  # Pub/sub based on FAYE.  Probbably important.
-  - enid
-
-  # Pub/sub based on FAYE again.  Something to do with ISLAs(?) (aka
-  # controls).
-  # - controls
-
-  # Some kind of appliance health check thing.  Has monit and beanstalk
-  # checkers.  No idea if this is needed.
-  # - florence
-
-  # Calculates rack and PDU capacity.
-  - ct-capacity-daemon
-
-  # Another thing to do with metrics?  No idea if this is needed or not.  It
-  # might be nothing more than a rebranded `demm`?  Or it might be a demm
-  # specifically for virtual machines/virtual machine hosts?
-  # - ct-hypervisor-daemon
-
 # List of daemons that have only an init.d file to install and enable.
+# Need this for the FTSW.
 init_only_daemons:
   - delayed_job
 
 number_crunchers:
-  - ct-capacity-daemon
-  - maggie
-  - martha
   - meryl
-  - theresa

@@ -7,6 +7,7 @@
     - gmetad
     - rrdtool
 
+# XXX Don't install gmetad-agg
 - name: Install gmetad-agg
   vars:
     download_dest: "{{ role_path }}/files/tmp/{{ gmetad_agg_deb }}"
@@ -33,7 +34,7 @@
     mode: u=rw,g=r,o=r
 
 - name: Install gmetad configuration
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: gmetad.conf
     dest: /etc/ganglia/
     owner: root
