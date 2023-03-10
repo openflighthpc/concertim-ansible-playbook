@@ -8,8 +8,6 @@
     - role: build_base
     - role: misc_packages
       tags: misc_packages
-    # - role: certificates
-    #   tags: certificates
     - role: webserver
       tags: webserver
     - role: database
