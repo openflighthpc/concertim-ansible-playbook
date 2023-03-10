@@ -91,6 +91,27 @@ Vagrant.configure("2") do |config|
         inline: "apt-get -y update && apt-get -y upgrade",
         run: "never"
 
+      # Build and configure the VM in the same was as the ansible README
+      # instructions state.
+      v.vm.provision "install_ansible",
+        type: "shell",
+        run: "never",
+        path: "scripts/install-ansible.sh"
+      v.vm.provision "run_prep_playbook",
+        type: "shell",
+        run: "never",
+        path: "scripts/run-prep-playbook.sh"
+      v.vm.provision "run_build_playbook",
+        type: "shell",
+        run: "never",
+        inline: <<-SH
+          AWS_ACCESS_KEY_ID=#{ENV.fetch('AWS_ACCESS_KEY_ID', '')} AWS_SECRET_ACCESS_KEY=#{ENV.fetch('AWS_SECRET_ACCESS_KEY', '')} /vagrant/scripts/run-build-playbook.sh
+        SH
+      v.vm.provision "run_configure_playbook",
+        type: "shell",
+        run: "never",
+        path: "scripts/run-configure-playbook.sh"
+
       unless to_boolean(ENV['ACCEPTANCE'])
         v.vm.synced_folder ANSIBLE_DIR, "/ansible"
         # if File.directory?(CODE_PATH)
