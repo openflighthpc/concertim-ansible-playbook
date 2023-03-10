@@ -47,14 +47,6 @@
         src: services/
         dest: /etc/monit/conf.d/
 
-    - name: Install monitored services configuration (template)
-      ansible.builtin.template:
-        src: services/{{ item }}
-        dest: /etc/monit/conf.d/
-      loop:
-        - phoenix-emma.monit
-        - phoenix-mia.monit
-
     - name: Remove fake ganglia monit configuration
       ansible.builtin.file:
         path: /etc/monit/conf.d/fake-ganglia.monit
@@ -69,13 +61,3 @@
     owner: root
     group: root
     mode: "755"
-
-- name: Create monit utility script symlinks
-  ansible.builtin.file:
-    src: /usr/local/sbin/check_drb_connection.sh
-    dest: "/usr/local/sbin/{{ item }}"
-    state: link
-  loop:
-    - check_hacor_connection.sh
-    - check_sas_connection.sh
-    - check_meca_connection.sh
