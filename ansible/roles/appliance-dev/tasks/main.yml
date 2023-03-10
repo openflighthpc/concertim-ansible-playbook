@@ -36,3 +36,22 @@
   loop:
     - get-memcache-key.rb
     - list-memcache-keys.rb
+
+# Allow all local users trusted access to the database.  This allows the
+# `vagrant` user to access the database as {{app_user}}.  This is very useful
+# for dealing with file permissions for the vagrant vboxfs.
+- name: Trusted access to database
+  ansible.builtin.replace:
+    path: /etc/postgresql/11/main/pg_hba.conf
+    regexp: "local *all *all *peer"
+    replace: "local   all             all                                     trust"
+    backup: true
+
+- name: Restart postgresql
+  ansible.builtin.service:
+    name: postgresql
+    state: restarted
+    enabled: yes
+
+- name: Configure dev ct-visualisation-app
+  include_tasks: install_dev_gems.yml
