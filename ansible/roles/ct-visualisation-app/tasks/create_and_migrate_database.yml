@@ -1,0 +1,29 @@
+- name: Create database
+  vars:
+    task: db:create
+  ansible.builtin.shell:
+    cmd: |
+      sudo -u {{ app_user }} /bin/bash -c 'RAILS_ENV={{rails_env}} ./bin/rails {{task}} --trace'
+    chdir: "{{ct_vis_app_core_dir}}"
+
+- name: Add SUPERUSER role to {{app_user}}
+  vars:
+    dbname: ct-vis
+    dbsuperuser: postgres
+  ansible.builtin.shell: |
+    sudo -u {{dbsuperuser}} /bin/bash -c 'psql -d {{dbname}} -U {{dbsuperuser}} -f /dev/stdin <<< "ALTER ROLE \"{{app_user}}\" SUPERUSER"'
+
+- name: Migrate database
+  vars:
+    task: db:migrate
+  ansible.builtin.shell:
+    cmd: |
+      sudo -u {{ app_user }} /bin/bash -c 'RAILS_ENV={{rails_env}} ./bin/rails {{task}} --trace'
+    chdir: "{{ct_vis_app_core_dir}}"
+
+- name: Remove SUPERUSER role from {{app_user}}
+  vars:
+    dbname: ct-vis
+    dbsuperuser: postgres
+  ansible.builtin.shell: |
+    sudo -u {{dbsuperuser}} /bin/bash -c 'psql -d {{dbname}} -U {{dbsuperuser}} -f /dev/stdin <<< "ALTER ROLE \"{{app_user}}\" NOSUPERUSER"'

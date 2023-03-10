@@ -18,11 +18,24 @@
     cd "{{ ct_vis_app_core_dir }}"
     ./bin/bundle install
 
-- name: Create master key and credentials
-  ansible.builtin.shell:
-    chdir: "{{ ct_vis_app_core_dir }}"
-    cmd: |
-      sudo -u {{app_user}} /bin/bash -c 'EDITOR=cat ./bin/rails credentials:edit'
+- name: Create new master key and credentials
+  block:
+    - name: Remove existing key and credentials
+      ansible.builtin.file:
+        path: "{{ct_vis_app_core_dir}}/config/{{item}}"
+        state: absent
+      loop:
+        - master.key
+        - credentials.yml.enc
+
+    - name: Create master key and credentials
+      ansible.builtin.shell:
+        chdir: "{{ ct_vis_app_core_dir }}"
+        cmd: |
+          sudo -u {{app_user}} /bin/bash -c 'EDITOR=cat ./bin/rails credentials:edit'
+
+- name: Create and migrate database
+  import_tasks: create_and_migrate_database.yml
 
 - name: Precompile assets
   import_tasks: run_rake_task.yml
