@@ -63,47 +63,21 @@ case $STAGE in
     rm -f $src/pack.yaml
 
 
-    a2dissite redirect-http-to-https
-    a2ensite allow-http
-    cd /etc/apache2
-    echo "Listen 80" > ports.conf
-    /etc/init.d/apache2 reload
-    cd /etc/apache2/conf-available
-    sed -i "s/ServerName .*/ServerName command.appliance.local/" mia.server_name.conf
     ;;
 
     # ------------------------------------------------------------
     init)
 
-    a2dissite ssl
-    /etc/init.d/apache2 reload
 	;;
 
     # ------------------------------------------------------------
     reopen)
 
-    a2dissite allow-http
-    a2ensite redirect-http-to-https
-    /etc/init.d/apache2 reload
 	;;
 
     # ------------------------------------------------------------
     config)
 
-    HOST=$1
-    DOMAIN=$2
-    PUBLIC_IP=$3
-    PUBLIC_MASK=$4
-    GATEWAY_IP=$5
-    PUBLIC_WILDCARD_MASK=$6
-    cd /etc/apache2
-    echo "Listen 443" >> ports.conf
-    cd /etc/apache2/conf-available
-    sed -i "s/ServerName .*/ServerName ${HOST}.${DOMAIN}/" mia.server_name.conf
-    cd /etc/apache2/sites-available
-    sed -i "s|RedirectMatch .*|RedirectMatch ^/(.*)$ \"https://${HOST}.${DOMAIN}/\$1\"|" redirect-http-to-https.conf
-    a2ensite ssl
-    /etc/init.d/apache2 reload
 	;;
 
     # ------------------------------------------------------------

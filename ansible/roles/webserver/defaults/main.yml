@@ -1,0 +1,4 @@
+webserver_host: "command"
+webserver_domain: "concertim.alces-flight.com"
+webserver_host_and_domain: "{{webserver_host}}.{{webserver_domain}}"
+webserver_admin_email: "concertim@alces-flight.com"
