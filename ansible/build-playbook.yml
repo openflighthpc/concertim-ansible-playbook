@@ -12,8 +12,11 @@
       tags: webserver
     - role: database
       tags: database
+
+    # XXX Currently only used for running hacor db migrations beanstalkd.
     - role: beanstalkd
       tags: beanstalkd
+
     - role: memcached
       tags: memcached
     - role: ganglia
@@ -26,11 +29,16 @@
       tags: ruby
     - role: gems
       tags: gems
+
+    # XXX Want to get rid of this as soon as we can.
     - role: snmp
       tags: snmp
 
     - role: package-daemons
       tags: package-daemons
+
+    # XXX Currently want these for migrations and post migraiton scripts.
+    # The chassis templates in hacor are part of that.
     - role: phoenix-modules
       tags: phoenix-modules
 
