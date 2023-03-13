@@ -1,5 +1,5 @@
 ---
-- name: Build machine to be an unconfigured (vanilla) Flight Concertim MIA
+- name: Build and configure an Alces Concertim machine
   hosts: all
   become: true
   become_user: root
@@ -45,5 +45,9 @@
     - role: fake-gmond
       tags: fake-gmond
       when: want_fake_metrics | bool
+    - role: configure-vanilla
+      tags: configure-vanilla
+    - role: license-limits
+      tags: license-limits
     - role: finalization
       tags: finalization

@@ -1,7 +1,6 @@
-# Building and configuring a Concertim MIA
+# Building and configuring Alces Concertim
 
-This directory contains ansible playbooks to build a vanilla MIA and configure
-it.
+This directory contains ansible playbooks to build an Alces Concertim machine.
 
 The instructions here will work for version `revival-15`, you're milage may
 vary with other versions.
@@ -9,7 +8,7 @@ vary with other versions.
 ## Prerequisites
 
 * An Ubuntu 22.04 (jammy) machine with at least 4GiB of memory and at least 2
-  CPUs.  This machine will become the MIA.
+  CPUs.  This machine will become the Alces Concertim machine.
 * Root access on that Ubuntu machine.
 * The Ubuntu machine needs to be configured to not use "Predictable Network
   Interface Names".  That is to use `ethX` naming instead of `enpXsY` style
@@ -25,10 +24,9 @@ below.
 2. Gather GitHub and S3 credentials.
 3. Install ansible and dependencies.
 4. Clone this git repository and checkout the correct tag.
-5. Configure the First Time Setup Wizard (FTSW) data.
-6. Optionally run the prep playbook to configure the network naming
+5. Optionally run the prep playbook to configure the network naming
    convention.
-7. Run the build and configure playbooks.
+6. Run the build playbook.
 
 ## Gather GitHub and S3 credentials
 
@@ -49,7 +47,7 @@ snippets.
 * `AWS_SECRET_ACCESS_KEY` is your secret AWS access key allowing downloading
   from the S3 bucket mentioned above.
 * `GH_TOKEN` is your GitHub oath token that allows access to the
-  `alces-flight/concertim-emma` repository.
+  `alces-flight/concertim-bootstrap` repository.
 
 
 ## Install ansible
@@ -66,9 +64,9 @@ apt install --yes ansible
 
 ## Clone this git repository and checkout the correct tag
 
-This git repository contains the ansible playbook to build and configure a
-Concertim MIA.  The playbook is intended to be ran on the MIA machine itself.
-To that end it needs to be downloaded to the MIA machine.
+This git repository contains the ansible playbook to build and configure Alces
+Concertim.  The playbook is intended to be ran on the Concertim machine itself.
+To that end it needs to be downloaded to the Concertim machine.
 
 This git repository is a private repository, so you will need to provide
 credentials to clone it.
@@ -81,19 +79,6 @@ ln -s /root/concertim-bootstrap/ansible /ansible
 cd /root/concertim-bootstrap
 echo "Using tag ${RELEASE_TAG}"
 git checkout --quiet ${RELEASE_TAG}
-```
-
-## Configure the First Time Setup Wizard data
-
-The First Time Setup Wizard (FTSW) configures a vanilla appliance.  It uses
-data contained in `appliance-config.tgz` and `setup-data.yml` files to do so.
-
-Currently, there is example data that needs to be copied into place.
-Eventually, there will be instructions on how to configure this data to suit.
-
-```bash
-cp -a  /ansible/roles/configure-vanilla/files/ftsw-example-data/ \
-       /ansible/roles/configure-vanilla/files/tmp/ftsw-data
 ```
 
 ## Run the prep playbook to configure the network naming convention as needed
@@ -110,17 +95,16 @@ configure playbooks.
 ansible-playbook --inventory /ansible/inventory.ini /ansible/prep-playbook.yml
 ```
 
-## Run the build and configure playbooks
+## Run the build playbook
 
 Run the build playbook.
 
 If you rebooted the machine after the above step, don't forget to ensure that
-your credentials have been gathered and exported.
+your AWS credentials have been gathered and exported.
 
 ```
 AWS_ACCESS_KEY_ID=...
 AWS_SECRET_ACCESS_KEY=...
-GH_TOKEN=...
 ```
 
 ```bash
@@ -128,10 +112,4 @@ ansible-playbook \
   --inventory /ansible/inventory.ini \
   --extra-vars "aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
   /ansible/build-playbook.yml
-```
-
-Run the configure playbook:
-
-```bash
-ansible-playbook --inventory /ansible/inventory.ini /ansible/configure-playbook.yml
 ```

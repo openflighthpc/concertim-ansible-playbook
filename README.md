@@ -1,11 +1,11 @@
-# Building and configuring an Alces Concertim MIA
+# Building and configuring Alces Concertim
 
-This repository contains ansible playbooks for building and configuring an
-Alces Concertim MIA.
+This repository contains ansible playbooks for building and configuring
+Alces Concertim.
 
-## Building an Alces Concertim MIA
+## Building Alces Concertim
 
-To build an Alces Concertim MIA, visit the [releases
+To build Alces Concertim, visit the [releases
 page](https://github.com/alces-flight/concertim-bootstrap/releases) and select
 the release you want to build.  At the time of writing you probably want to
 use the most recent `revival-X` release, e.g., `revival-11`.

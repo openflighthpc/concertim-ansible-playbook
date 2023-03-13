@@ -1,5 +1,5 @@
 ---
-- name: Prepare a machine to be built into an unconfigured (vanilla) Flight Concertim MIA
+- name: Prepare a machine to be built into an Alces Concertim machine
   hosts: all
   become: true
   become_user: root
@@ -8,4 +8,3 @@
   roles:
     - role: use-eth0-naming
       tags: use-eth0-naming
-

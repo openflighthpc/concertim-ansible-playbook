@@ -6,7 +6,7 @@ set -o pipefail
 usage() {
     cat <<EOF
 Usage: $(basename $0) BOX_NAME
-Rebuild BOX_NAME as a MIA.
+Rebuild BOX_NAME as a Flight Concertim.
 EOF
 }
 
@@ -32,4 +32,3 @@ vagrant provision --provision-with run_prep_playbook "${BOX_NAME}"
 # place.
 vagrant reload --force "${BOX_NAME}"
 vagrant provision --provision-with run_build_playbook "${BOX_NAME}"
-vagrant provision --provision-with run_configure_playbook "${BOX_NAME}"

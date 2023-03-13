@@ -14,4 +14,3 @@
     name: monit
     state: restarted
     enabled: yes
-  when: finalization_start_monit == True
