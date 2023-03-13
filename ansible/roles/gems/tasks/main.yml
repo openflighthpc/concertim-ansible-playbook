@@ -12,7 +12,8 @@
         cmd: PATH={{ruby_18_bin_dir}}:$PATH update_rubygems
 
 - name: Install Ruby 1.8 gem build depedencies
-  retries: 3
+  register: result
+  until: result is success
   ansible.builtin.apt:
     name:
       # - libgpgme-dev
@@ -62,7 +63,8 @@
         - gem1.9
 
 - name: Install local ruby 1.8 gems
-  retries: 3
+  register: result
+  until: result is success
   ansible.builtin.command:
     cmd: gem1.8 install --no-rdoc --no-ri {{item}}
   loop:

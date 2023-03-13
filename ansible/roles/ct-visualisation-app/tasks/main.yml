@@ -14,6 +14,8 @@
     dest: /etc/logrotate.d/ct-visualisation-app
 
 - name: Bundle install gems
+  register: result
+  until: result is success
   ansible.builtin.shell: |
     cd "{{ ct_vis_app_core_dir }}"
     ./bin/bundle install
