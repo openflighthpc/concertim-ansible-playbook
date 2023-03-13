@@ -7,23 +7,6 @@
     - gmetad
     - rrdtool
 
-- name: Install gmetad-agg
-  vars:
-    download_dest: "{{ role_path }}/files/tmp/{{ gmetad_agg_deb }}"
-  block:
-    - name: Download gmetad-agg from S3
-      amazon.aws.aws_s3:
-        bucket: "{{ s3_bucket }}"
-        object: "{{ s3_debs_prefix }}{{ gmetad_agg_deb }}"
-        dest: "{{ download_dest }}"
-        mode: get
-        aws_access_key: "{{ aws_access_key_id }}"
-        aws_secret_key: "{{ aws_secret_access_key }}"
-
-    - name: Install gmetad-agg deb
-      ansible.builtin.apt:
-        deb: "{{ download_dest }}"
-
 - name: Install gmond configuration
   ansible.builtin.copy:
     src: gmond.conf
@@ -33,16 +16,8 @@
     mode: u=rw,g=r,o=r
 
 - name: Install gmetad configuration
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: gmetad.conf
-    dest: /etc/ganglia/
-    owner: root
-    group: nogroup
-    mode: u=rw,g=r,o=r
-
-- name: Install gmetad-agg configuration
-  ansible.builtin.copy:
-    src: gmetad-agg.conf
     dest: /etc/ganglia/
     owner: root
     group: nogroup
@@ -65,7 +40,6 @@
         state: link
       loop:
         - check_gmetad_rrd_age.sh
-        - check_gmetad-agg_rrd_age.sh
 
 - name: Ensure that ganglia is started
   ansible.builtin.service:
@@ -75,4 +49,3 @@
   loop:
     - ganglia-monitor
     - gmetad
-    - gmetad-agg

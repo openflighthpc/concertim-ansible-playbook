@@ -14,7 +14,6 @@
     mode: "755"
     state: directory
   loop:
-    - "{{ emma_personalty_folder }}"
     - "{{ etc_personalty_folder }}"
 
 - name: Copy personality metadata
@@ -25,7 +24,6 @@
     group: "{{app_user}}"
     mode: "644"
   loop:
-    - "{{ emma_personalty_folder }}/{{ branding_name }}/personality.yml"
     - "{{ etc_personalty_folder }}/personality.yml"
 
 - name: Install personality giving script
@@ -39,48 +37,3 @@
 - name: Run personality giving script
   ansible.builtin.command:
     cmd: /usr/local/sbin/give_appliance_chassis_templates_personality.rb
-
-- name: Download logos from S3
-  amazon.aws.aws_s3:
-    bucket: "{{s3_bucket}}"
-    object: "{{s3_assets_prefix}}logos/{{ item }}"
-    dest: "{{ role_path }}/files/tmp/{{ item }}"
-    mode: get
-    aws_access_key: "{{ aws_access_key_id }}"
-    aws_secret_key: "{{ aws_secret_access_key }}"
-  loop: "{{ logo_files }}"
-
-- name: Copy Alces Flight logos
-  ansible.builtin.copy:
-    src: "tmp/{{ item[0] }}"
-    dest: "{{ item[1] }}"
-    owner: "{{app_user}}"
-    group: "{{app_user}}"
-    mode: "664"
-  with_nested:
-    - "{{ logo_files }}"
-    - "{{ logo_dirs }}"
-
-- name: Fix logos on about page
-  vars:
-    alces_concertim_logo: logo-left.png
-    alces_flight_logo: logo-right.png
-    image_dir: "{{rails_root_dir}}/mia/public/images"
-  ansible.builtin.copy:
-    src: "tmp/{{ item.src}}"
-    dest: "{{ image_dir }}/{{ item.dest }}"
-    owner: "{{app_user}}"
-    group: "{{app_user}}"
-    mode: "664"
-  loop:
-    - src: "{{ alces_concertim_logo }}"
-      dest: about-banner.png
-    - src: "{{ alces_flight_logo }}"
-      dest: ct.png
-
-# XXX Not sure where this is supposed to come from, or how much it is related
-# to personality, but we need this to address some issues.
-- name: Add help/ct.yml file
-  ansible.builtin.copy:
-    src: "help-ct.yml"
-    dest: "{{ mia_help_dir }}/{{ branding_name }}.yml"

@@ -1,23 +1,13 @@
 package_assets_daemons:
-  - ailsa:main
-  - ct-capacity-daemon:main
-  - enid:main
-  - maggie:main
-  - martha:main
   - meryl:main
-  - theresa:main
 
 package_assets_modules:
   - hacor:main
   - meca:main
-  - oobm:main
   - sas:main
-  - scram:main
   - uma:main
 
 package_assets_appliances:
-  - emma:main
-  - mia:main
   - ct-visualisation-app:main
 
 package_assets_fake_gmond_tag: main

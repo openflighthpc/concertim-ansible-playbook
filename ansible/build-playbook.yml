@@ -1,5 +1,5 @@
 ---
-- name: Build machine to be an unconfigured (vanilla) Flight Concertim MIA
+- name: Build and configure an Alces Concertim machine
   hosts: all
   become: true
   become_user: root
@@ -8,14 +8,15 @@
     - role: build_base
     - role: misc_packages
       tags: misc_packages
-    # - role: certificates
-    #   tags: certificates
     - role: webserver
       tags: webserver
     - role: database
       tags: database
+
+    # XXX Currently only used for running hacor db migrations beanstalkd.
     - role: beanstalkd
       tags: beanstalkd
+
     - role: memcached
       tags: memcached
     - role: ganglia
@@ -28,22 +29,19 @@
       tags: ruby
     - role: gems
       tags: gems
+
+    # XXX Want to get rid of this as soon as we can.
     - role: snmp
       tags: snmp
-    - role: phoenix-mongrel
-      tags: phoenix-mongrel
-    - role: delia
-      tags: delia
-    - role: delia-plugins
-      tags: delia-plugins
+
     - role: package-daemons
       tags: package-daemons
+
+    # XXX Currently want these for migrations and post migraiton scripts.
+    # The chassis templates in hacor are part of that.
     - role: phoenix-modules
       tags: phoenix-modules
-    - role: emma
-      tags: emma
-    - role: package-mia
-      tags: package-mia
+
     - role: ct-visualisation-app
       tags: ct-visualisation-app
     - role: personality
@@ -54,5 +52,10 @@
       tags: appliance-dev
     - role: fake-gmond
       tags: fake-gmond
+      when: want_fake_metrics | bool
+    - role: configure-vanilla
+      tags: configure-vanilla
+    - role: license-limits
+      tags: license-limits
     - role: finalization
       tags: finalization

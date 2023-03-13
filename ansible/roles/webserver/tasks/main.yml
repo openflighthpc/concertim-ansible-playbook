@@ -10,6 +10,14 @@
     src: apache2/
     dest: /etc/apache2/
 
+- name: Write templated apache config files
+  ansible.builtin.template:
+    src: apache2/{{item}}
+    dest: /etc/apache2/{{item}}
+  loop:
+    - conf-available/mia.server_name.conf
+    - sites-available/redirect-http-to-https.conf
+
 - name: Enable mods
   ansible.builtin.command:
     cmd: a2enmod {{ item|quote }}
@@ -33,7 +41,6 @@
   ansible.builtin.command:
     cmd: a2enconf {{ item|quote }}
   loop:
-    - mia.proxy_cluster
     - mia.proxy_frontend
     - mia.server_name
 
@@ -43,16 +50,14 @@
   loop:
     - default
     - 000-default
+    - default-ssl
 
 - name: Enable sites
   ansible.builtin.command:
     cmd: a2ensite {{ item|quote }}
   loop:
-    - allow-http
-    # These are enabled later as part of the configure playbook/FTSW.
-    # - default-ssl
-    # - redirect-http-to-https
-    # - ssl
+    - redirect-http-to-https
+    - ssl
 
 - name: Ensure that apache2 is started
   ansible.builtin.service:

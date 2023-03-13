@@ -1,25 +1,3 @@
-# FSR the non-dev version of requirejs isn't installed.  It is present on the
-# `safe-persistent deploy` built MIA, but not this ansible built one.  Don't
-# yet know why.
-- name: Use dev requirejs
-  ansible.builtin.replace:
-    path: "{{ item[0] }}"
-    regexp: "{{ item[1].regexp }}"
-    replace: "{{ item[1].replace }}"
-    backup: true
-  with_nested:
-    - "{{ requirejs_boot_files }}"
-    - "{{ replacements }}"
-  vars:
-    requirejs_boot_files:
-      - "{{rails_root_dir}}/mia/app/views/layouts/mia.rhtml"
-      - "{{rails_root_dir}}/emma/core/app/views/layouts/application.html.erb"
-    replacements:
-      - regexp: '<script data-main="/scripts/lib/main" src="/scripts/lib/contrib/require.js"></script>'
-        replace: '<%#<script data-main="/scripts/lib/main" src="/scripts/lib/contrib/require.js"></script>%>'
-      - regexp: '<%#<script data-main="/scripts/src/meta/dev" src="/scripts/src/javascript/contrib/require.js"></script>%>' 
-        replace: => '<script data-main="/scripts/src/meta/dev" src="/scripts/src/javascript/contrib/require.js"></script>'
-
 - name: Install useful dev tools
   ansible.builtin.apt:
     name:
@@ -36,3 +14,22 @@
   loop:
     - get-memcache-key.rb
     - list-memcache-keys.rb
+
+# Allow all local users trusted access to the database.  This allows the
+# `vagrant` user to access the database as {{app_user}}.  This is very useful
+# for dealing with file permissions for the vagrant vboxfs.
+- name: Trusted access to database
+  ansible.builtin.replace:
+    path: /etc/postgresql/11/main/pg_hba.conf
+    regexp: "local *all *all *peer"
+    replace: "local   all             all                                     trust"
+    backup: true
+
+- name: Restart postgresql
+  ansible.builtin.service:
+    name: postgresql
+    state: restarted
+    enabled: yes
+
+- name: Configure dev ct-visualisation-app
+  include_tasks: install_dev_gems.yml

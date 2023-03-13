@@ -14,15 +14,30 @@
     dest: /etc/logrotate.d/ct-visualisation-app
 
 - name: Bundle install gems
+  register: result
+  until: result is success
   ansible.builtin.shell: |
     cd "{{ ct_vis_app_core_dir }}"
     ./bin/bundle install
 
-- name: Create master key and credentials
-  ansible.builtin.shell:
-    chdir: "{{ ct_vis_app_core_dir }}"
-    cmd: |
-      sudo -u {{app_user}} /bin/bash -c 'EDITOR=cat ./bin/rails credentials:edit'
+- name: Create new master key and credentials
+  block:
+    - name: Remove existing key and credentials
+      ansible.builtin.file:
+        path: "{{ct_vis_app_core_dir}}/config/{{item}}"
+        state: absent
+      loop:
+        - master.key
+        - credentials.yml.enc
+
+    - name: Create master key and credentials
+      ansible.builtin.shell:
+        chdir: "{{ ct_vis_app_core_dir }}"
+        cmd: |
+          sudo -u {{app_user}} /bin/bash -c 'EDITOR=cat ./bin/rails credentials:edit'
+
+- name: Create and migrate database
+  import_tasks: create_and_migrate_database.yml
 
 - name: Precompile assets
   import_tasks: run_rake_task.yml
@@ -32,15 +47,38 @@
     additional_env: ""
     chdir: "{{ ct_vis_app_core_dir }}"
 
-- name: Install ct-visualisation-app.service
+- name: Make IRV chassis template image directories
+  ansible.builtin.file:
+    path: "{{ct_vis_app_core_dir}}/public/images/{{item}}/"
+    owner: "{{app_user}}"
+    group: "{{app_user}}"
+    mode: "755"
+    state: directory
+  loop:
+    - irv
+    # - data_centre
+
+- name: Configure default IRV images
+  ansible.builtin.file:
+    src: "{{rails_root_dir}}/hacor/app/models/chassis_templates/images"
+    dest: "{{ct_vis_app_core_dir}}/public/images/irv/concurrent-thinking"
+    state: link
+
+- name: Install systemd service files
   ansible.builtin.template:
-    src: ct-visualisation-app.service
-    dest: /lib/systemd/system/ct-visualisation-app.service
+    src: "{{item}}.service"
+    dest: /lib/systemd/system/{{item}}.service
     owner: root
     group: root
     mode: "644"
+  loop:
+    - ct-visualisation-app
+    - ct-visualisation-job-runner
 
-- name: Ensure that ct-visualisation-app is enabled
+- name: Enable visualisation app
   ansible.builtin.service:
-    name: ct-visualisation-app
+    name: "{{item}}"
     enabled: yes
+  loop:
+    - ct-visualisation-app
+    - ct-visualisation-job-runner

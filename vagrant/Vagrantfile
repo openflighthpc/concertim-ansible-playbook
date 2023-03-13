@@ -20,55 +20,8 @@ MACHINES = [
     box: "ubuntu/jammy64",
   }
 ]
-PLAYBOOKS = [
-  {
-    id: "package",
-    path: File.join(ANSIBLE_DIR, "package-assets-playbook.yml"),
-    extra_vars: {
-      'gh_token' => ENV.fetch('GH_TOKEN', ''),
-      'aws_access_key_id' => ENV.fetch('AWS_ACCESS_KEY_ID', ''),
-      'aws_secret_access_key' => ENV.fetch('AWS_SECRET_ACCESS_KEY', ''),
-      'release_tag' => ENV.fetch('MIA_RELEASE_TAG', ''),
-    }
-  },
-  {
-    id: "prep",
-    path: File.join(ANSIBLE_DIR, "prep-playbook.yml"),
-    extra_vars: {}
-  },
-  {
-    id: "build",
-    path: File.join(ANSIBLE_DIR, "build-playbook.yml"),
-    extra_vars: {
-      'aws_access_key_id' => ENV.fetch('AWS_ACCESS_KEY_ID', ''),
-      'aws_secret_access_key' => ENV.fetch('AWS_SECRET_ACCESS_KEY', ''),
-      'release_tag' => ENV.fetch('MIA_RELEASE_TAG', ''),
-    }
-  },
-  {
-    id: "configure",
-    path: File.join(ANSIBLE_DIR, "configure-playbook.yml"),
-    extra_vars: {}
-  },
-]
-
-KNOWN_ENV_VARS = %w(
-  ANSIBLE_START_AT_TASK
-  ANSIBLE_TAGS
-  ANSIBLE_VERBOSE
-)
-
-class BadEnvVars < Vagrant::Errors::VagrantError
-  def error_message
-    env_vars = @extra_data[:env_vars]
-    "Badly named environment variables #{env_vars}.  " \
-      "Valid values are #{KNOWN_ENV_VARS.join(', ')}"
-  end
-end
 
 Vagrant.configure("2") do |config|
-  assert_good_env_vars
-
   MACHINES.each_with_index do |box, idx|
     config.vm.provider "virtualbox" do |v|
       # v.memory = 8192
@@ -100,27 +53,26 @@ Vagrant.configure("2") do |config|
           v.vm.synced_folder CT_SOURCES, "/data/private/share/dev"
         end
 
-        playbooks.each do |playbook|
-          v.vm.provision "#{playbook[:id]}_playbook", type: "ansible_local", run: "never" do |ansible|
-            ansible.playbook = playbook[:path]
-            ansible.verbose = to_boolean(ENV.fetch('ANSIBLE_VERBOSE', 'false'))
-            ansible.extra_vars = playbook[:extra_vars]
+        # Build the VM in the same was as the ansible README instructions
+        # state.  These are only available when `ACCEPTANCE` has not been defined.
+        v.vm.provision "install_ansible",
+          type: "shell",
+          run: "never",
+          path: "scripts/install-ansible.sh"
+        v.vm.provision "run_prep_playbook",
+          type: "shell",
+          run: "never",
+          path: "scripts/run-prep-playbook.sh"
+        v.vm.provision "run_build_playbook",
+          type: "shell",
+          run: "never",
+          inline: <<-SH
+            AWS_ACCESS_KEY_ID=#{ENV.fetch('AWS_ACCESS_KEY_ID', '')} AWS_SECRET_ACCESS_KEY=#{ENV.fetch('AWS_SECRET_ACCESS_KEY', '')} /vagrant/scripts/run-build-playbook.sh
+          SH
 
-            if ENV.key?('ANSIBLE_START_AT_TASK')
-              ansible.start_at_task = ENV['ANSIBLE_START_AT_TASK']
-            end
-            if ENV.key?('ANSIBLE_TAGS')
-              ansible.tags = ENV['ANSIBLE_TAGS']
-            end
-          end
-        end
       end
     end
   end
-end
-
-def playbooks
-  PLAYBOOKS
 end
 
 def to_boolean(v)
@@ -129,12 +81,5 @@ def to_boolean(v)
     true
   else
     false
-  end
-end
-
-def assert_good_env_vars
-  bad_vars = ENV.keys.grep(/^ansible/i) - KNOWN_ENV_VARS
-  unless bad_vars.empty?
-    raise BadEnvVars, {env_vars: bad_vars.join(', ')}
   end
 end

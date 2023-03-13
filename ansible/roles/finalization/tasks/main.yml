@@ -3,46 +3,10 @@
     name: "{{ item }}"
     state: restarted
   loop:
-    # Rails apps
-    - phoenix-mongrel
-    - emma
     - ct-visualisation-app
-    #
-    # Daemons
-    - ailsa
-    - enid
-    - maggie
-    - martha
     - meryl
-    - theresa
-    - ct-capacity-daemon
     - metric-reporting-daemon
-    #
-    # Other daemons 
-    - delayed_job
-
-- name: Restart delia service
-  block:
-    # XXX Figure something better than this.
-    - name: Wait for other services to start
-      ansible.builtin.wait_for:
-        timeout: 60
-
-    - name: Restart delia
-      ansible.builtin.service:
-        name: delia
-        state: restarted
-
-    # XXX Figure something better than this.
-    - name: Give delia a moment or two
-      ansible.builtin.wait_for:
-        timeout: 60
-
-# XXX FSR, mia needs restarting *again* for the hardware setup wizard to work.
-# We may need some kind of sleep before hand.
-- name: Restart mia again because of the reasons
-  ansible.builtin.command:
-    cmd: mongrel_rails cluster::restart -C /etc/mongrel_cluster/mia.yml --clean
+    - ct-visualisation-job-runner
 
 # We're now finally ready to monit our services.
 - name: Start monit
@@ -50,4 +14,3 @@
     name: monit
     state: restarted
     enabled: yes
-  when: finalization_start_monit == True

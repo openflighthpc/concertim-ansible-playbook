@@ -1,0 +1,6 @@
+integrator_password: "{{integrator_password}}"
+integrator_email: "{{integrator_email}}"
+admin_password: "{{admin_password}}"
+admin_email: "{{admin_email}}"
+operator_password: "{{operator_password}}"
+operator_email: "{{operator_email}}"

@@ -1,7 +1,0 @@
-:appliance:
-  :appliance_id: {{ appliance_id }}
-  :appliance_name: {{ appliance_name }}
-  :appliance_type: MIA
-  :appliance_host: {{ appliance_host }}
-  :appliance_url: {{ appliance_url }}
-  :multicast_intf: {{ private_intf_name }}

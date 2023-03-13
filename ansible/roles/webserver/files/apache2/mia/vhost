@@ -1,6 +1,6 @@
 ServerAdmin dev@concertim.com
 
-DocumentRoot /opt/concurrent-thinking/mia/public
+DocumentRoot /opt/concurrent-thinking/ct-visualisation-app/core/public
 
 AddType application/vnd.ms-fontobject .eot
 # AddType application/x-woff .woff
@@ -8,7 +8,7 @@ AddType font/opentype .woff
 AddType font/ttf .ttf
 AddType font/opentype .otf
 
-<Directory "/opt/concurrent-thinking/mia/public">
+<Directory "/opt/concurrent-thinking/ct-visualisation-app/core/public">
   SetEnv APACHE_ERROR_LOG /var/log/apache2/web_ssl_error.log
   Options FollowSymLinks
   AllowOverride None
@@ -97,7 +97,7 @@ RewriteRule ^/(.*\.var)$ /$1 [PT]
 RewriteRule ^/control_stream/(.*)$ /control_stream.php?fn=$1 [PT]
 RewriteRule ^/sys/control/(.*)/(.*)$ /control_stream.php?fn=$1&ticks=$2 [PT]
 RewriteRule ^/sys/control/(.*)$ /control_stream.php?fn=$1 [PT]
-RewriteRule ^/sys/date$ /date_responder.php [PT]
+RewriteRule ^/sys/date$ /sys/date_responder.php [PT]
 RewriteRule ^/sys/render/(.*)$ /render_timer.php?r=$1 [PT]
 RewriteRule ^/sys/deferral/(.*)$ /deferral_reader.php?fn=$1 [PT]
 
@@ -113,9 +113,6 @@ RewriteRule ^.*$ /system/maintenance.html [L]
 # Rewrite index to check for static
 RewriteRule ^/$ /index.html [QSA] 
 
-# Rewrite anything with the /-/ prefix to EMMA
-RewriteRule ^/-/(.*)$ balancer://emma_cluster%{REQUEST_URI} [P,QSA,L]
-
 # Rewrite anything with the /--/ prefix to ct-visualisation-app
 RewriteRule ^/(--/.*)$ http://localhost:7000/$1 [P,QSA,L]
 
@@ -126,7 +123,6 @@ RewriteRule ^([^.]+)$ $1.html [QSA]
 
 # Redirect all non-static requests to cluster
 RewriteCond %{DOCUMENT_ROOT}/%{REQUEST_FILENAME} !-f
-RewriteRule ^/(.*)$ balancer://mongrel_cluster%{REQUEST_URI} [P,QSA,L]
 
 # Deflate
 AddOutputFilterByType DEFLATE text/html text/plain text/xml application/xml application/xhtml+xml text/javascript text/css
