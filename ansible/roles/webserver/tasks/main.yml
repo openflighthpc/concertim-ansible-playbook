@@ -17,6 +17,7 @@
   loop:
     - conf-available/mia.server_name.conf
     - sites-available/redirect-http-to-https.conf
+    - mia/vhost
 
 - name: Enable mods
   ansible.builtin.command:

@@ -16,6 +16,7 @@ AddType font/opentype .otf
 </Directory>
 
 <Location "/">
+RedirectMatch ^/$ https://{{webserver_host_and_domain}}/--/
 </Location>
 
 RewriteEngine On
