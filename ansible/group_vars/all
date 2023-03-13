@@ -26,20 +26,6 @@ s3_modules_prefix:       /concertim/packages/{{release_tag}}/modules/
 # aws_secret_access_key
 
 # ==================================================
-# emma and mia variables
-#
-# These variables are used by a number of different roles, so they given here
-# where they can be shared.
-emma_ports:
-  - 9900
-  - 9901
-  - 9902
-mia_ports:
-  - 8000
-  - 8001
-  - 8002
-
-# ==================================================
 # Ruby variables
 #
 # Variables related to our custom ruby installations.
@@ -74,7 +60,6 @@ gems_source: "file:///ansible/roles/gems/files/gems/"
 rails_env: production
 # The directory containing our rails apps.
 rails_root_dir: /data/private/share/rails
-emma_core_dir: "{{rails_root_dir}}/emma/core"
 
 
 # ==================================================

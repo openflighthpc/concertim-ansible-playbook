@@ -6,4 +6,3 @@ logo_files:
   - logo-right.png
   - lower-login.png
   - upper-login.png
-mia_help_dir: "{{rails_root_dir}}/mia/help"
