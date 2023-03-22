@@ -23,5 +23,5 @@
 - name: Configure trusted access to database
   include_tasks: database_trusted_access.yml
 
-- name: Configure dev ct-visualisation-app
-  include_tasks: install_dev_gems.yml
+- name: Setup dev ct-visualisation-app
+  include_tasks: setup_dev_ct_vis_app.yml

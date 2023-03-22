@@ -14,3 +14,13 @@
     cd {{dev_root_dir}}/appliances/ct-visualisation-app/core
     ./bin/bundle install
   when: dev_ct_vis_dir.stdout != ""
+
+
+- name: Disable production ct-visualisation-app
+  ansible.builtin.service:
+    name: "{{item}}"
+    state: stopped
+    enabled: no
+  loop:
+    - ct-visualisation-app
+    - ct-visualisation-job-runner
