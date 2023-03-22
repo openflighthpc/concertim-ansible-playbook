@@ -1,0 +1,5 @@
+server {
+  listen 443 ssl default;
+
+  include /etc/nginx/snippets/server-https.d/*.conf;
+}

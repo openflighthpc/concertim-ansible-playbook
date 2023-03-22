@@ -50,6 +50,7 @@
       tags: release-info
     - role: appliance-dev
       tags: appliance-dev
+      when: want_dev_build | bool
     - role: fake-gmond
       tags: fake-gmond
       when: want_fake_metrics | bool

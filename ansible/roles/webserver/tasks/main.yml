@@ -1,66 +1,32 @@
-- name: Install apache and dependencies
+- name: Install nginx and dependencies
   ansible.builtin.apt:
     name:
-      - apache2
-      - libapache2-mod-php
+      - ssl-cert
+      - nginx
+      - php8.1-fpm
     state: latest
 
 - name: Write the apache config files
   ansible.builtin.copy:
-    src: apache2/
-    dest: /etc/apache2/
-
-- name: Write templated apache config files
-  ansible.builtin.template:
-    src: apache2/{{item}}
-    dest: /etc/apache2/{{item}}
-  loop:
-    - conf-available/mia.server_name.conf
-    - sites-available/redirect-http-to-https.conf
-    - mia/vhost
-
-- name: Enable mods
-  ansible.builtin.command:
-    cmd: a2enmod {{ item|quote }}
-  loop:
-    - deflate
-    - expires
-    - headers
-    - include
-    - proxy
-    - proxy_balancer
-    - lbmethod_bybusyness
-    - proxy_http
-    - rewrite
-    - socache_dbm
-    - ssl
-    - lbmethod_byrequests
-    - cgi
-    - php8.1
-
-- name: Enable conf
-  ansible.builtin.command:
-    cmd: a2enconf {{ item|quote }}
-  loop:
-    - mia.proxy_frontend
-    - mia.server_name
+    src: nginx/
+    dest: /etc/nginx/
 
 - name: Disable default sites
-  ansible.builtin.command:
-    cmd: a2dissite {{ item|quote }}
-  loop:
-    - 000-default
-    - default-ssl
+  ansible.builtin.file:
+    path: "/etc/nginx/sites-enabled/default"
+    state: absent
 
 - name: Enable sites
-  ansible.builtin.command:
-    cmd: a2ensite {{ item|quote }}
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/{{item}}
+    dest: /etc/nginx/sites-enabled/{{item}}
+    state: link
   loop:
-    - redirect-http-to-https
-    - ssl
+    - default-http
+    - default-https
 
-- name: Ensure that apache2 is started
+- name: Ensure that nginx is started
   ansible.builtin.service:
-    name: apache2
+    name: nginx
     state: restarted
     enabled: yes

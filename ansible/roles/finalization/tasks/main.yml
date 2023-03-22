@@ -2,11 +2,14 @@
   ansible.builtin.service:
     name: "{{ item }}"
     state: restarted
-  loop:
-    - ct-visualisation-app
-    - meryl
-    - metric-reporting-daemon
-    - ct-visualisation-job-runner
+  vars:
+    services:
+      - memcached
+      - meryl
+      - metric-reporting-daemon
+      - "{{ (not want_dev_build) | ternary('ct-visualisation-app', '') }}"
+      - "{{ (not want_dev_build) | ternary('ct-visualisation-job-runner', '') }}"
+  loop: "{{ services | select | list }}"
 
 # We're now finally ready to monit our services.
 - name: Start monit
