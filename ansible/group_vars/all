@@ -72,6 +72,9 @@ ct_etc_dir: /data/private/share/etc/concurrent-thinking
 
 # ==================================================
 # Configuration for which parts of the build we want.
-#
-# At the moment we don't want any demo data or fake metrics.
+
+# Set to true to include a fake metric generating engine.
 want_fake_metrics: false
+
+# Set to true to configure for a development build.
+want_dev_build: false

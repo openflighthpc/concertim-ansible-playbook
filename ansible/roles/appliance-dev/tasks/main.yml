@@ -1,19 +1,21 @@
+# Install tools that are for development.  Tools that are useful
+# for production debugging and maintenance should be installed by the
+# misc-packages role.
 - name: Install useful dev tools
   ansible.builtin.apt:
-    name:
-      - jq
+    name: []
     state: latest
 
+# As above, install scripts that are for development.  Scripts that are useful
+# for production debugging and maintenance should be installed by the
+# misc-packages role.
 - name: Install useful dev scripts
   ansible.builtin.copy:
-    src: "{{ item }}"
+    src: scripts/
     dest: /usr/local/sbin/
     owner: root
     group: root
     mode: "0755"
-  loop:
-    - get-memcache-key.rb
-    - list-memcache-keys.rb
 
 - name: Nginx dev configuration
   include_tasks: nginx_dev_configuration.yml

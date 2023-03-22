@@ -3,8 +3,22 @@
     name: python3-boto3
     state: latest
 
-- name: Install useful development utilities
+# Install tools that are for production debugging and maintenance. Tools
+# strictly for development should be installed by the appliance-dev role.
+- name: Install useful utilities
   ansible.builtin.apt:
     name:
       - net-tools
+      - jq
     state: latest
+
+# As above, install scripts that are for production debugging and maintenance.
+# Scritps strictly for development should be installed by the appliance-dev
+# role.
+- name: Install useful scripts
+  ansible.builtin.copy:
+    src: scripts/
+    dest: /usr/local/sbin/
+    owner: root
+    group: root
+    mode: "0755"
