@@ -1,4 +1,4 @@
-- name: Copy FTSW scripts
+- name: Copy user default scripts
   ansible.builtin.copy:
     src:  "{{ item }}"
     dest: /usr/local/sbin/
@@ -6,9 +6,9 @@
     group: root
     mode: "744"
   loop:
-    - ftsw-users.rb
+    - set-user-defaults.rb
 
-- name: Copy FTSW data files
+- name: Copy user default data files
   ansible.builtin.template:
     src:  "{{ item }}"
     dest: /data/private/share/etc/concurrent-thinking/appliance/
@@ -16,7 +16,7 @@
     group: "{{app_user}}"
     mode: "640"
   loop:
-    - ftsw-user-data.yml
+    - default-user-data.yml
 
 - name: Run post migration scripts
   vars:
@@ -49,7 +49,7 @@
   import_tasks: run_rails_runner.yml
   vars:
     rails_runner: ./bin/rails runner
-    runner_args: /usr/local/sbin/ftsw-users.rb
+    runner_args: /usr/local/sbin/set-user-defaults.rb
     ruby_bin_dir: "{{ruby_30_bin_dir}}"
     additional_env: ""
     chdir: "{{ rails_root_dir }}/ct-visualisation-app/core"
