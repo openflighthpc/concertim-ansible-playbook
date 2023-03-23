@@ -50,15 +50,6 @@
   loop_control:
     loop_var: module
 
-- name: configuring uma
-  vars:
-    template_dest: "{{ rails_root_dir }}/uma/db/fixtures/users.yml"
-    template_src: "{{ template_dest }}.tagged"
-    replacements:
-      - regexp: "%INTEGRTOR_PASSWORD%"
-        replace: "{{ integrator_password }}"
-  include_tasks: install_tagged_configuration.yml
-
 # XXX Move all of these to the various phoenix-module repos.
 - name: Patch and fixup
   block:

@@ -5,7 +5,6 @@ package_assets_modules:
   - hacor:main
   - meca:main
   - sas:main
-  - uma:main
 
 package_assets_appliances:
   - ct-visualisation-app:main
