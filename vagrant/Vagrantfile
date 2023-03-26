@@ -5,17 +5,15 @@ CT_SRC_DIR = [ ENV['FLIGHT_CODE'], "#{ENV['HOME']}/projects/concertim/src" ]
 ANSIBLE_DIR="../ansible"
 MACHINES = [
   {
-    name: "command1",
+    name: "dev1",
     box: "ubuntu/jammy64",
   },
   {
-    name: "command2",
-    # box: "bento/ubuntu-22.04",
+    name: "dev2",
     box: "ubuntu/jammy64",
   },
   {
-    name: "command3",
-    # box: "ubuntu/focal64",
+    name: "asset-build",
     box: "ubuntu/jammy64",
   }
 ]
@@ -31,9 +29,18 @@ Vagrant.configure("2") do |config|
 
     config.vm.define box[:name], primary: idx == 0 do |v|
       v.vm.box = box[:box]
-      v.vm.hostname = box[:name]
+      v.vm.hostname = "concertim-#{box[:name]}"
+      v.vm.provider "virtualbox" do |p|
+        # This needs to be nested inside the `config.vm.define` block to set
+        # the name for just this box.
+        p.name = "concertim_#{box[:name]}_#{Time.now.to_f.to_s.sub('.', '_')}"
+      end
+
+      # Forward HTTP/S ports at predictable host ports.  Redirection from HTTP
+      # to HTTPS isn't expected to work with these ports.
       v.vm.network "forwarded_port", guest:  80, host: 9080 + idx + 1, host_ip: '127.0.0.1'
       v.vm.network "forwarded_port", guest: 443, host: 9443 + idx + 1, host_ip: '127.0.0.1'
+
       v.vm.provision "swap",
         type: "shell",
         path: "scripts/create-swap.sh",
