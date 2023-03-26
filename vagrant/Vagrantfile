@@ -1,8 +1,7 @@
-CODE_PATH = [ ENV['FLIGHT_CODE'], "#{ENV['HOME']}/code" ]
+CT_SRC_DIR = [ ENV['FLIGHT_CODE'], "#{ENV['HOME']}/projects/concertim/src" ]
   .compact
   .map { |p| File.expand_path(p) }
   .detect { |p| File.directory?(p) }
-CT_SOURCES = File.join(CODE_PATH, 'concertim-sources')
 ANSIBLE_DIR="../ansible"
 MACHINES = [
   {
@@ -46,11 +45,8 @@ Vagrant.configure("2") do |config|
 
       unless to_boolean(ENV['ACCEPTANCE'])
         v.vm.synced_folder ANSIBLE_DIR, "/ansible"
-        # if File.directory?(CODE_PATH)
-        #   v.vm.synced_folder CODE_PATH, "/code"
-        # end
-        if File.directory?(CT_SOURCES)
-          v.vm.synced_folder CT_SOURCES, "/data/private/share/dev"
+        if File.directory?(CT_SRC_DIR)
+          v.vm.synced_folder CT_SRC_DIR, "/data/private/share/dev"
         end
 
         # Build the VM in the same was as the ansible README instructions
