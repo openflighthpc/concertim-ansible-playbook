@@ -62,6 +62,7 @@
   ansible.builtin.service:
     name: "{{item}}"
     enabled: yes
+    state: restarted
   loop:
     - ct-visualisation-app
     - ct-visualisation-job-runner
