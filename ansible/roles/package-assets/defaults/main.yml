@@ -1,13 +1,13 @@
 package_assets_daemons:
-  - meryl:revival-18
+  - meryl:revival-19
 
 package_assets_modules:
-  - hacor:revival-18
-  - meca:revival-18
-  - sas:revival-18
+  - hacor:revival-19
+  - meca:revival-19
+  - sas:revival-19
 
 package_assets_appliances:
-  - ct-visualisation-app:revival-18
+  - ct-visualisation-app:revival-19
 
 package_assets_fake_gmond_tag: main
 
