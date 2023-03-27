@@ -3,7 +3,6 @@ package_assets_daemons:
 
 package_assets_modules:
   - hacor:main
-  - meca:main
   - sas:main
 
 package_assets_appliances:
