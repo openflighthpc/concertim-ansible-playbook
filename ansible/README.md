@@ -2,8 +2,9 @@
 
 This directory contains ansible playbooks to build an Alces Concertim machine.
 
-The instructions here will work for version `revival-19.1`, you're milage may
-vary with other versions.
+The instructions here will work for version latest `main`, you're milage may
+vary with other versions.  You probably want to use the instructions for a
+tagged release, e.g., `revival-19.1`.
 
 ## Prerequisites
 
@@ -72,7 +73,7 @@ This git repository is a private repository, so you will need to provide
 credentials to clone it.
 
 ```bash
-RELEASE_TAG="revival-19.1"
+RELEASE_TAG="main"
 cd /root
 git clone https://${GH_TOKEN}@github.com/alces-flight/concertim-bootstrap.git
 ln -s /root/concertim-bootstrap/ansible /ansible

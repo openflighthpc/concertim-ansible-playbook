@@ -3,11 +3,8 @@
 #
 # Used in configuring tags, S3 prefixes etc. for the installed assets.  E.g.,
 # `v8.0.0`, `resurect-10` or `dev-2022-11-28`.
-# release_tag: "dev-{{ansible_date_time.date}}"
-
-# This commit is tagged `revival-19.1`, but it uses the `revival-19` assets.
-# The change is a patch fix to one of the roles.
-release_tag: "revival-19"
+release_tag: "dev-{{ansible_date_time.date}}"
+# release_tag: "revival-19"
 
 # ==================================================
 # S3 variables
