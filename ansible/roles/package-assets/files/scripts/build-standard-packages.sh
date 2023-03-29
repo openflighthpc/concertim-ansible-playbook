@@ -40,24 +40,6 @@ else
     declare -a DAEMONS=()
 fi
 
-# MODULES and the branch to build are read from the Environment variable
-# MODULES.  It is a space separated list of NAME:TAG pairs.  E.g.,
-#
-#   MODULES="hacor:main meca:dev scram:v1.2.3"
-#
-# The tag could be a tag, branch or commit.
-if declare -p MODULES >/dev/null 2>&1 ; then
-    copy="${MODULES}"
-    unset MODULES
-    declare -a MODULES
-    for td in ${copy}; do
-        MODULES+=("${td}")
-    done
-    unset copy
-else
-    declare -a MODULES=()
-fi
-
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 GH_ORG=alces-flight
 PACKAGE_DIR="${PACKAGE_DIR:-${SCRIPT_DIR}/../tmp/packages}"
@@ -232,7 +214,6 @@ main() {
     cd "${BUILD_DIR}"
 
     package_projects DAEMONS daemon
-    package_projects MODULES module
     package_projects APPLIANCES appliance
     create_release_and_version_files
 }

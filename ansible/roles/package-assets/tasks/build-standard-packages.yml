@@ -8,7 +8,6 @@
   environment:
     APPLIANCES: "{{ package_assets_appliances | join(' ') }}"
     DAEMONS: "{{ package_assets_daemons | join(' ') }}"
-    MODULES: "{{ package_assets_modules | join(' ') }}"
     GH_TOKEN: "{{gh_token}}"
     BUILD_DIR:   "{{package_assets_repo_dir}}"
     PACKAGE_DIR: "{{package_assets_package_dir}}"

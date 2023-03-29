@@ -1,8 +1,3 @@
 etc_personalty_folder: "{{ct_etc_dir}}/appliance"
 branding_name: "ct"
 branding_yaml_path: "{{ct_etc_dir}}/branding.yml"
-logo_files:
-  - logo-left.png
-  - logo-right.png
-  - lower-login.png
-  - upper-login.png

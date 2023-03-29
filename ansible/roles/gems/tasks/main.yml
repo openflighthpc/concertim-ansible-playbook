@@ -1,139 +1,19 @@
-- name: Update ruby gems
-  block:
-    - name: Install rubygems-update gem
-      vars:
-        rubygems_version: '1.8.24'
-        rubygems_update_gem: "rubygems-update-{{ rubygems_version }}.gem"
-      ansible.builtin.command:
-        cmd: gem1.8 install "{{ role_path }}/files/{{ rubygems_update_gem }}" --no-rdoc --no-ri --local
-
-    - name: Update rubygems
-      ansible.builtin.shell:
-        cmd: PATH={{ruby_18_bin_dir}}:$PATH update_rubygems
-
-- name: Install Ruby 1.8 gem build depedencies
-  register: result
-  until: result is success
-  ansible.builtin.apt:
-    name:
-      # - libgpgme-dev
-      # - libgpgme11
-      - imagemagick
-      - libmagickcore-dev
-      - libmagickwand-dev
-      - libpq-dev
-      - librrd-dev
-      - libsnmp-dev
-      - libsqlite3-dev
-      - libxslt1-dev
-      - nodejs
-      - postgresql-server-dev-11
-
-      # These were previously installed so that openssl and ruby could be
-      # built.  At least some of them are required for the gems too.
-      # XXX Find out which of these we need and remove those we don't.
-      - autoconf
-      - bison
-      - build-essential
-      - libdb-dev
-      - libffi-dev
-      - libgdbm-dev
-      - libgdbm6
-      - libncurses5-dev
-      - libreadline6-dev
-      - libssl-dev
-      - libyaml-dev
-      # - subversion
-      - uuid-dev
-      - zlib1g-dev
-
 - name: Configure gem source
   block:
     - name: Add local gem server
       ansible.builtin.command:
-        cmd: "{{item}} sources --add {{ gems_source }}"
-      loop:
-        - gem1.8
-        - gem1.9
+        cmd: "gem1.9 sources --add {{ gems_source }}"
+
     - name: Remove rubygems gem server
       ansible.builtin.command:
-        cmd: "{{item}} sources --remove http://rubygems.org/"
-      loop:
-        - gem1.8
-        - gem1.9
+        cmd: "gem1.9 sources --remove http://rubygems.org/"
 
-- name: Install local ruby 1.8 gems
-  register: result
-  until: result is success
+- name: Install bundler for ruby 1.9
   ansible.builtin.command:
-    cmd: gem1.8 install --no-rdoc --no-ri {{item}}
-  loop:
-    - "rubyforge -v 2.0.4"
-    - "rake -v 0.9.2.2"
-    - "hoe -v 2.6.0"
-    - "rails -v 2.0.2"
-    - "netaddr -v 1.4.0"
-    - "RubyRRDtool -v 0.6.1"
-    - "roxml -v 1.2"
-    - "sqlite3-ruby -v 1.3.1"
-    - "gruff -v 0.2.9"
-    # - ferret
-    - "date_time-duration -v 0.0.1"
-    - "phoenix-actionwebservice -v 1.2.7"
-    - "postgres -v 0.7.9.2008.01.24"
-    - "libxml-ruby -v 3.1.0"
-    - "archive-tar-minitar -v 0.5.2"
-    - "highline -v 1.5.1"
-    - "slave -v 1.2.1"
-    # - gpgme
-    - "dbi -v 0.4.3"
-    - "dbd-pg -v 0.3.9"
-    - "bundler -v 1.3.5"
-    - "nokogiri -v 1.5.10"
-    - "memcache-client -v 1.8.5"
-    - "sequel -v 3.16.0"
-    - "eventmachine -v 1.0.3"
-    - "snmp -v 1.1.1"
-    - "net-snmp -v 0.2.1"
-    - "rack -v 1.5.2"
-    - safe_libs
-    - "rmagick -v 2.15.4"
-
-    - beanstalk-client-free
-    - phoenix_utils
-    - data_source_core
-    - "romance -v '~> 1.1.0'"
-    - delia_client
-    - activerecord-rdbcp-adapter
-    - phoenix_validations
-    - phoenix_metrics
-    - phoenix_snmp
-    - phoenix_update_signaller
-
-- name: Install local ruby 1.9 gems
-  ansible.builtin.command:
-    cmd: gem1.9 install --no-rdoc --no-ri {{item}}
-  loop:
-    - bundler
-    - beanstalk-client-free
-    - phoenix_utils
-    - data_source_core
-    - "romance -v '~> 1.2.0'"
-    - delia_client
-    - phoenix_update_signaller
-    - phoenix_snmp
-    - mini_magick_pgc
-    - net-snmp
-    # - snmp
-    # - ct_modbus
+    cmd: gem1.9 install --no-rdoc --no-ri bundler
 
 - name: Create bundler1.9 symlink
   ansible.builtin.file:
     src: "{{ruby_19_bin_dir}}/bundle"
     dest: /usr/bin/bundle1.9
     state: link
-
-- name: Install delia client config
-  ansible.builtin.copy:
-    src: delia_client.yml
-    dest: "{{ct_etc_dir}}"
