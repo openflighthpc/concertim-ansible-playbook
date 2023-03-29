@@ -1,0 +1,4489 @@
+-- IPT PDU SNMP configuration MIB
+--
+-- (c) 2013 IPT Limited
+-- 
+-- Written by Designer Systems Ltd
+
+-- V1.00.00
+
+-- PEN 38218 supplied under license by Designer Systems Ltd
+
+PDUSNMP DEFINITIONS ::= BEGIN
+
+IMPORTS
+   enterprises, IpAddress, Gauge, TimeTicks     FROM RFC1155-SMI
+   DisplayString                                FROM RFC1213-MIB
+   OBJECT-TYPE                                  FROM RFC-1212
+   TRAP-TYPE                                    FROM RFC-1215
+   MODULE-IDENTITY					FROM SNMPv2-SMI
+   Integer32, Unsigned32			      FROM SNMPv2-SMI
+   OBJECT-GROUP						FROM SNMPv2-CONF
+   NOTIFICATION-GROUP			 		FROM SNMPv2-CONF
+   MODULE-COMPLIANCE					FROM SNMPv2-CONF
+   DateAndTime						FROM SNMPv2-TC
+   TEXTUAL-CONVENTION					FROM SNMPv2-TC;
+
+PDU-SNMP			MODULE-IDENTITY
+
+	LAST-UPDATED	"201309201712Z"
+	ORGANIZATION	"IPT Limited"
+	CONTACT-INFO  	"sales@iptltd.com"
+	DESCRIPTION		"IPT SNMP PDU MIB definition"
+
+-- V1.00.00	
+	REVISION		"201309201712Z"
+	DESCRIPTION		"First release"
+
+	::= { IPT-PDU-SNMP 1 }
+
+IPT-PDU-SNMP				OBJECT IDENTIFIER ::=  { enterprises 38218 }
+
+PDU-SNMP					OBJECT IDENTIFIER ::=  { IPT-PDU-SNMP 1 }
+Slave-SiteTotals				OBJECT IDENTIFIER ::=  { PDU-SNMP 1 }
+Slave-Server				OBJECT IDENTIFIER ::=  { PDU-SNMP 2 }
+PDU-Configuration				OBJECT IDENTIFIER ::=  { PDU-SNMP 3 }
+TRAP-Destinations				OBJECT IDENTIFIER ::=  { PDU-SNMP 4 }
+PDU-Information				OBJECT IDENTIFIER ::=  { PDU-SNMP 5 }
+PDU-Meters					OBJECT IDENTIFIER ::=  { PDU-SNMP 6 }
+PDU-Sockets					OBJECT IDENTIFIER ::=  { PDU-SNMP 7 }
+PDU-Environmental				OBJECT IDENTIFIER ::=  { PDU-SNMP 8 }
+PDU-Security				OBJECT IDENTIFIER ::=  { PDU-SNMP 9 }
+PDU-Logs					OBJECT IDENTIFIER ::=  { PDU-SNMP 10 }
+PDU-Traps					OBJECT IDENTIFIER ::=  { PDU-SNMP 11 }
+PDU-TrapThresholds			OBJECT IDENTIFIER ::=  { PDU-Traps 1 }
+
+Slave-PDUs					OBJECT IDENTIFIER ::=  { IPT-PDU-SNMP 2 }
+Slave-Information				OBJECT IDENTIFIER ::=  { Slave-PDUs 2 }
+Slave-Status                     	OBJECT IDENTIFIER ::=  { Slave-PDUs 3 }
+Slave-Sockets                   	OBJECT IDENTIFIER ::=  { Slave-PDUs 4 }
+Slave-Environmental                	OBJECT IDENTIFIER ::=  { Slave-PDUs 5 }
+Slave-Security                     	OBJECT IDENTIFIER ::=  { Slave-PDUs 6 }
+Slave-Traps					OBJECT IDENTIFIER ::=  { Slave-PDUs 7 }
+Slave-TrapNotifications			OBJECT IDENTIFIER ::=  { Slave-Traps 1 }
+
+Slave-Global				OBJECT IDENTIFIER ::=  { IPT-PDU-SNMP 3 }
+
+
+-- PDU-SNMP.Slave-SiteTotals
+
+Slave-SiteTotalkWh	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Total Energy used by all slaves on site in kWh x10."
+    
+    ::= { Slave-SiteTotals 1 }
+
+Slave-SiteTotalBtu	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Total Energy used by all slaves on site in Btu x10."
+    
+    ::= { Slave-SiteTotals 2 }
+
+Slave-SiteTotalKgCO2	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Total Energy used by all slaves on site in KgCO2 x10."
+    
+    ::= { Slave-SiteTotals 3 }
+
+-- PDU-SNMP.Slave-Server
+
+Slave-NoPDUs	OBJECT-TYPE
+    SYNTAX		INTEGER (0..32)
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Number of PDU's connected in SLAVE mode"
+    
+    ::= { Slave-Server 1 }
+
+Slaves-Online	OBJECT-TYPE
+    SYNTAX		INTEGER (0..32)
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Number of PDU's ONLINE in SLAVE mode."
+    
+    ::= { Slave-Server 2 }
+
+Slave-ServerStatus	OBJECT-TYPE
+    SYNTAX		INTEGER {STOPPED(0),RUNNING(1),SEARCHING(2),GETINFO(3),LISTENING(4)} 
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Server status"
+    
+    ::= { Slave-Server 3 }
+
+-- PDU-SNMP.PDU-Configuration
+
+PDU-ClientName	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Compatible - PDU Client name."
+    
+    ::= { PDU-Configuration 1 }
+
+PDU-LocationName	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Compatible - PDU Location Name."
+    
+    ::= { PDU-Configuration 2 }
+
+PDU-FirmwareVersion	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - PDU firmware version."
+    
+    ::= { PDU-Configuration 3 }
+
+PDU-KgCO2Conversion	OBJECT-TYPE
+    SYNTAX		INTEGER (1..1000)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Compatible - KgCO2 conversion factor x1000 [544 = 0.544]"
+    
+    ::= { PDU-Configuration 4 }
+
+PDU-MODBUSTimeout	OBJECT-TYPE
+    SYNTAX		INTEGER (500..5000)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Compatible - MODBUS Timeout in mS."
+    
+    ::= { PDU-Configuration 5 }
+
+PDU-MODBUSRetry	OBJECT-TYPE
+    SYNTAX		INTEGER (1..10)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Compatible - MODBUS Retry value."
+    
+    ::= { PDU-Configuration 6 }
+
+PDU-NotUsed1	OBJECT-TYPE
+    SYNTAX		INTEGER (0)
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Not used."
+    
+    ::= { PDU-Configuration 7 }
+
+PDU-AlarmPeriod	OBJECT-TYPE
+    SYNTAX		INTEGER (1..240)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Compatible - Alarm period check in minutes."
+    
+    ::= { PDU-Configuration 8 }
+
+PDU-DHCPStatus	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Compatible - DHCP Enable.Set to 1 to ENABLE or 0 to DISABLE DHCP support."
+    
+    ::= { PDU-Configuration 9 }
+
+PDU-IPAddress	OBJECT-TYPE
+    SYNTAX		Ipaddress
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Compatible - PDU IP Address."
+    
+    ::= { PDU-Configuration 10 }
+
+PDU-SubNetMask	OBJECT-TYPE
+    SYNTAX		Ipaddress
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Compatible - PDU Sub-net mask."
+    
+    ::= { PDU-Configuration 11 }
+
+PDU-CabinetID	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Cabinet ID."
+    
+    ::= { PDU-Configuration 12 }
+
+PDU-SocketPeriod	OBJECT-TYPE
+    SYNTAX		INTEGER (0..5000)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Socket ON sequence period (mS) 0=OFF."
+    
+    ::= { PDU-Configuration 13 }
+
+PDU-LockPeriod	OBJECT-TYPE
+    SYNTAX		INTEGER (1..240)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Lock activation period (S)."
+    
+    ::= { PDU-Configuration 14 }
+
+PDU-RTC-Hour	OBJECT-TYPE
+    SYNTAX		INTEGER (0..23)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU RTC Hour [24 hour clock]."
+    
+    ::= { PDU-Configuration 15 }
+
+PDU-RTC-Minute	OBJECT-TYPE
+    SYNTAX		INTEGER (1..59)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU RTC Minute."
+    
+    ::= { PDU-Configuration 16 }
+
+PDU-RTC-Date	OBJECT-TYPE
+    SYNTAX		INTEGER (1..31)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU RTC Date."
+    
+    ::= { PDU-Configuration 17 }
+
+PDU-RTC-Month	OBJECT-TYPE
+    SYNTAX		INTEGER (1..12)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU RTC Month."
+    
+    ::= { PDU-Configuration 18 }
+
+PDU-RTC-Year	OBJECT-TYPE
+    SYNTAX		INTEGER (0..99)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU RTC Year [tens only]."
+    
+    ::= { PDU-Configuration 19 }
+
+
+-- PDU-SNMP.TRAP-Destinations
+
+TRAPDestinationsTable	OBJECT-TYPE
+    SYNTAX			SEQUENCE OF TRAPDestinationsEntry
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	""
+    
+    ::= { TRAP-Destinations 1 }
+
+TRAPDestinationsEntry	OBJECT-TYPE
+    SYNTAX			TRAPDestinationsEntry
+    MAX-ACCESS		not-accessible
+    STATUS			current
+    DESCRIPTION   	"Table of Trap notification destinations."
+    INDEX			{ TRAPDestinationsIndex }    
+    
+    ::= { TRAPDestinationsTable 1 }
+
+TRAPDestinationsEntry ::= SEQUENCE {
+
+	  TRAPDestinationsIndex
+		INTEGER,
+	  TRAPDestinationsStatus
+		INTEGER,
+	  TRAPDestinationsIP
+		Ipaddress,
+	  TRAPDestinationsCommunity
+		DisplayString,
+  }
+
+TRAPDestinationsIndex	OBJECT-TYPE
+    SYNTAX			INTEGER (0..1)
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	"Trap destination index [0..1]."
+    
+    ::= { TRAPDestinationsEntry 1 }
+
+TRAPDestinationsStatus	OBJECT-TYPE
+    SYNTAX			INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Trap destination status. Set to 1 to ENABLE or 0 to DISABLE trap destination."
+    
+    ::= { TRAPDestinationsEntry 2 }
+
+TRAPDestinationsIP	OBJECT-TYPE
+    SYNTAX			Ipaddress
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Trap destination IP address. Set to the IP address of the destination SNMP manager."
+    
+    ::= { TRAPDestinationsEntry 3 }
+
+TRAPDestinationsCommunity	OBJECT-TYPE
+    SYNTAX			DisplayString
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Trap destination SNMP community. Set to the community name to be used with the destination SNMP manager."
+    
+    ::= { TRAPDestinationsEntry 4 }
+
+-- PDU-SNMP.PDU-Information
+
+PDU-Firmware	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Firmware version."
+    
+    ::= { PDU-Information 1 }
+
+PDU-NoSockets	OBJECT-TYPE
+    SYNTAX		INTEGER (0..32)
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Number of sockets."
+    
+    ::= { PDU-Information 2 }
+
+PDU-ProductName	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Product name."
+    
+    ::= { PDU-Information 3 }
+
+PDU-SerialNumber	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Serial number."
+    
+    ::= { PDU-Information 4 }
+
+-- PDU-SNMP.Slave-Status
+
+PDU-Meter1-VRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 1 RMS Voltage (VAC) x10."
+    
+    ::= { PDU-Meters 1 }
+
+PDU-Meter1-IRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 1 RMS Current (A) x10."
+    
+    ::= { PDU-Meters 2 }
+
+PDU-Meter1-KWH	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 1 total energy consumption (kW/h) x10."
+    
+    ::= { PDU-Meters 3 }
+
+PDU-Meter1-KW	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 1 Kilowatts (kW) x1000."
+    
+    ::= { PDU-Meters 4 }
+
+PDU-Meter1-TPMU	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 1 Internal Temperature (C) x10."
+    
+    ::= { PDU-Meters 5 }
+
+PDU-Meter1-IPK	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 1 Peak Current (A) x10."
+    
+    ::= { PDU-Meters 6 }
+
+PDU-Meter1-VPK	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 1 Peak Voltage (V) x10."
+    
+    ::= { PDU-Meters 7 }
+
+PDU-Meter1-PF	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 1 Power Factor x1000"
+    
+    ::= { PDU-Meters 8 }
+
+PDU-Meter1-Freq	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 1 Frequency x10"
+    
+    ::= { PDU-Meters 9 }
+
+PDU-Meter2-VRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 2 RMS Voltage (VAC) x10."
+    
+    ::= { PDU-Meters 10 }
+
+PDU-Meter2-IRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 2 RMS Current (A) x10."
+    
+    ::= { PDU-Meters 11 }
+
+PDU-Meter2-KWH	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 2 total energy consumption (kW/h) x10."
+    
+    ::= { PDU-Meters 12 }
+
+PDU-Meter2-KW	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 2 Kilowatts (kW) x1000."
+    
+    ::= { PDU-Meters 13 }
+
+PDU-Meter2-TPMU	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 2 Internal Temperature (C) x10."
+    
+    ::= { PDU-Meters 14 }
+
+PDU-Meter2-IPK	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 2 Peak Current (A) x10."
+    
+    ::= { PDU-Meters 15 }
+
+PDU-Meter2-VPK	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 2 Peak Voltage (V) x10."
+    
+    ::= { PDU-Meters 16 }
+
+PDU-Meter2-PF	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 2 Power Factor x1000"
+    
+    ::= { PDU-Meters 17 }
+
+PDU-Meter2-Freq	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 2 Frequency x10"
+    
+    ::= { PDU-Meters 18 }
+
+PDU-Meter3-VRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 3 RMS Voltage (VAC) x10."
+    
+    ::= { PDU-Meters 19 }
+
+PDU-Meter3-IRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 3 RMS Current (A) x10."
+    
+    ::= { PDU-Meters 20 }
+
+PDU-Meter3-KWH	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 3 total energy consumption (kW/h) x10."
+    
+    ::= { PDU-Meters 21 }
+
+PDU-Meter3-KW	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 3 Kilowatts (kW) x1000."
+    
+    ::= { PDU-Meters 22 }
+
+PDU-Meter3-TPMU	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 3 Internal Temperature (C) x10."
+    
+    ::= { PDU-Meters 23 }
+
+PDU-Meter3-IPK	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 3 Peak Current (A) x10."
+    
+    ::= { PDU-Meters 24 }
+
+PDU-Meter3-VPK	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 3 Peak Voltage (V) x10."
+    
+    ::= { PDU-Meters 25 }
+
+PDU-Meter3-PF	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 3 Power Factor x1000"
+    
+    ::= { PDU-Meters 26 }
+
+PDU-Meter3-Freq	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Meter 3 Frequency x10"
+    
+    ::= { PDU-Meters 27 }
+
+-- PDU-SNMP.PDU-Sockets
+
+PDU-SocketsTable	OBJECT-TYPE
+    SYNTAX		SEQUENCE OF PDUStatusEntry
+    MAX-ACCESS  	not-accessible
+    STATUS  	current
+    DESCRIPTION   ""
+    
+    ::= { PDU-Sockets 1 }
+    
+PDU-SocketsEntry	OBJECT-TYPE
+    SYNTAX		PDU-SocketsEntry
+    MAX-ACCESS	not-accessible
+    STATUS		current
+    DESCRIPTION   "Table of Socket status parameters."
+    INDEX		{ SocketIndex }    
+    
+    ::= { PDU-SocketsTable 1 }
+
+PDU-SocketsEntry ::= SEQUENCE {
+
+	  Socket-Index
+		INTEGER,
+	  Socket-Number
+		INTEGER,
+	  Socket-Equipment
+		DisplayString,
+	  Socket-ONOFF
+		INTEGER,
+	  Socket-AMPS
+		INTEGER,
+	  Socket-KWH
+		Integer32,
+	  Socket-INFO
+		INTEGER,
+  }
+
+Socket-Index	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	not-accessible
+    STATUS  	current
+    DESCRIPTION   "Socket index"
+    
+    ::= { PDU-SocketsEntry 1 }
+
+Socket-Number	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	not-accessible
+    STATUS  	current
+    DESCRIPTION   "Socket number [Range 1 to 48]"
+    
+    ::= { PDU-SocketsEntry 2 }
+
+Socket-Equipment	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Socket equipment name."
+    
+    ::= { PDU-SocketsEntry 3 }
+
+Socket-ONOFF	OBJECT-TYPE
+    SYNTAX		INTEGER {OFF(0),ON(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Socket ON/OFF status [Set to 1 to switch ON, 0 to switch OFF]"
+    
+    ::= { PDU-SocketsEntry 4 }
+
+Socket-AMPS		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Socket current (Amps) x10."
+    
+    ::= { PDU-SocketsEntry 5 }
+
+Socket-KWH		OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Socket Energy (kWh) x10."
+    
+    ::= { PDU-SocketsEntry 6 }
+
+Socket-INFO		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Socket information (status, phase and picture)."
+    
+    ::= { PDU-SocketsEntry 7 }
+
+
+-- PDU-SNMP.PDU-Environmental
+
+PDU-Environmental-Temp1	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Environmental Temperature probe 1 (C) x100."
+    
+    ::= { PDU-Environmental 1 }
+
+PDU-Environmental-Temp1-Location	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental Temperature probe 1 location name."
+    
+    ::= { PDU-Environmental 2 }
+
+PDU-Environmental-Temp2	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Environmental Temperature probe 2 (C) x100."
+    
+    ::= { PDU-Environmental 3 }
+
+PDU-Environmental-Temp2-Location	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental Temperature probe 2 location name."
+    
+    ::= { PDU-Environmental 4 }
+
+PDU-Environmental-Temp3	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Environmental Temperature probe 3 (C) x100."
+    
+    ::= { PDU-Environmental 5 }
+
+PDU-Environmental-Temp3-Location	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental Temperature probe 3 location name."
+    
+    ::= { PDU-Environmental 6 }
+
+PDU-Environmental-Temp4	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Environmental Temperature probe 4 (C) x100."
+    
+    ::= { PDU-Environmental 7 }
+
+PDU-Environmental-Temp4-Location	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental Temperature probe 4 location name."
+    
+    ::= { PDU-Environmental 8 }
+
+PDU-Environmental-Temp5	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Environmental Temperature probe 5 (C) x100."
+    
+    ::= { PDU-Environmental 9 }
+
+PDU-Environmental-Temp5-Location	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental Temperature probe 5 location name."
+    
+    ::= { PDU-Environmental 10 }
+
+PDU-Environmental-Temp6	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Environmental Temperature probe 6 (C) x100."
+    
+    ::= { PDU-Environmental 11 }
+
+PDU-Environmental-Temp6-Location	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental Temperature probe 6 location name."
+    
+    ::= { PDU-Environmental 12 }
+
+PDU-Environmental-Temp7	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Environmental Temperature probe 7 (C) x100."
+    
+    ::= { PDU-Environmental 13 }
+
+PDU-Environmental-Temp7-Location	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental Temperature probe 7 location name."
+    
+    ::= { PDU-Environmental 14 }
+
+PDU-Environmental-Temp8	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Environmental Temperature probe 8 (C) x100."
+    
+    ::= { PDU-Environmental 15 }
+
+PDU-Environmental-Temp8-Location	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental Temperature probe 8 location name."
+    
+    ::= { PDU-Environmental 16 }
+
+PDU-Environmental-HumidityTemp	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS		read-only
+    STATUS  		current
+    DESCRIPTION		"Environmental Humidity probe Temperature (C) x100."
+    
+    ::= { PDU-Environmental 17 }
+
+PDU-Environmental-Humidity	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Environmental humidity probe (%) x100."
+    
+    ::= { PDU-Environmental 18 }
+
+PDU-Environmental-Contact1	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Environmental contact input 1 status."
+    
+    ::= { PDU-Environmental 19 }
+
+PDU-Environmental-Contact1-Location	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental contact input 1 location name."
+    
+    ::= { PDU-Environmental 20 }
+
+PDU-Environmental-Contact2	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Environmental contact input 2 status."
+    
+    ::= { PDU-Environmental 21 }
+
+PDU-Environmental-Contact2-Location	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental contact input 2 location name."
+    
+    ::= { PDU-Environmental 22 }
+
+PDU-Environmental-Contact3	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Environmental contact input 3 status."
+    
+    ::= { PDU-Environmental 23 }
+
+PDU-Environmental-Contact3-Location	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental contact input 3 location name."
+    
+    ::= { PDU-Environmental 24 }
+
+
+-- PDU-SNMP.PDU-Security
+
+PDU-Security-Door		OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Security door contact status."
+    
+    ::= { PDU-Security 1 }
+
+PDU-Security-Lock		OBJECT-TYPE
+    SYNTAX			INTEGER {LOCKED(0),UNLOCKED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Security lock status [Set to 1 to unlock]"
+    
+    ::= { PDU-Security 2 }
+
+PDU-Security-Wild	OBJECT-TYPE
+    SYNTAX			INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Security Card/PIN Wildcard status.
+    Set with 1 to enable or 0 to disable Wildcard feature."
+    
+    ::= { PDU-Security 3 }
+
+PDU-Security-UnlockTimeDate	OBJECT-TYPE
+    SYNTAX			DisplayString
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Time and data of last unlock."
+    
+    ::= { PDU-Security 4 }
+
+PDU-SecurityTable	OBJECT-TYPE
+    SYNTAX			SEQUENCE OF PDU-SecurityEntry
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	""
+    
+    ::= { PDU-Security 5 }
+
+PDU-SecurityEntry	OBJECT-TYPE
+    SYNTAX			PDU-SecurityEntry
+    MAX-ACCESS		not-accessible
+    STATUS			current
+    DESCRIPTION   	"Table of PDU- Card/PIN codes."
+    INDEX			{ PDU-SecurityIndex }    
+    
+    ::= { PDU-SecurityTable 1 }
+
+PDU-SecurityEntry ::= SEQUENCE {
+
+	  PDU-Security-Index
+		INTEGER,
+	  PDU-Security-Code
+		Integer32,
+  }
+
+PDU-Security-Index	OBJECT-TYPE
+    SYNTAX			INTEGER (1..32)
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	"Security Card/PIN code index."
+    
+    ::= { PDU-SecurityEntry 1 }
+
+PDU-Security-Code	OBJECT-TYPE
+    SYNTAX			Integer32
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Security Card/PIN number."
+    
+    ::= { PDU-SecurityEntry 2 }
+
+
+-- PDU-SNMP.PDU-Logs
+
+PDU-Logs-Number		OBJECT-TYPE
+    SYNTAX			Integer32
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Log file number of log lines stored."
+    
+    ::= { PDU-Logs 1 }
+
+PDU-Logs-Index		OBJECT-TYPE
+    SYNTAX			Integer32
+    MAX-ACCESS	  	write-only
+    STATUS  		current
+    DESCRIPTION		"Log file line index pointer.
+     Set to line to be read."
+    
+    ::= { PDU-Logs 2 }
+
+PDU-Logs-Data		OBJECT-TYPE
+    SYNTAX			DisplayString
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Log file log line data."
+    
+    ::= { PDU-Logs 3 }
+
+PDU-Logs-Clear		OBJECT-TYPE
+    SYNTAX			INTEGER {RESET(1)}
+    MAX-ACCESS	  	write-only
+    STATUS  		current
+    DESCRIPTION		"Log file clear.
+     Set with 1 to clear log file."
+    
+    ::= { PDU-Logs 4 }
+
+
+-- PDU-SNMP.PDU-Traps.PDU-TrapThresholds
+
+Meter1-VRMSLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Voltage LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 1 }
+
+Meter1-VRMSLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "eter 1 Voltage LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 2 }
+
+Meter1-VRMSHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Voltage HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 3 }
+
+Meter1-VRMSHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Voltage HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 4 }
+
+Meter1-IRMSLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Current LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 5 }
+
+Meter1-IRMSLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Current LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 6 }
+
+Meter1-IRMSHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Current HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 7 }
+
+Meter1-IRMSHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Current HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 8 }
+
+Meter1-KWSLowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Kilowatts LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 9 }
+
+Meter1-KWSLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Kilowatts LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 10 }
+
+Meter1-KWSHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Kilowatts HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 11 }
+
+Meter1-KWSHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Kilowatts HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 12 }
+
+Meter1-TempLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Internal temperature LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 13 }
+
+Meter1-TempLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Internal temperature LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 14 }
+
+Meter1-TempHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Internal temperature HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 15 }
+
+Meter1-TempHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Internal temperature HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 16 }
+
+Meter1-PFLowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Power factor LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 17 }
+
+Meter1-PFLow	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Power factor LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 18 }
+
+Meter1-PFHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Power factor HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 19 }
+
+Meter1-PFHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Power factor HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 20 }
+
+Meter1-FreqLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Frequency LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 21 }
+
+Meter1-FreqLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Frequency LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 22 }
+
+Meter1-FreqHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Frequency HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 23 }
+
+Meter1-FreqHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Frequency HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 24 }
+
+Meter2-VRMSLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Voltage LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 25 }
+
+Meter2-VRMSLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "eter 1 Voltage LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 26 }
+
+Meter2-VRMSHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Voltage HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 27 }
+
+Meter2-VRMSHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Voltage HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 28 }
+
+Meter2-IRMSLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Current LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 29 }
+
+Meter2-IRMSLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Current LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 30 }
+
+Meter2-IRMSHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Current HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 31 }
+
+Meter2-IRMSHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Current HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 32 }
+
+Meter2-KWSLowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Kilowatts LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 33 }
+
+Meter2-KWSLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Kilowatts LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 34 }
+
+Meter2-KWSHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Kilowatts HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 35 }
+
+Meter2-KWSHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Kilowatts HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 36 }
+
+Meter2-TempLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Internal temperature LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 37 }
+
+Meter2-TempLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Internal temperature LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 38 }
+
+Meter2-TempHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Internal temperature HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 39 }
+
+Meter2-TempHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Internal temperature HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 40 }
+
+Meter2-PFLowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Power factor LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 41 }
+
+Meter2-PFLow	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Power factor LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 42 }
+
+Meter2-PFHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Power factor HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 43 }
+
+Meter2-PFHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Power factor HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 44 }
+
+Meter2-FreqLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Frequency LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 45 }
+
+Meter2-FreqLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Frequency LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 46 }
+
+Meter2-FreqHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Frequency HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 47 }
+
+Meter2-FreqHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Frequency HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 48 }
+
+Meter3-VRMSLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Voltage LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 49 }
+
+Meter3-VRMSLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "eter 1 Voltage LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 50 }
+
+Meter3-VRMSHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Voltage HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 51 }
+
+Meter3-VRMSHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Voltage HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 52 }
+
+Meter3-IRMSLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Current LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 53 }
+
+Meter3-IRMSLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Current LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 54 }
+
+Meter3-IRMSHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Current HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 55 }
+
+Meter3-IRMSHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Current HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 56 }
+
+Meter3-KWSLowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Kilowatts LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 57 }
+
+Meter3-KWSLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Kilowatts LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 58 }
+
+Meter3-KWSHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Kilowatts HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 59 }
+
+Meter3-KWSHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Kilowatts HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 60 }
+
+Meter3-TempLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Internal temperature LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 61 }
+
+Meter3-TempLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Internal temperature LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 62 }
+
+Meter3-TempHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Internal temperature HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 63 }
+
+Meter3-TempHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Internal temperature HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 64 }
+
+Meter3-PFLowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Power factor LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 65 }
+
+Meter3-PFLow	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Power factor LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 66 }
+
+Meter3-PFHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Power factor HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 67 }
+
+Meter3-PFHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Power factor HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 68 }
+
+Meter3-FreqLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Frequency LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 69 }
+
+Meter3-FreqLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Frequency LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 70 }
+
+Meter3-FreqHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Frequency HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 71 }
+
+Meter3-FreqHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Frequency HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 72 }
+
+Socket-ThresholdsTable	OBJECT-TYPE
+    SYNTAX			SEQUENCE OF Socket-ThresholdsEntry
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	""
+    
+    ::= { PDU-TrapThresholds 73 }
+
+Socket-ThresholdsEntry	OBJECT-TYPE
+    SYNTAX			Socket-ThresholdsEntry
+    MAX-ACCESS		not-accessible
+    STATUS			current
+    DESCRIPTION   	"Table of socket trap notification thresholds."
+    INDEX			{ Socket-ThresholdsNumber }    
+    
+    ::= { Socket-ThresholdsTable 1 }
+
+Socket-ThresholdsEntry ::= SEQUENCE {
+
+	  Socket-ThresholdsNumber
+		INTEGER,
+	  Socket-AMPSLowAlarm
+		INTEGER,
+	  Socket-AMPSLow
+		INTEGER,
+	  Socket-AMPSHighAlarm
+		INTEGER,
+	  Socket-AMPSHigh
+		INTEGER,
+  }
+
+Socket-ThresholdsNumber	OBJECT-TYPE
+    SYNTAX			INTEGER (1..48)
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	"Trap threshold Socket- number [1..48]."
+    
+    ::= { Socket-ThresholdsEntry 1 }
+
+Socket-AMPSLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Socket Current LOW alarm disabled/enabled."
+    
+    ::= { Socket-ThresholdsEntry 2 }
+
+Socket-AMPSLow	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Socket Current LOW trap threshold x10."
+    
+    ::= { Socket-ThresholdsEntry 3 }
+
+Socket-AMPSHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Socket Current HIGH alarm disabled/enabled."
+    
+    ::= { Socket-ThresholdsEntry 4 }
+
+Socket-AMPSHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Socket Current HIGH trap threshold x10."
+    
+    ::= { Socket-ThresholdsEntry 5 }
+
+Environmental-Temp1LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 1 LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 74 }
+
+Environmental-Temp1Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 1 LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 75 }
+
+Environmental-Temp1HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 1 HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 76 }
+
+Environmental-Temp1High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 1 HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 77 }
+
+Environmental-Temp2LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 2 LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 78 }
+
+Environmental-Temp2Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 2 LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 79 }
+
+Environmental-Temp2HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 2 HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 80 }
+
+Environmental-Temp2High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 2 HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 81 }
+
+Environmental-Temp3LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 3 LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 82 }
+
+Environmental-Temp3Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 3 LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 83 }
+
+Environmental-Temp3HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 3 HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 84 }
+
+Environmental-Temp3High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 3 HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 85 }
+
+Environmental-Temp4LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 4 LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 86 }
+
+Environmental-Temp4Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 4 LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 87 }
+
+Environmental-Temp4HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 4 HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 88 }
+
+Environmental-Temp4High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 4 HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 89 }
+
+Environmental-Temp5LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 5 LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 90 }
+
+Environmental-Temp5Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 5 LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 91 }
+
+Environmental-Temp5HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 5 HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 92 }
+
+Environmental-Temp5High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 5 HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 93 }
+
+Environmental-Temp6LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 6 LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 94 }
+
+Environmental-Temp6Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 6 LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 95 }
+
+Environmental-Temp6HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 6 HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 96 }
+
+Environmental-Temp6High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 6 HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 97 }
+
+Environmental-Temp7LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 7 LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 98 }
+
+Environmental-Temp7Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 7 LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 99 }
+
+Environmental-Temp7HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 7 HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 100 }
+
+Environmental-Temp7High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 7 HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 101 }
+
+Environmental-Temp8LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 8 LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 102 }
+
+Environmental-Temp8Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 8 LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 103 }
+
+Environmental-Temp8HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 8 HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 104 }
+
+Environmental-Temp8High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental temperature probe 8 HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 105 }
+
+Environmental-HumidityTempLowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental humidity probe temperature LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 106 }
+
+Environmental-HumidityTempLow	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental humidity probe temperature LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 107 }
+
+Environmental-HumidityTempHighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental humidity probe temperature HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 108 }
+
+Environmental-HumidityTempHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental humidity probe temperature HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 109 }
+
+Environmental-HumidityLowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental humidity probe LOW alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 110 }
+
+Environmental-HumidityLow	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental humidity probe LOW trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 111 }
+
+Environmental-HumidityHighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental humidity probe HIGH alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 112 }
+
+Environmental-HumidityHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental humidity probe HIGH trap threshold x10."
+    
+    ::= { PDU-TrapThresholds 113 }
+
+Environmental-Contact1OpenedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental Contact 1 OPENED alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 114 }
+
+Environmental-Contact1ClosedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental Contact 1 CLOSED alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 115 }
+
+Environmental-Contact2OpenedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental Contact 2 OPENED alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 116 }
+
+Environmental-Contact2ClosedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental Contact 2 CLOSED alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 117 }
+
+Environmental-Contact3OpenedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental Contact 3 OPENED alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 118 }
+
+Environmental-Contact3ClosedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Environmental Contact 3 CLOSED alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 119 }
+
+Security-DoorOpenedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Security Door OPENED alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 120 }
+
+Security-DoorClosedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Security Door CLOSED alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 121 }
+
+Security-LockUnlockedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Security Lock UNLOCKED alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 122 }
+
+Security-LockLockedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Security Lock LOCKED alarm disabled/enabled."
+    
+    ::= { PDU-TrapThresholds 123 }
+
+
+-- Slave-PDU
+
+Slave-SlaveSelected	OBJECT-TYPE
+    SYNTAX		INTEGER (1..32)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Compatible - Currently selected Slave PDU.
+    Set to number between 1 and Slave-NoPDUs"
+    
+    ::= { Slave-PDUs 1 }
+
+-- PDU.PDUInfo
+
+Slave-PDUName	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave PDU Name."
+    
+    ::= { Slave-Information 1 }
+
+Slave-PDUStatus	OBJECT-TYPE
+    SYNTAX		INTEGER {OFFLINE(0),ONLINE(1),DISABLED(2)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave PDU ONLINE / OFFLINE or DISABLED status."
+    
+    ::= { Slave-Information 2 }
+
+Slave-PDUAddress	OBJECT-TYPE
+    SYNTAX		INTEGER (1..32)
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave PDU MODBUS Address."
+    
+    ::= { Slave-Information 3 }
+
+Slave-PDUFirmware	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave PDU Firmware version."
+    
+    ::= { Slave-Information 4 }
+
+Slave-Info-NotUsed2	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Not used."
+    
+    ::= { Slave-Information 5 }
+
+Slave-PDUNoSockets	OBJECT-TYPE
+    SYNTAX		INTEGER (0..48)
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave PDU Number of sockets."
+    
+    ::= { Slave-Information 6 }
+
+Slave-Info-NotUsed3	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Not used."
+    
+    ::= { Slave-Information 7 }
+
+Slave-Info-NotUsed4	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Not used."
+    
+    ::= { Slave-Information 8 }
+
+Slave-Info-PDUReset	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	write-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave PDU Reset."
+    
+    ::= { Slave-Information 9 }
+
+Slave-Info-PDUkWhReset	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	write-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave PDU Reset energy."
+    
+    ::= { Slave-Information 10 }
+
+-- PDU.Slave-Status
+
+Slave-Meter1-VRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 1 RMS Voltage (VAC) x10."
+    
+    ::= { Slave-Status 1 }
+
+Slave-Meter1-IRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 1 RMS Current (A) x10."
+    
+    ::= { Slave-Status 2 }
+
+Slave-Meter1-KWH	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 1 total energy consumption (kW/h) x10."
+    
+    ::= { Slave-Status 3 }
+
+Slave-Meter1-KW	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 1 Kilowatts (kW) x1000."
+    
+    ::= { Slave-Status 4 }
+
+Slave-Meter1-TPMU	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 1 Internal Temperature (C) x10."
+    
+    ::= { Slave-Status 5 }
+
+Slave-Status-NotUsed1	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Not used."
+    
+    ::= { Slave-Status 6 }
+
+Slave-Status-NotUsed2	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Not used."
+    
+    ::= { Slave-Status 7 }
+
+Slave-Meter1-IPK	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 1 Peak Current (A) x10."
+    
+    ::= { Slave-Status 8 }
+
+Slave-Meter1-VPK	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 1 Peak Voltage (V) x10."
+    
+    ::= { Slave-Status 9 }
+
+Slave-Meter1-PF	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 1 Power Factor x1000"
+    
+    ::= { Slave-Status 10 }
+
+Slave-Status-NotUsed3	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Not used."
+    
+    ::= { Slave-Status 11 }
+
+Slave-Status-NotUsed4	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Not used."
+    
+    ::= { Slave-Status 12 }
+
+Slave-Status-NotUsed5	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Not used."
+    
+    ::= { Slave-Status 13 }    
+
+Slave-Meter1-Freq	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 1 Frequency x10"
+    
+    ::= { Slave-Status 14 }
+
+Slave-Meter2-VRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 2 RMS Voltage (VAC) x10."
+    
+    ::= { Slave-Status 15 }
+
+Slave-Meter2-IRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 2 RMS Current (A) x10."
+    
+    ::= { Slave-Status 16 }
+
+Slave-Meter2-KWH	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 2 total energy consumption (kW/h) x10."
+    
+    ::= { Slave-Status 17 }
+
+Slave-Meter2-KW	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 2 Kilowatts (kW) x1000."
+    
+    ::= { Slave-Status 18 }
+
+Slave-Meter2-TPMU	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 2 Internal Temperature (C) x10."
+    
+    ::= { Slave-Status 19 }
+
+Slave-Meter2-IPK	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 2 Peak Current (A) x10."
+    
+    ::= { Slave-Status 20 }
+
+Slave-Meter2-VPK	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 2 Peak Voltage (V) x10."
+    
+    ::= { Slave-Status 21 }
+
+Slave-Meter2-PF	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 2 Power Factor x1000"
+    
+    ::= { Slave-Status 22 }
+
+Slave-Meter2-Freq	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 2 Frequency x10"
+    
+    ::= { Slave-Status 23 }
+
+Slave-Meter3-VRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 3 RMS Voltage (VAC) x10."
+    
+    ::= { Slave-Status 24 }
+
+Slave-Meter3-IRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 3 RMS Current (A) x10."
+    
+    ::= { Slave-Status 25 }
+
+Slave-Meter3-KWH	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 3 total energy consumption (kW/h) x10."
+    
+    ::= { Slave-Status 26 }
+
+Slave-Meter3-KW	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 3 Kilowatts (kW) x1000."
+    
+    ::= { Slave-Status 27 }
+
+Slave-Meter3-TPMU	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 3 Internal Temperature (C) x10."
+    
+    ::= { Slave-Status 28 }
+
+Slave-Meter3-IPK	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 3 Peak Current (A) x10."
+    
+    ::= { Slave-Status 29 }
+
+Slave-Meter3-VPK	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 3 Peak Voltage (V) x10."
+    
+    ::= { Slave-Status 30 }
+
+Slave-Meter3-PF	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 3 Power Factor x1000"
+    
+    ::= { Slave-Status 31 }
+
+Slave-Meter3-Freq	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Slave Meter 3 Frequency x10"
+    
+    ::= { Slave-Status 32 }
+
+-- PDU.Slave-Sockets
+
+Slave-SocketsTable	OBJECT-TYPE
+    SYNTAX		SEQUENCE OF PDUStatusEntry
+    MAX-ACCESS  	not-accessible
+    STATUS  	current
+    DESCRIPTION   ""
+    
+    ::= { Slave-Sockets 1 }
+    
+Slave-SocketsEntry	OBJECT-TYPE
+    SYNTAX		Slave-SocketsEntry
+    MAX-ACCESS	not-accessible
+    STATUS		current
+    DESCRIPTION   "Table of Socket status parameters."
+    INDEX		{ SocketIndex }    
+    
+    ::= { Slave-SocketsTable 1 }
+
+Slave-SocketsEntry ::= SEQUENCE {
+
+	  Socket-Index
+		INTEGER,
+	  Socket-Number
+		INTEGER,
+	  Socket-NotUsed1
+		DisplayString,
+	  Socket-ONOFF
+		INTEGER,
+	  Socket-AMPS
+		INTEGER,
+	  Socket-KWH
+		Integer32,
+  }
+
+Socket-Index	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	not-accessible
+    STATUS  	current
+    DESCRIPTION   "Socket index"
+    
+    ::= { Slave-SocketsEntry 1 }
+
+Socket-Number	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	not-accessible
+    STATUS  	current
+    DESCRIPTION   "Socket number [Range 1 to 48]"
+    
+    ::= { Slave-SocketsEntry 2 }
+
+Socket-NotUsed1		OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Not used."
+    
+    ::= { Slave-SocketsEntry 3 }
+
+Socket-ONOFF	OBJECT-TYPE
+    SYNTAX		INTEGER {OFF(0),ON(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Socket ON/OFF status [Compatible - Write ignored]"
+    
+    ::= { Slave-SocketsEntry 4 }
+
+Socket-AMPS		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Socket current (Amps) x10."
+    
+    ::= { Slave-SocketsEntry 5 }
+
+Socket-KWH		OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Socket Energy (kWh) x10."
+    
+    ::= { Slave-SocketsEntry 6 }
+
+Socket-Selected	OBJECT-TYPE
+    SYNTAX		INTEGER (1..48)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Compatible - Currently selected socket.
+    Set to number between 1 and Slave-PDUNoSockets"
+    
+    ::= { Slave-Sockets 2 }    
+
+-- PDU.Slave-Environmental
+
+Slave-Environmental-Temp1	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 1 (C) x100."
+    
+    ::= { Slave-Environmental 1 }
+
+Slave-Environmental-Temp2	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 2 (C) x100."
+    
+    ::= { Slave-Environmental 2 }
+
+Slave-Environmental-Temp3	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 3 (C) x100."
+    
+    ::= { Slave-Environmental 3 }
+
+Slave-Environmental-Temp4	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 4 (C) x100."
+    
+    ::= { Slave-Environmental 4 }
+
+Slave-Environmental-Temp5	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 5 (C) x100."
+    
+    ::= { Slave-Environmental 5 }
+
+Slave-Environmental-Temp6	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 6 (C) x100."
+    
+    ::= { Slave-Environmental 6 }
+
+Slave-Environmental-Temp7	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 7 (C) x100."
+    
+    ::= { Slave-Environmental 7 }
+
+Slave-Environmental-Temp8	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 8 (C) x100."
+    
+    ::= { Slave-Environmental 8 }
+
+Slave-Environmental-HumidityTemp	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS		read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Humidity probe Temperature (C) x100."
+    
+    ::= { Slave-Environmental 9 }
+
+Slave-Environmental-Humidity	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental humidity probe (%) x100."
+    
+    ::= { Slave-Environmental 10 }
+
+Slave-Environmental-Contact1	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental contact input 1 status."
+    
+    ::= { Slave-Environmental 11 }
+
+Slave-Environmental-Contact2	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental contact input 2 status."
+    
+    ::= { Slave-Environmental 12 }
+
+Slave-Environmental-Contact3	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental contact input 3 status."
+    
+    ::= { Slave-Environmental 13 }
+
+
+-- PDU.Slave-Security
+
+Slave-Security-Door	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Security door contact status."
+    
+    ::= { Slave-Security 1 }
+
+Slave-Security-Lock	OBJECT-TYPE
+    SYNTAX			INTEGER {LOCKED(0),UNLOCKED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Compatible - Security lock status.
+    Set with any data to force unlock."
+    
+    ::= { Slave-Security 2 }
+
+
+-- Slave-Traps.Slave-TrapNotifications
+
+Slave-Meter1-VRMSLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter1-VRMS }
+    STATUS current
+    DESCRIPTION         "Meter 1 Voltage LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 1 }
+
+Slave-Meter1-VRMSHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter1-VRMS }
+    STATUS current
+    DESCRIPTION         "Meter 1 Voltage HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 2 }
+
+Slave-Meter1-IRMSLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter1-IRMS }
+    STATUS current
+    DESCRIPTION         "Meter 1 Amps LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 3 }
+
+Slave-Meter1-IRMSHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter1-IRMS }
+    STATUS current
+    DESCRIPTION         "Meter 1 Amps HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 4 }
+
+Slave-Meter1-KWSLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter1-KW }
+    STATUS current
+    DESCRIPTION         "Meter 1 Kilowatts LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 5 }
+
+Slave-Meter1-KWSHigh			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter1-KW }
+    STATUS current
+    DESCRIPTION         "Meter 1 Kilowatts HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 6 }
+
+Slave-Meter1-TempLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter1-TPMU }
+    STATUS current
+    DESCRIPTION         "Meter 1 Temperature LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 7 }
+
+Slave-Meter1-TempHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter1-TPMU }
+    STATUS current
+    DESCRIPTION         "Meter 1 Temperature HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 8 }
+
+Slave-Socket-AMPSLow		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Socket-Number }
+    STATUS current
+    DESCRIPTION         "Socket Amps LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 9 }
+
+Slave-Socket-AMPSHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Socket-Number }
+    STATUS current
+    DESCRIPTION         "Socket Amps HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 10 }
+
+Slave-Environmental-Temp1Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp1 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 1 LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 11 }
+
+Slave-Environmental-Temp1High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp1 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 1 HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 12 }
+
+Slave-Environmental-Temp2Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp2 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 2 LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 13 }
+
+Slave-Environmental-Temp2High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp2 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 2 HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 14 }
+
+Slave-Environmental-Temp3Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp3 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 3 LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 15 }
+
+Slave-Environmental-Temp3High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp3 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 3 HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 16 }
+
+Slave-Environmental-Temp4Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp4 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 4 LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 17 }
+
+Slave-Environmental-Temp4High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp4 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 4 HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 18 }
+    
+Slave-Environmental-Temp5Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp5 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 5 LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 19 }
+
+Slave-Environmental-Temp5High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp5 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 5 HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 20 }
+
+Slave-Environmental-Temp6Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp6 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 6 LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 21 }
+
+Slave-Environmental-Temp6High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp6 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 6 HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 22 }
+
+Slave-Environmental-Temp7Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp7 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 7 LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 23 }
+
+Slave-Environmental-Temp7High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp7 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 7 HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 24 }
+
+Slave-Environmental-Temp8Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp8 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 8 LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 25 }
+
+Slave-Environmental-Temp8High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Temp8 }
+    STATUS current
+    DESCRIPTION         "Environmental Temperature probe 8 HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 26 }
+
+Slave-Environmental-HumidityTempLow		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-HumidityTemp }
+    STATUS current
+    DESCRIPTION         "Environmental Humidity probe Temperature LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 27 }
+
+Slave-Environmental-HumidityTempHigh	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-HumidityTemp }
+    STATUS current
+    DESCRIPTION         "Environmental Humidity probe Temperature HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 28 }
+
+Slave-Environmental-HumidityLow	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Humidity }
+    STATUS current
+    DESCRIPTION         "Environmental Humidity probe LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 29 }
+
+Slave-Environmental-HumidityHigh	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Humidity }
+    STATUS current
+    DESCRIPTION         "Environmental Humidity probe HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 30 }
+
+Slave-Environmental-Contact1Open	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Contact1 }
+    STATUS current
+    DESCRIPTION         "Environmental Contact 1 OPEN trap notification"
+    
+    ::= { Slave-TrapNotifications 31 }
+
+Slave-Environmental-Contact1Closed	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Contact1 }
+    STATUS current
+    DESCRIPTION         "Environmental Contact 1 CLOSED trap notification"
+    
+    ::= { Slave-TrapNotifications 32 }
+
+Slave-Environmental-Contact2Open	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Contact2 }
+    STATUS current
+    DESCRIPTION         "Environmental Contact 2 OPEN trap notification"
+    
+    ::= { Slave-TrapNotifications 33 }
+
+Slave-Environmental-Contact2Closed	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Contact2 }
+    STATUS current
+    DESCRIPTION         "Environmental Contact 2 CLOSED trap notification"
+    
+    ::= { Slave-TrapNotifications 34 }
+
+Slave-Environmental-Contact3Open	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Contact3 }
+    STATUS current
+    DESCRIPTION         "Environmental Contact 3 OPEN trap notification"
+    
+    ::= { Slave-TrapNotifications 35 }
+
+Slave-Environmental-Contact3Closed	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Environmental-Contact3 }
+    STATUS current
+    DESCRIPTION         "Environmental Contact 3 CLOSED trap notification"
+    
+    ::= { Slave-TrapNotifications 36 }
+
+Slave-Security-DoorOpen		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Security-Door }
+    STATUS current
+    DESCRIPTION         "Environmental Door OPEN trap notification"
+    
+    ::= { Slave-TrapNotifications 37 }
+
+Slave-Security-DoorClosed		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Security-Door }
+    STATUS current
+    DESCRIPTION         "Environmental Door CLOSED trap notification"
+    
+    ::= { Slave-TrapNotifications 38 }
+
+Slave-Security-LockUnlocked	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Security-Lock }
+    STATUS current
+    DESCRIPTION         "Environmental Lock UNLOCKED trap notification"
+    
+    ::= { Slave-TrapNotifications 39 }
+
+Slave-Security-LockLocked		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-Security-Lock }
+    STATUS current
+    DESCRIPTION         "Environmental Lock LOCKED trap notification"
+    
+    ::= { Slave-TrapNotifications 40 }
+
+Slave-PDUOffline			NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, Slave-PDUAddress, Slave-PDUStatus }
+    STATUS current
+    DESCRIPTION         "PDU OFFLINE trap notification"
+    
+    ::= { Slave-TrapNotifications 41 }
+
+Slave-Meter1-PFLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter1-PF }
+    STATUS current
+    DESCRIPTION         "Meter 1 Power Factor LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 42 }
+
+Slave-Meter1-PFHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter1-PF }
+    STATUS current
+    DESCRIPTION         "Meter 1 Power Factor HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 43 }
+
+Slave-Meter1-FreqLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter1-Freq }
+    STATUS current
+    DESCRIPTION         "Meter 1 Frequency LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 44 }
+
+Slave-Meter1-FreqHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter1-Freq }
+    STATUS current
+    DESCRIPTION         "Meter 1 Frequency HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 45 }
+
+Slave-Meter2-VRMSLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter2-VRMS }
+    STATUS current
+    DESCRIPTION         "Meter 2 Voltage LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 46 }
+
+Slave-Meter2-VRMSHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter2-VRMS }
+    STATUS current
+    DESCRIPTION         "Meter 2 Voltage HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 47 }
+
+Slave-Meter2-IRMSLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter2-IRMS }
+    STATUS current
+    DESCRIPTION         "Meter 2 Amps LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 48 }
+
+Slave-Meter2-IRMSHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter2-IRMS }
+    STATUS current
+    DESCRIPTION         "Meter 2 Amps HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 49 }
+
+Slave-Meter2-KWSLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter2-KW }
+    STATUS current
+    DESCRIPTION         "Meter 2 Kilowatts LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 50 }
+
+Slave-Meter2-KWSHigh			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter2-KW }
+    STATUS current
+    DESCRIPTION         "Meter 2 Kilowatts HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 51 }
+
+Slave-Meter2-TempLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter2-TPMU }
+    STATUS current
+    DESCRIPTION         "Meter 2 Temperature LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 52 }
+
+Slave-Meter2-TempHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter2-TPMU }
+    STATUS current
+    DESCRIPTION         "Meter 2 Temperature HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 53 }
+
+Slave-Meter2-PFLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter2-PF }
+    STATUS current
+    DESCRIPTION         "Meter 2 Power Factor LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 54 }
+
+Slave-Meter2-PFHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter2-PF }
+    STATUS current
+    DESCRIPTION         "Meter 2 Power Factor HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 55 }
+
+Slave-Meter2-FreqLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter2-Freq }
+    STATUS current
+    DESCRIPTION         "Meter 2 Frequency LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 56 }
+
+Slave-Meter2-FreqHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter2-Freq }
+    STATUS current
+    DESCRIPTION         "Meter 2 Frequency HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 57 }
+
+Slave-Meter3-VRMSLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter3-VRMS }
+    STATUS current
+    DESCRIPTION         "Meter 3 Voltage LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 58 }
+
+Slave-Meter3-VRMSHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter3-VRMS }
+    STATUS current
+    DESCRIPTION         "Meter 3 Voltage HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 59 }
+
+Slave-Meter3-IRMSLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter3-IRMS }
+    STATUS current
+    DESCRIPTION         "Meter 3 Amps LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 60 }
+
+Slave-Meter3-IRMSHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter3-IRMS }
+    STATUS current
+    DESCRIPTION         "Meter 3 Amps HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 61 }
+
+Slave-Meter3-KWSLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter3-KW }
+    STATUS current
+    DESCRIPTION         "Meter 3 Kilowatts LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 62 }
+
+Slave-Meter3-KWSHigh			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter3-KW }
+    STATUS current
+    DESCRIPTION         "Meter 3 Kilowatts HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 63 }
+
+Slave-Meter3-TempLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter3-TPMU }
+    STATUS current
+    DESCRIPTION         "Meter 3 Temperature LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 64 }
+
+Slave-Meter3-TempHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter3-TPMU }
+    STATUS current
+    DESCRIPTION         "Meter 3 Temperature HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 65 }
+
+Slave-Meter3-PFLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter3-PF }
+    STATUS current
+    DESCRIPTION         "Meter 3 Power Factor LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 66 }
+
+Slave-Meter3-PFHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter3-PF }
+    STATUS current
+    DESCRIPTION         "Meter 3 Power Factor HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 67 }
+
+Slave-Meter3-FreqLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter3-Freq }
+    STATUS current
+    DESCRIPTION         "Meter 3 Frequency LOW trap notification"
+    
+    ::= { Slave-TrapNotifications 68 }
+
+Slave-Meter3-FreqHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, Slave-PDUAddress, Slave-Meter3-Freq }
+    STATUS current
+    DESCRIPTION         "Meter 3 Frequency HIGH trap notification"
+    
+    ::= { Slave-TrapNotifications 69 }
+
+
+-- Slave-Global
+
+Slave-Global-Table		OBJECT-TYPE
+    SYNTAX			SEQUENCE OF Slave-Global-Entry
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	""
+    
+    ::= { Slave-Global 1 }
+
+Slave-Global-Entry		OBJECT-TYPE
+    SYNTAX			Slave-Global-Entry
+    MAX-ACCESS		not-accessible
+    STATUS			current
+    DESCRIPTION   	"Table of Trap notification destinations."
+    INDEX			{ Slave-Global-Index }    
+    
+    ::= { Slave-Global-Table 1 }
+
+Slave-Global-Entry ::= SEQUENCE {
+
+	  Slave-Global-Index
+		INTEGER,
+	  Slave-Global-Status
+		INTEGER,
+	  Slave-Global-Address
+		INTEGER,
+	  Slave-Global-Firmware
+		DisplayString,
+	  Slave-Global-Serial
+		DisplayString,
+	  Slave-Global-NoSockets
+		INTEGER,
+	  Slave-Global-Meter1-VRMS
+		INTEGER,
+	  Slave-Global-Meter1-IRMS
+		INTEGER,
+	  Slave-Global-Meter1-VRMS
+		INTEGER,
+	  Slave-Global-Meter1-KWH
+		Integer32,
+	  Slave-Global-Meter1-KW
+		INTEGER,
+	  Slave-Global-Meter1-TPMU
+		INTEGER,
+	  Slave-Global-Meter1-PF
+		INTEGER,
+	  Slave-Global-Sockets
+		Integer32,
+	  Slave-Global-Socket1Amps
+		INTEGER,
+	  Slave-Global-Socket2Amps
+		INTEGER,
+	  Slave-Global-Socket3Amps
+		INTEGER,
+	  Slave-Global-Socket4Amps
+		INTEGER,
+	  Slave-Global-Socket5Amps
+		INTEGER,
+	  Slave-Global-Socket6Amps
+		INTEGER,
+	  Slave-Global-Socket7Amps
+		INTEGER,
+	  Slave-Global-Socket8Amps
+		INTEGER,
+	  Slave-Global-Socket9Amps
+		INTEGER,
+	  Slave-Global-Socket10Amps
+		INTEGER,
+	  Slave-Global-Socket11Amps
+		INTEGER,
+	  Slave-Global-Socket12Amps
+		INTEGER,
+	  Slave-Global-Socket13Amps
+		INTEGER,
+	  Slave-Global-Socket14Amps
+		INTEGER,
+	  Slave-Global-Socket15Amps
+		INTEGER,
+	  Slave-Global-Socket16Amps
+		INTEGER,
+	  Slave-Global-Socket17Amps
+		INTEGER,
+	  Slave-Global-Socket18Amps
+		INTEGER,
+	  Slave-Global-Socket19Amps
+		INTEGER,
+	  Slave-Global-Socket20Amps
+		INTEGER,
+	  Slave-Global-Socket21Amps
+		INTEGER,
+	  Slave-Global-Socket22Amps
+		INTEGER,
+	  Slave-Global-Socket23Amps
+		INTEGER,
+	  Slave-Global-Socket24Amps
+		INTEGER,
+	  Slave-Global-Socket25Amps
+		INTEGER,
+	  Slave-Global-Socket26Amps
+		INTEGER,
+	  Slave-Global-Socket27Amps
+		INTEGER,
+	  Slave-Global-Socket28Amps
+		INTEGER,
+	  Slave-Global-Socket29Amps
+		INTEGER,
+	  Slave-Global-Socket30Amps
+		INTEGER,
+	  Slave-Global-Socket31Amps
+		INTEGER,
+	  Slave-Global-Socket32Amps
+		INTEGER,
+	  Slave-Global-Socket1kWh
+		Integer32,
+	  Slave-Global-Socket2kWh
+		Integer32,
+	  Slave-Global-Socket3kWh
+		Integer32,
+	  Slave-Global-Socket4kWh
+		Integer32,
+	  Slave-Global-Socket5kWh
+		Integer32,
+	  Slave-Global-Socket6kWh
+		Integer32,
+	  Slave-Global-Socket7kWh
+		Integer32,
+	  Slave-Global-Socket8kWh
+		Integer32,
+	  Slave-Global-Socket9kWh
+		Integer32,
+	  Slave-Global-Socket10kWh
+		Integer32,
+	  Slave-Global-Socket11kWh
+		Integer32,
+	  Slave-Global-Socket12kWh
+		Integer32,
+	  Slave-Global-Socket13kWh
+		Integer32,
+	  Slave-Global-Socket14kWh
+		Integer32,
+	  Slave-Global-Socket15kWh
+		Integer32,
+	  Slave-Global-Socket16kWh
+		Integer32,
+	  Slave-Global-Socket17kWh
+		Integer32,
+	  Slave-Global-Socket18kWh
+		Integer32,
+	  Slave-Global-Socket19kWh
+		Integer32,
+	  Slave-Global-Socket20kWh
+		Integer32,
+	  Slave-Global-Socket21kWh
+		Integer32,
+	  Slave-Global-Socket22kWh
+		Integer32,
+	  Slave-Global-Socket23kWh
+		Integer32,
+	  Slave-Global-Socket24kWh
+		Integer32,
+	  Slave-Global-Socket25kWh
+		Integer32,
+	  Slave-Global-Socket26kWh
+		Integer32,
+	  Slave-Global-Socket27kWh
+		Integer32,
+	  Slave-Global-Socket28kWh
+		Integer32,
+	  Slave-Global-Socket29kWh
+		Integer32,
+	  Slave-Global-Socket30kWh
+		Integer32,
+	  Slave-Global-Socket31kWh
+		Integer32,
+	  Slave-Global-Socket32kWh
+		Integer32,
+	  Slave-Global-Socket33Amps
+		INTEGER,
+	  Slave-Global-Socket34Amps
+		INTEGER,
+	  Slave-Global-Socket35Amps
+		INTEGER,
+	  Slave-Global-Socket36Amps
+		INTEGER,
+	  Slave-Global-Socket37Amps
+		INTEGER,
+	  Slave-Global-Socket38Amps
+		INTEGER,
+	  Slave-Global-Socket39Amps
+		INTEGER,
+	  Slave-Global-Socket40Amps
+		INTEGER,
+	  Slave-Global-Socket41Amps
+		INTEGER,
+	  Slave-Global-Socket42Amps
+		INTEGER,
+	  Slave-Global-Socket43Amps
+		INTEGER,
+	  Slave-Global-Socket44Amps
+		INTEGER,
+	  Slave-Global-Socket45Amps
+		INTEGER,
+	  Slave-Global-Socket46Amps
+		INTEGER,
+	  Slave-Global-Socket47Amps
+		INTEGER,
+  	  Slave-Global-Socket48Amps
+		INTEGER,
+	  Slave-Global-Socket33kWh
+		Integer32,
+	  Slave-Global-Socket34kWh
+		Integer32,
+	  Slave-Global-Socket35kWh
+		Integer32,
+	  Slave-Global-Socket36kWh
+		Integer32,
+	  Slave-Global-Socket37kWh
+		Integer32,
+	  Slave-Global-Socket38kWh
+		Integer32,
+	  Slave-Global-Socket39kWh
+		Integer32,
+	  Slave-Global-Socket40kWh
+		Integer32,
+	  Slave-Global-Socket41kWh
+		Integer32,
+	  Slave-Global-Socket42kWh
+		Integer32,
+	  Slave-Global-Socket43kWh
+		Integer32,
+	  Slave-Global-Socket44kWh
+		Integer32,
+	  Slave-Global-Socket45kWh
+		Integer32,
+	  Slave-Global-Socket46kWh
+		Integer32,
+	  Slave-Global-Socket47kWh
+		Integer32,
+	  Slave-Global-Socket48kWh
+		Integer32,
+	  Slave-Global-Sockets2
+	  	Integer32,
+	  Slave-Global-Meter1-Freq
+	  	INTEGER,
+	  Slave-Global-Meter2-VRMS
+		INTEGER,
+	  Slave-Global-Meter2-IRMS
+		INTEGER,
+	  Slave-Global-Meter2-VRMS
+		INTEGER,
+	  Slave-Global-Meter2-KWH
+		Integer32,
+	  Slave-Global-Meter2-KW
+		INTEGER,
+	  Slave-Global-Meter2-TPMU
+		INTEGER,
+	  Slave-Global-Meter2-PF
+		INTEGER,
+	  Slave-Global-Meter2-Freq
+	  	INTEGER,
+	  Slave-Global-Meter3-VRMS
+		INTEGER,
+	  Slave-Global-Meter3-IRMS
+		INTEGER,
+	  Slave-Global-Meter3-VRMS
+		INTEGER,
+	  Slave-Global-Meter3-KWH
+		Integer32,
+	  Slave-Global-Meter3-KW
+		INTEGER,
+	  Slave-Global-Meter3-TPMU
+		INTEGER,
+	  Slave-Global-Meter3-PF
+		INTEGER,
+	  Slave-Global-Meter3-Freq
+	  	INTEGER,
+	  	
+}
+
+Slave-Global-Index		OBJECT-TYPE
+    SYNTAX			INTEGER (0..31)
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	"PDU index [0..NoPDUs]."
+    
+    ::= { Slave-Global-Entry 1 }
+
+Slave-Global-Status		OBJECT-TYPE
+    SYNTAX		INTEGER {OFFLINE(0),ONLINE(1),DISABLED(2)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Compatible - PDU ONLINE / OFFLINE or DISABLED status."
+    
+    ::= { Slave-Global-Entry 2 }
+
+Slave-Global-Address		OBJECT-TYPE
+    SYNTAX		INTEGER (1..32)
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - PDU MODBUS Address."
+    
+    ::= { Slave-Global-Entry 3 }
+
+Slave-Global-NoSockets		OBJECT-TYPE
+    SYNTAX		INTEGER (0..32)
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - PDU Number of sockets."
+    
+    ::= { Slave-Global-Entry 4 }
+
+Slave-Global-Meter1-VRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Meter 1 RMS Voltage (VAC) x10."
+    
+    ::= { Slave-Global-Entry 5 }
+
+Slave-Global-Meter1-IRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Meter 1 RMS Current (A) x10."
+    
+    ::= { Slave-Global-Entry 6 }
+
+Slave-Global-Meter1-KWH	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Meter 1 Total energy consumption (kW/h) x10."
+    
+    ::= { Slave-Global-Entry 7 }
+
+Slave-Global-Meter1-KW	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Meter 1 Kilowatts (kW) x1000."
+    
+    ::= { Slave-Global-Entry 8 }
+
+Slave-Global-Meter1-TPMU	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Meter 1 Internal Temperature (C) x10."
+    
+    ::= { Slave-Global-Entry 9 }
+
+Slave-Global-Meter1-PF	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Compatible - Meter 1 Power Factor x1000"
+    
+    ::= { Slave-Global-Entry 10 }
+    
+Slave-Global-Environmental-Temp1	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 1 (C) x100."
+    
+    ::= { Slave-Global-Entry 11 }
+
+Slave-Global-Environmental-Temp2	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 2 (C) x100."
+    
+    ::= { Slave-Global-Entry 12 }
+
+Slave-Global-Environmental-Temp3	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 3 (C) x100."
+    
+    ::= { Slave-Global-Entry 13 }
+
+Slave-Global-Environmental-Temp4	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 4 (C) x100."
+    
+    ::= { Slave-Global-Entry 14 }
+
+Slave-Global-Environmental-Temp5	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 5 (C) x100."
+    
+    ::= { Slave-Global-Entry 15 }
+
+Slave-Global-Environmental-Temp6	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 6 (C) x100."
+    
+    ::= { Slave-Global-Entry 16 }
+
+Slave-Global-Environmental-Temp7	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 7 (C) x100."
+    
+    ::= { Slave-Global-Entry 17 }
+
+Slave-Global-Environmental-Temp8	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental Temperature probe 8 (C) x100."
+    
+    ::= { Slave-Global-Entry 18 }
+
+Slave-Global-Environmental-HumidityTemp	OBJECT-TYPE
+    SYNTAX				INTEGER
+    MAX-ACCESS		  	read-only
+    STATUS  			current
+    DESCRIPTION			"Compatible - Environmental Humidity probe Temperature (C) x100."
+    
+    ::= { Slave-Global-Entry 19 }
+
+Slave-Global-Environmental-Humidity	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental humidity probe (%) x100."
+    
+    ::= { Slave-Global-Entry 20 }
+
+Slave-Global-Environmental-Contact1	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1),NONE(3)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental contact input 1 status.
+    Set with any data to clear status."
+    
+    ::= { Slave-Global-Entry 21 }
+
+Slave-Global-Environmental-Contact2	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental contact input 2 status.
+    Set with any data to clear status."
+    
+    ::= { Slave-Global-Entry 22 }
+
+Slave-Global-Environmental-Contact3	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental contact input 3 status.
+    Set with any data to clear status."
+    
+    ::= { Slave-Global-Entry 23 }
+
+Slave-Global-Security-Door	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental door contact status."
+    
+    ::= { Slave-Global-Entry 24 }
+
+Slave-Global-Security-Lock	OBJECT-TYPE
+    SYNTAX			INTEGER {LOCKED(0),UNLOCKED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Compatible - Environmental lock status.
+    Set with any data to force unlock."
+    
+    ::= { Slave-Global-Entry 25 }
+
+Slave-Global-Sockets	OBJECT-TYPE
+    SYNTAX			INTEGER32
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket status bits 1 to 32
+    Set or clear bit to control socket, Bit 0 = Socket 1, Bit 31 = Socket 32"
+    
+    ::= { Slave-Global-Entry 26 }
+
+Slave-Global-Socket1Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 27 }
+
+Slave-Global-Socket2Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 28 }
+
+Slave-Global-Socket3Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 29 }
+
+Slave-Global-Socket4Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 30 }
+
+Slave-Global-Socket5Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 31 }
+
+Slave-Global-Socket6Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 32 }
+
+Slave-Global-Socket7Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 33 }
+
+Slave-Global-Socket8Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 34 }
+
+Slave-Global-Socket9Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 35 }
+
+Slave-Global-Socket10Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 36 }
+
+Slave-Global-Socket11Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 37 }
+
+Slave-Global-Socket12Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 38 }
+
+Slave-Global-Socket13Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 39 }
+
+Slave-Global-Socket14Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 40 }
+
+Slave-Global-Socket15Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 41 }
+
+Slave-Global-Socket16Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 42 }
+
+Slave-Global-Socket17Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 43 }
+
+Slave-Global-Socket18Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 44 }
+
+Slave-Global-Socket19Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 45 }
+
+Slave-Global-Socket20Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 46 }
+
+Slave-Global-Socket21Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 47 }
+
+Slave-Global-Socket22Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 48 }
+
+Slave-Global-Socket23Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 49 }
+
+Slave-Global-Socket24Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 50 }
+
+Slave-Global-Socket25Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 51 }
+
+Slave-Global-Socket26Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 52 }
+
+Slave-Global-Socket27Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 53 }
+
+Slave-Global-Socket28Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 54 }
+
+Slave-Global-Socket29Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 55 }
+
+Slave-Global-Socket30Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 56 }
+
+Slave-Global-Socket31Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 57 }
+
+Slave-Global-Socket32Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 58 }
+
+Slave-Global-Socket1kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 59 }
+
+Slave-Global-Socket2kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 60 }
+
+Slave-Global-Socket3kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 61 }
+
+Slave-Global-Socket4kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 62 }
+
+Slave-Global-Socket5kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 63 }
+
+Slave-Global-Socket6kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 64 }
+
+Slave-Global-Socket7kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 65 }
+
+Slave-Global-Socket8kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 66 }
+
+Slave-Global-Socket9kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 67 }
+
+Slave-Global-Socket10kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 68 }
+
+Slave-Global-Socket11kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 69 }
+
+Slave-Global-Socket12kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 70 }
+
+Slave-Global-Socket13kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 71 }
+
+Slave-Global-Socket14kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 72 }
+
+Slave-Global-Socket15kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 73 }
+
+Slave-Global-Socket16kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 74 }
+
+Slave-Global-Socket17kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 75 }
+
+Slave-Global-Socket18kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 76 }
+
+Slave-Global-Socket19kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 77 }
+
+Slave-Global-Socket20kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 78 }
+
+Slave-Global-Socket21kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 79 }
+
+Slave-Global-Socket22kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 80 }
+
+Slave-Global-Socket23kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 81 }
+
+Slave-Global-Socket24kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 82 }
+
+Slave-Global-Socket25kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 83 }
+
+Slave-Global-Socket26kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 84 }
+
+Slave-Global-Socket27kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 85 }
+
+Slave-Global-Socket28kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 86 }
+
+Slave-Global-Socket29kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 87 }
+
+Slave-Global-Socket30kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 88 }
+
+Slave-Global-Socket31kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 89 }
+
+Slave-Global-Socket32kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Compatible - Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 90 }
+
+Slave-Global-Socket33Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 91 }
+
+Slave-Global-Socket34Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 92 }
+
+Slave-Global-Socket35Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 93 }
+
+Slave-Global-Socket36Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 94 }
+
+Slave-Global-Socket37Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 95 }
+
+Slave-Global-Socket38Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 96 }
+
+Slave-Global-Socket39Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 97 }
+
+Slave-Global-Socket40Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 98 }
+
+Slave-Global-Socket41Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 99 }
+
+Slave-Global-Socket42Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 100 }
+
+Slave-Global-Socket43Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 101 }
+
+Slave-Global-Socket44Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 102 }
+
+Slave-Global-Socket45Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 103 }
+
+Slave-Global-Socket46Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 104 }
+
+Slave-Global-Socket47Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 105 }
+
+Slave-Global-Socket48Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket Amps value x10."
+    
+    ::= { Slave-Global-Entry 106 }
+
+Slave-Global-Socket33kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 107 }
+
+Slave-Global-Socket34kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 108 }
+
+Slave-Global-Socket35kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 109 }
+
+Slave-Global-Socket36kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 110 }
+
+Slave-Global-Socket37kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 111 }
+
+Slave-Global-Socket38kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 112 }
+
+Slave-Global-Socket39kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 113 }
+
+Slave-Global-Socket40kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 114 }
+
+Slave-Global-Socket41kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 115 }
+
+Slave-Global-Socket42kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 116 }
+
+Slave-Global-Socket43kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 117 }
+
+Slave-Global-Socket44kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 118 }
+
+Slave-Global-Socket45kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 119 }
+
+Slave-Global-Socket46kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 120 }
+
+Slave-Global-Socket47kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 121 }
+
+Slave-Global-Socket48kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Socket kWh value x10."
+    
+    ::= { Slave-Global-Entry 122 }
+
+Slave-Global-Sockets2	OBJECT-TYPE
+    SYNTAX			INTEGER32
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Socket status bits 33-48
+    Set or clear bit to control socket,
+    Bit 0 = Socket 33, Bit 15 = Socket 48"
+    
+    ::= { Slave-Global-Entry 123 }
+
+Slave-Global-Meter1-Freq	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Meter 1 Frequency x10"
+    
+    ::= { Slave-Global-Entry 124 }
+
+Slave-Global-Meter2-VRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Meter 2 RMS Voltage (VAC) x10."
+    
+    ::= { Slave-Global-Entry 125 }
+
+Slave-Global-Meter2-IRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Meter 2 RMS Current (A) x10."
+    
+    ::= { Slave-Global-Entry 126 }
+
+Slave-Global-Meter2-KWH	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Total energy consumption (kW/h) x10."
+    
+    ::= { Slave-Global-Entry 127 }
+
+Slave-Global-Meter2-KW	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Kilowatts (kW) x1000."
+    
+    ::= { Slave-Global-Entry 128 }
+
+Slave-Global-Meter2-TPMU	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Internal Temperature (C) x10."
+    
+    ::= { Slave-Global-Entry 129 }
+
+Slave-Global-Meter2-PF	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Power Factor x1000"
+    
+    ::= { Slave-Global-Entry 130 }
+
+Slave-Global-Meter2-Freq	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Meter 2 Frequency x10"
+    
+    ::= { Slave-Global-Entry 131 }
+
+Slave-Global-Meter3-VRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Meter 3 RMS Voltage (VAC) x10."
+    
+    ::= { Slave-Global-Entry 132 }
+
+Slave-Global-Meter3-IRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Meter 3 RMS Current (A) x10."
+    
+    ::= { Slave-Global-Entry 133 }
+
+Slave-Global-Meter3-KWH	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Total energy consumption (kW/h) x10."
+    
+    ::= { Slave-Global-Entry 134 }
+
+Slave-Global-Meter3-KW	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Kilowatts (kW) x1000."
+    
+    ::= { Slave-Global-Entry 135 }
+
+Slave-Global-Meter3-TPMU	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Internal Temperature (C) x10."
+    
+    ::= { Slave-Global-Entry 136 }
+
+Slave-Global-Meter3-PF	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Power Factor x1000"
+    
+    ::= { Slave-Global-Entry 137 }
+
+Slave-Global-Meter3-Freq	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Meter 3 Frequency x10"
+    
+    ::= { Slave-Global-Entry 138 }
+
+END   

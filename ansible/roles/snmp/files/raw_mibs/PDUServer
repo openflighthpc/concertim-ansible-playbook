@@ -1,0 +1,2570 @@
+-- TPT PDU SNMP configuration MIB
+--
+-- (c) 2011-2012 TPT Limited
+-- 
+-- Written by Designer Systems Ltd
+
+-- V1.03.00
+
+-- PEN 38218 supplied under license by Designer Systems Ltd
+
+PDUServer DEFINITIONS ::= BEGIN
+
+IMPORTS
+   enterprises, IpAddress, Gauge, TimeTicks     FROM RFC1155-SMI
+   DisplayString                                FROM RFC1213-MIB
+   OBJECT-TYPE                                  FROM RFC-1212
+   TRAP-TYPE                                    FROM RFC-1215
+   MODULE-IDENTITY					FROM SNMPv2-SMI
+   Integer32, Unsigned32			      FROM SNMPv2-SMI
+   OBJECT-GROUP						FROM SNMPv2-CONF
+   NOTIFICATION-GROUP			 		FROM SNMPv2-CONF
+   MODULE-COMPLIANCE					FROM SNMPv2-CONF
+   DateAndTime						FROM SNMPv2-TC
+   TEXTUAL-CONVENTION					FROM SNMPv2-TC;
+
+PDUServer			MODULE-IDENTITY
+
+	LAST-UPDATED	"201108241712Z"
+	ORGANIZATION	"Telecom Protection Technologies Ltd"
+	CONTACT-INFO  	"sales@tpt.uk.com"
+	DESCRIPTION		"TPT PDUServer MIB definition"
+
+-- V1.00.00	20/06/2011
+	REVISION		"201106201712Z"
+	DESCRIPTION		"First release (without traps)"
+
+-- V1.01.00	12/08/2011
+	REVISION		"201108121712Z"
+	DESCRIPTION		"Second release (with traps)"
+	
+-- V1.01.01	24/08/2011
+	REVISION		"201108241712Z"
+	DESCRIPTION		"Third release (Added OID's for PDU reset,
+				KWH reset, LCD brightness & Client/Location under
+				Configuration)"
+
+-- V1.01.02	21/09/2011
+	REVISION		"201109211712Z"
+	DESCRIPTION		"Fourth release (Added kW register and kW trap
+				 notification and threshold definitions)"
+	
+-- V1.01.03	9/11/2011
+	REVISION		"201111091712Z"
+	DESCRIPTION		"Fifth release (ASN.1 compatibility update)"
+	
+-- V1.02.00	22/12/2011
+	REVISION		"201112221712Z"
+	DESCRIPTION		"Sixth release (Added global PDU table to allow
+				 access to all PDU data in system. Added IP Address,
+				 Sub-net mask, DHCP configuration and alarm period.)"
+
+-- V1.03.00	20/6/2012
+	REVISION		"201206202012Z"
+	DESCRIPTION		"Seventh release (Added global port status OID)"
+
+-- V1.03.01	28/8/2012
+	REVISION		"201208282012Z"
+	DESCRIPTION		"Eighth release (Added port selection register)"
+
+-- V1.04.00	27/9/2012
+	REVISION		"201209272012Z"
+	DESCRIPTION		"Ninth release (Added global registers for port amps and kWh's)"
+
+	::= { TPTPDUServer 1 }
+
+TPTPDUServer				OBJECT IDENTIFIER ::=  { enterprises 38218 }
+
+PDUServer					OBJECT IDENTIFIER ::=  { TPTPDUServer 1 }
+SiteTotals					OBJECT IDENTIFIER ::=  { PDUServer 1 }
+Status					OBJECT IDENTIFIER ::=  { PDUServer 2 }
+Configuration				OBJECT IDENTIFIER ::=  { PDUServer 3 }
+TRAPDestinations				OBJECT IDENTIFIER ::=  { PDUServer 4 }
+
+PDU						OBJECT IDENTIFIER ::=  { TPTPDUServer 2 }
+PDUInfo					OBJECT IDENTIFIER ::=  { PDU 2 }
+PMUStatus                          	OBJECT IDENTIFIER ::=  { PDU 3 }
+PORTStatus                         	OBJECT IDENTIFIER ::=  { PDU 4 }
+ENVIROStatus                      	OBJECT IDENTIFIER ::=  { PDU 5 }
+ENVIROSecurity                     	OBJECT IDENTIFIER ::=  { PDU 6 }
+PDUTraps					OBJECT IDENTIFIER ::=  { PDU 7 }
+TRAPNotifications				OBJECT IDENTIFIER ::=  { PDUTraps 1 }
+TRAPThresholds				OBJECT IDENTIFIER ::=  { PDUTraps 2 }
+
+PDUGlobal					OBJECT IDENTIFIER ::=  { TPTPDUServer 3 }
+
+
+-- PDUServer.SiteTotals
+
+SiteTotalkWh	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Total Energy used on site in kWh x10."
+    
+    ::= { SiteTotals 1 }
+
+SiteTotalBtu	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Total Energy used on site in Btu x10."
+    
+    ::= { SiteTotals 2 }
+
+SiteTotalKgCO2	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Total Energy used on site in KgCO2 x10."
+    
+    ::= { SiteTotals 3 }
+
+-- PDUServer.Status
+
+NumberOfPDUs	OBJECT-TYPE
+    SYNTAX		INTEGER (0..32)
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Number of PDU's connected to the PDUServer"
+    
+    ::= { Status 1 }
+
+NumberOnline	OBJECT-TYPE
+    SYNTAX		INTEGER (0..32)
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Number of PDU's ONLINE."
+    
+    ::= { Status 2 }
+
+ServerStatus	OBJECT-TYPE
+    SYNTAX		INTEGER {STOPPED(0), RUNNING(1), SEARCHING(2), QUERYING(3)} 
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Current PDUServer operational status."
+    
+    ::= { Status 3 }
+
+-- PDUServer.Configuration
+
+ClientName		OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDUServer Client name."
+    
+    ::= { Configuration 1 }
+
+LocationName	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDUServer Location Name."
+    
+    ::= { Configuration 2 }
+
+FirmwareVersion	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDUServer firmware version."
+    
+    ::= { Configuration 3 }
+
+KgCO2Conversion	OBJECT-TYPE
+    SYNTAX		INTEGER (1..1000)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "KgCO2 conversion factor x1000 [544 = 0.544]"
+    
+    ::= { Configuration 4 }
+
+MODBUSTimeout	OBJECT-TYPE
+    SYNTAX		INTEGER (500..5000)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "MODBUS Timeout in mS."
+    
+    ::= { Configuration 5 }
+
+MODBUSRetry		OBJECT-TYPE
+    SYNTAX		INTEGER (1..10)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "MODBUS Retry value."
+    
+    ::= { Configuration 6 }
+
+LCDBrightness	OBJECT-TYPE
+    SYNTAX		INTEGER (0..1000)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "LCD Backlight brightness."
+    
+    ::= { Configuration 7 }
+
+AlarmPeriod		OBJECT-TYPE
+    SYNTAX		INTEGER (10..1000)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Period between alarm queries in seconds."
+    
+    ::= { Configuration 8 }
+
+DHCPStatus		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "DHCP Enable.Set to 1 to ENABLE or 0 to DISABLE DHCP support."
+    
+    ::= { Configuration 9 }
+
+IPAddress		OBJECT-TYPE
+    SYNTAX		Ipaddress
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "IP Address of PDU Server."
+    
+    ::= { Configuration 10 }
+
+SubNetMask		OBJECT-TYPE
+    SYNTAX		Ipaddress
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Server Sub-net mask."
+    
+    ::= { Configuration 11 }
+
+-- PDUServer.TRAPDestinations
+
+TRAPDestinationsTable	OBJECT-TYPE
+    SYNTAX			SEQUENCE OF TRAPDestinationsEntry
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	""
+    
+    ::= { TRAPDestinations 1 }
+
+TRAPDestinationsEntry	OBJECT-TYPE
+    SYNTAX			TRAPDestinationsEntry
+    MAX-ACCESS		not-accessible
+    STATUS			current
+    DESCRIPTION   	"Table of Trap notification destinations."
+    INDEX			{ TRAPDestinationsIndex }    
+    
+    ::= { TRAPDestinationsTable 1 }
+
+TRAPDestinationsEntry ::= SEQUENCE {
+
+	  TRAPDestinationsIndex
+		INTEGER,
+	  TRAPDestinationsStatus
+		INTEGER,
+	  TRAPDestinationsIP
+		Ipaddress,
+	  TRAPDestinationsCommunity
+		DisplayString,
+  }
+
+TRAPDestinationsIndex	OBJECT-TYPE
+    SYNTAX			INTEGER (0..1)
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	"Trap destination index [0..1]."
+    
+    ::= { TRAPDestinationsEntry 1 }
+
+TRAPDestinationsStatus	OBJECT-TYPE
+    SYNTAX			INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Trap destination status. Set to 1 to ENABLE or 0 to DISABLE trap destination."
+    
+    ::= { TRAPDestinationsEntry 2 }
+
+TRAPDestinationsIP	OBJECT-TYPE
+    SYNTAX			Ipaddress
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Trap destination IP address. Set to the IP address of the destination SNMP manager."
+    
+    ::= { TRAPDestinationsEntry 3 }
+
+TRAPDestinationsCommunity	OBJECT-TYPE
+    SYNTAX			DisplayString
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"Trap destination SNMP community. Set to the community name to be used with the destination SNMP manager."
+    
+    ::= { TRAPDestinationsEntry 4 }
+
+
+-- PDU
+
+PDUSelected	OBJECT-TYPE
+    SYNTAX		INTEGER (1..32)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Currently selected PDU slot. Set to number between 1 and NumberOfPDUs"
+    
+    ::= { PDU 1 }
+
+-- PDU.PDUInfo
+
+PDUName		OBJECT-TYPE
+    SYNTAX		DisplayString (SIZE (0..20))
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU friendly name."
+    
+    ::= { PDUInfo 1 }
+
+PDUStatus		OBJECT-TYPE
+    SYNTAX		INTEGER {OFFLINE(0),ONLINE(1),DISABLED(2)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU ONLINE / OFFLINE or DISABLED status."
+    
+    ::= { PDUInfo 2 }
+
+PDUAddress		OBJECT-TYPE
+    SYNTAX		INTEGER (1..32)
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU MODBUS Address."
+    
+    ::= { PDUInfo 3 }
+
+PDUFirmware	OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Firmware version."
+    
+    ::= { PDUInfo 4 }
+
+PDUSerial		OBJECT-TYPE
+    SYNTAX		DisplayString
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Serial number."
+    
+    ::= { PDUInfo 5 }
+
+PDUNoPORTs		OBJECT-TYPE
+    SYNTAX		INTEGER (0..32)
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Number of ports."
+    
+    ::= { PDUInfo 6 }
+
+PDUAllON		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Set with any value to turn ALL ports ON."
+    
+    ::= { PDUInfo 7 }
+
+PDUAllOFF		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Set with any value to turn ALL ports OFF."
+    
+    ::= { PDUInfo 8 }
+
+PDUReset		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Set with any value to RESET PDU."
+    
+    ::= { PDUInfo 9 }
+
+PDUKWHReset	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Set with any value to reset kWh value."
+    
+    ::= { PDUInfo 10 }
+
+-- PDU.PMUStatus
+
+PMUStatusVRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "RMS Voltage (VAC) x10."
+    
+    ::= { PMUStatus 1 }
+
+PMUStatusIRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "RMS Current (A) x10."
+    
+    ::= { PMUStatus 2 }
+
+PMUStatusKWH	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Total energy consumption (kW/h) x10."
+    
+    ::= { PMUStatus 3 }
+
+PMUStatusKW	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Kilowatts (kW) x1000."
+    
+    ::= { PMUStatus 4 }
+
+PMUStatusTPMU	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Internal temperature (C) x10."
+    
+    ::= { PMUStatus 5 }
+
+PMUStatusARP	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Average Reactive Power (W) x10."
+    
+    ::= { PMUStatus 6 }
+
+PMUStatusIRP	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Instantaneous Reactive Power (W) x10."
+    
+    ::= { PMUStatus 7 }
+
+PMUStatusIPK	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Peak Current (A) x10."
+    
+    ::= { PMUStatus 8 }
+
+PMUStatusVPK	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Peak Voltage (V) x10."
+    
+    ::= { PMUStatus 9 }
+
+PMUStatusPF	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Power Factor x1000"
+    
+    ::= { PMUStatus 10 }
+
+PMUStatusAP	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Apparent Power (W) x10."
+    
+    ::= { PMUStatus 11 }
+
+PMUStatusHAP	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Harmonic Active Power (W) x10."
+    
+    ::= { PMUStatus 12 }
+
+PMUStatusFAP	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Fundamental Active Power (W) x10."
+    
+    ::= { PMUStatus 13 }    
+
+
+-- PDU.PORTStatus
+
+PORTStatusTable	OBJECT-TYPE
+    SYNTAX		SEQUENCE OF PDUStatusEntry
+    MAX-ACCESS  	not-accessible
+    STATUS  	current
+    DESCRIPTION   ""
+    
+    ::= { PORTStatus 1 }
+    
+PORTStatusEntry	OBJECT-TYPE
+    SYNTAX		PDUStatusEntry
+    MAX-ACCESS	not-accessible
+    STATUS		current
+    DESCRIPTION   "Table of PORT status parameters."
+    INDEX		{ PORTIndex }    
+    
+    ::= { PORTStatusTable 1 }
+
+PDUStatusEntry ::= SEQUENCE {
+
+	  PORTIndex
+		INTEGER,
+	  PORTNumber
+		INTEGER,
+	  PORTName
+		DisplayString,
+	  PORTONOFF
+		INTEGER,
+	  PORTAMPS
+		INTEGER,
+	  PORTKWH
+		Integer32,
+  }
+
+PORTIndex		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	not-accessible
+    STATUS  	current
+    DESCRIPTION   "Port index"
+    
+    ::= { PORTStatusEntry 1 }
+
+PORTNumber		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	not-accessible
+    STATUS  	current
+    DESCRIPTION   "Port number [Range 1 to PDUNoPORTs]"
+    
+    ::= { PORTStatusEntry 2 }
+
+PORTName		OBJECT-TYPE
+    SYNTAX		DisplayString (SIZE (0..10))
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Port friendly name."
+    
+    ::= { PORTStatusEntry 3 }
+
+PORTONOFF		OBJECT-TYPE
+    SYNTAX		INTEGER {OFF(0),ON(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Port ON/OFF status [Set to 1 to switch ON, 0 to switch OFF]"
+    
+    ::= { PORTStatusEntry 4 }
+
+PORTAMPS		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Port current (Amps) x10."
+    
+    ::= { PORTStatusEntry 5 }
+
+PORTKWH		OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Port Energy (kWh) x10."
+    
+    ::= { PORTStatusEntry 6 }
+
+PORTSelected	OBJECT-TYPE
+    SYNTAX		INTEGER (1..32)
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Currently selected PORT. Set to number between 1 and PDUNoPORTs"
+    
+    ::= { PORTStatus 2 }    
+
+-- PDU.ENVIROStatus
+
+ENVIROStatusTemp1	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 1 (C) x100."
+    
+    ::= { ENVIROStatus 1 }
+
+ENVIROStatusTemp2	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 2 (C) x100."
+    
+    ::= { ENVIROStatus 2 }
+
+ENVIROStatusTemp3	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 3 (C) x100."
+    
+    ::= { ENVIROStatus 3 }
+
+ENVIROStatusTemp4	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 4 (C) x100."
+    
+    ::= { ENVIROStatus 4 }
+
+ENVIROStatusTemp5	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 5 (C) x100."
+    
+    ::= { ENVIROStatus 5 }
+
+ENVIROStatusTemp6	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 6 (C) x100."
+    
+    ::= { ENVIROStatus 6 }
+
+ENVIROStatusTemp7	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 7 (C) x100."
+    
+    ::= { ENVIROStatus 7 }
+
+ENVIROStatusTemp8	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 8 (C) x100."
+    
+    ::= { ENVIROStatus 8 }
+
+ENVIROStatusHumidityTemp	OBJECT-TYPE
+    SYNTAX				INTEGER
+    MAX-ACCESS		  	read-only
+    STATUS  			current
+    DESCRIPTION			"ENVIRO Module Humidity sensor temperature (C) x100."
+    
+    ::= { ENVIROStatus 9 }
+
+ENVIROStatusHumidity	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module humidity sensor (%) x100."
+    
+    ::= { ENVIROStatus 10 }
+
+ENVIROStatusContact1	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module contact input 1 status.
+    Set with any data to clear status."
+    
+    ::= { ENVIROStatus 11 }
+
+ENVIROStatusContact2	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module contact input 2 status.
+    Set with any data to clear status."
+    
+    ::= { ENVIROStatus 12 }
+
+ENVIROStatusContact3	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module contact input 3 status.
+    Set with any data to clear status."
+    
+    ::= { ENVIROStatus 13 }
+
+
+-- PDU.ENVIROSecurity
+
+ENVIROSecurityDoor	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module door contact status."
+    
+    ::= { ENVIROSecurity 1 }
+
+ENVIROSecurityLock	OBJECT-TYPE
+    SYNTAX			INTEGER {LOCKED(0),UNLOCKED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module lock status.
+    Set with any data to force unlock."
+    
+    ::= { ENVIROSecurity 2 }
+
+ENVIROSecurityWild	OBJECT-TYPE
+    SYNTAX			INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module Card/PIN Wildcard status.
+    Set with 1 to enable or 0 to disable Wildcard feature."
+    
+    ::= { ENVIROSecurity 3 }
+  
+ENVIROSecurityTable	OBJECT-TYPE
+    SYNTAX			SEQUENCE OF ENVIROSecurityEntry
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	""
+    
+    ::= { ENVIROSecurity 4 }
+    
+ENVIROSecurityEntry	OBJECT-TYPE
+    SYNTAX			ENVIROSecurityEntry
+    MAX-ACCESS		not-accessible
+    STATUS			current
+    DESCRIPTION   	"Table of ENVIRO Card/PIN codes."
+    INDEX			{ ENVIROSecurityIndex }    
+    
+    ::= { ENVIROSecurityTable 1 }
+
+ENVIROSecurityEntry ::= SEQUENCE {
+
+	  ENVIROSecurityIndex
+		INTEGER,
+	  ENVIROSecurityCode
+		Integer32,
+  }
+
+ENVIROSecurityIndex	OBJECT-TYPE
+    SYNTAX			INTEGER (1..32)
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	"Card/PIN code index."
+    
+    ::= { ENVIROSecurityEntry 1 }
+
+ENVIROSecurityCode	OBJECT-TYPE
+    SYNTAX			Integer32
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module Card/PIN number."
+    
+    ::= { ENVIROSecurityEntry 2 }
+
+
+-- PDUTraps.TRAPNotifications
+
+PDUVRMSLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, PDUName, PDUStatusVRMS }
+    STATUS current
+    DESCRIPTION         "Voltage LOW trap notification"
+    
+    ::= { TRAPNotifications 1 }
+
+PDUVRMSHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, PDUName, PDUStatusVRMS }
+    STATUS current
+    DESCRIPTION         "Voltage HIGH trap notification"
+    
+    ::= { TRAPNotifications 2 }
+
+PDUIRMSLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, PDUName, PDUStatusIRMS }
+    STATUS current
+    DESCRIPTION         "Current LOW trap notification"
+    
+    ::= { TRAPNotifications 3 }
+
+PDUIRMSHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, PDUName, PDUStatusIRMS }
+    STATUS current
+    DESCRIPTION         "Current HIGH trap notification"
+    
+    ::= { TRAPNotifications 4 }
+
+PDUKWSLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, PDUName, PDUStatusKW }
+    STATUS current
+    DESCRIPTION         "Kilowatts LOW trap notification"
+    
+    ::= { TRAPNotifications 5 }
+
+PDUKWSHigh			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, PDUName, PDUStatusKW }
+    STATUS current
+    DESCRIPTION         "Kilowatts HIGH trap notification"
+    
+    ::= { TRAPNotifications 6 }
+
+PDUTempLow			NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, PDUName, PDUStatusTPMU }
+    STATUS current
+    DESCRIPTION         "PDU Temperature LOW trap notification"
+    
+    ::= { TRAPNotifications 7 }
+
+PDUTempHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, PDUName, PDUStatusTPMU }
+    STATUS current
+    DESCRIPTION         "PDU Temperature HIGH trap notification"
+    
+    ::= { TRAPNotifications 8 }
+
+PORTAMPSLow		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, PDUName, PORTNumber }
+    STATUS current
+    DESCRIPTION         "Port Current LOW trap notification"
+    
+    ::= { TRAPNotifications 9 }
+
+PORTAMPSHigh		NOTIFICATION-TYPE
+    OBJECTS			{ SysName, SysLocation, PDUName, PORTNumber }
+    STATUS current
+    DESCRIPTION         "Port Current HIGH trap notification"
+    
+    ::= { TRAPNotifications 10 }
+
+ENVIROTemp1Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp1 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 1 LOW trap notification"
+    
+    ::= { TRAPNotifications 11 }
+
+ENVIROTemp1High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp1 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 1 HIGH trap notification"
+    
+    ::= { TRAPNotifications 12 }
+
+ENVIROTemp2Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp2 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 2 LOW trap notification"
+    
+    ::= { TRAPNotifications 13 }
+
+ENVIROTemp2High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp2 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 2 HIGH trap notification"
+    
+    ::= { TRAPNotifications 14 }
+
+ENVIROTemp3Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp3 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 3 LOW trap notification"
+    
+    ::= { TRAPNotifications 15 }
+
+ENVIROTemp3High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp3 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 3 HIGH trap notification"
+    
+    ::= { TRAPNotifications 16 }
+
+ENVIROTemp4Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp4 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 4 LOW trap notification"
+    
+    ::= { TRAPNotifications 17 }
+
+ENVIROTemp4High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp4 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 4 HIGH trap notification"
+    
+    ::= { TRAPNotifications 18 }
+    
+ENVIROTemp5Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp5 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 5 LOW trap notification"
+    
+    ::= { TRAPNotifications 19 }
+
+ENVIROTemp5High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp5 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 5 HIGH trap notification"
+    
+    ::= { TRAPNotifications 20 }
+
+ENVIROTemp6Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp6 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 6 LOW trap notification"
+    
+    ::= { TRAPNotifications 21 }
+
+ENVIROTemp6High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp6 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 6 HIGH trap notification"
+    
+    ::= { TRAPNotifications 22 }
+
+ENVIROTemp7Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp7 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 7 LOW trap notification"
+    
+    ::= { TRAPNotifications 23 }
+
+ENVIROTemp7High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp7 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 7 HIGH trap notification"
+    
+    ::= { TRAPNotifications 24 }
+
+ENVIROTemp8Low		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp8 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 8 LOW trap notification"
+    
+    ::= { TRAPNotifications 25 }
+
+ENVIROTemp8High		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusTemp8 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Temperature sensor 8 HIGH trap notification"
+    
+    ::= { TRAPNotifications 26 }
+
+ENVIROHUMTempLow		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusHumidityTemp }
+    STATUS current
+    DESCRIPTION         "ENVIRO Humidity sensor temperature LOW trap notification"
+    
+    ::= { TRAPNotifications 27 }
+
+ENVIROHUMTempHigh	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusHumidityTemp }
+    STATUS current
+    DESCRIPTION         "ENVIRO Humidity sensor temperature HIGH trap notification"
+    
+    ::= { TRAPNotifications 28 }
+
+ENVIROHumidityLow	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusHumidity }
+    STATUS current
+    DESCRIPTION         "ENVIRO Humidity sensor LOW trap notification"
+    
+    ::= { TRAPNotifications 29 }
+
+ENVIROHumidityHigh	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusHumidity }
+    STATUS current
+    DESCRIPTION         "ENVIRO Humidity sensor HIGH trap notification"
+    
+    ::= { TRAPNotifications 30 }
+
+ENVIROContact1Open	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusContact1 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Contact 1 OPEN trap notification"
+    
+    ::= { TRAPNotifications 31 }
+
+ENVIROContact1Closed	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusContact1 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Contact 1 CLOSED trap notification"
+    
+    ::= { TRAPNotifications 32 }
+
+ENVIROContact2Open	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusContact2 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Contact 2 OPEN trap notification"
+    
+    ::= { TRAPNotifications 33 }
+
+ENVIROContact2Closed	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusContact2 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Contact 2 CLOSED trap notification"
+    
+    ::= { TRAPNotifications 34 }
+
+ENVIROContact3Open	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusContact3 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Contact 3 OPEN trap notification"
+    
+    ::= { TRAPNotifications 35 }
+
+ENVIROContact3Closed	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROStatusContact3 }
+    STATUS current
+    DESCRIPTION         "ENVIRO Contact 3 CLOSED trap notification"
+    
+    ::= { TRAPNotifications 36 }
+
+ENVIRODoorOpen		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROSecurityDoor }
+    STATUS current
+    DESCRIPTION         "ENVIRO Door OPEN trap notification"
+    
+    ::= { TRAPNotifications 37 }
+
+ENVIRODoorClosed		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROSecurityDoor }
+    STATUS current
+    DESCRIPTION         "ENVIRO Door CLOSED trap notification"
+    
+    ::= { TRAPNotifications 38 }
+
+ENVIROLockUnlocked	NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROSecurityLock }
+    STATUS current
+    DESCRIPTION         "ENVIRO Lock UNLOCKED trap notification"
+    
+    ::= { TRAPNotifications 39 }
+
+ENVIROLockLocked		NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, ENVIROSecurityLock }
+    STATUS current
+    DESCRIPTION         "ENVIRO Lock LOCKED trap notification"
+    
+    ::= { TRAPNotifications 40 }
+
+PDUOffline			NOTIFICATION-TYPE
+    OBJECTS             { SysName, SysLocation, PDUName, PDUStatus }
+    STATUS current
+    DESCRIPTION         "PDU OFFLINE trap notification"
+    
+    ::= { TRAPNotifications 41 }
+
+
+-- PDUTraps.TRAPThresholds
+
+PDUVRMSLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Voltage LOW alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 1 }
+
+PDUVRMSLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Voltage LOW trap threshold x10."
+    
+    ::= { TRAPThresholds 2 }
+
+PDUVRMSHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Voltage HIGH alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 3 }
+
+PDUVRMSHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Voltage HIGH trap threshold x10."
+    
+    ::= { TRAPThresholds 4 }
+
+PDUIRMSLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Current LOW alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 5 }
+
+PDUIRMSLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Current LOW trap threshold x10."
+    
+    ::= { TRAPThresholds 6 }
+
+PDUIRMSHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Current HIGH alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 7 }
+
+PDUIRMSHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Current HIGH trap threshold x10."
+    
+    ::= { TRAPThresholds 8 }
+
+PDUKWSLowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Kilowatts LOW alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 9 }
+
+PDUKWSLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Kilowatts LOW trap threshold x10."
+    
+    ::= { TRAPThresholds 10 }
+
+PDUKWSHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Kilowatts HIGH alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 11 }
+
+PDUKWSHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Kilowatts HIGH trap threshold x10."
+    
+    ::= { TRAPThresholds 12 }
+
+PDUTempLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Internal temperature LOW alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 13 }
+
+PDUTempLow		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Internal temperature LOW trap threshold x10."
+    
+    ::= { TRAPThresholds 14 }
+
+PDUTempHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Internal temperature HIGH alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 15 }
+
+PDUTempHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU Internal temperature HIGH trap threshold x10."
+    
+    ::= { TRAPThresholds 16 }
+
+PORTThresholdsTable	OBJECT-TYPE
+    SYNTAX			SEQUENCE OF PORTThresholdsEntry
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	""
+    
+    ::= { TRAPThresholds 17 }
+
+PORTThresholdsEntry	OBJECT-TYPE
+    SYNTAX			PORTThresholdsEntry
+    MAX-ACCESS		not-accessible
+    STATUS			current
+    DESCRIPTION   	"Table of Port trap notification thresholds."
+    INDEX			{ PORTThresholdsNumber }    
+    
+    ::= { PORTThresholdsTable 1 }
+
+PORTThresholdsEntry ::= SEQUENCE {
+
+	  PORTThresholdsNumber
+		INTEGER,
+	  PORTAMPSLowAlarm
+		INTEGER,
+	  PORTAMPSLow
+		INTEGER,
+	  PORTAMPSHighAlarm
+		INTEGER,
+	  PORTAMPSHigh
+		INTEGER,
+  }
+
+PORTThresholdsNumber	OBJECT-TYPE
+    SYNTAX			INTEGER (1..32)
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	"Trap threshold PORT number [1..32]."
+    
+    ::= { PORTThresholdsEntry 1 }
+
+PORTAMPSLowAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Port Current LOW alarm disabled/enabled."
+    
+    ::= { PORTThresholdsEntry 2 }
+
+PORTAMPSLow	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Port Current LOW trap threshold x10."
+    
+    ::= { PORTThresholdsEntry 3 }
+
+PORTAMPSHighAlarm		OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Port Current HIGH alarm disabled/enabled."
+    
+    ::= { PORTThresholdsEntry 4 }
+
+PORTAMPSHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "Port Current HIGH trap threshold x10."
+    
+    ::= { PORTThresholdsEntry 5 }
+
+ENVIROTemp1LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 1 LOW alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 18 }
+
+ENVIROTemp1Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 1 LOW trap threshold x10."
+    
+    ::= { TRAPThresholds 19 }
+
+ENVIROTemp1HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 1 HIGH alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 20 }
+
+ENVIROTemp1High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 1 HIGH trap threshold x10."
+    
+    ::= { TRAPThresholds 21 }
+
+ENVIROTemp2LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 2 LOW alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 22 }
+
+ENVIROTemp2Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 2 LOW trap threshold x10."
+    
+    ::= { TRAPThresholds 23 }
+
+ENVIROTemp2HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 2 HIGH alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 24 }
+
+ENVIROTemp2High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 2 HIGH trap threshold x10."
+    
+    ::= { TRAPThresholds 25 }
+
+ENVIROTemp3LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 3 LOW alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 26 }
+
+ENVIROTemp3Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 3 LOW trap threshold x10."
+    
+    ::= { TRAPThresholds 27 }
+
+ENVIROTemp3HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 3 HIGH alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 28 }
+
+ENVIROTemp3High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 3 HIGH trap threshold x10."
+    
+    ::= { TRAPThresholds 29 }
+
+ENVIROTemp4LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 4 LOW alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 30 }
+
+ENVIROTemp4Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 4 LOW trap threshold x10."
+    
+    ::= { TRAPThresholds 31 }
+
+ENVIROTemp4HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 4 HIGH alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 32 }
+
+ENVIROTemp4High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 4 HIGH trap threshold x10."
+    
+    ::= { TRAPThresholds 33 }
+
+ENVIROTemp5LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 5 LOW alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 34 }
+
+ENVIROTemp5Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 5 LOW trap threshold x10."
+    
+    ::= { TRAPThresholds 35 }
+
+ENVIROTemp5HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 5 HIGH alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 36 }
+
+ENVIROTemp5High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 5 HIGH trap threshold x10."
+    
+    ::= { TRAPThresholds 37 }
+
+ENVIROTemp6LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 6 LOW alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 38 }
+
+ENVIROTemp6Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 6 LOW trap threshold x10."
+    
+    ::= { TRAPThresholds 39 }
+
+ENVIROTemp6HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 6 HIGH alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 40 }
+
+ENVIROTemp6High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 6 HIGH trap threshold x10."
+    
+    ::= { TRAPThresholds 41 }
+
+ENVIROTemp7LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 7 LOW alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 42 }
+
+ENVIROTemp7Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 7 LOW trap threshold x10."
+    
+    ::= { TRAPThresholds 43 }
+
+ENVIROTemp7HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 7 HIGH alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 44 }
+
+ENVIROTemp7High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 7 HIGH trap threshold x10."
+    
+    ::= { TRAPThresholds 45 }
+
+ENVIROTemp8LowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 8 LOW alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 46 }
+
+ENVIROTemp8Low	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 8 LOW trap threshold x10."
+    
+    ::= { TRAPThresholds 47 }
+
+ENVIROTemp8HighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 8 HIGH alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 48 }
+
+ENVIROTemp8High	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO temperature sensor 8 HIGH trap threshold x10."
+    
+    ::= { TRAPThresholds 49 }
+
+ENVIROHumidityTempLowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO humidity sensor temperature LOW alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 50 }
+
+ENVIROHumidityTempLow	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO humidity sensor temperature LOW trap threshold x10."
+    
+    ::= { TRAPThresholds 51 }
+
+ENVIROHumidityTempHighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO humidity sensor temperature HIGH alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 52 }
+
+ENVIROHumidityTempHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO humidity sensor temperature HIGH trap threshold x10."
+    
+    ::= { TRAPThresholds 53 }
+
+ENVIROHumidityLowAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO humidity sensor LOW alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 54 }
+
+ENVIROHumidityLow	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO humidity sensor LOW trap threshold x10."
+    
+    ::= { TRAPThresholds 55 }
+
+ENVIROHumidityHighAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO humidity sensor HIGH alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 56 }
+
+ENVIROHumidityHigh	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO humidity sensor HIGH trap threshold x10."
+    
+    ::= { TRAPThresholds 57 }
+
+ENVIROContact1OpenedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO Contact 1 OPENED alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 58 }
+
+ENVIROContact1ClosedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO Contact 1 CLOSED alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 59 }
+
+ENVIROContact2OpenedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO Contact 2 OPENED alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 60 }
+
+ENVIROContact2ClosedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO Contact 2 CLOSED alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 61 }
+
+ENVIROContact3OpenedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO Contact 3 OPENED alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 62 }
+
+ENVIROContact3ClosedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO Contact 3 CLOSED alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 63 }
+
+ENVIRODoorOpenedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO Security Door OPENED alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 64 }
+
+ENVIRODoorClosedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO Security Door CLOSED alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 65 }
+
+ENVIROLockUnlockedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO Security Lock UNLOCKED alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 66 }
+
+ENVIROLockLockedAlarm	OBJECT-TYPE
+    SYNTAX		INTEGER {DISABLED(0),ENABLED(1)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "ENVIRO Security Lock LOCKED alarm disabled/enabled."
+    
+    ::= { TRAPThresholds 67 }
+
+
+-- PDUGlobal
+
+PDUGlobalTable		OBJECT-TYPE
+    SYNTAX			SEQUENCE OF PDUGlobalEntry
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	""
+    
+    ::= { PDUGlobal 1 }
+
+PDUGlobalEntry		OBJECT-TYPE
+    SYNTAX			PDUGlobalEntry
+    MAX-ACCESS		not-accessible
+    STATUS			current
+    DESCRIPTION   	"Table of Trap notification destinations."
+    INDEX			{ PDUGlobalIndex }    
+    
+    ::= { PDUGlobalTable 1 }
+
+PDUGlobalEntry ::= SEQUENCE {
+
+	  PDUGlobalIndex
+		INTEGER,
+	  PDUGlobalStatus
+		INTEGER,
+	  PDUGlobalAddress
+		INTEGER,
+	  PDUGlobalFirmware
+		DisplayString,
+	  PDUGlobalSerial
+		DisplayString,
+	  PDUGlobalNoPORTs
+		INTEGER,
+	  PDUGlobalVRMS
+		INTEGER,
+	  PDUGlobalIRMS
+		INTEGER,
+	  PDUGlobalVRMS
+		INTEGER,
+	  PDUGlobalKWH
+		Integer32,
+	  PDUGlobalKW
+		INTEGER,
+	  PDUGlobalTPMU
+		INTEGER,
+	  PDUGlobalPF
+		INTEGER,
+	  PDUGlobalPORTStatus
+		Integer32,
+	  PDUGlobalPORT1Amps
+		INTEGER,
+	  PDUGlobalPORT2Amps
+		INTEGER,
+	  PDUGlobalPORT3Amps
+		INTEGER,
+	  PDUGlobalPORT4Amps
+		INTEGER,
+	  PDUGlobalPORT5Amps
+		INTEGER,
+	  PDUGlobalPORT6Amps
+		INTEGER,
+	  PDUGlobalPORT7Amps
+		INTEGER,
+	  PDUGlobalPORT8Amps
+		INTEGER,
+	  PDUGlobalPORT9Amps
+		INTEGER,
+	  PDUGlobalPORT10Amps
+		INTEGER,
+	  PDUGlobalPORT11Amps
+		INTEGER,
+	  PDUGlobalPORT12Amps
+		INTEGER,
+	  PDUGlobalPORT13Amps
+		INTEGER,
+	  PDUGlobalPORT14Amps
+		INTEGER,
+	  PDUGlobalPORT15Amps
+		INTEGER,
+	  PDUGlobalPORT16Amps
+		INTEGER,
+	  PDUGlobalPORT17Amps
+		INTEGER,
+	  PDUGlobalPORT18Amps
+		INTEGER,
+	  PDUGlobalPORT19Amps
+		INTEGER,
+	  PDUGlobalPORT20Amps
+		INTEGER,
+	  PDUGlobalPORT21Amps
+		INTEGER,
+	  PDUGlobalPORT22Amps
+		INTEGER,
+	  PDUGlobalPORT23Amps
+		INTEGER,
+	  PDUGlobalPORT24Amps
+		INTEGER,
+	  PDUGlobalPORT25Amps
+		INTEGER,
+	  PDUGlobalPORT26Amps
+		INTEGER,
+	  PDUGlobalPORT27Amps
+		INTEGER,
+	  PDUGlobalPORT28Amps
+		INTEGER,
+	  PDUGlobalPORT29Amps
+		INTEGER,
+	  PDUGlobalPORT30Amps
+		INTEGER,
+	  PDUGlobalPORT31Amps
+		INTEGER,
+	  PDUGlobalPORT32Amps
+		INTEGER,
+	  PDUGlobalPORT1kWh
+		Integer32,
+	  PDUGlobalPORT2kWh
+		Integer32,
+	  PDUGlobalPORT3kWh
+		Integer32,
+	  PDUGlobalPORT4kWh
+		Integer32,
+	  PDUGlobalPORT5kWh
+		Integer32,
+	  PDUGlobalPORT6kWh
+		Integer32,
+	  PDUGlobalPORT7kWh
+		Integer32,
+	  PDUGlobalPORT8kWh
+		Integer32,
+	  PDUGlobalPORT9kWh
+		Integer32,
+	  PDUGlobalPORT10kWh
+		Integer32,
+	  PDUGlobalPORT11kWh
+		Integer32,
+	  PDUGlobalPORT12kWh
+		Integer32,
+	  PDUGlobalPORT13kWh
+		Integer32,
+	  PDUGlobalPORT14kWh
+		Integer32,
+	  PDUGlobalPORT15kWh
+		Integer32,
+	  PDUGlobalPORT16kWh
+		Integer32,
+	  PDUGlobalPORT17kWh
+		Integer32,
+	  PDUGlobalPORT18kWh
+		Integer32,
+	  PDUGlobalPORT19kWh
+		Integer32,
+	  PDUGlobalPORT20kWh
+		Integer32,
+	  PDUGlobalPORT21kWh
+		Integer32,
+	  PDUGlobalPORT22kWh
+		Integer32,
+	  PDUGlobalPORT23kWh
+		Integer32,
+	  PDUGlobalPORT24kWh
+		Integer32,
+	  PDUGlobalPORT25kWh
+		Integer32,
+	  PDUGlobalPORT26kWh
+		Integer32,
+	  PDUGlobalPORT27kWh
+		Integer32,
+	  PDUGlobalPORT28kWh
+		Integer32,
+	  PDUGlobalPORT29kWh
+		Integer32,
+	  PDUGlobalPORT30kWh
+		Integer32,
+	  PDUGlobalPORT31kWh
+		Integer32,
+	  PDUGlobalPORT32kWh
+		Integer32,
+  }
+
+PDUGlobalIndex		OBJECT-TYPE
+    SYNTAX			INTEGER (0..31)
+    MAX-ACCESS  		not-accessible
+    STATUS  		current
+    DESCRIPTION   	"PDU index [0..NoPDUs]."
+    
+    ::= { PDUGlobalEntry 1 }
+
+PDUGlobalStatus		OBJECT-TYPE
+    SYNTAX		INTEGER {OFFLINE(0),ONLINE(1),DISABLED(2)}
+    MAX-ACCESS  	read-write
+    STATUS  	current
+    DESCRIPTION   "PDU ONLINE / OFFLINE or DISABLED status."
+    
+    ::= { PDUGlobalEntry 2 }
+
+PDUGlobalAddress		OBJECT-TYPE
+    SYNTAX		INTEGER (1..32)
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU MODBUS Address."
+    
+    ::= { PDUGlobalEntry 3 }
+
+PDUGlobalNoPORTs		OBJECT-TYPE
+    SYNTAX		INTEGER (0..32)
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Number of ports."
+    
+    ::= { PDUGlobalEntry 4 }
+
+PDUGlobalVRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "RMS Voltage (VAC) x10."
+    
+    ::= { PDUGlobalEntry 5 }
+
+PDUGlobalIRMS	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "RMS Current (A) x10."
+    
+    ::= { PDUGlobalEntry 6 }
+
+PDUGlobalKWH	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Total energy consumption (kW/h) x10."
+    
+    ::= { PDUGlobalEntry 7 }
+
+PDUGlobalKW	OBJECT-TYPE
+    SYNTAX		Integer32
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Kilowatts (kW) x1000."
+    
+    ::= { PDUGlobalEntry 8 }
+
+PDUGlobalTPMU	OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "PDU Internal temperature (C) x10."
+    
+    ::= { PDUGlobalEntry 9 }
+
+PDUGlobalPF		OBJECT-TYPE
+    SYNTAX		INTEGER
+    MAX-ACCESS  	read-only
+    STATUS  	current
+    DESCRIPTION   "Power Factor x1000"
+    
+    ::= { PDUGlobalEntry 10 }
+    
+PDUGlobalENVIROStatusTemp1	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 1 (C) x100."
+    
+    ::= { PDUGlobalEntry 11 }
+
+PDUGlobalENVIROStatusTemp2	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 2 (C) x100."
+    
+    ::= { PDUGlobalEntry 12 }
+
+PDUGlobalENVIROStatusTemp3	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 3 (C) x100."
+    
+    ::= { PDUGlobalEntry 13 }
+
+PDUGlobalENVIROStatusTemp4	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 4 (C) x100."
+    
+    ::= { PDUGlobalEntry 14 }
+
+PDUGlobalENVIROStatusTemp5	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 5 (C) x100."
+    
+    ::= { PDUGlobalEntry 15 }
+
+PDUGlobalENVIROStatusTemp6	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 6 (C) x100."
+    
+    ::= { PDUGlobalEntry 16 }
+
+PDUGlobalENVIROStatusTemp7	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 7 (C) x100."
+    
+    ::= { PDUGlobalEntry 17 }
+
+PDUGlobalENVIROStatusTemp8	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module temperature sensor 8 (C) x100."
+    
+    ::= { PDUGlobalEntry 18 }
+
+PDUGlobalENVIROStatusHumidityTemp	OBJECT-TYPE
+    SYNTAX				INTEGER
+    MAX-ACCESS		  	read-only
+    STATUS  			current
+    DESCRIPTION			"ENVIRO Module Humidity sensor temperature (C) x100."
+    
+    ::= { PDUGlobalEntry 19 }
+
+PDUGlobalENVIROStatusHumidity	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module humidity sensor (%) x100."
+    
+    ::= { PDUGlobalEntry 20 }
+
+PDUGlobalENVIROStatusContact1	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1),NONE(3)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module contact input 1 status and ENVIRO module connection status.
+    If NONE then no ENVIRO module connected to PDU.
+    Set with any data to clear status."
+    
+    ::= { PDUGlobalEntry 21 }
+
+PDUGlobalENVIROStatusContact2	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module contact input 2 status.
+    Set with any data to clear status."
+    
+    ::= { PDUGlobalEntry 22 }
+
+PDUGlobalENVIROStatusContact3	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module contact input 3 status.
+    Set with any data to clear status."
+    
+    ::= { PDUGlobalEntry 23 }
+
+PDUGlobalENVIROSecurityDoor	OBJECT-TYPE
+    SYNTAX			INTEGER {OPEN(0),CLOSED(1)}
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module door contact status."
+    
+    ::= { PDUGlobalEntry 24 }
+
+PDUGlobalENVIROSecurityLock	OBJECT-TYPE
+    SYNTAX			INTEGER {LOCKED(0),UNLOCKED(1)}
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"ENVIRO Module lock status.
+    Set with any data to force unlock."
+    
+    ::= { PDUGlobalEntry 25 }
+
+PDUGlobalPORTStatus	OBJECT-TYPE
+    SYNTAX			INTEGER32
+    MAX-ACCESS	  	read-write
+    STATUS  		current
+    DESCRIPTION		"PORT status bits.
+    Set or clear bit to control port, Bit 0 = Port 1, Bit 31 = Port 32"
+    
+    ::= { PDUGlobalEntry 26 }
+
+PDUGlobalPORT1Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 27 }
+
+PDUGlobalPORT2Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 28 }
+
+PDUGlobalPORT3Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 29 }
+
+PDUGlobalPORT4Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 30 }
+
+PDUGlobalPORT5Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 31 }
+
+PDUGlobalPORT6Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 32 }
+
+PDUGlobalPORT7Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 33 }
+
+PDUGlobalPORT8Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 34 }
+
+PDUGlobalPORT9Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 35 }
+
+PDUGlobalPORT10Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 36 }
+
+PDUGlobalPORT11Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 37 }
+
+PDUGlobalPORT12Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 38 }
+
+PDUGlobalPORT13Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 39 }
+
+PDUGlobalPORT14Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 40 }
+
+PDUGlobalPORT15Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 41 }
+
+PDUGlobalPORT16Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 42 }
+
+PDUGlobalPORT17Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 43 }
+
+PDUGlobalPORT18Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 44 }
+
+PDUGlobalPORT19Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 45 }
+
+PDUGlobalPORT20Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 46 }
+
+PDUGlobalPORT21Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 47 }
+
+PDUGlobalPORT22Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 48 }
+
+PDUGlobalPORT23Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 49 }
+
+PDUGlobalPORT24Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 50 }
+
+PDUGlobalPORT25Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 51 }
+
+PDUGlobalPORT26Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 52 }
+
+PDUGlobalPORT27Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 53 }
+
+PDUGlobalPORT28Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 54 }
+
+PDUGlobalPORT29Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 55 }
+
+PDUGlobalPORT30Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 56 }
+
+PDUGlobalPORT31Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 57 }
+
+PDUGlobalPORT32Amps	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port Amps value x10."
+    
+    ::= { PDUGlobalEntry 58 }
+
+PDUGlobalPORT1kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 59 }
+
+PDUGlobalPORT2kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 60 }
+
+PDUGlobalPORT3kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 61 }
+
+PDUGlobalPORT4kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 62 }
+
+PDUGlobalPORT5kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 63 }
+
+PDUGlobalPORT6kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 64 }
+
+PDUGlobalPORT7kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 65 }
+
+PDUGlobalPORT8kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 66 }
+
+PDUGlobalPORT9kWh		OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 67 }
+
+PDUGlobalPORT10kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 68 }
+
+PDUGlobalPORT11kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 69 }
+
+PDUGlobalPORT12kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 70 }
+
+PDUGlobalPORT13kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 71 }
+
+PDUGlobalPORT14kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 72 }
+
+PDUGlobalPORT15kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 73 }
+
+PDUGlobalPORT16kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 74 }
+
+PDUGlobalPORT17kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 75 }
+
+PDUGlobalPORT18kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 76 }
+
+PDUGlobalPORT19kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 77 }
+
+PDUGlobalPORT20kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 78 }
+
+PDUGlobalPORT21kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 79 }
+
+PDUGlobalPORT22kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 80 }
+
+PDUGlobalPORT23kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 81 }
+
+PDUGlobalPORT24kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 82 }
+
+PDUGlobalPORT25kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 83 }
+
+PDUGlobalPORT26kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 84 }
+
+PDUGlobalPORT27kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 85 }
+
+PDUGlobalPORT28kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 86 }
+
+PDUGlobalPORT29kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 87 }
+
+PDUGlobalPORT30kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 88 }
+
+PDUGlobalPORT31kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 89 }
+
+PDUGlobalPORT32kWh	OBJECT-TYPE
+    SYNTAX			INTEGER
+    MAX-ACCESS	  	read-only
+    STATUS  		current
+    DESCRIPTION		"Port kWh value x10."
+    
+    ::= { PDUGlobalEntry 90 }
+
+END   

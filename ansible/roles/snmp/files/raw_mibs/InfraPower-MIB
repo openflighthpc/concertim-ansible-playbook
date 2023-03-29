@@ -1,0 +1,1098 @@
+InfraPower-MIB DEFINITIONS ::= BEGIN
+	IMPORTS
+		enterprises 			FROM RFC1155-SMI
+		OBJECT-TYPE			FROM RFC-1212
+		NOTIFICATION-TYPE		FROM SNMPv2-SMI;
+	-- IMPORTS End
+	AustinHughes				OBJECT IDENTIFIER ::= { enterprises 34550 }	
+	InfraPower				OBJECT IDENTIFIER ::= { AustinHughes 20 }
+	ipDongle				OBJECT IDENTIFIER ::= { InfraPower 1 }
+	pduGroup				OBJECT IDENTIFIER ::= { InfraPower 2 }
+	--###########################################################################################
+	-- Last update : 2014/01/21
+	-- 2014/01/21 - v2.4
+	--	-Remove imports from INET-ADDRESS-MIB for InetAddressIPv4
+	--	-Embedded the InetAddressIPv4 TEXTUAL-CONVENTION in this mib
+	--	-Embedded the DateAndTime TEXTUAL-CONVENTION in this mib
+	--	-Embedded the DisplayString TEXTUAL-CONVENTION in this mib
+	--	 (no need to load SNMPv2-TC, SNMPv2-TC & DisplayString from external mib files)
+	-- 2013/07/12 - v2.3
+	--      -updated description to outlet
+	-- 2013/05/14 - v2.2
+	--      -THSensorActivation is changed to read-only.
+	-- 2013/05/03 - v2.1
+	--      -added imports to InetAddressIPv4 from INET-ADDRESS-MIB.
+	-- 2013/04/09 - v2.0
+	--      -added individaul outlet Alarm, LowAlert threhold, PowerUpSeqDelay setup.
+	--      -added read-only pdu RealTimeClock OID.
+	-- 2013/02/07 - v1.2
+	--	-limited Trap to circuit alarm, breaker status change, th alarm, th disconnection !
+	--
+	--###########################################################################################
+	--------------------------------------------------------------------------------
+	-- textual conventions
+	-- InetAddressIPv4 is extrated from INET-ADDRESS-MIB
+	InetAddressIPv4 ::= TEXTUAL-CONVENTION
+	    DISPLAY-HINT "1d.1d.1d.1d"
+	    STATUS       current
+	    DESCRIPTION
+		"Represents an IPv4 network address:
+
+
+		   Octets   Contents         Encoding
+		    1-4     IPv4 address     network-byte order
+
+		 The corresponding InetAddressType value is ipv4(1).
+
+		 This textual convention SHOULD NOT be used directly in object
+		 definitions, as it restricts addresses to a specific format.
+		 However, if it is used, it MAY be used either on its own or in
+		 conjunction with InetAddressType, as a pair."
+	    SYNTAX       OCTET STRING (SIZE (4))
+	-- DateAndTime is extrated from SNMPv2-TC
+	DateAndTime ::= TEXTUAL-CONVENTION
+	    DISPLAY-HINT "2d-1d-1d,1d:1d:1d.1d,1a1d:1d"
+	    STATUS       current
+	    DESCRIPTION
+		    "A date-time specification.
+
+		    field  octets  contents                  range
+		    -----  ------  --------                  -----
+		      1      1-2   year*                     0..65536
+		      2       3    month                     1..12
+		      3       4    day                       1..31
+		      4       5    hour                      0..23
+		      5       6    minutes                   0..59
+		      6       7    seconds                   0..60
+				   (use 60 for leap-second)
+		      7       8    deci-seconds              0..9
+		      8       9    direction from UTC        '+' / '-'
+		      9      10    hours from UTC*           0..13
+		     10      11    minutes from UTC          0..59
+
+		    * Notes:
+		    - the value of year is in network-byte order
+		    - daylight saving time in New Zealand is +13
+
+		    For example, Tuesday May 26, 1992 at 1:30:15 PM EDT would be
+		    displayed as:
+
+				     1992-5-26,13:30:15.0,-4:0
+
+		    Note that if only local time is known, then timezone
+		    information (fields 8-10) is not present."
+	    SYNTAX       OCTET STRING (SIZE (8 | 11))
+	-- DisplayString is extrated from SNMPv2-TC
+	DisplayString ::= TEXTUAL-CONVENTION
+	    DISPLAY-HINT "255a"
+	    STATUS       current
+	    DESCRIPTION
+		    "Represents textual information taken from the NVT ASCII
+		    character set, as defined in pages 4, 10-11 of RFC 854.
+
+		    To summarize RFC 854, the NVT ASCII repertoire specifies:
+
+		      - the use of character codes 0-127 (decimal)
+
+		      - the graphics characters (32-126) are interpreted as
+			US ASCII
+
+		      - NUL, LF, CR, BEL, BS, HT, VT and FF have the special
+			meanings specified in RFC 854
+
+		      - the other 25 codes have no standard interpretation
+
+		      - the sequence 'CR LF' means newline
+
+		      - the sequence 'CR NUL' means carriage-return
+
+		      - an 'LF' not preceded by a 'CR' means moving to the
+			same column on the next line.
+
+		      - the sequence 'CR x' for any x other than LF or NUL is
+			illegal.  (Note that this also means that a string may
+			end with either 'CR LF' or 'CR NUL', but not with CR.)
+
+		    Any object defined using this syntax may not exceed 255
+		    characters in length."
+	    SYNTAX       OCTET STRING (SIZE (0..255))
+	--------------------------------------------------------------------------------
+	--	ipDongleAdmin
+	--
+	ipDongleAdmin			OBJECT IDENTIFIER ::= { ipDongle 1 }
+	
+	ipdongleModel  OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (0..32))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The model number of the product."
+		::= { ipDongleAdmin 1 }
+		--main_conf.AppText
+	ipdongleName  OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (0..16))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The name of the product."
+		::= { ipDongleAdmin 5 }
+		--main_conf.DeviceName		
+	ipdongleLocation  OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (0..16))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The location of the product."
+		::= { ipDongleAdmin 6 }
+		--main_conf.Location
+	ipdongleMacAddress  OBJECT-TYPE
+		SYNTAX      OCTET STRING
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The MAC address of the products"
+		::= { ipDongleAdmin 8 }
+		--mac_conf
+	ipdongleIpAddressIpv4  OBJECT-TYPE
+		SYNTAX      InetAddressIPv4
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The current IPv4 address."
+		::= { ipDongleAdmin 9 }
+		--web_conf.IpV4Addr
+	ipdongleSubnetIpv4  OBJECT-TYPE
+		SYNTAX      InetAddressIPv4
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The current IPv4 subnet."
+		::= { ipDongleAdmin 10 }
+		--web_conf.IpV4Netmask
+	ipdongleGatewayIpv4  OBJECT-TYPE
+		SYNTAX      InetAddressIPv4
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The current IPv4 gateway"
+		::= { ipDongleAdmin 11 }
+		--web_conf.IpV4GatewayIP
+
+	-------------------------------------------------------------------------------------------------------
+	--
+	--	pduAdmin
+	--
+	pduAdmin				OBJECT IDENTIFIER ::= { pduGroup 1 }
+	
+	pduTable        OBJECT-TYPE
+		SYNTAX      SEQUENCE OF PduEntry
+		MAX-ACCESS  not-accessible
+		STATUS      current
+		DESCRIPTION
+			"Table of PDU"
+		::= { pduAdmin 1 }
+	
+	pduEntry        OBJECT-TYPE
+		SYNTAX      PduEntry
+		MAX-ACCESS  not-accessible
+		STATUS 	    current
+		DESCRIPTION
+			"Table entries of PDU"
+		INDEX   { pduIndex }
+		::= { pduTable 1 }
+	
+	PduEntry ::=
+		SEQUENCE {
+			pduIndex			INTEGER,
+			pduModel			DisplayString,
+			pduID				DisplayString,
+			pduName				DisplayString,
+			pduLocation			DisplayString,
+			pduGroupNumber			DisplayString,
+			pduMainLoadVoltage		DisplayString,
+			pduMainLoadAmp			INTEGER,
+			pduMainPowerFactor		DisplayString,
+			pduMainActivePower		INTEGER,
+			pduMainApparentPower		INTEGER,
+			pduMainCumulativeEnergy		INTEGER,
+			pduRealTimeClock		DisplayString,
+			circuits			DisplayString,
+			circuitBreakers			DisplayString,
+			outlets				DisplayString,
+			THSensors			DisplayString
+		}
+
+	pduIndex OBJECT-TYPE
+		SYNTAX      INTEGER (1..16)
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The cascade level(RS485 address 00= index 1, 01=index 2 ¡K 15=index 16) of this PDU."
+		::= { pduEntry 1 }
+		--PDU_Details.Device_ID (converted 2nd byte to integer)
+	pduModel OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (0..32))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The model number of this PDU."
+		::= { pduEntry 2 }
+		--PDU_Details.PDU_Model
+	pduID OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (0..16))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The unique identifier of this PDU."
+		::= { pduEntry 3 }
+		--PDU_Details.Serial_Number
+	pduName OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (0..16))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The name of this PDU."
+		::= { pduEntry 6 }
+		--PDU_Details.PDU_Name
+	pduLocation OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (0..16))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The location of this PDU."
+		::= { pduEntry 7 }
+		--PDU_Details.PDU_Location
+	pduGroupNumber OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (3))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The group number of this PDU. ranged from 000 to 240"
+		::= { pduEntry 8 }
+		-- updated on 2012/10/08 by Ed		
+	pduMainLoadVoltage OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (4))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The voltage measured for this PDU in tenths of Volts.
+			 (0000)=0.0VAC, (2201)=220.1VAC"
+		::= { pduEntry 13 }
+		--PDU_Details.PDU_Load_Voltage
+	pduMainLoadAmp OBJECT-TYPE
+		SYNTAX      INTEGER
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The load measured for this PDU in tenths of Amps
+			 (0)=0.0A, (1)=0.1A, (101)=10.1A, (160)=16.0A"
+		::= { pduEntry 14 }
+		--Circuit_Details.Circuit_Load_Amp (sum of all circuits)
+	pduMainPowerFactor OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (3))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of the power factor for this PDU in hundredths, 
+			 Ranged from '000' to '100', 
+			 in format of 'A.BB', where A is digits before decimal place, B is the digits after decimal place."
+		::= { pduEntry 16 }
+		--PDU_Details.PDU_PowerFactor
+	pduMainActivePower OBJECT-TYPE
+		SYNTAX      INTEGER
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of the active power consumption for this PDU in hundredth of kW, '0000000' ~ '9999999', in foimat of 'AAAAA.BB', where A is digits before decimal place, B is the digits after decimal place."
+		::= { pduEntry 17 }
+		--Circuit_Details.Circuit_ActivePower (sum of all circuits)
+	pduMainApparentPower OBJECT-TYPE
+		SYNTAX      INTEGER
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of the apparent power consumption for this PDU in hundredth of kVA, '0000000' ~ '9999999', in foimat of 'AAAAA.BB', where A is digits before decimal place, B is the digits after decimal place."
+		::= { pduEntry 18 }
+		--Circuit_Details.Circuit_ApparentPower (sum of all circuits)
+	pduMainCumulativeEnergy OBJECT-TYPE
+		SYNTAX      INTEGER
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The accumulated energy of this PDU in hundredth of kilowatt-hours. sum up all circuits Cumulative energy reading (byte afeter @)"
+		::= { pduEntry 19 }
+		--Circuit_Details.Circuit_CumulativeEnergy (sum of all circuits)
+	pduRealTimeClock OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (0..14))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The real time clock & calendar. Formatted to 'YYMMDDHHNNSSW'"
+		::= { pduEntry 20 }
+	--
+	--	circuits
+	--
+	circuits	OBJECT-TYPE
+		SYNTAX		DisplayString (SIZE (1..4))
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION
+			""
+		::= { pduEntry 24 }
+	
+	circuitTable        OBJECT-TYPE
+		SYNTAX      SEQUENCE OF CircuitTablEntry
+		MAX-ACCESS  not-accessible
+		STATUS      current
+		DESCRIPTION
+			"Table of circuit"
+		::= { circuits 1 }
+		
+	circuitTablEntry        OBJECT-TYPE
+		SYNTAX      CircuitTablEntry
+		MAX-ACCESS  not-accessible
+		STATUS 	    current
+		DESCRIPTION
+			"Table entries of circuit"
+		INDEX   { pduIndex,
+					circuitIndex }
+		::= { circuitTable 1 }
+	
+	CircuitTablEntry ::=
+		SEQUENCE {
+			circuitIndex			INTEGER,
+			circuitRatedAmp			DisplayString,
+			circuitState			INTEGER,
+			circuitLoadVoltage		DisplayString,
+			circuitLoadAmp			DisplayString,
+			circuitLoadPeakAmp		DisplayString,
+			circuitCumulativeEnergy		DisplayString,
+			circuitLoadPeakAmpReset		DisplayString,
+			circuitBreakerStateCopy		INTEGER,
+			circuitLoadAmpAlarmThresh	DisplayString,
+			circuitLoadAmpLowAlertThresh	DisplayString
+		}
+	
+	circuitIndex OBJECT-TYPE
+		SYNTAX      INTEGER (1..2)
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"Circuit ID, 1=Circuit A, 2=Circuit B"
+		::= { circuitTablEntry 1 }
+	
+	circuitRatedAmp OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (3))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The input current rating of this circuit in Amps"
+		::= { circuitTablEntry 2 }
+
+
+
+	circuitState OBJECT-TYPE
+		SYNTAX      INTEGER (0..4)
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The status of this circuit, 0=Normal, 1=Alarm, 2=Alert, 3=Low , 4=not exist"
+		::= { circuitTablEntry 5 }
+		
+	circuitLoadVoltage OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (4))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The volatge measured for this circuit in tenths of Volts"
+		::= { circuitTablEntry 6 }
+		
+	circuitLoadAmp OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (3))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The load measured for this circuit in tenths of Amps"
+		::= { circuitTablEntry 7 }
+
+
+	circuitLoadPeakAmp OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (16))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of the peak current of this circuit in tenths of Amps (aab) with time stamp in < yymmddhhnnss@aab > format"
+		::= { circuitTablEntry 12 }
+		
+	circuitCumulativeEnergy OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (21))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The accumulated energy of this circuit in hundredth of kilowatt-hours"
+		::= { circuitTablEntry 13 }
+		
+	circuitLoadPeakAmpReset OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (1))
+		MAX-ACCESS  write-only
+		STATUS      current
+		DESCRIPTION
+			"Reset the peak current of the circuit to zero, 1=confirm reset"
+		::= { circuitTablEntry 14 }
+		
+	circuitBreakerStateCopy OBJECT-TYPE
+		SYNTAX      INTEGER (0..1)
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value for the circuit breaker state, 0=connected,  1= tripped"
+		::= { circuitTablEntry 15 }
+		
+	circuitLoadAmpAlarmThresh OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (3))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The upper alarm current threshold of this circuit in tenths of Amps."
+		::= { circuitTablEntry 16 }
+
+	circuitLoadAmpLowAlertThresh OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (3))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The lower alert current threshold of this circuit in tenths of Amps."
+		::= { circuitTablEntry 18 }
+		
+	--
+	--	circuitBreakers
+	--
+	circuitBreakers	OBJECT-TYPE
+		SYNTAX		DisplayString (SIZE (1..4))
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION
+			""
+		::= { pduEntry 25 }
+	
+	circuitBreakerTable        OBJECT-TYPE
+		SYNTAX      SEQUENCE OF CircuitBreakerTableEntry
+		MAX-ACCESS  not-accessible
+		STATUS      current
+		DESCRIPTION
+			"Table of circuit breaker"
+		::= { circuitBreakers 1 }
+		
+	circuitBreakerTableEntry        OBJECT-TYPE
+		SYNTAX      CircuitBreakerTableEntry
+		MAX-ACCESS  not-accessible
+		STATUS 	    current
+		DESCRIPTION
+			"Table entries of circuit breaker"
+		INDEX   { pduIndex,
+					circuitBreakerIndex }
+		::= { circuitBreakerTable 1 }
+	
+	CircuitBreakerTableEntry ::=
+		SEQUENCE {
+			circuitBreakerIndex					INTEGER,
+			circuitBreakerRatedAmp				DisplayString,
+			circuitBreakerState					INTEGER
+		}
+		
+	circuitBreakerIndex OBJECT-TYPE
+		SYNTAX      INTEGER (1..2)
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"Circuit Breaker ID, value (1)=circuit breaker A, (2)=circuit breaker B"
+		::= { circuitBreakerTableEntry 1 }
+	
+	circuitBreakerRatedAmp OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (3))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The current rating of this circuit breaker in tenths of Amps."
+		::= { circuitBreakerTableEntry 2 }
+
+	circuitBreakerState OBJECT-TYPE
+		SYNTAX      INTEGER (0..1)
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value for the circuit breaker state, 0=connected,  1= tripped"
+		::= { circuitBreakerTableEntry 4 }
+
+	--
+	--	outlets
+	--
+	outlets	OBJECT-TYPE
+		SYNTAX		DisplayString (SIZE (1..4))
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION
+			"The default outlet SNMP polling period is 10 second."
+		::= { pduEntry 26 }
+
+	stdOutletTable        OBJECT-TYPE
+		SYNTAX      SEQUENCE OF StdOutletTableEntry
+		MAX-ACCESS  not-accessible
+		STATUS      current
+		DESCRIPTION
+			"Table of non C19 outlet.
+			The default outlet SNMP polling period is 10 second."
+		::= { outlets 1 }
+		
+	stdOutletTableEntry        OBJECT-TYPE
+		SYNTAX      StdOutletTableEntry
+		MAX-ACCESS  not-accessible
+		STATUS 	    current
+		DESCRIPTION
+			"Table entries of non C19 outlet. 
+			The default outlet SNMP polling period is 10 second."
+		INDEX   { pduIndex,
+					stdOutletIndex }
+		::= { stdOutletTable 1 }
+		
+	StdOutletTableEntry ::=
+		SEQUENCE {
+			stdOutletIndex				INTEGER,
+			stdOutletCircuit			DisplayString,
+			stdOutletType				DisplayString,
+			stdOutletName					DisplayString,
+			stdOutletPowerStatus			INTEGER,
+			stdOutletAlarmState			INTEGER,
+			stdOutletLoadAmp			DisplayString,
+			stdOutletEnergy				DisplayString,
+			stdOutletPeakAmp			DisplayString,
+			stdOutletCumulativeEnergy		DisplayString,
+			stdOutletLoadAmpAlarmThresh		DisplayString,
+			stdOutletLoadAmpLowAlertThresh		DisplayString,
+			stdOutletPeakAmpReset			DisplayString,
+			stdOutletCumulativeEnergyReset		DisplayString,
+			stdOutletPowerUpSequenceDelay		INTEGER
+		}
+		
+	stdOutletIndex OBJECT-TYPE
+		SYNTAX      INTEGER (1..48)
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of a unique number for this outlet. 
+			The default outlet SNMP polling period is 10 second."
+		::= { stdOutletTableEntry 1 }
+	
+	stdOutletCircuit OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (1))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of the circuit for this outlet, (1)= Circuit A, (2)=Circuit B. 
+			The default outlet SNMP polling period is 10 second."
+		::= { stdOutletTableEntry 2 }
+		
+	stdOutletType OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (0..16))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of outlet type for this outlet, (1)=IEC C13, (2)=NEMA 5-20, (3)=BS1363, (4)=Schuko, (5)=French, (6)=AS 3112. 
+			The default outlet SNMP polling period is 10 second."
+		::= { stdOutletTableEntry 3 }
+	stdOutletName OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (0..16))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The name of this outlet. 
+			The default outlet SNMP polling period is 10 second."
+		::= { stdOutletTableEntry 4 }
+		
+	stdOutletPowerStatus OBJECT-TYPE
+		SYNTAX      INTEGER (0..1)
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"GET:The value of the power state for this outlets. SET: switch ON or OFF the power of the outlet. (0) = OFF, (1) = ON. 
+			The default outlet SNMP polling period is 10 second."
+		::= { stdOutletTableEntry 7 }
+		
+	stdOutletAlarmState OBJECT-TYPE
+		SYNTAX      INTEGER (0..4)
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of the alarm state for this outlets, (0) = normal, (1) = alarm, (2)=alert, (3) = low alert, (4) = no exist. 
+			The default outlet SNMP polling period is 10 second."
+		::= { stdOutletTableEntry 8 }
+		
+	stdOutletLoadAmp OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (3))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The load measured for this outlet in tenths of Amps. 
+			The default outlet SNMP polling period is 10 second."
+		::= { stdOutletTableEntry 9 }
+
+	stdOutletEnergy OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (0..7))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of the energy consumption for this outlet in hundredth of watt. 
+			The default outlet SNMP polling period is 10 second."
+		::= { stdOutletTableEntry 10 }
+				
+	stdOutletPeakAmp OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (16))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of the peak current of this outlet in tenths of Amps (aab) with time stamp in < yymmddhhnnss@aab > format. 
+			The default outlet SNMP polling period is 10 second."
+		::= { stdOutletTableEntry 11 }
+		
+	stdOutletCumulativeEnergy OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (21))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The accumulated energy of this outlet in hundredth of kilowatt-hours with time stapm in < yymmddhhnnss@caaaaabb > format. 
+			The default outlet SNMP polling period is 10 second."
+		::= { stdOutletTableEntry 12 }
+
+	stdOutletLoadAmpAlarmThresh OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (3))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The upper alarm current threshold of this outlet in tenths of Amps. The default outlet SNMP polling period is 10 second."
+		::= { stdOutletTableEntry 13 }
+		-- Added on 2013/04/08
+
+	stdOutletLoadAmpLowAlertThresh OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (3))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The lower alert current threshold of this outlet in tenths of Amps. 000=disabled. 
+			The default outlet SNMP polling period is 10 second."
+		::= { stdOutletTableEntry 15 }		
+		-- Added on 2013/04/08
+
+	stdOutletPeakAmpReset OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (1))
+		MAX-ACCESS  write-only
+		STATUS      current
+		DESCRIPTION
+			"Reset the peak current of this outlet to zero. 1=confirm reset. 
+			The default outlet SNMP polling period is 10 second."
+		::= { stdOutletTableEntry 16 }
+		
+	stdOutletCumulativeEnergyReset OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (1))
+		MAX-ACCESS  write-only
+		STATUS      current
+		DESCRIPTION
+			"Reset the cumulative energy consumption counter of this outlet to zero, 1=confirm reset. 
+			The default outlet SNMP polling period is 10 second."
+		::= { stdOutletTableEntry 17 }
+
+	stdOutletPowerUpSequenceDelay OBJECT-TYPE
+		SYNTAX      INTEGER (0..9)
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The power up sequence delay of this outlet in seconds. 
+			The default outlet SNMP polling period is 10 second."
+		::= { stdOutletTableEntry 18 }
+		
+	--	c19OutletTable
+	c19OutletTable        OBJECT-TYPE
+		SYNTAX      SEQUENCE OF C19OutletTableEntry
+		MAX-ACCESS  not-accessible
+		STATUS      current
+		DESCRIPTION
+			"Table of C19 outlet. 
+			The default outlet SNMP polling period is 10 second."
+		::= { outlets 2 }
+		
+	c19OutletTableEntry        OBJECT-TYPE
+		SYNTAX      C19OutletTableEntry
+		MAX-ACCESS  not-accessible
+		STATUS 	    current
+		DESCRIPTION
+			"Table entries of C19 outlet. 
+			The default outlet SNMP polling period is 10 second."
+		INDEX   { pduIndex,
+					c19OutletIndex }
+		::= { c19OutletTable 1 }
+		
+	C19OutletTableEntry ::=
+		SEQUENCE {
+			c19OutletIndex				INTEGER,
+			c19OutletCircuit			DisplayString,
+			c19OutletType				DisplayString,
+			c19OutletName					DisplayString,
+			c19OutletPowerStatus			INTEGER,
+			c19OutletAlarmState			INTEGER,
+			c19OutletLoadAmp			DisplayString,
+			c19OutletEnergy				DisplayString,
+			c19OutletPeakAmp			DisplayString,
+			c19OutletCumulativeEnergy		DisplayString,
+			c19OutletLoadAmpAlarmThresh		DisplayString,
+			c19OutletLoadAmpLowAlertThresh		DisplayString,
+			c19OutletPeakAmpReset			DisplayString,
+			c19OutletCumulativeEnergyReset		DisplayString,
+			c19OutletPowerUpSequenceDelay		INTEGER
+		}
+	
+	c19OutletIndex OBJECT-TYPE
+		SYNTAX      INTEGER (1..48)
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of a unique number for this outlet. 
+			The default outlet SNMP polling period is 10 second."
+		::= { c19OutletTableEntry 1 }
+	
+	c19OutletCircuit OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (1))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of the circuit for this outlet, (1)= Circuit A, (2)=Circuit B. 
+			The default outlet SNMP polling period is 10 second."
+		::= { c19OutletTableEntry 2 }
+		
+	c19OutletType OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (1))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of outlet type for this outlet, (1)=IEC C13, (2)=IEC C19, (3)=BS1363, (4)=NEMA 5-20R, (5)=CEE7. 
+			The default outlet SNMP polling period is 10 second."
+		::= { c19OutletTableEntry 3 }
+	c19OutletName OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (0..16))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The name of this outlet. 
+			The default outlet SNMP polling period is 10 second."
+		::= { c19OutletTableEntry 4 }
+		
+	c19OutletPowerStatus OBJECT-TYPE
+		SYNTAX      INTEGER (0..1)
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"GET:The value of the power state for this outlets. SET: switch ON or OFF the power of the outlet. (0) = OFF, (1) = ON. 
+			The default outlet SNMP polling period is 10 second."
+		::= { c19OutletTableEntry 7 }
+		
+	c19OutletAlarmState OBJECT-TYPE
+		SYNTAX      INTEGER (0..4)
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of the alarm state for this outlets, (0) = normal, (1) = alarm, (2)=alert, (3) = low alert, (4) = no exist. 
+			The default outlet SNMP polling period is 10 second."
+		::= { c19OutletTableEntry 8 }
+		
+	c19OutletLoadAmp OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (0..3))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The load measured for this outlet in tenths of Amps. 
+			The default outlet SNMP polling period is 10 second."
+		::= { c19OutletTableEntry 9 }
+
+	c19OutletEnergy OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (0..7))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of the energy consumption for this outlet in hundredth of watt. 
+			The default outlet SNMP polling period is 10 second."
+		::= { c19OutletTableEntry 10 }
+		
+	c19OutletPeakAmp OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (16))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The value of the peak current of this outlet in tenths of Amps (aab) with time stamp in < yymmddhhnnss@aab > format. 
+			The default outlet SNMP polling period is 10 second."
+		::= { c19OutletTableEntry 11 }
+		
+	c19OutletCumulativeEnergy OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (21))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The accumulated energy of this outlet in hundredth of kilowatt-hours with time stamp in < yymmddhhnnss@caaaaabb > format. 
+			The default outlet SNMP polling period is 10 second."
+		::= { c19OutletTableEntry 12 }
+
+	c19OutletLoadAmpAlarmThresh OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (3))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The upper alarm current threshold of this outlet in tenths of Amps. 
+			The default outlet SNMP polling period is 10 second."
+		::= { c19OutletTableEntry 13 }
+		-- Added on 2013/04/09
+
+	c19OutletLoadAmpLowAlertThresh OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (3))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The lower alert current threshold of this outlet in tenths of Amps. 000=disabled. 
+			The default outlet SNMP polling period is 10 second."
+		::= { c19OutletTableEntry 15 }	
+		-- Added on 2013/04/09
+		
+	c19OutletPeakAmpReset OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (1))
+		MAX-ACCESS  write-only
+		STATUS      current
+		DESCRIPTION
+			"Reset the peak current of this outlet to zero. 1=confirm reset. 
+			The default outlet SNMP polling period is 10 second."
+		::= { c19OutletTableEntry 16 }
+		
+	c19OutletCumulativeEnergyReset OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (1))
+		MAX-ACCESS  write-only
+		STATUS      current
+		DESCRIPTION
+			"Reset the cumulative energy consumption counter of this outlet to zero, 1=confirm reset. 
+			The default outlet SNMP polling period is 10 second."
+		::= { c19OutletTableEntry 17 }
+
+	c19OutletPowerUpSequenceDelay OBJECT-TYPE
+		SYNTAX      INTEGER (0..9)
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The power up sequence delay of this outlet in seconds. 
+			The default outlet SNMP polling period is 10 second."
+		::= { c19OutletTableEntry 18 }
+	
+	--
+	--	Sensors
+	--
+	THSensors	OBJECT-TYPE
+		SYNTAX		DisplayString (SIZE (1..4))
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION
+			""
+		::= { pduEntry 27 }
+
+	THsensorTable        OBJECT-TYPE
+		SYNTAX      SEQUENCE OF THSensorTableEntry
+		MAX-ACCESS  not-accessible
+		STATUS      current
+		DESCRIPTION
+			"Table of THsensor"
+		::= { THSensors 1 }
+		
+	THsensorTableEntry        OBJECT-TYPE
+		SYNTAX      THSensorTableEntry
+		MAX-ACCESS  not-accessible
+		STATUS 	    current
+		DESCRIPTION
+			"Table entries of THSensor"
+		INDEX   { pduIndex,
+					THSensorIndex }
+		::= { THsensorTable 1 }
+		
+	THSensorTableEntry ::=
+		SEQUENCE {
+			THSensorIndex						INTEGER,
+			THSensorLocation					DisplayString,
+			THSensorType						DisplayString,
+			THSensorConnState					INTEGER,
+			THSensorAlarmState					DisplayString,
+			tempSensorValue						INTEGER,
+			tempSensorValueStr					DisplayString,
+			tempSensorUpperAlarmThresh			DisplayString,
+			humiSensorValue						INTEGER,
+			humiSensorValueStr					DisplayString,
+			humiSensorUpperAlarmThresh			DisplayString,
+			THSensorActivation					INTEGER
+		}
+		
+	THSensorIndex OBJECT-TYPE
+		SYNTAX      INTEGER (1..2)
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The id of the sensor.1=TH1, 2=TH2"
+		::= { THsensorTableEntry 1 }
+	
+	THSensorLocation OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (0..16))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The location of the sensor."
+		::= { THsensorTableEntry 3 }
+		
+	THSensorType OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (1))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The sensor type. (1) = Temperature sensor, (2) = Temperature-Humidity sensor"
+		::= { THsensorTableEntry 4 }
+		
+	THSensorConnState OBJECT-TYPE
+		SYNTAX      INTEGER (0..1)
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"0=disconnected, 1=connected"
+		::= { THsensorTableEntry 5 }
+		
+	THSensorAlarmState OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (2))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"2 digit, first digit = temperature status & second digit = humidity status"
+		::= { THsensorTableEntry 6 }
+		
+	tempSensorValue OBJECT-TYPE
+		SYNTAX      INTEGER (0..999)
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The temperature measured in tenths of degree Celsius"
+		::= { THsensorTableEntry 7 }
+		
+	tempSensorValueStr OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (4))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The temperature reading, in degrees celsius, shown as a string ('----' if its disconnected)."
+		::= { THsensorTableEntry 8 }
+		
+	tempSensorUpperAlarmThresh OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (4))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The value of the upper temperature warning threshold in tenths of degree Celsius"
+		::= { THsensorTableEntry 9 }
+		
+	humiSensorValue OBJECT-TYPE
+		SYNTAX      INTEGER (0..999)
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The relative humidity measured by the sensor in percent."
+		::= { THsensorTableEntry 11 }
+		
+	humiSensorValueStr OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (3))
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"The relative humidity measured by the sensor in percent,  shown as a string ('----' if its disconnected)."
+		::= { THsensorTableEntry 12 }
+		
+	humiSensorUpperAlarmThresh OBJECT-TYPE
+		SYNTAX      DisplayString (SIZE (3))
+		MAX-ACCESS  read-write
+		STATUS      current
+		DESCRIPTION
+			"The value of the upper relative humidity warning threshold in percent."
+		::= { THsensorTableEntry 13 }
+		
+	THSensorActivation OBJECT-TYPE
+		SYNTAX      INTEGER (1)
+		MAX-ACCESS  read-only
+		STATUS      current
+		DESCRIPTION
+			"0=Deactivated. 1=Actvated"
+		::= { THsensorTableEntry 15 }
+		
+	--
+	--	pduTraps
+	--
+	pduTraps	OBJECT IDENTIFIER	::= { pduGroup 2 }
+		
+	circuitLoadEventTriggered		NOTIFICATION-TYPE
+		OBJECTS {
+			pduIndex, pduName, pduLocation, circuitIndex, circuitName, circuitState,circuitLoadAmp, circuitLoadAmpAlarmThresh, circuitLoadAmpAlertThresh, circuitLoadAmpLowAlertThresh
+		}
+		STATUS      current
+		DESCRIPTION
+			"The circuit alarm/alert/low of this PDU triggered"
+		::= { pduTraps 1 }
+
+	circuitBreakerTripped		NOTIFICATION-TYPE
+		OBJECTS {
+			pduIndex, pduName, pduLocation, circuitBreakerIndex, circuitBreakerName, circuitBreakerState
+		}
+		STATUS      current
+		DESCRIPTION
+			"The circuit breaker of this PDU tripped"
+		::= { pduTraps 12 }
+		
+	circuitBreakerRecovered		NOTIFICATION-TYPE
+		OBJECTS {
+			pduIndex, pduName, pduLocation, circuitBreakerIndex, circuitBreakerName, circuitBreakerState
+		}
+		STATUS      current
+		DESCRIPTION
+			"The circuit breaker of this PDU recovered"
+		::= { pduTraps 13 }
+
+	sensorConnectionLost		NOTIFICATION-TYPE
+		OBJECTS {
+			pduIndex, pduName, pduLocation, THSensorIndex, THSensorType, THSensorName, THSensorLocation
+		}
+		STATUS      current
+		DESCRIPTION
+			"The temperature or temperatue-humidity sensor disconnected"
+		::= { pduTraps 40 }
+		
+	tempSensorEventTriggered		NOTIFICATION-TYPE
+		OBJECTS {
+			pduIndex, pduName, pduLocation, THSensorIndex, THSensorType, THSensorName, THSensorLocation, THSensorAlarmState, tempSensorValueStr, tempSensorUpperAlarmThresh, tempSensorLowerAlarmThresh
+		}
+		STATUS      current
+		DESCRIPTION
+			"The temperature upper alarm triggered"
+		::= { pduTraps 41 }
+
+		
+	humiSensorEventTriggered		NOTIFICATION-TYPE
+		OBJECTS {
+			pduIndex, pduName, pduLocation, THSensorIndex, THSensorType, THSensorName, THSensorLocation, THSensorAlarmState, humiSensorValueStr, humiSensorUpperAlarmThresh, humiSensorLowerAlarmThresh
+		}
+		STATUS      current
+		DESCRIPTION
+			"The relative humidity upper alarm triggered"
+		::= { pduTraps 47 }
+
+	pduDisconnected		NOTIFICATION-TYPE
+		OBJECTS {
+			pduIndex, pduName, pduLocation,pduConnState, pduActivation
+		}
+		STATUS      current
+		DESCRIPTION
+			"The pdu is disconnected"
+		::= { pduTraps 53 }
+	
+END
