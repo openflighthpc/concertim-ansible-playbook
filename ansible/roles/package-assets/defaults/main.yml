@@ -1,10 +1,6 @@
 package_assets_daemons:
   - meryl:main
 
-package_assets_modules:
-  - hacor:main
-  - sas:main
-
 package_assets_appliances:
   - ct-visualisation-app:main
 
