@@ -37,11 +37,6 @@
     - role: package-daemons
       tags: package-daemons
 
-    # XXX Currently want these for migrations and post migraiton scripts.
-    # The chassis templates in hacor are part of that.
-    - role: phoenix-modules
-      tags: phoenix-modules
-
     - role: ct-visualisation-app
       tags: ct-visualisation-app
     - role: personality

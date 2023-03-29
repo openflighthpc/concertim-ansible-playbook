@@ -1,3 +1,13 @@
+- name: Install build dependencies
+  register: result
+  until: result is success
+  ansible.builtin.apt:
+    name:
+      - autoconf
+      - bison
+      - build-essential
+      - libpq-dev
+
 - name: Check for existing installation
   ansible.builtin.command:
     cmd: ls -d {{ ct_vis_app_path }}
