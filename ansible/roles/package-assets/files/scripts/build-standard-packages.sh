@@ -22,24 +22,6 @@ else
     declare -a APPLIANCES=()
 fi
 
-# DAEMONS and the branch to build are read from the Environment variable
-# DAEMONS.  It is a space separated list of NAME:TAG pairs.  E.g.,
-#
-#   DAEMONS="meryl:main maggie:dev theresa:v1.2.3"
-#
-# The tag could be a tag, branch or commit.
-if declare -p DAEMONS >/dev/null 2>&1 ; then
-    copy="${DAEMONS}"
-    unset DAEMONS
-    declare -a DAEMONS
-    for tagged_project in ${copy}; do
-        DAEMONS+=("${tagged_project}")
-    done
-    unset copy
-else
-    declare -a DAEMONS=()
-fi
-
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 GH_ORG=alces-flight
 PACKAGE_DIR="${PACKAGE_DIR:-${SCRIPT_DIR}/../tmp/packages}"
@@ -213,7 +195,6 @@ main() {
     mkdir -p "${BUILD_DIR}"
     cd "${BUILD_DIR}"
 
-    package_projects DAEMONS daemon
     package_projects APPLIANCES appliance
     create_release_and_version_files
 }

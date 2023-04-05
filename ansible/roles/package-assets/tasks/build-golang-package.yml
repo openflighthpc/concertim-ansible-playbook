@@ -1,0 +1,29 @@
+- name: Run golang build script {{item.name}}
+  ansible.builtin.command:
+    cmd: |
+      {{role_path}}/files/scripts/build-golang-package.sh
+  environment:
+    BUILD_DIR:   "{{package_assets_repo_dir}}"
+    GH_TOKEN: "{{gh_token}}"
+    PACKAGE_DIR: "{{package_assets_package_dir}}"
+    RELEASE: "{{release_tag}}"
+    GH_REPO: "{{item.repo}}"
+    PKG_NAME: "{{item.name}}"
+    BUILD_TAG: "{{item.tag}}"
+    PKG_TYPE: "{{item.type}}"
+    REPO_SUBDIR: "{{item.subdir}}"
+  register: build_golang_packages
+  # The failure will become fatal after the stderr and stdout have been printed.
+  ignore_errors: True
+
+- name: "Build packages stderr"
+  ansible.builtin.debug:
+    var: build_golang_packages.stderr_lines
+  failed_when: build_golang_packages.rc != 0
+  ignore_errors: True
+  when: build_golang_packages.rc != 0
+
+- name: "Build packages stdout"
+  ansible.builtin.debug:
+    var: build_golang_packages.stdout_lines
+  failed_when: build_golang_packages.rc != 0

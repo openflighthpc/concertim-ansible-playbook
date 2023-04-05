@@ -7,7 +7,6 @@
     cmd: "{{role_path}}/files/scripts/build-standard-packages.sh {{release_tag}}"
   environment:
     APPLIANCES: "{{ package_assets_appliances | join(' ') }}"
-    DAEMONS: "{{ package_assets_daemons | join(' ') }}"
     GH_TOKEN: "{{gh_token}}"
     BUILD_DIR:   "{{package_assets_repo_dir}}"
     PACKAGE_DIR: "{{package_assets_package_dir}}"
