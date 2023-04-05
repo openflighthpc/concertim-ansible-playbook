@@ -1,3 +1,0 @@
-ruby_build_assets:
-  - openssl-1.0.2u
-  - ruby-1.9.2-p0

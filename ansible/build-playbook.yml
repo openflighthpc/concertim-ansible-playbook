@@ -12,7 +12,6 @@
       tags: webserver
     - role: database
       tags: database
-
     - role: memcached
       tags: memcached
     - role: ganglia
@@ -23,12 +22,8 @@
       tags: data_dirs
     - role: ruby
       tags: ruby
-    - role: gems
-      tags: gems
-
     - role: package-daemons
       tags: package-daemons
-
     - role: ct-visualisation-app
       tags: ct-visualisation-app
     - role: personality

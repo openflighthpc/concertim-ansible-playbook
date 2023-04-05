@@ -1,25 +1,8 @@
 mode: production
 daemon_installation_dir: /data/private/share/daemons
-# gem_source_url: "http://build:Bu11dUS3R2000@src.concertim.com/gems/uranus-concertim/gems"
 
 # List of statically compiled daemons.  Their tarball needs downloading and
 # extracting and a systemd unit file installing.
 static_daemons:
   - metric-reporting-daemon
-
-# List of daemons that have been packaged and need full installation.  That is
-# they have source code to download and extract; gem dependencies to install;
-# and init.d files to install and enable.
-packaged_daemons:
-  # Parses `gmetad` output and updates memcache.  Memcache data includes
-  # * for each device, its current metrics and values.
-  # * for each metric, list of devices currently reporting that metric.
-  # * a unique list of metrics.
-  # * for each "appliance" reported by ailsa, details of that appliance.
-  - meryl
-
-# List of daemons that have only an init.d file to install and enable.
-init_only_daemons: []
-
-number_crunchers:
-  - meryl
+  - metric-processing-daemon
