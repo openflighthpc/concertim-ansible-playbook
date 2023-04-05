@@ -12,14 +12,9 @@ release_tag: "dev-{{ansible_date_time.date}}"
 # Some of our assets are stored in S3.  These are common variables for
 # accessing them.
 s3_bucket: alces-flight
-s3_assets_prefix:        /concertim/assets/
 s3_packages_prefix:      /concertim/packages/{{release_tag}}/
 s3_appliances_prefix:    /concertim/packages/{{release_tag}}/appliances/
 s3_daemons_prefix:       /concertim/packages/{{release_tag}}/daemons/
-# s3_gems_prefix:          /concertim/packages/{{release_tag}}/gems/
-s3_debs_prefix:          /concertim/packages/debs/
-s3_misc_packages_prefix: /concertim/packages/misc/
-s3_modules_prefix:       /concertim/packages/{{release_tag}}/modules/
 
 # The following are expected to be provided as `--extra-args` from the CLI.
 # aws_access_key_id
