@@ -1,7 +1,9 @@
-#!/usr/bin/env ruby1.9
+#!/usr/bin/env ruby
 
-require 'memcache'
+require 'dalli'
+require 'dalli/client'
 require 'json'
 
-mc = MemCache.new('127.0.0.1:11211')
+address = "localhost:11211"
+mc = Dalli::Client.new(address, { serializer: Marshal })
 puts mc.get(ARGV[0]).to_json

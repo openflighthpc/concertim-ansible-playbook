@@ -1,11 +1,3 @@
-# Not entirely decided on the correct naming for the daemon.  Should all new
-# daemons be prefixed with ct-?
-- name: Fix issue with metric-reporting-daemon name
-  ansible.builtin.file:
-    src: "{{daemon_installation_dir}}/metric-reporting-daemon"
-    dest: "{{daemon_installation_dir}}/ct-metric-reporting-daemon"
-    state: link
-
 - name: Generate shared secret
   vars:
     secret_file: "{{ daemon_installation_dir }}/ct-metric-reporting-daemon/config/secret"
@@ -24,7 +16,6 @@
     - name: Created secret
       ansible.builtin.shell:
         cmd: |
-          PATH={{ruby_19_bin_dir}}:$PATH
           ruby -r securerandom -e 'puts SecureRandom.hex(64)' > {{secret_file}}
 
     - name: Ensure {{app_user}} can read file
@@ -33,8 +24,3 @@
         owner: root
         group: "{{app_user}}"
         mode: "640"
-
-- name: Install logrotate configuration
-  ansible.builtin.copy:
-    src: ct-metric-reporting-daemon.logrotate
-    dest: /etc/logrotate.d/ct-metric-reporting-daemon

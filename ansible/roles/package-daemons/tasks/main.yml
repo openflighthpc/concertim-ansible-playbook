@@ -6,7 +6,7 @@
     mode: get
     aws_access_key: "{{ aws_access_key_id }}"
     aws_secret_key: "{{ aws_secret_access_key }}"
-  loop: "{{ packaged_daemons + static_daemons }}"
+  loop: "{{ static_daemons }}"
 
 - name: Make destination directory
   ansible.builtin.file:
@@ -21,50 +21,7 @@
     src: "tmp/{{ item }}.tgz"
     dest: "{{ daemon_installation_dir }}"
     creates: "{{ daemon_installation_dir }}/{{ item }}"
-  loop: "{{ packaged_daemons + static_daemons }}"
-
-- name: Install number crunchers
-  block:
-    - name: Download number cruncher from S3
-      amazon.aws.aws_s3:
-        bucket: "{{s3_bucket}}"
-        object: "{{s3_daemons_prefix}}{{ item }}-number-cruncher.deb"
-        dest: "{{ role_path }}/files/tmp/{{ item }}-number-cruncher.deb"
-        mode: get
-        aws_access_key: "{{ aws_access_key_id }}"
-        aws_secret_key: "{{ aws_secret_access_key }}"
-      loop: "{{ number_crunchers }}"
-
-    - name: Install number cruncher deb package
-      ansible.builtin.apt:
-        deb: "{{ role_path }}/files/tmp/{{ item }}-number-cruncher.deb"
-      loop: "{{ number_crunchers }}"
-
-- name: Patch bundler source
-  vars:
-    gemfile: "{{daemon_installation_dir}}/{{item}}/Gemfile"
-    original_source: ":gemcutter"
-  include_tasks: patch_bundler_source.yml
-  loop: "{{packaged_daemons}}"
-
-- name: Install gem dependencies
-  vars:
-    daemon_path: "{{ daemon_installation_dir}}/{{ item }}"
-  ansible.builtin.shell: |
-    cd "{{ daemon_path }}"
-    PATH={{ruby_19_bin_dir}}:$PATH
-    {{ruby_19_bin_dir}}/bundle install
-  loop: "{{ packaged_daemons }}"
-
-- name: Install init.d files
-  ansible.builtin.copy:
-    src: "{{ item }}.init"
-    dest: /etc/init.d/{{ item }}
-    owner: root
-    group: root
-    mode: "744"
-  loop: "{{ packaged_daemons + init_only_daemons }}"
-  # XXX deal with UID check.
+  loop: "{{ static_daemons }}"
 
 - name: Install systemd {{item}}.service file
   ansible.builtin.copy:
@@ -75,20 +32,18 @@
     mode: "644"
   loop: "{{ static_daemons }}"
 
+- name: Install {{item}} logrotate configuration
+  ansible.builtin.copy:
+    src: "{{item}}.logrotate"
+    dest: "/etc/logrotate.d/{{item}}"
+  loop: "{{ static_daemons }}"
+
 - name: Additional metric reporting daemon configuration
   include_tasks: metric_reporting_daemon_config.yml
-
-- name: Install clobber script
-  ansible.builtin.copy:
-    src: scripts/clobber
-    dest: /usr/local/sbin/
-    owner: root
-    group: root
-    mode: "755"
 
 - name: Ensure that daemons are enabled
   ansible.builtin.service:
     name: "{{ item }}"
     # state: started
     enabled: yes
-  loop: "{{ packaged_daemons + init_only_daemons + static_daemons }}"
+  loop: "{{ static_daemons }}"

@@ -1,3 +1,9 @@
+- name: Install required packages
+  ansible.builtin.apt:
+    name: 
+      - awscli
+      - golang
+
 - name: Remove prior builds
   ansible.builtin.file:
     path: "{{ package_assets_package_dir }}"
@@ -13,13 +19,15 @@
     - "{{ package_assets_package_dir }}"
     - "{{ package_assets_repo_dir }}"
 
-- name: Build standard packages
-  import_tasks: build-standard-packages.yml
-  tags: standard-packages
+- name: Build ruby packages
+  include_tasks: build-ruby-package.yml
+  tags: ruby-packages
+  loop: "{{package_assets_ruby_projects}}"
 
 - name: Build golang packages
-  import_tasks: build-golang-packages.yml
+  include_tasks: "build-golang-package.yml"
   tags: golang-packages
+  loop: "{{package_assets_golang_projects}}"
 
 - name: Build fake gmond package
   import_tasks: build-fake-gmond-package.yml

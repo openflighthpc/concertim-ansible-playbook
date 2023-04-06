@@ -1,9 +1,0 @@
-check process beanstalkd matching "/usr/bin/beanstalkd"
-  start program = "/usr/bin/systemctl restart beanstalkd.service" with timeout 60 seconds
-  restart program = "/usr/bin/systemctl restart beanstalkd.service" with timeout 60 seconds
-  stop program = "/usr/bin/systemctl stop beanstalkd.service"
-  if failed port 11300 type tcp
-     with timeout 5 seconds
-     then restart
-  if totalcpu > 12% for 5 cycles then restart # hung process?
-  group server

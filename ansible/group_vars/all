@@ -12,14 +12,9 @@ release_tag: "dev-{{ansible_date_time.date}}"
 # Some of our assets are stored in S3.  These are common variables for
 # accessing them.
 s3_bucket: alces-flight
-s3_assets_prefix:        /concertim/assets/
 s3_packages_prefix:      /concertim/packages/{{release_tag}}/
 s3_appliances_prefix:    /concertim/packages/{{release_tag}}/appliances/
 s3_daemons_prefix:       /concertim/packages/{{release_tag}}/daemons/
-# s3_gems_prefix:          /concertim/packages/{{release_tag}}/gems/
-s3_debs_prefix:          /concertim/packages/debs/
-s3_misc_packages_prefix: /concertim/packages/misc/
-s3_modules_prefix:       /concertim/packages/{{release_tag}}/modules/
 
 # The following are expected to be provided as `--extra-args` from the CLI.
 # aws_access_key_id
@@ -27,28 +22,10 @@ s3_modules_prefix:       /concertim/packages/{{release_tag}}/modules/
 
 # ==================================================
 # Ruby variables
-#
-# Variables related to our custom ruby installations.
 
-# The directory containing Ruby version 1.9.
-ruby_19_bin_dir: /opt/ruby-1.9/bin
 # The directory containing Ruby version 3.0.
 ruby_30_bin_dir: /usr/bin
 
-# The version of Rubygems we're using is too old to install from an S3 URL.
-# So for now we install from a gem repo contained in this git repository.
-# Alternatives include:
-#
-# * Updating to a newer version of Rubygems.  This is likly to require
-#   updating to a new version of Ruby too.
-# * Access the S3 bucket over HTTP(S).  This involves embedding the AWS
-#   credentials in the URL.  Ufortunately my attempts to do this failed due to
-#   invalid characters ('/') being included in the secret key.
-# * Making the gems stored on S3 public to avoid the credentials issue above.
-#
-# For now we use a local gem repository as it is a step in the right
-# direction.
-gems_source: "file:///ansible/roles/gems/files/gems/"
 
 # ==================================================
 # Rails variables

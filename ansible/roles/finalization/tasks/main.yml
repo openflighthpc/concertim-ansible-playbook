@@ -5,8 +5,8 @@
   vars:
     services:
       - memcached
-      - meryl
-      - metric-reporting-daemon
+      - ct-metric-reporting-daemon
+      - ct-metric-processing-daemon
       - "{{ (not want_dev_build) | ternary('ct-visualisation-app', '') }}"
       - "{{ (not want_dev_build) | ternary('ct-visualisation-job-runner', '') }}"
   loop: "{{ services | select | list }}"

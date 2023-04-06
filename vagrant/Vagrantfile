@@ -56,16 +56,27 @@ Vagrant.configure("2") do |config|
           v.vm.synced_folder CT_SRC_DIR, "/data/private/share/dev"
         end
 
+        if Vagrant.has_plugin?("vagrant-notify-forwarder")
+          # Notify forwarder forwards notifications for file system changes.
+          # This enables quick dev reloading in rails apps and air.
+          v.notify_forwarder.port = 22021
+        else
+          $stderr.puts <<~EOF
+          WARNING: vagrant-notify-forwarder is not installed.
+
+          Run the following for a much better development experience.
+
+          vagrant plugin install vagrant-notify-forwarder
+
+          EOF
+        end
+
         # Build the VM in the same was as the ansible README instructions
         # state.  These are only available when `ACCEPTANCE` has not been defined.
         v.vm.provision "install_ansible",
           type: "shell",
           run: "never",
           path: "scripts/install-ansible.sh"
-        v.vm.provision "run_prep_playbook",
-          type: "shell",
-          run: "never",
-          path: "scripts/run-prep-playbook.sh"
         v.vm.provision "run_build_playbook",
           type: "shell",
           run: "never",
