@@ -1,39 +1,7 @@
-- name: Create empty release.yml
-  ansible.builtin.copy:
-    content: |
-      {}
-    dest: "{{ release_yml_dest }}"
-    owner: "{{app_user}}"
+- name: Install release.yml
+  ansible.builtin.template:
+    src:  release.yml
+    dest: "{{release_yml_dest}}"
+    owner: root
     group: "{{app_user}}"
     mode: "644"
-
-# XXX Is there a better way of doing this.  The loop and registering is quite
-# unclear.
-- name: Add asset limits
-  vars:
-    entries:
-      - name: rack_limit
-        default: 3
-      - name: device_limit
-        default: 100
-      - name: nrad_limit
-        default: 3
-      - name: expire_time
-        default: "{{ license_expiration_time }}"
-  block:
-    - name: Check for existing entry
-      ansible.builtin.shell:
-        cmd: |
-          grep -c "^{{ item.name }}:" "{{ release_yml_dest }}"
-      register: existing_entry_test
-      failed_when: False
-      loop: "{{ entries }}"
-
-    - name: Add asset limit entry
-      ansible.builtin.lineinfile:
-        path: "{{ release_yml_dest }}"
-        line: "{{ item.item.name }}: {{ item.item.default }}"
-        insertbefore: EOF
-      loop: "{{ existing_entry_test.results }}"
-      when: item.rc != 0
-

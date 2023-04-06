@@ -11,3 +11,7 @@ license_expires_in_seconds: "{{ (license_expires_in_days|int) * 24 * 60 * 60 |in
 # Time at which license expires expresssed as seconds since the epoch.
 # Default is 30 days from now.
 license_expiration_time: "{{ (ansible_date_time.epoch|int) + (license_expires_in_seconds|int) }}"
+
+rack_limit: 3
+device_limit: 100
+nrad_limit: 30
