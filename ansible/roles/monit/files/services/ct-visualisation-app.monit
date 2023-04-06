@@ -1,21 +1,21 @@
-check process ct-visualisation-app with matching "ct-visualisation-app"
-  start program = "/usr/bin/systemctl restart ct-visualisation-app" with timeout 60 seconds
-  restart program = "/usr/bin/systemctl restart ct-visualisation-app" with timeout 60 seconds
-  stop program = "/usr/bin/systemctl stop ct-visualisation-app"
-  group ct
-  group ct-visualisation
-
-check file ct-visualisation-app_log with path /var/log/ct-ct-visualisation-app.log
-  start program = "/usr/bin/systemctl restart ct-visualisation-app" with timeout 60 seconds
-  restart program = "/usr/bin/systemctl restart ct-visualisation-app" with timeout 60 seconds
-  stop program = "/usr/bin/systemctl stop ct-visualisation-app"
-  if timestamp > 5 minutes then restart
-  group ct
-  group ct-visualisation
-
-check process ct-visualisation-job-runner with matching "ct-visualisation-job-runner"
-  start program = "/usr/bin/systemctl restart ct-visualisation-job-runner" with timeout 60 seconds
-  restart program = "/usr/bin/systemctl restart ct-visualisation-job-runner" with timeout 60 seconds
-  stop program = "/usr/bin/systemctl stop ct-visualisation-job-runner"
-  group ct
-  group ct-visualisation
+# check process ct-visualisation-app with matching "ct-visualisation-app"
+#   start program = "/usr/bin/systemctl restart ct-visualisation-app" with timeout 60 seconds
+#   restart program = "/usr/bin/systemctl restart ct-visualisation-app" with timeout 60 seconds
+#   stop program = "/usr/bin/systemctl stop ct-visualisation-app"
+#   group ct
+#   group ct-visualisation
+#
+# check file ct-visualisation-app_log with path /var/log/ct-ct-visualisation-app.log
+#   start program = "/usr/bin/systemctl restart ct-visualisation-app" with timeout 60 seconds
+#   restart program = "/usr/bin/systemctl restart ct-visualisation-app" with timeout 60 seconds
+#   stop program = "/usr/bin/systemctl stop ct-visualisation-app"
+#   if timestamp > 5 minutes then restart
+#   group ct
+#   group ct-visualisation
+#
+# check process ct-visualisation-job-runner with matching "ct-visualisation-job-runner"
+#   start program = "/usr/bin/systemctl restart ct-visualisation-job-runner" with timeout 60 seconds
+#   restart program = "/usr/bin/systemctl restart ct-visualisation-job-runner" with timeout 60 seconds
+#   stop program = "/usr/bin/systemctl stop ct-visualisation-job-runner"
+#   group ct
+#   group ct-visualisation
