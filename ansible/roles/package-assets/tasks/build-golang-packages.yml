@@ -1,7 +1,0 @@
-- name: Install required packages
-  ansible.builtin.apt:
-    name: golang
-
-- name: New Build golang packages
-  include_tasks: "build-golang-package.yml"
-  loop: "{{package_assets_golang_projects}}"

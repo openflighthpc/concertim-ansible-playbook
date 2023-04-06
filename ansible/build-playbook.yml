@@ -28,8 +28,6 @@
       tags: ct-visualisation-app
     - role: personality
       tags: personality
-    - role: release-info
-      tags: release-info
     - role: appliance-dev
       tags: appliance-dev
       when: want_dev_build | bool

@@ -36,6 +36,35 @@ if [ "${PKG_TYPE}" == "" ] ; then
     exit 1
 fi
 
+# Return path to build.yml from project root.
+get_build_yaml() {
+  echo core/config/build.yml
+}
+
+create_build_yml() {
+    local build_yml
+    build_yml="$(get_build_yaml)"
+    echo -e "Creating ${build_yml}"
+    local version sha date
+
+    version=$(
+      git tag --list --points-at HEAD --sort=-v:refname | \
+          grep '^v[[:digit:]]' | \
+          head -n 1
+    ) || true
+    if [ "$version" == "" ] ; then
+        version=$(git rev-parse --abbrev-ref HEAD)
+    fi
+    sha=$(git rev-parse HEAD)
+    date=$(git log -1 --format=%cd --date iso)
+    cat <<EOF > "${build_yml}"
+---
+build_version: "${version}"
+build_rev: "${sha}"
+build_date: "${date}"
+EOF
+}
+
 checkout_source() {
     if [ -d "${PKG_NAME}" ] ; then
         pushd "${PKG_NAME}" > /dev/null
@@ -58,6 +87,17 @@ checkout_source() {
 	    git merge --quiet @{upstream}
     fi
     popd > /dev/null
+}
+
+create_tar_file() {
+    echo "Creating tar file $( realpath --relative-to="." ${project_dir} )/${PKG_NAME}.tgz"
+    git archive --format tar --prefix "${PKG_NAME}/" --output "${project_dir}/${PKG_NAME}.tar" HEAD
+}
+
+append_build_yml() {
+    tar --append -f "${project_dir}/${PKG_NAME}.tar" "${PKG_NAME}/$(get_build_yaml)"
+    gzip "${project_dir}/${PKG_NAME}.tar"
+    mv "${project_dir}/${PKG_NAME}.tar.gz" "${project_dir}/${PKG_NAME}.tgz"
 }
 
 git_ref_type() {
@@ -87,10 +127,11 @@ main() {
     echo -e "=== Packaging project: ${PKG_NAME} from ${GH_REPO}/${REPO_SUBDIR} @ ${BUILD_TAG}"
     checkout_source
     pushd "${PKG_NAME}/${REPO_SUBDIR}" > /dev/null
-    make clean
-    make package
-    mv "${PKG_NAME}.tgz" "${project_dir}"
+
+    create_build_yml
+    create_tar_file
     popd > /dev/null
+    append_build_yml
 }
 
 main "$@"

@@ -1,18 +1,23 @@
-package_assets_appliances:
-  - ct-visualisation-app:main
-
 package_assets_fake_gmond_tag: main
+
+package_assets_ruby_projects:
+  - repo: concertim-ct-visualisation-app
+    name: ct-visualisation-app
+    # This could be a git tag, git branch or git commit.
+    tag: main
+    type: appliance
+    subdir: ""
 
 package_assets_golang_projects:
   - repo: concertim-metric-reporting-daemon
-    name: metric-reporting-daemon
+    name: ct-metric-reporting-daemon
     # This could be a git tag, git branch or git commit.
     tag: main
     type: daemon
     subdir: ""
 
   - repo: concertim-metric-reporting-daemon
-    name: metric-processing-daemon
+    name: ct-metric-processing-daemon
     # This could be a git tag, git branch or git commit.
     tag: main
     type: daemon
