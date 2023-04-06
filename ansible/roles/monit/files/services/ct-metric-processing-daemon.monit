@@ -1,0 +1,16 @@
+check process ct-metric-processing-daemon with matching "ct-metric-processing-daemon"
+  start program = "/usr/bin/systemctl restart ct-metric-processing-daemon" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart ct-metric-processing-daemon" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop ct-metric-processing-daemon"
+  group ct-daemon
+  group ct-metrics
+  group ct-metric-processing
+
+check file ct-metric-processing-daemon_log with path /var/log/ct-metric-processing-daemon.log
+  start program = "/usr/bin/systemctl restart ct-metric-processing-daemon" with timeout 60 seconds
+  restart program = "/usr/bin/systemctl restart ct-metric-processing-daemon" with timeout 60 seconds
+  stop program = "/usr/bin/systemctl stop ct-metric-processing-daemon"
+  if timestamp > 5 minutes then restart
+  group ct-daemon
+  group ct-metrics
+  group ct-metric-processing

@@ -3,7 +3,7 @@ Description=Concertim Metric Reporting Daemon - Provides HTTP API to allow injec
 
 [Service]
 Type=exec
-ExecStart=/data/private/share/daemons/ct-metric-reporting-daemon/metric-reporting-daemon
+ExecStart=/data/private/share/daemons/ct-metric-reporting-daemon/ct-metric-reporting-daemon
 TimeoutSec=10sec
 StandardOutput=append:/var/log/ct-metric-reporting-daemon.log
 StandardError=append:/var/log/ct-metric-reporting-daemon.log
