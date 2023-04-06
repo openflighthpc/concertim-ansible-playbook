@@ -26,9 +26,4 @@ vagrant destroy --force "${BOX_NAME}"
 vagrant up --no-provision "${BOX_NAME}"
 vagrant provision --provision-with swap "${BOX_NAME}"
 vagrant provision --provision-with install_ansible "${BOX_NAME}"
-vagrant provision --provision-with run_prep_playbook "${BOX_NAME}"
-
-# Reboot the machine so that changes configured in `prep_playbook` can take
-# place.
-vagrant reload --force "${BOX_NAME}"
 vagrant provision --provision-with run_build_playbook "${BOX_NAME}"

@@ -77,10 +77,6 @@ Vagrant.configure("2") do |config|
           type: "shell",
           run: "never",
           path: "scripts/install-ansible.sh"
-        v.vm.provision "run_prep_playbook",
-          type: "shell",
-          run: "never",
-          path: "scripts/run-prep-playbook.sh"
         v.vm.provision "run_build_playbook",
           type: "shell",
           run: "never",

@@ -8,26 +8,20 @@ tagged release, e.g., `revival-19.1`.
 
 ## Prerequisites
 
-* An Ubuntu 22.04 (jammy) machine with at least 4GiB of memory and at least 2
+* An Ubuntu 22.04 (jammy) machine with at least 3GiB of memory and at least 2
   CPUs.  This machine will become the Alces Concertim machine.
 * Root access on that Ubuntu machine.
-* The Ubuntu machine needs to be configured to not use "Predictable Network
-  Interface Names".  That is to use `ethX` naming instead of `enpXsY` style
-  naming.  This repo ships with an ansible playbook that can be used to
-  configure the machine to use `ethX` style network names.
 
 ## Overview
 
-The process is as follows.  Steps 2 through 7 are described in more detail
+The process is as follows.  Steps 2 through 5 are described in more detail
 below.
 
 1. Log into your Ubuntu machine and gain root access.
 2. Gather GitHub and S3 credentials.
 3. Install ansible and dependencies.
 4. Clone this git repository and checkout the correct tag.
-5. Optionally run the prep playbook to configure the network naming
-   convention.
-6. Run the build playbook.
+5. Run the build playbook.
 
 ## Gather GitHub and S3 credentials
 
@@ -82,26 +76,10 @@ echo "Using tag ${RELEASE_TAG}"
 git checkout --quiet ${RELEASE_TAG}
 ```
 
-## Run the prep playbook to configure the network naming convention as needed
-
-Before the build and configure playbooks can be ran, the machine needs to be
-configured to use `ethX` style network naming convention.  Running the prep
-playbook will preform that configuration if needed and inform you of the next
-steps, which will be to either 1) reboot the machine and then run the build
-and configure playbooks; or 2) move straight on to running the build and
-configure playbooks.
-
-
-```bash
-ansible-playbook --inventory /ansible/inventory.ini /ansible/prep-playbook.yml
-```
-
 ## Run the build playbook
 
-Run the build playbook.
-
-If you rebooted the machine after the above step, don't forget to ensure that
-your AWS credentials have been gathered and exported.
+Run the build playbook. You will need to ensure that your AWS credentials have
+been gathered and exported.
 
 ```
 AWS_ACCESS_KEY_ID=...
