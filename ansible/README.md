@@ -42,7 +42,7 @@ snippets.
 * `AWS_SECRET_ACCESS_KEY` is your secret AWS access key allowing downloading
   from the S3 bucket mentioned above.
 * `GH_TOKEN` is your GitHub oath token that allows access to the
-  `alces-flight/concertim-bootstrap` repository.
+  `alces-flight/concertim-ansible-playbook` repository.
 
 
 ## Install ansible
@@ -69,9 +69,9 @@ credentials to clone it.
 ```bash
 RELEASE_TAG="main"
 cd /root
-git clone https://${GH_TOKEN}@github.com/alces-flight/concertim-bootstrap.git
-ln -s /root/concertim-bootstrap/ansible /ansible
-cd /root/concertim-bootstrap
+git clone https://${GH_TOKEN}@github.com/alces-flight/concertim-ansible-playbook.git
+ln -s /root/concertim-ansible-playbook/ansible /ansible
+cd /root/concertim-ansible-playbook
 echo "Using tag ${RELEASE_TAG}"
 git checkout --quiet ${RELEASE_TAG}
 ```

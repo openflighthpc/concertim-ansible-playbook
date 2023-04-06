@@ -54,36 +54,3 @@ ACCEPTANCE=true vagrant up --provision-with swap BOX_NAME
 ```
 
 Then follow the instructions in the [ansible README](/ansible/README.md).
-
-## Asset building
-
-TBD: Improve this section.
-
-The ansible build playbook expects certain assets to be available for it in S3.
-These assets are built and uploaded to S3 by running the
-`package-assets-playbook.yml`.  Typically, this is done on the `asset-build`
-vagrant box.
-
-On your laptop run the following:
-
-```sh
-cd vagrant/
-vagrant up asset-build
-vagrant ssh asset-build
-```
-
-Once SSHd into the vagrant box, gain root with `sudo su -` and then run the
-following:
-
-```
-GH_TOKEN=...
-AWS_ACCESS_KEY_ID=...
-AWS_SECRET_ACCESS_KEY=...
-```
-
-```bash
-ansible-playbook /ansible/package-assets-playbook.yml \
-  --inventory /ansible/inventory.ini \
-  --extra-vars "gh_token=$GH_TOKEN" \
-  --extra-vars "aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY"
-```
