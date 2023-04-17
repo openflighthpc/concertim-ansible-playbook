@@ -34,8 +34,6 @@
       tags: package-daemons
     - role: ct-visualisation-app
       tags: ct-visualisation-app
-    - role: personality
-      tags: personality
     - role: appliance-dev
       tags: appliance-dev
       when: want_dev_build | bool
