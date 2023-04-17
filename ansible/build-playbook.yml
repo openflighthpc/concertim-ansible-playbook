@@ -4,8 +4,16 @@
   become: true
   become_user: root
   become_method: sudo
+
+  pre_tasks:
+    - name: Check credentials and release tag
+      vars:
+        credentials:
+          - aws_access_key_id
+          - aws_secret_access_key
+      include_tasks: tasks/assert_credentials_and_release_tag.yml
+
   roles:
-    - role: build_base
     - role: misc_packages
       tags: misc_packages
     - role: webserver
