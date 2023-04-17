@@ -1,4 +1,3 @@
 rack_limit: {{ rack_limit }}
 device_limit: {{ device_limit }}
 nrad_limit: {{ nrad_limit }}
-expire_time: {{ license_expiration_time }}

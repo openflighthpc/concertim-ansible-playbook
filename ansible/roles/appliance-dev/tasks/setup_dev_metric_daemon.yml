@@ -1,0 +1,6 @@
+# * install golang
+# * git config --global --add safe.directory /data/private/share/dev/daemons/ct-metric-reporting-daemon
+# * go build
+# * stop and disable prod services
+# * monit unmonitor -g ct-metrics
+# * run in screen session

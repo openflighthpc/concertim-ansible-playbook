@@ -31,8 +31,6 @@ ruby_30_bin_dir: /usr/bin
 # Rails variables
 #
 rails_env: production
-# The directory containing our rails apps.
-rails_root_dir: /data/private/share/rails
 
 
 # ==================================================
@@ -41,7 +39,12 @@ rails_root_dir: /data/private/share/rails
 # The name of (1) the unix user used to run our rails apps; (2) the database
 # user/role used.
 app_user: www-data
-ct_etc_dir: /data/private/share/etc/concurrent-thinking
+
+ct_root_dir: /opt/concertim
+# The directory into which the ct apps are installed.
+ct_installation_dir: /opt/concertim/opt
+# The directory into which some of the ct configuration can be found.
+ct_etc_dir: /opt/concertim/etc
 
 # ==================================================
 # Configuration for which parts of the build we want.

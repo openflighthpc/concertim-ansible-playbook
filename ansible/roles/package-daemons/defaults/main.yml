@@ -1,8 +1,8 @@
 mode: production
-daemon_installation_dir: /data/private/share/daemons
+daemon_installation_dir: /opt/concertim/opt
 
-# List of statically compiled daemons.  Their tarball needs downloading and
-# extracting and a systemd unit file installing.
-static_daemons:
+# List of daemons.  Their tarball needs downloading and extracting.
+# Configuration for systemd, logrotate and perhaps more needs installing.
+daemons:
   - ct-metric-reporting-daemon
   - ct-metric-processing-daemon

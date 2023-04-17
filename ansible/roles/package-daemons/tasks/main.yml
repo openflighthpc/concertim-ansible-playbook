@@ -6,7 +6,7 @@
     mode: get
     aws_access_key: "{{ aws_access_key_id }}"
     aws_secret_key: "{{ aws_secret_access_key }}"
-  loop: "{{ static_daemons }}"
+  loop: "{{ daemons }}"
 
 - name: Make destination directory
   ansible.builtin.file:
@@ -21,22 +21,22 @@
     src: "tmp/{{ item }}.tgz"
     dest: "{{ daemon_installation_dir }}"
     creates: "{{ daemon_installation_dir }}/{{ item }}"
-  loop: "{{ static_daemons }}"
+  loop: "{{ daemons }}"
 
 - name: Install systemd {{item}}.service file
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: "{{ item }}.service"
     dest: /lib/systemd/system/{{ item }}.service
     owner: root
     group: root
     mode: "644"
-  loop: "{{ static_daemons }}"
+  loop: "{{ daemons }}"
 
 - name: Install {{item}} logrotate configuration
   ansible.builtin.copy:
     src: "{{item}}.logrotate"
     dest: "/etc/logrotate.d/{{item}}"
-  loop: "{{ static_daemons }}"
+  loop: "{{ daemons }}"
 
 - name: Additional metric reporting daemon configuration
   include_tasks: metric_reporting_daemon_config.yml
@@ -46,4 +46,4 @@
     name: "{{ item }}"
     # state: started
     enabled: yes
-  loop: "{{ static_daemons }}"
+  loop: "{{ daemons }}"

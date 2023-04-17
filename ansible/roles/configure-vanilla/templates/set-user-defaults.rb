@@ -18,7 +18,7 @@ def update_user(login, user_data)
   end
 end
 
-user_data = YAML.load_file("/data/private/share/etc/concurrent-thinking/appliance/default-user-data.yml")
+user_data = YAML.load_file("{{ct_etc_dir}}/default-user-data.yml")
 
 update_user('admin', user_data)
 update_user('operator', user_data)

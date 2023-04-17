@@ -1,4 +1,4 @@
-- name: Make data directories
+- name: Make installation directories
   ansible.builtin.file:
     path: "{{ item.path }}"
     owner: "{{ item.owner }}"
@@ -6,97 +6,17 @@
     mode: "{{ item.mode }}"
     state: directory
   loop:
-    - path: /data/
-      owner: root
-      group: root
-      mode: u=rwx,g=rwx,o=rx
-
-    - path: /data/private
-      owner: root
-      group: root
-      mode: "755"
-
-    - path: /data/private/share
-      owner: root
-      group: root
-      mode: "755"
-
-    - path: /data/private/share/etc
+    - path: "{{ct_root_dir}}"
       owner: root
       group: root
       mode: "755"
 
     - path: "{{ct_etc_dir}}"
-      owner: "{{app_user}}"
-      group: "{{app_user}}"
-      mode: u=rwx,g=rx,o=rx
-
-    - path: "{{ct_etc_dir}}/ssl"
-      owner: "{{app_user}}"
-      group: "{{app_user}}"
-      mode: "755"
-
-    - path: /data/public
       owner: root
       group: root
       mode: "755"
 
-    - path: /data/public/resources
-      owner: root
-      group: root
-      mode: u=rwx,g=rwx,o=rwx
-
-    - path: /data/public/resources/admin
-      owner: root
-      group: root
-      mode: u=rwx,g=,o=
-
-    - path: /data/public/resources/backup
-      owner: root
-      group: root
-      mode: u=rwx,g=rwx,o=rwx
-
-    - path: /data/public/resources/data
-      owner: root
-      group: root
-      mode: u=rwx,g=rwx,o=rwx
-
-    - path: /data/public/resources/tmp
-      owner: root
-      group: root
-      mode: "1777"
-
-    - path: /data/public/resources/etc
-      owner: root
-      group: root
-      mode: "777"
-
-    - path: /data/public/resources/etc/concurrent-thinking
-      owner: root
-      group: root
-      mode: u=rwx,g=rwx,o=rwx
-
-    - path: /data/public/tmp
-      owner: root
-      group: root
-      mode: "1777"
-
-- name: Create symlinks
-  ansible.builtin.file:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    state: link
-  loop:
-    - src: "{{ct_etc_dir}}"
-      dest: /etc/concurrent-thinking
-
-- name: Create bind mounts
-  ansible.posix.mount:
-    path: "{{ item.path }}"
-    src: "{{ item.src }}"
-    opts: bind
-    fstype: "none"
-    state: mounted
-  loop:
-    - path: /resources
-      src: /data/public/resources
+    - path: "{{ct_installation_dir}}"
+      owner: "{{app_user}}"
+      group: "{{app_user}}"
+      mode: "755"

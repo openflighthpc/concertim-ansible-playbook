@@ -1,17 +1,13 @@
 - name: Check for dev installation
-  vars:
-    dev_root_dir: /data/private/share/dev
   ansible.builtin.command:
-    cmd: ls -d {{dev_root_dir}}/appliances/ct-visualisation-app
+    cmd: ls -d {{dev_root_dir}}/ct-visualisation-app
   register: dev_ct_vis_dir
   failed_when: False
 
 
 - name: Bundle install gems for dev ct-visualisation-app
-  vars:
-    dev_root_dir: /data/private/share/dev
   ansible.builtin.shell: |
-    cd {{dev_root_dir}}/appliances/ct-visualisation-app/core
+    cd {{dev_root_dir}}/ct-visualisation-app/core
     ./bin/bundle install
   when: dev_ct_vis_dir.stdout != ""
 

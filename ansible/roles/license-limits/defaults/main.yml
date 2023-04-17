@@ -1,17 +1,3 @@
-release_yml_dest: "{{ct_etc_dir}}/appliance/release.yml"
-
-# Time until license expires expressed in days.
-# Default 30 days.
-license_expires_in_days: 30
-
-# Time until license expires expressed in seconds.
-# Default 30 days (in seconds).
-license_expires_in_seconds: "{{ (license_expires_in_days|int) * 24 * 60 * 60 |int }}"
-
-# Time at which license expires expresssed as seconds since the epoch.
-# Default is 30 days from now.
-license_expiration_time: "{{ (ansible_date_time.epoch|int) + (license_expires_in_seconds|int) }}"
-
 rack_limit: 3
 device_limit: 100
 nrad_limit: 30

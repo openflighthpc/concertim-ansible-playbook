@@ -6,10 +6,17 @@
       - php8.1-fpm
     state: latest
 
-- name: Write the apache config files
+- name: Install nginx config files
   ansible.builtin.copy:
     src: nginx/
     dest: /etc/nginx/
+
+- name: Install templated nginx config files
+  ansible.builtin.template:
+    src:  "{{ item }}"
+    dest: "/etc/{{ item }}"
+  loop:
+    - nginx/snippets/server-https.d/document-root.conf
 
 - name: Disable default sites
   ansible.builtin.file:
