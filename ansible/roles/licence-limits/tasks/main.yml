@@ -1,4 +1,4 @@
-- name: Install license_limits.yml
+- name: Install licence-limits.yml
   ansible.builtin.template:
     src:  licence-limits.yml
     dest: "{{ct_etc_dir}}"

@@ -38,7 +38,7 @@
     - role: fake-gmond
       tags: fake-gmond
       when: want_fake_metrics | bool
-    - role: license-limits
-      tags: license-limits
+    - role: licence-limits
+      tags: licence-limits
     - role: finalization
       tags: finalization
