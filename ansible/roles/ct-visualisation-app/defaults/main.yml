@@ -6,3 +6,7 @@ admin_password: admin
 admin_email: admin@test.com
 operator_password: operator
 operator_email: operator@test.com
+
+rack_limit: 3
+device_limit: 100
+nrad_limit: 30
