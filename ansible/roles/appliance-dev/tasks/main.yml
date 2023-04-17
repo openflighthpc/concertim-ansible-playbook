@@ -3,7 +3,8 @@
 # misc-packages role.
 - name: Install useful dev tools
   ansible.builtin.apt:
-    name: []
+    name:
+      - golang-go
     state: latest
 
 # As above, install scripts that are for development.  Scripts that are useful
