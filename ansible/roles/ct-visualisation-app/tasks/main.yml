@@ -57,6 +57,9 @@
 - name: Create and migrate database
   import_tasks: create_and_migrate_database.yml
 
+- name: Create default users
+  import_tasks: create_default_users.yml
+
 - name: Precompile assets
   import_tasks: run_rake_task.yml
   vars:
@@ -84,3 +87,6 @@
   loop:
     - ct-visualisation-app
     - ct-visualisation-job-runner
+
+- name: Create initial rack
+  import_tasks: create_initial_rack.yml

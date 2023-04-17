@@ -26,11 +26,3 @@
     ruby_bin_dir: "{{ruby_30_bin_dir}}"
     additional_env: ""
     chdir: "{{ ct_installation_dir }}/ct-visualisation-app/core"
-
-- name: Create initial rack
-  ansible.builtin.shell:
-    chdir: "{{ ct_installation_dir }}/ct-visualisation-app/docs/api/examples/"
-    cmd: |
-      export CONCERTIM_HOST=localhost
-      export AUTH_TOKEN=$(LOGIN=admin PASSWORD={{ admin_password }} ./get-auth-token.sh)
-      ./create-rack.sh

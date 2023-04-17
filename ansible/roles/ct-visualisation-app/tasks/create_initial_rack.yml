@@ -1,0 +1,11 @@
+- name: Wait for ct-vis-app to be running
+  ansible.builtin.pause:
+    seconds: 30
+
+- name: Create initial rack
+  ansible.builtin.shell:
+    chdir: "{{ ct_installation_dir }}/ct-visualisation-app/docs/api/examples/"
+    cmd: |
+      export CONCERTIM_HOST=localhost
+      export AUTH_TOKEN=$(LOGIN=admin PASSWORD={{ admin_password }} ./get-auth-token.sh)
+      ./create-rack.sh
