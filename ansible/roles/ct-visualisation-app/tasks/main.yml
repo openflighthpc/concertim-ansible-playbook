@@ -1,8 +1,16 @@
+- name: Install dependencies
+  register: result
+  until: result is success
+  ansible.builtin.apt:
+    name:
+      - ruby3.0
+
 - name: Install build dependencies
   register: result
   until: result is success
   ansible.builtin.apt:
     name:
+      - ruby3.0-dev
       - autoconf
       - bison
       - build-essential

@@ -28,8 +28,6 @@
       tags: monit
     - role: data_dirs
       tags: data_dirs
-    - role: ruby
-      tags: ruby
     - role: package-daemons
       tags: package-daemons
     - role: ct-visualisation-app

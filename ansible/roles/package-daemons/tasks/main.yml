@@ -1,3 +1,11 @@
+# The daemons have libexec scripts which depend on Ruby.
+- name: Install dependencies
+  register: result
+  until: result is success
+  ansible.builtin.apt:
+    name:
+      - ruby3.0
+
 - name: Download daemon packages from S3
   amazon.aws.aws_s3:
     bucket: "{{s3_bucket}}"

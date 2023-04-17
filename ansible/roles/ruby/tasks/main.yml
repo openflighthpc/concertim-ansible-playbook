@@ -1,5 +1,0 @@
-- name: Install ruby 3.0
-  ansible.builtin.apt:
-    name:
-      - ruby3.0
-      - ruby3.0-dev
