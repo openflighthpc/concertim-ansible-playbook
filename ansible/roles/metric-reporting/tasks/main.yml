@@ -18,7 +18,7 @@
 
 - name: Make destination directory
   ansible.builtin.file:
-    path: "{{ daemon_installation_dir }}"
+    path: "{{ ct_installation_dir }}"
     owner: root
     group: root
     mode: "755"
@@ -27,8 +27,8 @@
 - name: Extract tar files
   ansible.builtin.unarchive:
     src: "tmp/{{ item }}.tgz"
-    dest: "{{ daemon_installation_dir }}"
-    creates: "{{ daemon_installation_dir }}/{{ item }}"
+    dest: "{{ ct_installation_dir }}"
+    creates: "{{ ct_installation_dir }}/{{ item }}"
   loop: "{{ daemons }}"
 
 - name: Install systemd {{item}}.service file

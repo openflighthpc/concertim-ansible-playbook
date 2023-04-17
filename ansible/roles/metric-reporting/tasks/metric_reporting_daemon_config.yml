@@ -1,6 +1,6 @@
 - name: Generate shared secret
   vars:
-    secret_file: "{{ daemon_installation_dir }}/ct-metric-reporting-daemon/config/secret"
+    secret_file: "{{ ct_installation_dir }}/ct-metric-reporting-daemon/config/secret"
   block:
     - name: Ensure directories exist
       ansible.builtin.file:
@@ -10,8 +10,8 @@
         mode: "755"
         state: directory
       loop:
-        - "{{ daemon_installation_dir }}/ct-metric-reporting-daemon"
-        - "{{ daemon_installation_dir }}/ct-metric-reporting-daemon/config"
+        - "{{ ct_installation_dir }}/ct-metric-reporting-daemon"
+        - "{{ ct_installation_dir }}/ct-metric-reporting-daemon/config"
 
     - name: Created secret
       ansible.builtin.shell:

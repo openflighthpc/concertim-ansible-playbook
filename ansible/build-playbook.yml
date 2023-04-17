@@ -28,8 +28,8 @@
       tags: monit
     - role: data_dirs
       tags: data_dirs
-    - role: package-daemons
-      tags: package-daemons
+    - role: metric-reporting
+      tags: metric-reporting
     - role: ct-visualisation-app
       tags: ct-visualisation-app
     - role: appliance-dev

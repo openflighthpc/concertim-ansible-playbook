@@ -1,6 +1,3 @@
-mode: production
-daemon_installation_dir: /opt/concertim/opt
-
 # List of daemons.  Their tarball needs downloading and extracting.
 # Configuration for systemd, logrotate and perhaps more needs installing.
 daemons:
