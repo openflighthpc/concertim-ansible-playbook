@@ -9,10 +9,12 @@ check host gmetad with address 127.0.0.1
   group ganglia
   group metrics
 
-# Use restart, and always place a sleep 15 or more in your script, see script for why
-check program gmetad_check_rrd with path "/usr/local/sbin/check_gmetad_rrd_age.sh"
-  if status != 0 for 2 times within 2 cycles then restart
-  start program = "/bin/bash -c '/bin/sleep 5 && /etc/init.d/gmetad start'" with timeout 60 seconds
-  stop program = "/etc/init.d/gmetad stop"
-  group ganglia
-  group metrics
+# XXX Currently gmetad isn't writing RRD files, and we're not using them
+# anyway.  Re-enable this if one of both of these changes.
+# # Use restart, and always place a sleep 15 or more in your script, see script for why
+# check program gmetad_check_rrd with path "/usr/local/sbin/check_gmetad_rrd_age.sh"
+#   if status != 0 for 2 times within 2 cycles then restart
+#   start program = "/bin/bash -c '/bin/sleep 5 && /etc/init.d/gmetad start'" with timeout 60 seconds
+#   stop program = "/etc/init.d/gmetad stop"
+#   group ganglia
+#   group metrics
