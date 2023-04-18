@@ -1,2 +1,0 @@
-cloud_init_netplan: /etc/netplan/50-cloud-init.yaml
-eth0_netplan: /etc/netplan/01-netcfg.yaml

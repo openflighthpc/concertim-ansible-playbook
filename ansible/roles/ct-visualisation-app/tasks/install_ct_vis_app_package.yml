@@ -1,6 +1,6 @@
 - name: Make destination directory
   ansible.builtin.file:
-    path: "{{ rails_root_dir }}"
+    path: "{{ ct_installation_dir }}"
     owner: "{{ app_user }}"
     group: "{{ app_user }}"
     mode: "755"
@@ -8,7 +8,7 @@
 
 - name: Install ct-visualisation-app tarball from s3
   vars:
-    destination_dir: "{{ rails_root_dir }}"
+    destination_dir: "{{ ct_installation_dir }}"
     s3_prefix: "{{s3_appliances_prefix}}"
     tarball_name: ct-visualisation-app.tgz
     untarred_dir: ct-visualisation-app

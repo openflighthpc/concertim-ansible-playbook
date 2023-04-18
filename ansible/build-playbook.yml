@@ -4,8 +4,39 @@
   become: true
   become_user: root
   become_method: sudo
+
+  pre_tasks:
+    - name: Check credentials and release tag
+      vars:
+        credentials:
+          - aws_access_key_id
+          - aws_secret_access_key
+      include_tasks: tasks/assert_credentials_and_release_tag.yml
+
+    - name: Make installation directories
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+        mode: "{{ item.mode }}"
+        state: directory
+      loop:
+        - path: "{{ct_root_dir}}"
+          owner: root
+          group: root
+          mode: "755"
+
+        - path: "{{ct_etc_dir}}"
+          owner: root
+          group: root
+          mode: "755"
+
+        - path: "{{ct_installation_dir}}"
+          owner: "{{app_user}}"
+          group: "{{app_user}}"
+          mode: "755"
+
   roles:
-    - role: build_base
     - role: misc_packages
       tags: misc_packages
     - role: webserver
@@ -18,25 +49,15 @@
       tags: ganglia
     - role: monit
       tags: monit
-    - role: data_dirs
-      tags: data_dirs
-    - role: ruby
-      tags: ruby
-    - role: package-daemons
-      tags: package-daemons
+    - role: metric-reporting
+      tags: metric-reporting
     - role: ct-visualisation-app
       tags: ct-visualisation-app
-    - role: personality
-      tags: personality
     - role: appliance-dev
       tags: appliance-dev
       when: want_dev_build | bool
     - role: fake-gmond
       tags: fake-gmond
       when: want_fake_metrics | bool
-    - role: configure-vanilla
-      tags: configure-vanilla
-    - role: license-limits
-      tags: license-limits
     - role: finalization
       tags: finalization

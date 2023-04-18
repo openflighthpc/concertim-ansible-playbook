@@ -1,8 +1,16 @@
+- name: Install dependencies
+  register: result
+  until: result is success
+  ansible.builtin.apt:
+    name:
+      - ruby3.0
+
 - name: Install build dependencies
   register: result
   until: result is success
   ansible.builtin.apt:
     name:
+      - ruby3.0-dev
       - autoconf
       - bison
       - build-essential
@@ -49,6 +57,12 @@
 - name: Create and migrate database
   import_tasks: create_and_migrate_database.yml
 
+- name: Create default users
+  import_tasks: create_default_users.yml
+
+- name: Add licence limits
+  import_tasks: licence_limits.yml
+
 - name: Precompile assets
   import_tasks: run_rake_task.yml
   vars:
@@ -76,3 +90,6 @@
   loop:
     - ct-visualisation-app
     - ct-visualisation-job-runner
+
+- name: Create initial rack
+  import_tasks: create_initial_rack.yml

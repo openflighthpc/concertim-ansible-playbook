@@ -1,0 +1,44 @@
+- name: Workaround git and vboxfs issue
+  ansible.builtin.command:
+    cmd: git config --global --add safe.directory /opt/concertim/dev/ct-metric-reporting-daemon
+
+
+- name: Build metric reporting daemon server
+  ansible.builtin.command:
+    cmd: go build
+    chdir: "{{dev_root_dir}}/ct-metric-reporting-daemon"
+
+
+- name: Build metric processing daemon server
+  ansible.builtin.command:
+    cmd: go build
+    chdir: "{{dev_root_dir}}/ct-metric-reporting-daemon/processing"
+
+
+- name: unmonitor metric daemons
+  ansible.builtin.command:
+    cmd: monit unmonitor -g ct-metrics
+
+
+- name: Disable production metric daemons
+  ansible.builtin.service:
+    name: "{{item}}"
+    state: stopped
+    enabled: no
+  loop:
+    - ct-metric-reporting-daemon
+    - ct-metric-processing-daemon
+
+
+- name: Start dev servers
+  ansible.builtin.command:
+    cmd: screen -dmS {{item.name}} {{item.exe}}
+    chdir: "{{dir}}"
+  loop:
+    - exe: concertim-metric-reporting-daemon
+      dir: "{{dev_root_dir}}/ct-metric-reporting-daemon"
+      name: mrd
+
+    - exe: processing
+      dir: "{{dev_root_dir}}/ct-metric-reporting-daemon/processing"
+      name: mpd

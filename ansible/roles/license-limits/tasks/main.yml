@@ -1,7 +1,0 @@
-- name: Install release.yml
-  ansible.builtin.template:
-    src:  release.yml
-    dest: "{{release_yml_dest}}"
-    owner: root
-    group: "{{app_user}}"
-    mode: "644"

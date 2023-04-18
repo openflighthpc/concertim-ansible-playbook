@@ -1,24 +1,11 @@
-- name: Import APT signing key
-  ansible.builtin.apt_key:
-    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
-    state: present
-
-- name: Add postgresql repository
-  vars:
-    repo_name: "{{ ansible_facts['lsb']['codename'] }}-pgdg"
-  ansible.builtin.apt_repository:
-    repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ repo_name }} main
-    state: present
-    filename: postgresql-pgdg
-
-- name: Install postgresql 11
+- name: Install postgresql
   ansible.builtin.apt:
-    name: postgresql-11
+    name: postgresql
     state: present
 
 - name: Update configuration to log to syslog
   ansible.builtin.replace:
-    path: /etc/postgresql/11/main/postgresql.conf
+    path: /etc/postgresql/14/main/postgresql.conf
     regexp: "{{ item.regexp }}"
     replace: "{{ item.replace }}"
     backup: true
@@ -27,10 +14,6 @@
       replace: "log_destination = 'syslog'"
     - regexp: '#syslog_'
       replace: 'syslog_'
-    # - regexp: 'max_connections = 100'
-    #   replace: 'max_connections = 145'
-    # - regexp: 'shared_buffers = 32MB'
-    #   replace: 'shared_buffers = 24MB'
 
 - name: Ensure that postgresql is started
   ansible.builtin.service:
@@ -48,4 +31,4 @@
     - name: Create {{ app_user }} role
       when: db_user_exist.stdout == ""
       ansible.builtin.command:
-        cmd: sudo -u postgres createuser {{ app_user }} -A -R -d
+        cmd: sudo -u postgres createuser {{ app_user }} -S -R -d

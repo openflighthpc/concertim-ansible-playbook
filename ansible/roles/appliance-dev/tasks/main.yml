@@ -3,7 +3,8 @@
 # misc-packages role.
 - name: Install useful dev tools
   ansible.builtin.apt:
-    name: []
+    name:
+      - golang-go
     state: latest
 
 # As above, install scripts that are for development.  Scripts that are useful
@@ -25,3 +26,6 @@
 
 - name: Setup dev ct-visualisation-app
   include_tasks: setup_dev_ct_vis_app.yml
+
+- name: Setup dev metric daemons
+  include_tasks: setup_dev_metric_daemon.yml

@@ -1,0 +1,57 @@
+# The daemons have libexec scripts which depend on Ruby.
+- name: Install dependencies
+  register: result
+  until: result is success
+  ansible.builtin.apt:
+    name:
+      - ruby3.0
+
+- name: Download daemon packages from S3
+  amazon.aws.aws_s3:
+    bucket: "{{s3_bucket}}"
+    object: "{{s3_daemons_prefix}}{{ item }}.tgz"
+    dest: "{{ role_path }}/files/tmp/{{ item }}.tgz"
+    mode: get
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+  loop: "{{ daemons }}"
+
+- name: Make destination directory
+  ansible.builtin.file:
+    path: "{{ ct_installation_dir }}"
+    owner: root
+    group: root
+    mode: "755"
+    state: directory
+
+- name: Extract tar files
+  ansible.builtin.unarchive:
+    src: "tmp/{{ item }}.tgz"
+    dest: "{{ ct_installation_dir }}"
+    creates: "{{ ct_installation_dir }}/{{ item }}"
+  loop: "{{ daemons }}"
+
+- name: Install systemd {{item}}.service file
+  ansible.builtin.template:
+    src: "{{ item }}.service"
+    dest: /lib/systemd/system/{{ item }}.service
+    owner: root
+    group: root
+    mode: "644"
+  loop: "{{ daemons }}"
+
+- name: Install {{item}} logrotate configuration
+  ansible.builtin.copy:
+    src: "{{item}}.logrotate"
+    dest: "/etc/logrotate.d/{{item}}"
+  loop: "{{ daemons }}"
+
+- name: Generate shared secret
+  include_tasks: generate_shared_secret.yml
+
+- name: Ensure that daemons are enabled
+  ansible.builtin.service:
+    name: "{{ item }}"
+    # state: started
+    enabled: yes
+  loop: "{{ daemons }}"

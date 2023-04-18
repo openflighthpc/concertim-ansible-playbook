@@ -1,3 +1,12 @@
-ct_vis_app_path: "{{ rails_root_dir }}/ct-visualisation-app"
-ct_vis_app_core_dir: "{{ rails_root_dir }}/ct-visualisation-app/core"
+ct_vis_app_path: "{{ ct_installation_dir }}/ct-visualisation-app"
+ct_vis_app_core_dir: "{{ ct_installation_dir }}/ct-visualisation-app/core"
 ct_vis_app_log_file: /var/log/ct-visualisation-app.log
+
+admin_password: admin
+admin_email: admin@test.com
+operator_password: operator
+operator_email: operator@test.com
+
+rack_limit: 3
+device_limit: 100
+nrad_limit: 30

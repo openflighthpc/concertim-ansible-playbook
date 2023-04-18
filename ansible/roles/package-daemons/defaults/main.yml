@@ -1,8 +1,0 @@
-mode: production
-daemon_installation_dir: /data/private/share/daemons
-
-# List of statically compiled daemons.  Their tarball needs downloading and
-# extracting and a systemd unit file installing.
-static_daemons:
-  - ct-metric-reporting-daemon
-  - ct-metric-processing-daemon

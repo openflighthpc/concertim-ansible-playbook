@@ -1,19 +1,20 @@
 - name: Check for dev installation
-  vars:
-    dev_root_dir: /data/private/share/dev
   ansible.builtin.command:
-    cmd: ls -d {{dev_root_dir}}/appliances/ct-visualisation-app
+    cmd: ls -d {{dev_root_dir}}/ct-visualisation-app
   register: dev_ct_vis_dir
   failed_when: False
 
 
 - name: Bundle install gems for dev ct-visualisation-app
-  vars:
-    dev_root_dir: /data/private/share/dev
   ansible.builtin.shell: |
-    cd {{dev_root_dir}}/appliances/ct-visualisation-app/core
+    cd {{dev_root_dir}}/ct-visualisation-app/core
     ./bin/bundle install
   when: dev_ct_vis_dir.stdout != ""
+
+
+- name: unmonitor ct-vis-app
+  ansible.builtin.command:
+    cmd: monit unmonitor ct-visualisation-app
 
 
 - name: Disable production ct-visualisation-app
@@ -24,3 +25,24 @@
   loop:
     - ct-visualisation-app
     - ct-visualisation-job-runner
+
+
+- name: Workaround git and vboxfs issue
+  ansible.builtin.command:
+    cmd: git config --global --add safe.directory /opt/concertim/dev/ct-visualisation-app
+
+
+- name: Configure users
+  import_tasks: run_rails_runner.yml
+  vars:
+    rails_runner: ./bin/rails runner
+    runner_args: /usr/local/sbin/set-user-defaults.rb
+    ruby_bin_dir: "{{ruby_30_bin_dir}}"
+    additional_env: ""
+    chdir: "{{dev_root_dir}}/ct-visualisation-app/core"
+
+
+- name: Start dev server
+  ansible.builtin.command:
+    cmd: screen -dmS ct-vis-app ./bin/dev
+    chdir: "{{dev_root_dir}}/ct-visualisation-app/core"
