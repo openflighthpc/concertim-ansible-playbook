@@ -1,19 +1,8 @@
 - name: Generate shared secret
   vars:
-    secret_file: "{{ ct_installation_dir }}/ct-metric-reporting-daemon/config/secret"
+    secret_file: "{{ct_etc_dir}}/secret"
   block:
-    - name: Ensure directories exist
-      ansible.builtin.file:
-        path: "{{item}}"
-        owner: root
-        group: "{{app_user}}"
-        mode: "755"
-        state: directory
-      loop:
-        - "{{ ct_installation_dir }}/ct-metric-reporting-daemon"
-        - "{{ ct_installation_dir }}/ct-metric-reporting-daemon/config"
-
-    - name: Created secret
+    - name: Create secret
       ansible.builtin.shell:
         cmd: |
           ruby -r securerandom -e 'puts SecureRandom.hex(64)' > {{secret_file}}
