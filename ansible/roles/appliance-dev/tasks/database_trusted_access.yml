@@ -4,7 +4,7 @@
 
 - name: Trusted access to database for all local users
   ansible.builtin.replace:
-    path: /etc/postgresql/11/main/pg_hba.conf
+    path: /etc/postgresql/14/main/pg_hba.conf
     regexp: "local *all *all *peer"
     replace: "local   all             all                                     trust"
     backup: true

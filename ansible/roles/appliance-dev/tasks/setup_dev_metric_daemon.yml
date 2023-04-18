@@ -5,13 +5,13 @@
 
 - name: Build metric reporting daemon server
   ansible.builtin.command:
-    cmd: go build
+    cmd: go build -o ./tmp/main .
     chdir: "{{dev_root_dir}}/ct-metric-reporting-daemon"
 
 
 - name: Build metric processing daemon server
   ansible.builtin.command:
-    cmd: go build
+    cmd: go build -o ./tmp/main .
     chdir: "{{dev_root_dir}}/ct-metric-reporting-daemon/processing"
 
 
@@ -32,13 +32,11 @@
 
 - name: Start dev servers
   ansible.builtin.command:
-    cmd: screen -dmS {{item.name}} {{item.exe}}
-    chdir: "{{dir}}"
+    cmd: screen -dmS {{item.name}} ./tmp/main
+    chdir: "{{item.dir}}"
   loop:
-    - exe: concertim-metric-reporting-daemon
-      dir: "{{dev_root_dir}}/ct-metric-reporting-daemon"
+    - dir: "{{dev_root_dir}}/ct-metric-reporting-daemon"
       name: mrd
 
-    - exe: processing
-      dir: "{{dev_root_dir}}/ct-metric-reporting-daemon/processing"
+    - dir: "{{dev_root_dir}}/ct-metric-reporting-daemon/processing"
       name: mpd

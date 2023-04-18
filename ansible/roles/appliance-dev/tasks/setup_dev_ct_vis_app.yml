@@ -12,9 +12,9 @@
   when: dev_ct_vis_dir.stdout != ""
 
 
-- name: unmonitor ct-vis-app
-  ansible.builtin.command:
-    cmd: monit unmonitor ct-visualisation-app
+# - name: unmonitor ct-vis-app
+#   ansible.builtin.command:
+#     cmd: monit unmonitor ct-visualisation-app
 
 
 - name: Disable production ct-visualisation-app
@@ -40,6 +40,7 @@
     ruby_bin_dir: "{{ruby_30_bin_dir}}"
     additional_env: ""
     chdir: "{{dev_root_dir}}/ct-visualisation-app/core"
+    user: root
 
 
 - name: Start dev server

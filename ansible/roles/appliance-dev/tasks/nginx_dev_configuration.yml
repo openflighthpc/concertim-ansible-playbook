@@ -11,7 +11,7 @@
       fi
 
 - name: Install dev document root
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: document-root-dev.conf
     dest: /etc/nginx/snippets/server-https.d/
 
