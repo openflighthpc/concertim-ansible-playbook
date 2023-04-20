@@ -1,4 +1,6 @@
 - name: Install dependencies for ansible S3 tasks
+  register: result
+  until: result is success
   ansible.builtin.apt:
     name: python3-boto3
     state: latest
@@ -6,6 +8,8 @@
 # Install tools that are for production debugging and maintenance. Tools
 # strictly for development should be installed by the appliance-dev role.
 - name: Install useful utilities
+  register: result
+  until: result is success
   ansible.builtin.apt:
     name:
       - net-tools

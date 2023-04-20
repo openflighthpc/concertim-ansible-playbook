@@ -1,4 +1,6 @@
 - name: Install required packages
+  register: result
+  until: result is success
   ansible.builtin.apt:
     name: 
       - awscli

@@ -1,4 +1,6 @@
 - name: Install nginx and dependencies
+  register: result
+  until: result is success
   ansible.builtin.apt:
     name:
       - ssl-cert

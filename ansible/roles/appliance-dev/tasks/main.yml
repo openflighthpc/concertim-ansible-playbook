@@ -2,6 +2,8 @@
 # for production debugging and maintenance should be installed by the
 # misc-packages role.
 - name: Install useful dev tools
+  register: result
+  until: result is success
   ansible.builtin.apt:
     name:
       - golang-go

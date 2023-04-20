@@ -1,4 +1,6 @@
 - name: Install postgresql
+  register: result
+  until: result is success
   ansible.builtin.apt:
     name: postgresql
     state: present

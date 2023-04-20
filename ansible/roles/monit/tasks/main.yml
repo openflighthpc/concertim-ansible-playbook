@@ -1,4 +1,6 @@
 - name: Install monit
+  register: result
+  until: result is success
   ansible.builtin.apt:
     name: monit
     state: latest
@@ -13,6 +15,8 @@
 
 # Some monit scripts depend on additional packages.
 - name: Install dependent packages
+  register: result
+  until: result is success
   ansible.builtin.apt:
     name:
       # Used by fake ganglia monitor.
