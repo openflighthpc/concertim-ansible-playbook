@@ -2,11 +2,24 @@ ct_vis_app_path: "{{ ct_installation_dir }}/ct-visualisation-app"
 ct_vis_app_core_dir: "{{ ct_installation_dir }}/ct-visualisation-app/core"
 ct_vis_app_log_file: /var/log/ct-visualisation-app.log
 
-admin_password: admin
-admin_email: admin@test.com
-operator_password: operator
-operator_email: operator@test.com
+# XXX Figure out a better way to define these.  What I want is (1) user creates
+# a `default-user.yml` file containing any default users; (2) user runs
+# `ansible-playbook ... --extra-vars "@default-user.yml"`; (3) the users
+# specified in the file are created perhaps via an API call or perhaps via
+# rails runner.  Or perhaps the user provides the path to the yaml file:
+# `ansible-playbook ... --extra-vars
+# "default-users-file=path/to/default-users.yml"`
+default_users:
+  admin:
+    password: admin
+    email: admin@test.com
+  operator_one:
+    password: operator_one
+    email: operator_one@test.com
+  operator_two:
+    password: operator_two
+    email: operator_two@test.com
 
-rack_limit: 3
-device_limit: 100
+rack_limit: 10
+device_limit: 1000
 nrad_limit: 30

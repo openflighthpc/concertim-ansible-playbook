@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby1.9
+#!/usr/bin/env ruby
 
 def update_user(login, user_data)
   puts "Updating #{login} user"
@@ -7,8 +7,8 @@ def update_user(login, user_data)
     puts "    -> user not found"
   else
     puts "    -> found user: #{user.id}"
-    password = user_data["#{login}_password"]
-    email = user_data["#{login}_email"]
+    password = user_data["password"]
+    email = user_data["email"]
     user.password = password
     user.password_confirmation = password
     user.email = email
@@ -19,6 +19,6 @@ def update_user(login, user_data)
 end
 
 user_data = YAML.load_file("{{ct_etc_dir}}/default-user-data.yml")
-
-update_user('admin', user_data)
-update_user('operator', user_data)
+user_data.keys.each do |login, data|
+  update_user(login, data)
+end
