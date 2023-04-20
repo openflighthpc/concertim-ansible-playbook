@@ -7,5 +7,9 @@
     chdir: "{{ ct_installation_dir }}/ct-visualisation-app/docs/api/examples/"
     cmd: |
       export CONCERTIM_HOST=localhost
-      export AUTH_TOKEN=$(LOGIN=admin PASSWORD={{ admin_password }} ./get-auth-token.sh)
+      export AUTH_TOKEN=$(LOGIN=admin PASSWORD={{default_users.admin.password}} ./get-auth-token.sh)
+      ./create-rack.sh
+      export AUTH_TOKEN=$(LOGIN=operator_one PASSWORD={{default_users.operator_one.password}} ./get-auth-token.sh)
+      ./create-rack.sh
+      export AUTH_TOKEN=$(LOGIN=operator_two PASSWORD={{default_users.operator_two.password}} ./get-auth-token.sh)
       ./create-rack.sh

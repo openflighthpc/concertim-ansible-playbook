@@ -20,6 +20,6 @@ default_users:
     password: operator_two
     email: operator_two@test.com
 
-rack_limit: 3
-device_limit: 100
+rack_limit: 10
+device_limit: 1000
 nrad_limit: 30
