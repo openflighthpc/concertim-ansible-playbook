@@ -19,6 +19,6 @@ def update_user(login, user_data)
 end
 
 user_data = YAML.load_file("{{ct_etc_dir}}/default-user-data.yml")
-user_data.keys.each do |login, data|
+user_data.each do |login, data|
   update_user(login, data)
 end
