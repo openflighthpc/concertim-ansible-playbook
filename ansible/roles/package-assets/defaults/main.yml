@@ -4,7 +4,7 @@ package_assets_ruby_projects:
   - repo: concertim-ct-visualisation-app
     name: ct-visualisation-app
     # This could be a git tag, git branch or git commit.
-    tag: main
+    tag: "{{release_tag}}"
     type: appliance
     subdir: ""
 
@@ -12,13 +12,13 @@ package_assets_golang_projects:
   - repo: concertim-metric-reporting-daemon
     name: ct-metric-reporting-daemon
     # This could be a git tag, git branch or git commit.
-    tag: main
+    tag: 0.4.0
     type: daemon
     subdir: ""
 
   - repo: concertim-metric-reporting-daemon
     name: ct-metric-processing-daemon
     # This could be a git tag, git branch or git commit.
-    tag: main
+    tag: 0.4.0
     type: daemon
     subdir: processing
