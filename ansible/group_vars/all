@@ -3,8 +3,8 @@
 #
 # Used in configuring tags, S3 prefixes etc. for the installed assets.  E.g.,
 # `v8.0.0`, `resurect-10` or `dev-2022-11-28`.
-#release_tag: "dev-{{ansible_date_time.date}}"
-release_tag: "revival-21"
+release_tag: "dev-{{ansible_date_time.date}}"
+#release_tag: "revival-21"
 
 # ==================================================
 # S3 variables
