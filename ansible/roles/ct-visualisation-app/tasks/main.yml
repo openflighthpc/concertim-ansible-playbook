@@ -90,6 +90,3 @@
   loop:
     - ct-visualisation-app
     - ct-visualisation-job-runner
-
-- name: Create initial rack
-  import_tasks: create_initial_rack.yml
