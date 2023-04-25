@@ -47,3 +47,14 @@
   ansible.builtin.command:
     cmd: screen -dmS ct-vis-app ./bin/dev
     chdir: "{{dev_root_dir}}/ct-visualisation-app/core"
+
+- name: Create dev templates
+  block:
+    - name: Wait for dev server to start
+      ansible.builtin.pause:
+        seconds: 30
+
+    - name: Run populate templates script
+      ansible.builtin.command:
+        cmd: ./docs/api/examples/populate-templates.sh
+        chdir: "{{dev_root_dir}}/ct-visualisation-app"
