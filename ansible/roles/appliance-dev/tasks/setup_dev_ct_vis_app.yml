@@ -55,6 +55,14 @@
         seconds: 30
 
     - name: Run populate templates script
-      ansible.builtin.command:
-        cmd: ./docs/api/examples/populate-templates.sh
-        chdir: "{{dev_root_dir}}/ct-visualisation-app"
+      ansible.builtin.shell:
+        chdir: "{{dev_root_dir}}/ct-visualisation-app/docs/api/examples"
+        cmd: |
+          export CONCERTIM_HOST=localhost
+          export AUTH_TOKEN=$(LOGIN=admin PASSWORD={{default_users.admin.password}} ./get-auth-token.sh)
+          if [ $(./list-templates.sh | jq 'length') -eq 0 ] ; then
+            echo "Populating dev templates"
+            ./populate-templates.sh
+          else
+            echo "Templates previously populated"
+          fi
