@@ -1,0 +1,5 @@
+*.tgz
+*.vmdk
+README.md
+tmp/
+vagrant/
