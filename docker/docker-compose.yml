@@ -29,7 +29,6 @@ services:
       - ./docker/init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
     environment:
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-      - POSTGRES_USER=www-data
     expose:
       - 5432
     healthcheck:
