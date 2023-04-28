@@ -55,3 +55,4 @@
     # state: started
     enabled: yes
   loop: "{{ daemons }}"
+  when: not docker_build | bool
