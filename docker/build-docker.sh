@@ -16,6 +16,8 @@ fi
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "${SCRIPT_DIR}"/..
 
+echo "=== Building concertim image ==="
+
 docker-compose \
   --file docker/docker-compose.yml \
   --project-directory . \
@@ -24,10 +26,14 @@ docker-compose \
   --build-arg=AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
   concertim
 
+echo "=== Starting containers ==="
+
 docker-compose \
   --file docker/docker-compose.yml \
   --project-directory . \
   up --detach
+
+echo "=== Migrating database ==="
 
 docker-compose \
   --file docker/docker-compose.yml \
@@ -38,6 +44,8 @@ docker-compose \
       --tags docker-postbuild \
       --extra-vars "docker_postbuild=true" \
       /ansible/build-playbook.yml
+
+echo "=== Stopping containers ==="
 
 docker-compose \
   --file docker/docker-compose.yml \

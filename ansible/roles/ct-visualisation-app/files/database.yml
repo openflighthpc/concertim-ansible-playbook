@@ -89,4 +89,3 @@ production:
   database: ct-vis
   schema_search_path: public,uma,meca,ivy
   <<: *repo_base
-
