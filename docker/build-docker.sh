@@ -38,12 +38,15 @@ echo "=== Migrating database ==="
 docker-compose \
   --file docker/docker-compose.yml \
   --project-directory . \
-  run --rm concertim \
-    ansible-playbook \
-      --inventory /ansible/inventory.ini \
-      --tags docker-postbuild \
-      --extra-vars "docker_postbuild=true" \
-      /ansible/build-playbook.yml
+  run --rm --user www-data -e RAILS_ENV=production concertim \
+    bash -c 'cd /opt/concertim/opt/ct-visualisation-app/core && bin/rails db:create --trace'
+
+docker-compose \
+  --file docker/docker-compose.yml \
+  --project-directory . \
+  run --rm --user www-data -e RAILS_ENV=production concertim \
+    bash -c 'cd /opt/concertim/opt/ct-visualisation-app/core && bin/rails db:migrate --trace'
+
 
 echo "=== Stopping containers ==="
 
