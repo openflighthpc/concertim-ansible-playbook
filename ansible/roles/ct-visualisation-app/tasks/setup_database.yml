@@ -1,5 +1,4 @@
 - name: Configure database user
-  when: not docker_postbuild | bool
   block:
     - name: Check if {{ app_user }} role exists
       ansible.builtin.command:
@@ -20,7 +19,6 @@
     chdir: "{{ct_vis_app_core_dir}}"
 
 - name: Add SUPERUSER role to {{app_user}}
-  when: not docker_postbuild | bool
   vars:
     dbname: ct-vis
     dbsuperuser: postgres
@@ -36,7 +34,6 @@
     chdir: "{{ct_vis_app_core_dir}}"
 
 - name: Remove SUPERUSER role from {{app_user}}
-  when: not docker_postbuild | bool
   vars:
     dbname: ct-vis
     dbsuperuser: postgres

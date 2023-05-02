@@ -7,7 +7,6 @@
 
   vars:
     docker_build: false
-    docker_postbuild: false
 
   pre_tasks:
     - name: Check credentials and release tag

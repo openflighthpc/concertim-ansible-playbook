@@ -67,12 +67,10 @@
     mode: "0644"
 
 - name: Setup database
-  tags: docker-postbuild
   when: not docker_build | bool
   import_tasks: setup_database.yml
 
 - name: Create default users
-  tags: docker-postbuild
   when: not docker_build | bool
   import_tasks: create_default_users.yml
 
