@@ -1,8 +1,8 @@
 # Building and configuring Alces Concertim
 
-This repository contains an ansible playbook for building an Alces Concertim
-appliance and an ansible playbook for building assets used by the prior
-playbook.
+This repository contains ansible playbooks for building an Alces Concertim
+appliance.  Alces Concertim can either be built as a standard VM or as Docker
+images.
 
 ## Building Alces Concertim
 
@@ -11,7 +11,8 @@ page](https://github.com/alces-flight/concertim-ansible-playbook/releases) and
 select the release you want to build.
 
 The release notes for that release will contain a link to the relevant build
-instructions.
+instructions for building Concertim as a VM, and another link to the
+instructions for building Concertim as Docker images.
 
 ## Building Alces Concertim assets
 
