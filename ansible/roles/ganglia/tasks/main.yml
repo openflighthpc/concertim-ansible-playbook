@@ -50,3 +50,4 @@
   loop:
     - ganglia-monitor
     - gmetad
+  when: not docker_build | bool

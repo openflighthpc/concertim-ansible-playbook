@@ -54,10 +54,24 @@
         cmd: |
           sudo -u {{app_user}} /bin/bash -c 'EDITOR=cat ./bin/rails credentials:edit'
 
-- name: Create and migrate database
-  import_tasks: create_and_migrate_database.yml
+# Installs database config for accessing DB on a remote host.
+# XXX Would be better to have the config in ct-visualisation-app set the host
+# and we can adjust it here using ansible.builtin.replace
+- name: Install database config
+  when: docker_build | bool
+  ansible.builtin.copy:
+    src: database.yml
+    dest: "{{ct_vis_app_core_dir}}/config/"
+    owner: "{{app_user}}"
+    group: "{{app_user}}"
+    mode: "0644"
+
+- name: Setup database
+  when: not docker_build | bool
+  import_tasks: setup_database.yml
 
 - name: Create default users
+  when: not docker_build | bool
   import_tasks: create_default_users.yml
 
 - name: Add licence limits
@@ -82,7 +96,7 @@
     - ct-visualisation-app
     - ct-visualisation-job-runner
 
-- name: Enable visualisation app
+- name: Enable visualisation app (non-docker)
   ansible.builtin.service:
     name: "{{item}}"
     enabled: yes
@@ -90,3 +104,14 @@
   loop:
     - ct-visualisation-app
     - ct-visualisation-job-runner
+  when: not docker_build | bool
+
+- name: Enable visualisation app (docker)
+  ansible.builtin.file:
+    src: /lib/systemd/system/{{item}}.service
+    dest: /etc/systemd/system/multi-user.target.wants/{{item}}.service
+    state: link
+  loop:
+    - ct-visualisation-app
+    - ct-visualisation-job-runner
+  when: docker_build | bool

@@ -5,6 +5,9 @@
   become_user: root
   become_method: sudo
 
+  vars:
+    docker_build: false
+
   pre_tasks:
     - name: Check credentials and release tag
       vars:
@@ -43,6 +46,7 @@
       tags: webserver
     - role: database
       tags: database
+      when: not docker_build | bool
     - role: memcached
       tags: memcached
     - role: ganglia
@@ -61,3 +65,4 @@
       when: want_fake_metrics | bool
     - role: finalization
       tags: finalization
+      when: not docker_build | bool

@@ -12,6 +12,7 @@
     name: monit
     state: stopped
     enabled: no
+  when: not docker_build | bool
 
 # Some monit scripts depend on additional packages.
 - name: Install dependent packages

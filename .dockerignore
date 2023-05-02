@@ -1,0 +1,6 @@
+*.tgz
+*.vmdk
+README.md
+tmp/
+vagrant/
+ansible/tmp/
