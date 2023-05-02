@@ -26,6 +26,7 @@ RUN apt-get update && \
       --inventory /ansible/inventory.ini \
       --extra-vars "aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
       --extra-vars "docker_build=true" \
+      --tags prep,misc_packages,memcached,ganglia,metric-reporting,ct-visualisation-app \
       /ansible/build-playbook.yml && \
     apt-get remove --yes \
         ansible \
@@ -35,5 +36,5 @@ RUN apt-get update && \
     rm -Rf /usr/share/doc && rm -Rf /usr/share/man && \
     rm -rf /var/lib/apt/lists/*
 
-COPY ./docker/concertim-entrypoint.sh /docker-entrypoint.sh
+COPY ./docker/visualisation/entrypoint.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]

@@ -3,7 +3,7 @@ services:
   concertim:
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/visualisation/Dockerfile
       args:
         - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
         - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
@@ -12,11 +12,24 @@ services:
     privileged: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - static-content:/opt/concertim/opt/ct-visualisation-app/core/public
+    expose:
+      - 3000
+      - 7000
+    depends_on:
+      - db
+
+  proxy:
+    build:
+      context: .
+      dockerfile: docker/proxy/Dockerfile
     ports:
       - 127.0.0.1:9080:80
       - 127.0.0.1:9443:443
+    volumes:
+      - static-content:/opt/concertim/opt/ct-visualisation-app/core/public
     depends_on:
-      - db
+      - concertim
 
   db:
     image: postgres
@@ -26,7 +39,7 @@ services:
       - db-password
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ./docker/init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
+      - ./docker/db/init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
     environment:
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
     expose:
@@ -39,7 +52,8 @@ services:
 
 volumes:
   db-data:
+  static-content:
 
 secrets:
   db-password:
-    file: docker/secrets/db_password.txt
+    file: docker/secrets/db/password.txt

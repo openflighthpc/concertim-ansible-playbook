@@ -26,6 +26,14 @@ docker-compose \
   --build-arg=AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
   concertim
 
+echo "=== Building proxy image ==="
+
+docker-compose \
+  --file docker/docker-compose.yml \
+  --project-directory . \
+  build  \
+  proxy
+
 echo "=== Starting containers ==="
 
 docker-compose \

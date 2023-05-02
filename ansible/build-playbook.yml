@@ -10,6 +10,7 @@
 
   pre_tasks:
     - name: Check credentials and release tag
+      tags: prep
       vars:
         credentials:
           - aws_access_key_id
@@ -17,6 +18,7 @@
       include_tasks: tasks/assert_credentials_and_release_tag.yml
 
     - name: Make installation directories
+      tags: prep
       ansible.builtin.file:
         path: "{{ item.path }}"
         owner: "{{ item.owner }}"
