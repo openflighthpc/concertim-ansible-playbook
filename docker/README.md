@@ -3,9 +3,8 @@
 This directory contains scripts and configuration to use the ansible playbooks
 to build Docker containers for running Alces Concertim.
 
-The instructions here will work for version latest `main`, you're milage may
-vary with other versions.  You probably want to use the instructions for a
-tagged release, e.g., `revival-23`.
+The instructions here will work for version `0.1.0`, you're milage may vary
+with other versions.
 
 ## Container overview
 

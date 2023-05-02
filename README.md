@@ -8,8 +8,7 @@ playbook.
 
 To build Alces Concertim, visit the [releases
 page](https://github.com/alces-flight/concertim-ansible-playbook/releases) and
-select the release you want to build.  At the time of writing you probably want
-to use the most recent `revival-X` release, e.g., `revival-20`.
+select the release you want to build.
 
 The release notes for that release will contain a link to the relevant build
 instructions.
