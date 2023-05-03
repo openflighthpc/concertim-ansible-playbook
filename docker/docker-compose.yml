@@ -1,6 +1,6 @@
 version: "3.3"
 services:
-  concertim:
+  visualisation:
     build:
       context: .
       dockerfile: docker/visualisation/Dockerfile
@@ -40,7 +40,7 @@ services:
     volumes:
       - static-content:/opt/concertim/opt/ct-visualisation-app/core/public
     depends_on:
-      - concertim
+      - visualisation
       - metrics
 
   db:

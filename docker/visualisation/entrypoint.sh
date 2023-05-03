@@ -3,9 +3,9 @@
 # This script is a total hack around a problem that shouldn't exist.  The
 # problem should be fixed and this script removed. The problem:
 #
-# FSR the concertim container has a PID file for the Rails app which stops the
-# server from starting.  This might be because the image is built with it or
-# because its created when a container is started to run the database
+# FSR the visualisation container has a PID file for the Rails app which stops
+# the server from starting.  This might be because the image is built with it
+# or because its created when a container is started to run the database
 # migrations.  Either way it needs to be removed.
 #
 # The correct fix would be to have a container that 1) doesn't run multiple

@@ -4,7 +4,7 @@ This directory contains ansible playbooks to build an Alces Concertim machine.
 
 The instructions here will work for the current `main` branch, your milage may
 vary with other versions.  You probably want to use the instructions for a
-tagged release, e.g., `0.1.1`. with other versions.
+tagged release, e.g., `0.1.1`.
 
 ## Prerequisites
 

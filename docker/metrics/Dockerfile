@@ -28,7 +28,7 @@ RUN apt-get update && \
       --inventory /ansible/inventory.ini \
       --extra-vars "aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
       --extra-vars "docker_build=true" \
-      --extra-vars "memcache_host=concertim" \
+      --extra-vars "memcache_host=visualisation" \
       --tags prep,ganglia,metric-reporting \
       /ansible/build-playbook.yml && \
     apt-get remove --yes \
