@@ -38,6 +38,9 @@
     cd "{{ ct_vis_app_core_dir }}"
     ./bin/bundle install
 
+- name: Generate shared secret
+  include_tasks: generate_shared_secret.yml
+
 - name: Create new master key and credentials
   block:
     - name: Remove existing key and credentials

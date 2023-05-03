@@ -16,6 +16,13 @@ s3_packages_prefix:      /concertim/packages/{{release_tag}}/
 s3_appliances_prefix:    /concertim/packages/{{release_tag}}/appliances/
 s3_daemons_prefix:       /concertim/packages/{{release_tag}}/daemons/
 
+# ==================================================
+# Hostnames at which our various services can be found
+metrics_host: 127.0.0.1
+visualisation_host: 127.0.0.1
+db_host: 127.0.0.1
+memcache_host: 127.0.0.1
+
 # The following are expected to be provided as `--extra-args` from the CLI.
 # aws_access_key_id
 # aws_secret_access_key

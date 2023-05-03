@@ -1,61 +1,118 @@
 # Building Alces Concertim as a set of Docker containers
 
-This directory contains scripts and configuration to use the ansible playbooks
-to build Docker containers for running Alces Concertim.
+This directory contains scripts and configuration to build Docker images and
+containers from the Alces Concertim ansible playbooks.
 
-The instructions here will work for the current `main` branch, your milage may
+The instructions here will work for the current `main` branch; your milage may
 vary with other versions.  You probably want to use the instructions for a
-tagged release, e.g., `0.1.1`. with other versions.
+tagged release, e.g., `0.1.1`.
 
+## Image and container overview
 
-## Container overview
+The [docker-compose.yml](docker-compose.yml) file defines four services
+comprising the Concertim UI. Each service is built into its own image and it is
+expected that a single container will be created from each. The services are:
 
-Currently, two docker containers are built.  One of these, `db`, is a
-Postgresql image.  There are no known issues with this container.
+* `metrics`: Provides an HTTP API for receiving and processing metrics.
+* `visualisation`: Provides an HTTP API for reporting instances; and a web app
+  for visualising the instances and their metrics.
+* `proxy`: An nginx reverse proxy for the `metrics` and `visualisation`
+  services.
+* `db`: A postgresql database.
 
-The other container, `concertim` contains all other services that are required
-for Concertim.  These include `nginx`, `memcached`, `ganglia`, and our three
-concertim daemons.
+A number of volumes are created during the build process.  Two of these should
+be backed up.
 
-The `db` container stores its data on a volume called `db-data`.  Currently,
-this is the only volume that needs to be backed up.
+* `db-data`: contains the postgresql data including the racks and instances.
+  This should be included in a data retention policy.
+* `rrd-data`: contains the historial metrics as rrd file.  This should be
+  included in a data retention policy.
+* `static-content`: used to enable `proxy` to serve static assets.  This does
+  not need to be backed up.
+* `concertim-etc`: used to share some configuration between the services.  This
+  may be removed in future versions.  This does not need to be backed up.
 
-## Build prerequisites
+## Installation
+
+Prerequisites:
 
 * A machine with `docker` and `docker-compose` installed.
+* GitHub credentials.
 
-## Build the images
+The steps for installing are briefly:
 
-To build the images, run the script `build-docker.sh` in this directory.  That
-script will:
+1. Clone the github repo.
+2. Build the images.
+3. Migrate the databases.
+4. Start the containers.
+5. Remove intermediate images.
+
+These steps are described in more detail below.
+
+### Clone the github repo
+
+Clone this github repo to the build machine.  It is a private repo so you will
+need access to your github credentials or a github token.  In the code snippet
+below the repo is checked out to a folder named `concertim_ui`, doing this is
+not necessary but will provide much nicer image and container names.
+
+```
+RELEASE_TAG="main"
+git clone https://github.com/alces-flight/concertim-ansible-playbook.git concertim_ui
+cd concertim_ui
+git checkout --quiet ${RELEASE_TAG}
+```
+
+### Build the images
+
+To build the images, run the script `build-images.sh` found in this directory.
+That script will:
 
 1. Check certain authentication details have been provided.
-2. Run `docker-compose` to build the concertim Docker image.
-3. Launch containers to migrate the concertim database.
-4. Stop all started containers.
-
-The database password is passed via an ansible secret.  A default is set in the
-`docker/secrets/db_password.txt` file, you may wish to edit this file.
-
-## Starting the docker images
-
-The docker containers can be started by running the following in the root this
-repository:
+2. Run `docker-compose` to build the concertim Docker images.
 
 ```
-docker-compose \
-  --file docker/docker-compose.yml \
-  --project-directory . \
-  up
+docker/build-images.sh
 ```
 
-## Limitations of the Concertim container
+#### Build configuration
 
-* It is much larger that we want; currently around 1.3GB.
-* It runs multiple services that would probably be better in separate
-  containers.
-* Its services log to files, not standard output.
-* It runs systemd, requiring the `--privileged` flat and read-only mounting of
-  `/sys/fs/cgroup`.
+Some configuration of the build is possible.
 
-These issues will be fixed in upcoming releases.
+The database password is passed via an ansible secret.  A default is set in
+the `docker/secrets/db/password.txt` file, you may wish to edit this file.
+
+### Migrate the databases
+
+Before the containers are ready to be used, the database needs to be migrated.
+This is done by running the script `migrate-database.sh` found in this
+directory.  The script starts the `db` container, runs migration scripts in a
+temporary `visualisation` container and then stops all containers.
+
+```
+docker/migrate-database.sh
+```
+
+### Start the containers
+
+To start the containers, run the script `start-containers.sh` found in this
+directory.  That script is a small wrapper around `docker-compose up`.
+
+```
+docker/start-containers.sh
+```
+
+### Stopping the containers
+
+To stop the containers, run the script `stop-containers.sh` found in this
+directory.  That script is a small wrapper around `docker-compose stop`.
+
+```
+docker/stop-containers.sh
+```
+
+### Remove intermediate images
+
+The images are built from multi-stage Dockerfiles as a means of keeping their
+size down.  Once the images have been built, the intermediate images, which can
+be quite large, can be removed.  Doing so is left as an exercise to the reader.
