@@ -16,7 +16,7 @@ fi
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "${SCRIPT_DIR}"/..
 
-echo "=== Building concertim image ==="
+echo "=== Building metrics and concertim image ==="
 
 docker-compose \
   --file docker/docker-compose.yml \
@@ -24,7 +24,7 @@ docker-compose \
   build  \
   --build-arg=AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
   --build-arg=AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
-  concertim
+  metrics concertim
 
 echo "=== Building proxy image ==="
 

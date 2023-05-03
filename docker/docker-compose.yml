@@ -13,11 +13,24 @@ services:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - static-content:/opt/concertim/opt/ct-visualisation-app/core/public
+      - concertim-etc:/opt/concertim/etc
     expose:
-      - 3000
       - 7000
     depends_on:
       - db
+
+  metrics:
+    build:
+      context: .
+      dockerfile: docker/metrics/Dockerfile
+      args:
+        - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+        - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+    volumes:
+      - concertim-etc:/opt/concertim/etc
+      - rrd-data:/var/lib/ganglia/rrds
+    expose:
+      - 3000
 
   proxy:
     build:
@@ -30,6 +43,7 @@ services:
       - static-content:/opt/concertim/opt/ct-visualisation-app/core/public
     depends_on:
       - concertim
+      - metrics
 
   db:
     image: postgres
@@ -52,7 +66,9 @@ services:
 
 volumes:
   db-data:
+  rrd-data:
   static-content:
+  concertim-etc:
 
 secrets:
   db-password:

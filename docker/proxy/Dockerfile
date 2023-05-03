@@ -22,7 +22,7 @@ RUN apt-get update && \
     ansible-playbook \
       --inventory /ansible/inventory.ini \
       --extra-vars "docker_build=true" \
-      --extra-vars "visualisation_host=concertim metrics_host=concertim" \
+      --extra-vars "visualisation_host=concertim metrics_host=metrics" \
       --tags webserver \
       /ansible/build-playbook.yml && \
     apt-get remove --yes \
