@@ -1,6 +1,7 @@
 version: "3.3"
 services:
   concertim:
+    container_name: concertim-visualisation
     build:
       context: .
       dockerfile: docker/visualisation/Dockerfile
@@ -20,6 +21,7 @@ services:
       - db
 
   metrics:
+    container_name: concertim-metrics
     build:
       context: .
       dockerfile: docker/metrics/Dockerfile
@@ -33,6 +35,7 @@ services:
       - 3000
 
   proxy:
+    container_name: concertim-proxy
     build:
       context: .
       dockerfile: docker/proxy/Dockerfile
@@ -46,6 +49,7 @@ services:
       - metrics
 
   db:
+    container_name: concertim-db
     image: postgres
     restart: always
     user: postgres
