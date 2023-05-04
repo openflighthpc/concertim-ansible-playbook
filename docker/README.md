@@ -75,13 +75,6 @@ That script will:
 docker/build-images.sh
 ```
 
-#### Build configuration
-
-Some configuration of the build is possible.
-
-The database password is passed via an ansible secret.  A default is set in
-the `docker/secrets/db/password.txt` file, you may wish to edit this file.
-
 ### Migrate the databases
 
 Before the containers are ready to be used, the database needs to be migrated.
