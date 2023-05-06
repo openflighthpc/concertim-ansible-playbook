@@ -5,14 +5,8 @@
 
 - name: Build metric reporting daemon server
   ansible.builtin.command:
-    cmd: go build -o ./tmp/main .
+    cmd: go build -o ./tmp/reporting ./cmd/reporting/
     chdir: "{{dev_root_dir}}/ct-metric-reporting-daemon"
-
-
-- name: Build metric processing daemon server
-  ansible.builtin.command:
-    cmd: go build -o ./tmp/main .
-    chdir: "{{dev_root_dir}}/ct-metric-reporting-daemon/processing"
 
 
 - name: unmonitor metric daemons
@@ -27,16 +21,12 @@
     enabled: no
   loop:
     - ct-metric-reporting-daemon
-    - ct-metric-processing-daemon
 
 
 - name: Start dev servers
   ansible.builtin.command:
-    cmd: screen -dmS {{item.name}} ./tmp/main
-    chdir: "{{item.dir}}"
+    cmd: screen -dmS {{item.name}} ./tmp/{{item.exe}}
+    chdir: "{{dev_root_dir}}/ct-metric-reporting-daemon"
   loop:
-    - dir: "{{dev_root_dir}}/ct-metric-reporting-daemon"
-      name: mrd
-
-    - dir: "{{dev_root_dir}}/ct-metric-reporting-daemon/processing"
-      name: mpd
+    - exe: reporting
+      name: ct-metrics

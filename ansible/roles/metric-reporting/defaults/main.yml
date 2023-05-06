@@ -2,4 +2,3 @@
 # Configuration for systemd, logrotate and perhaps more needs installing.
 daemons:
   - ct-metric-reporting-daemon
-  - ct-metric-processing-daemon
