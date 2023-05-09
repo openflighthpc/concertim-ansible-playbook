@@ -3,8 +3,9 @@
 This directory contains scripts and configuration to build Docker images and
 containers from the Alces Concertim ansible playbooks.
 
-The instructions here will work for the `0.1.2` release; your milage may
-vary with other versions.
+The instructions here will work for the current `main` branch, your milage may
+vary with other versions.  You probably want to use the instructions for a
+tagged release e.g., `0.1.2`.
 
 ## Image and container overview
 
@@ -56,7 +57,7 @@ below the repo is checked out to a folder named `concertim_ui`, doing this is
 not necessary but will provide much nicer image and container names.
 
 ```
-RELEASE_TAG="0.1.2"
+RELEASE_TAG="main"
 git clone https://github.com/alces-flight/concertim-ansible-playbook.git concertim_ui
 cd concertim_ui
 git checkout --quiet ${RELEASE_TAG}
