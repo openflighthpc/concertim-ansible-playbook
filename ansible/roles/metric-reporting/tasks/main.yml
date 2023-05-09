@@ -58,7 +58,6 @@
     replace: '\1args: ["{{memcache_host}}:11211"]'
   loop:
     - "{{ct_installation_dir}}/ct-metric-reporting-daemon/config/config.yml"
-    - "{{ct_installation_dir}}/ct-metric-processing-daemon/config/config.yml"
   when: docker_build | bool
 
 - name: Install {{item}} logrotate configuration

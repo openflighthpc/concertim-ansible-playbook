@@ -7,7 +7,6 @@ if [ $# -gt 0 ] ; then
 else
   /usr/sbin/gmetad -c /etc/ganglia/gmetad.conf
   /opt/concertim/opt/ct-metric-reporting-daemon/ct-metric-reporting-daemon &
-  /opt/concertim/opt/ct-metric-processing-daemon/ct-metric-processing-daemon &
 
   # Wait for any process to exit.
   wait -n

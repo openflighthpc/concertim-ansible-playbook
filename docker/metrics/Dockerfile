@@ -57,8 +57,6 @@ COPY --from=builder /etc/ganglia/gmetad.conf /etc/ganglia/gmetad.conf
 COPY --from=builder /var/lib/gems/3.0.0/gems/ /var/lib/gems/3.0.0/gems/
 COPY --from=builder /var/lib/gems/3.0.0/specifications/ /var/lib/gems/3.0.0/specifications/
 COPY --from=builder /opt/concertim/opt/ct-metric-reporting-daemon /opt/concertim/opt/ct-metric-reporting-daemon 
-COPY --from=builder /opt/concertim/opt/ct-metric-processing-daemon /opt/concertim/opt/ct-metric-processing-daemon 
-
 
 COPY ./docker/metrics/entrypoint.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]

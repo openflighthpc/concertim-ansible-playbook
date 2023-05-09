@@ -15,10 +15,3 @@ package_assets_golang_projects:
     tag: main
     type: daemon
     subdir: ""
-
-  - repo: concertim-metric-reporting-daemon
-    name: ct-metric-processing-daemon
-    # This could be a git tag, git branch or git commit.
-    tag: main
-    type: daemon
-    subdir: processing
