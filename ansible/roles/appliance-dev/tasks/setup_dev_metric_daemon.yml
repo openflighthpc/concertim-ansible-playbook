@@ -2,19 +2,16 @@
   ansible.builtin.command:
     cmd: git config --global --add safe.directory /opt/concertim/dev/ct-metric-reporting-daemon
 
-
 - name: Build metric reporting daemon server
   ansible.builtin.command:
     cmd: go build -o ./tmp/reporting ./cmd/reporting/
     chdir: "{{dev_root_dir}}/ct-metric-reporting-daemon"
 
-
 - name: unmonitor metric daemons
   ansible.builtin.command:
     cmd: monit unmonitor -g ct-metrics
 
-
-- name: Disable production metric daemons
+- name: Disable production metric daemon
   ansible.builtin.service:
     name: "{{item}}"
     state: stopped
@@ -22,11 +19,12 @@
   loop:
     - ct-metric-reporting-daemon
 
+- name: Install air
+  ansible.builtin.shell:
+    cmd: |
+      curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
 
-- name: Start dev servers
-  ansible.builtin.command:
-    cmd: screen -dmS {{item.name}} ./tmp/{{item.exe}}
+- name: Start dev metric daemon
+  ansible.builtin.shell:
+    cmd: screen -dmS ct-metrics $(go env GOPATH)/bin/air -- --config-file config/config.dev.vm.yml
     chdir: "{{dev_root_dir}}/ct-metric-reporting-daemon"
-  loop:
-    - exe: reporting
-      name: ct-metrics
