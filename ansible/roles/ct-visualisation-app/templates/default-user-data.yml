@@ -1,9 +1,3 @@
 admin:
   password: "{{default_users.admin.password}}"
   email: "{{default_users.admin.email}}"
-operator_one:
-  password: "{{default_users.operator_one.password}}"
-  email: "{{default_users.operator_one.email}}"
-operator_two:
-  password: "{{default_users.operator_two.password}}"
-  email: "{{default_users.operator_two.email}}"
