@@ -1,6 +1,7 @@
 ################
 # Stage: builder
 FROM ubuntu:22.04 as builder
+LABEL com.alces-flight.concertim.role=builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
@@ -17,16 +18,16 @@ RUN apt-get update \
       && rm -Rf /usr/share/doc && rm -Rf /usr/share/man \
       && rm -rf /var/lib/apt/lists/*
 
-# Used for downloading our pre-packaged software from AWS.
-ARG AWS_ACCESS_KEY_ID
-ARG AWS_SECRET_ACCESS_KEY
-
 ADD ./ansible/ /ansible
+# Add secrets used for downloading our pre-packaged software from AWS.
+ADD ./docker/secrets/vault-password.txt /run/secrets/
+ADD ./docker/secrets/aws-credentials.yml.enc /run/secrets/
 
 RUN apt-get update && \
     ansible-playbook \
       --inventory /ansible/inventory.ini \
-      --extra-vars "aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
+      --vault-password-file /run/secrets/vault-password.txt \
+      --extra-vars "@/run/secrets/aws-credentials.yml.enc" \
       --extra-vars "docker_build=true" \
       --extra-vars "db_host=db" \
       --tags prep,memcached,ct-visualisation-app \
@@ -39,12 +40,10 @@ RUN apt-get update && \
     rm -Rf /usr/share/doc && rm -Rf /usr/share/man && \
     rm -rf /var/lib/apt/lists/*
 
-COPY ./docker/visualisation/entrypoint.sh /docker-entrypoint.sh
-ENTRYPOINT ["/docker-entrypoint.sh"]
-
 ################
 # Stage: final
 FROM ubuntu:22.04
+LABEL com.alces-flight.concertim.role=visualisation com.alces-flight.concertim.version=0.1.3
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
