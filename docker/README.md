@@ -63,6 +63,19 @@ cd concertim_ui
 git checkout --quiet ${RELEASE_TAG}
 ```
 
+### Configuration
+
+The default build binds two ports for HTTP and HTTPS traffic to the docker
+host.  The defaults bind to the host ports `9080` and `9443` on interface
+`127.0.0.1`.
+
+If the default values are not suitable for your needs, you can change them by
+editing them and restarting the containers. They are specified in the
+[docker-compose.yml](docker-compose.yml#L37) file in the `services.proxy.ports`
+section.  You can find documentation of the accepted format in the
+[docker-compose port
+documentation](https://docs.docker.com/compose/compose-file/compose-file-v3/#ports).
+
 ### Build the images
 
 To build the images, run the script `build-images.sh` found in this directory.
