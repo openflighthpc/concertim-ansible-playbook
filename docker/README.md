@@ -42,10 +42,12 @@ Prerequisites:
 The steps for installing are briefly:
 
 1. Clone the github repo.
-2. Build the images.
-3. Migrate the databases.
-4. Start the containers.
-5. Remove intermediate images.
+2. Create encrypted AWS credentials file
+3. Optionally, configure which host ports the docker containers bind to.
+4. Build the images.
+5. Migrate the databases.
+6. Start the containers.
+7. Remove intermediate images.
 
 These steps are described in more detail below.
 
@@ -61,6 +63,39 @@ RELEASE_TAG="main"
 git clone https://github.com/alces-flight/concertim-ansible-playbook.git concertim_ui
 cd concertim_ui
 git checkout --quiet ${RELEASE_TAG}
+```
+
+### Create encrypted AWS credentials file
+
+The Dockerfiles for the visualisation and metrics containers need AWS
+credentials available to download pre-built source code from AWS.  These
+credentials are passed to the ansible playbook using ansible-vault.  Doing this
+instead of environment variables avoids the image's history from including the
+credentials.
+
+To create the encrypted file:
+
+1. Create a `docker/secrets/vault-password.txt` password file.  It should
+   contain a single line with the vault password of your choice.
+2. Create the file `docker/secrets/aws-credenitals.yml` containing your AWS
+   credentials.  There is an [example
+   file](/docker/secrets/aws-credenitals.yml.example) to copy.
+3. Run `ansible-vault encrypt` to encrypt the AWS credentials.
+4. Remove the unencrypted credentials file.
+
+The snippet below will create a random password; edit 
+
+```
+touch docker/secrets/vault-password.txt
+chmod 600 docker/secrets/vault-password.txt
+date | sha256sum | cut -c 1-16 > docker/secrets/vault-password.txt
+cp docker/secrets/aws-credentials.yml.example docker/secrets/aws-credentials.yml
+$EDITOR docker/secrets/aws-credentials.yml
+ansible-vault encrypt -v \
+    --vault-password-file docker/secrets/vault-password.txt \
+    --output docker/secrets/aws-credentials.yml.enc \
+    docker/secrets/aws-credentials.yml
+rm docker/secrets/aws-credentials.yml
 ```
 
 ### Configuration

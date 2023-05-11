@@ -1,6 +1,7 @@
 ################
 # Stage: builder
 FROM ubuntu:22.04 as builder
+LABEL com.alces-flight.concertim.role=builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
@@ -36,6 +37,7 @@ RUN apt-get update && \
 ################
 # Stage: final
 FROM ubuntu:22.04
+LABEL com.alces-flight.concertim.role=proxy com.alces-flight.concertim.version=0.1.3
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \

@@ -3,33 +3,37 @@
 set -e
 set -o pipefail
 
-if [ -z "${AWS_ACCESS_KEY_ID}" ] ; then
-  echo "AWS_ACCESS_KEY_ID environment variable not set" >&2
-  exit 1
-fi
-
-if [ -z "${AWS_SECRET_ACCESS_KEY}" ] ; then
-  echo "AWS_SECRET_ACCESS_KEY environment variable not set" >&2
-  exit 1
-fi
-
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "${SCRIPT_DIR}"/..
 
-echo "=== Building metrics and visualisation image ==="
+if [ ! -f "docker/secrets/aws-credentials.yml.enc" ] ; then
+  echo "secrets file docker/secrets/aws-credentials.yml.enc does not exist" >&2
+  exit 1
+fi
+
+if [ ! -f "docker/secrets/vault-password.txt" ] ; then
+  echo "secrets file docker/secrets/vault-password.txt does not exist" >&2
+  exit 1
+fi
+
+echo "=== Building metrics, visualisation and proxy images ==="
 
 docker-compose \
   --file docker/docker-compose.yml \
   --project-directory . \
   build  \
-  --build-arg=AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
-  --build-arg=AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
   metrics visualisation
 
-echo "=== Building proxy image ==="
+cat <<EOF >&2
 
-docker-compose \
-  --file docker/docker-compose.yml \
-  --project-directory . \
-  build  \
-  proxy
+Build completed.  You should now remove the AWS credentials.
+
+  rm docker/secrets/aws-credentials.yml* docker/secrets/vault-password.txt
+
+You may also wish to remove the builder images as they contain the AWS
+credentials.  These can be safely removed.
+
+  docker image ls --filter "label=concertim.role=builder"
+  docker image rm \$(docker image ls --filter "label=concertim.role=builder" -q)
+
+EOF
