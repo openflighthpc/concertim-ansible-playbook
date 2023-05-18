@@ -18,13 +18,7 @@ fi
 
 echo "=== Building metrics, visualisation and proxy images ==="
 
-if docker compose version > /dev/null 2>&1 ; then
-  DOCKER_COMPOSE="docker compose"
-else
-  DOCKER_COMPOSE="docker-compose"
-fi
-
-${DOCKER_COMPOSE} \
+docker compose \
   --file docker/docker-compose.yml \
   --project-directory . \
   build  \

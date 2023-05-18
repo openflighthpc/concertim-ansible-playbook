@@ -36,8 +36,7 @@ be backed up.
 
 Prerequisites:
 
-* A machine with `docker` and `docker-compose` (or `docker-compose-plugin`)
-  installed.
+* A machine with `docker` and `docker-compose-plugin` installed.
 * GitHub credentials.
 * AWS credentials.
 
@@ -141,7 +140,7 @@ To build the images, run the script `build-images.sh` found in this directory.
 That script will:
 
 1. Check certain authentication details have been provided.
-2. Run `docker-compose` to build the concertim Docker images.
+2. Run `docker compose` to build the concertim Docker images.
 
 ```
 docker/build-images.sh
@@ -161,8 +160,8 @@ docker/migrate-database.sh
 ### Start the containers
 
 To start the containers, run the script `start-containers.sh` found in this
-directory.  That script is a small wrapper around `docker-compose up`.  The
-script takes the same arguments as `docker-compose up`; you will likely want to
+directory.  That script is a small wrapper around `docker compose up`.  The
+script takes the same arguments as `docker compose up`; you will likely want to
 pass `--detach`.
 
 ```
@@ -172,7 +171,7 @@ docker/start-containers.sh --detach
 ### Stopping the containers
 
 To stop the containers, run the script `stop-containers.sh` found in this
-directory.  That script is a small wrapper around `docker-compose stop`.
+directory.  That script is a small wrapper around `docker compose stop`.
 
 ```
 docker/stop-containers.sh
