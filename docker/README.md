@@ -182,9 +182,10 @@ docker/stop-containers.sh
 
 The images are built from multi-stage Dockerfiles as a means of keeping their
 size down.  Once the images have been built, the now unneeded "builder" images,
-should be removed.  This can be done with the following:
+should be removed if docker has not already done so automatically.  This can be
+done with the following:
 
 ```
-docker image ls --filter "label=concertim.role=builder"
-docker image rm \$(docker image ls --filter "label=concertim.role=builder" -q)
+docker image ls --filter "label=com.alces-flight.concertim.role=builder"
+docker image rm \$(docker image ls --filter "label=com.alces-flight.concertim.role=builder" -q)
 ```
