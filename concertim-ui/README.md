@@ -109,8 +109,15 @@ RELEASE_TAG="0.1.4"
 git clone -n --depth=1 --filter=tree:0 \
   https://${GH_TOKEN}@github.com/alces-flight/concertim-ansible-playbook.git
 cd concertim-ansible-playbook
-git sparse-checkout set --no-cone docker
+git sparse-checkout set --no-cone concertim-ui
 git checkout --quiet ${RELEASE_TAG}
+```
+
+The cd in to the `concertim-ui` directory.  The following snippets are expected
+to be ran from here.
+
+```
+cd concertim-ui
 ```
 
 ### Login to the concertim docker registry
