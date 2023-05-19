@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: docker/visualisation/Dockerfile
+      network: host
     secrets:
       - db-password
     volumes:
@@ -13,21 +14,27 @@ services:
       - 7000
     depends_on:
       - db
+    networks:
+      concertim-net: {}
 
   metrics:
     build:
       context: .
       dockerfile: docker/metrics/Dockerfile
+      network: host
     volumes:
       - concertim-etc:/opt/concertim/etc
       - rrd-data:/var/lib/ganglia/rrds
     expose:
       - 3000
+    networks:
+      concertim-net: {}
 
   proxy:
     build:
       context: .
       dockerfile: docker/proxy/Dockerfile
+      network: host
     ports:
       - 127.0.0.1:9080:80
       - 127.0.0.1:9443:443
@@ -36,6 +43,8 @@ services:
     depends_on:
       - visualisation
       - metrics
+    networks:
+      concertim-net: {}
 
   db:
     image: postgres
@@ -55,6 +64,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      concertim-net: {}
 
 volumes:
   db-data:
@@ -65,3 +76,9 @@ volumes:
 secrets:
   db-password:
     file: docker/secrets/db/password.txt
+
+networks:
+  concertim-net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1400

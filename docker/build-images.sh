@@ -18,11 +18,11 @@ fi
 
 echo "=== Building metrics, visualisation and proxy images ==="
 
-docker-compose \
+docker compose \
   --file docker/docker-compose.yml \
   --project-directory . \
   build  \
-  metrics visualisation
+  metrics visualisation proxy
 
 cat <<EOF >&2
 
@@ -33,7 +33,7 @@ Build completed.  You should now remove the AWS credentials.
 You may also wish to remove the builder images as they contain the AWS
 credentials.  These can be safely removed.
 
-  docker image ls --filter "label=concertim.role=builder"
-  docker image rm \$(docker image ls --filter "label=concertim.role=builder" -q)
+  docker image ls --filter "label=com.alces-flight.concertim.role=builder"
+  docker image rm \$(docker image ls --filter "label=com.alces-flight.concertim.role=builder" -q)
 
 EOF

@@ -10,13 +10,13 @@ echo "=== Migrating database ==="
 
 "${SCRIPT_DIR}"/start-containers.sh --detach db
 
-docker-compose \
+docker compose \
   --file docker/docker-compose.yml \
   --project-directory . \
   run --rm --user www-data -e RAILS_ENV=production visualisation \
     bash -c 'cd /opt/concertim/opt/ct-visualisation-app/core && bin/rails db:create --trace'
 
-docker-compose \
+docker compose \
   --file docker/docker-compose.yml \
   --project-directory . \
   run --rm --user www-data -e RAILS_ENV=production visualisation \
