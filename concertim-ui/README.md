@@ -3,8 +3,9 @@
 This directory contains configuration for deploying Alces Concertim as a set of
 docker containers using a `docker-compose.yml` file.
 
-The instructions here will work for the `0.1.4` release, your milage may
-vary with other versions.
+The instructions here will work for the current `main` branch, your milage may
+vary with other versions.  You probably want to use the instructions for a
+tagged release e.g., `0.1.4`.
 
 ## Image and container overview
 
@@ -105,7 +106,7 @@ Clone this directory of this github repo to the build machine.  It is a private
 repo so you will need access to your github credentials or a github token.
 
 ```
-RELEASE_TAG="0.1.4"
+RELEASE_TAG="main"
 git clone -n --depth=1 --filter=tree:0 \
   https://${GH_TOKEN}@github.com/alces-flight/concertim-ansible-playbook.git
 cd concertim-ansible-playbook
