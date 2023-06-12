@@ -2,6 +2,10 @@
 
 This directory contains ansible playbooks to build an Alces Concertim machine.
 
+Following the instructions here will result in a single machine running all of
+the Concertim servies. Alternatively, you could [deploy Concertim as Docker
+containers from pre-built images](/concertim-ui/README.md).
+
 The instructions here will work for the current `main` branch, your milage may
 vary with other versions.  You probably want to use the instructions for a
 tagged release e.g., `0.1.4`.
