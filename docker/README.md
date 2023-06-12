@@ -1,13 +1,21 @@
-# Building Alces Concertim as a set of Docker containers
+# Building Alces Concertim Docker images
 
-This directory contains scripts and configuration to build Docker images and
-containers from the Alces Concertim ansible playbooks.
+This directory contains scripts and configuration to build Docker images from
+the Alces Concertim ansible playbooks.
+
+Following the instructions here will result in Docker images suitable for
+uploading to our docker registry which can then be deployed by following the
+[docker deployment instructions](/concertim-ui/README.md).
+
+The images built here should be uploaded to the
+registry.docker.concertim.alces-flight.com docker register.  They are then used
+in the `/concertim-ui/docker-compose.yml` to deploy the images.
 
 The instructions here will work for the current `main` branch, your milage may
 vary with other versions.  You probably want to use the instructions for a
 tagged release e.g., `0.1.4`.
 
-## Image and container overview
+## Image overview
 
 The [docker-compose.yml](docker-compose.yml) file defines four services
 comprising the Concertim UI. Each service is built into its own image and it is
@@ -20,19 +28,7 @@ expected that a single container will be created from each. The services are:
   services.
 * `db`: A postgresql database.
 
-A number of volumes are created during the build process.  Two of these should
-be backed up.
-
-* `db-data`: contains the postgresql data including the racks and instances.
-  This should be included in a data retention policy.
-* `rrd-data`: contains the historial metrics as rrd file.  This should be
-  included in a data retention policy.
-* `static-content`: used to enable `proxy` to serve static assets.  This does
-  not need to be backed up.
-* `concertim-etc`: used to share some configuration between the services.  This
-  may be removed in future versions.  This does not need to be backed up.
-
-## Installation
+## Building the images
 
 Prerequisites:
 
@@ -47,9 +43,8 @@ The steps for installing are briefly:
 3. Create encrypted AWS credentials file
 4. Optionally, configure networking
 5. Build the images.
-6. Migrate the databases.
-7. Start the containers.
-8. Remove multi-stage "builder" images.
+6. Remove multi-stage "builder" images.
+7. Upload the images to registry.docker.concertim.alces-flight.com 
 
 These steps are described in more detail below.
 
@@ -118,17 +113,6 @@ rm docker/secrets/aws-credentials.yml
 
 ### Configuration
 
-The default build binds two ports for HTTP and HTTPS traffic to the docker
-host.  The defaults bind to the host ports `9080` and `9443` on interface
-`127.0.0.1`.
-
-If the default values are not suitable for your needs, you can change them by
-editing them and restarting the containers. They are specified in the
-[docker-compose.yml](docker-compose.yml#L37) file in the `services.proxy.ports`
-section.  You can find documentation of the accepted format in the
-[docker-compose port
-documentation](https://docs.docker.com/compose/compose-file/compose-file-v3/#ports).
-
 Depending on how your docker host is configured you may also need to configure
 the network MTU setting.  The default is set to 1400 which is suitable for the
 expected production deployment.  If you run into network issues you may want to
@@ -145,6 +129,47 @@ That script will:
 ```
 docker/build-images.sh
 ```
+
+### Remove unneeded multi-stage images
+
+The images are built from multi-stage Dockerfiles as a means of keeping their
+size down.  Once the images have been built, the now unneeded "builder" images,
+should be removed if docker has not already done so automatically.  This can be
+done with the following:
+
+```
+docker image ls --filter "label=com.alces-flight.concertim.role=builder"
+docker image rm \$(docker image ls --filter "label=com.alces-flight.concertim.role=builder" -q)
+```
+
+### Upload images to the docker registry
+
+You may wish to test the images prior to this step; see below for details.
+
+```
+docker login registry.docker.concertim.alces-flight.com
+docker push registry.docker.concertim.alces-flight.com/concertim-ui-visualisation
+docker push registry.docker.concertim.alces-flight.com/concertim-ui-metrics
+docker push registry.docker.concertim.alces-flight.com/concertim-ui-proxy
+```
+
+## Testing the images
+
+Prior to uploading the images you may wish to test them.  To do so the
+following steps can be followed.
+
+### Network configuration
+
+The default build binds two ports for HTTP and HTTPS traffic to the docker
+host.  The defaults bind to the host ports `80` and `443` on interface
+`0.0.0.0`.
+
+If the default values are not suitable for your needs, you can change them by
+editing them and restarting the containers. They are specified in the
+[docker-compose.yml](docker-compose.yml#L30) file in the `services.proxy.ports`
+section.  You can find documentation of the accepted format in the
+[docker-compose port
+documentation](https://docs.docker.com/compose/compose-file/compose-file-v3/#ports).
 
 ### Migrate the databases
 
@@ -175,16 +200,4 @@ directory.  That script is a small wrapper around `docker compose stop`.
 
 ```
 docker/stop-containers.sh
-```
-
-### Remove unneeded multi-stage images
-
-The images are built from multi-stage Dockerfiles as a means of keeping their
-size down.  Once the images have been built, the now unneeded "builder" images,
-should be removed if docker has not already done so automatically.  This can be
-done with the following:
-
-```
-docker image ls --filter "label=com.alces-flight.concertim.role=builder"
-docker image rm \$(docker image ls --filter "label=com.alces-flight.concertim.role=builder" -q)
 ```

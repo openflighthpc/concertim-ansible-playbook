@@ -3,6 +3,12 @@
 This directory contains configuration for deploying Alces Concertim as a set of
 docker containers using a `docker-compose.yml` file.
 
+Following the instructions here will result in the targeted machine runnig
+multiple Docker containers created from pre-built Docker images. Alternatively,
+you could [deploy Concertim directly on the targeted
+machine](/ansible/README.md).  Or you might be looking for [instructions on
+building the pre-built Docker images](/docker/README.md).
+
 The instructions here will work for the current `main` branch, your milage may
 vary with other versions.  You probably want to use the instructions for a
 tagged release e.g., `0.1.4`.
