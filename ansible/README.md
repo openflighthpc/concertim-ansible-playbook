@@ -13,15 +13,17 @@ tagged release e.g., `0.1.4`.
 ## Prerequisites
 
 * An Ubuntu 22.04 (jammy) machine with at least 3GiB of memory and at least 2
-  CPUs.  This machine will become the Alces Concertim machine.
+  CPUs.  This machine will become the Alces Concertim machine.  It is expected
+  that this would be a fresh virtual machine.
 * Root access on that Ubuntu machine.
 
 ## Overview
 
-The process is as follows.  Steps 2 through 5 are described in more detail
-below.
+The process is as follows.  Steps 2 through 5 are to be ran in the root shell
+obtained in step 1.  They are described in more detail below.
 
-1. Log into your Ubuntu machine and gain root access.
+1. Log into the virtual machine that is going to become the Concertim appliance
+   and gain root access.
 2. Gather GitHub and S3 credentials.
 3. Install ansible and dependencies.
 4. Clone this git repository and checkout the correct tag.
