@@ -73,7 +73,7 @@ The vagrant machines can be used to develop the Concertim apps.  To do so:
    mkdir -p ~/projects/concertim/src
    cd ~/projects/concertim/src
    git clone git@github.com:alces-flight/concertim-metric-reporting-daemon.git ct-metric-reporting-daemon
-   git clone git@github.com:alces-flight/concertim-ct-visualisation-app.git ct-visualisation-app.git
+   git clone git@github.com:alces-flight/concertim-ct-visualisation-app.git ct-visualisation-app
    ```
 
 2. Build a vagrant machine (either `dev1` or `dev2`).
