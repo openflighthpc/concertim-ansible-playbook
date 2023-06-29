@@ -14,16 +14,6 @@
     enabled: no
   when: not docker_build | bool
 
-# Some monit scripts depend on additional packages.
-- name: Install dependent packages
-  register: result
-  until: result is success
-  ansible.builtin.apt:
-    name:
-      # Used by fake ganglia monitor.
-      - xmlstarlet
-    state: latest
-
 - name: Install configuration
   ansible.builtin.copy:
     src: "{{ item.src }}"
@@ -46,23 +36,6 @@
       mode: "700"
 
 - name: Install monitored services configuration
-  block:
-    - name: Install monitored services configuration (copy)
-      ansible.builtin.copy:
-        src: services/
-        dest: /etc/monit/conf.d/
-
-    - name: Remove fake ganglia monit configuration
-      ansible.builtin.file:
-        path: /etc/monit/conf.d/fake-ganglia.monit
-        state: absent
-      when: not want_fake_metrics | bool
-
-
-- name: Install monit utility scripts
   ansible.builtin.copy:
-    src: scripts/
-    dest: /usr/local/sbin/
-    owner: root
-    group: root
-    mode: "755"
+    src: services/
+    dest: /etc/monit/conf.d/

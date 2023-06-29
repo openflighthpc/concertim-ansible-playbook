@@ -1,5 +1,3 @@
-package_assets_fake_gmond_tag: main
-
 package_assets_ruby_projects:
   - repo: concertim-ct-visualisation-app
     name: ct-visualisation-app

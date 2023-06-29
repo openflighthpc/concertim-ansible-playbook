@@ -70,9 +70,6 @@
     - role: appliance-dev
       tags: appliance-dev
       when: want_dev_build | bool
-    - role: fake-gmond
-      tags: fake-gmond
-      when: want_fake_metrics | bool
     - role: finalization
       tags: finalization
       when: not docker_build | bool

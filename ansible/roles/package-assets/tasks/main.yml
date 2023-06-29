@@ -31,10 +31,6 @@
   tags: golang-packages
   loop: "{{package_assets_golang_projects}}"
 
-- name: Build fake gmond package
-  import_tasks: build-fake-gmond-package.yml
-  tags: fake-gmond
-
 - name: Upload packages
   import_tasks: upload-packages.yml
   tags: upload
