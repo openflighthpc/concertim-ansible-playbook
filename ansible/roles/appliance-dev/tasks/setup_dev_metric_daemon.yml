@@ -3,6 +3,8 @@
     cmd: git config --global --add safe.directory /opt/concertim/dev/ct-metric-reporting-daemon
 
 - name: Build metric reporting daemon server
+  register: result
+  until: result is success
   ansible.builtin.command:
     cmd: go build -o ./tmp/reporting ./cmd/reporting/
     chdir: "{{dev_root_dir}}/ct-metric-reporting-daemon"

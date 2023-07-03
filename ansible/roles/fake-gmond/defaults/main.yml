@@ -1,7 +1,0 @@
-fake_gmond_extract_dir: /root
-fake_gmond_group: root
-fake_gmond_owner: root
-fake_gmond_s3_prefix: "{{s3_packages_prefix}}demo/"
-fake_gmond_tarball_name: ganglia_data_generator.tgz
-fake_gmond_untarred_dir: ganglia_data_generator
-fake_gmond_port: "8677"
