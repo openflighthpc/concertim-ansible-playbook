@@ -6,9 +6,8 @@ Following the instructions here will result in a single machine running all of
 the Concertim servies. Alternatively, you could [deploy Concertim as Docker
 containers from pre-built images](/concertim-ui/README.md).
 
-The instructions here will work for the current `main` branch, your milage may
-vary with other versions.  You probably want to use the instructions for a
-tagged release e.g., `0.1.4`.
+The instructions here will work for the `v0.2.1` release, your milage may
+vary with other versions.
 
 ## Prerequisites
 
@@ -71,7 +70,7 @@ This git repository is a private repository, so you will need to provide
 credentials to clone it.
 
 ```bash
-RELEASE_TAG="main"
+RELEASE_TAG="v0.2.1"
 cd /root
 git clone https://${GH_TOKEN}@github.com/alces-flight/concertim-ansible-playbook.git
 ln -s /root/concertim-ansible-playbook/ansible /ansible

@@ -11,9 +11,8 @@ The images built here should be uploaded to the
 registry.docker.concertim.alces-flight.com docker register.  They are then used
 in the `/concertim-ui/docker-compose.yml` to deploy the images.
 
-The instructions here will work for the current `main` branch, your milage may
-vary with other versions.  You probably want to use the instructions for a
-tagged release e.g., `0.1.4`.
+The instructions here will work for the `v0.2.1` release, your milage may
+vary with other versions.
 
 ## Image overview
 
@@ -70,7 +69,7 @@ below the repo is checked out to a folder named `concertim_ui`, doing this is
 not necessary but will provide much nicer image and container names.
 
 ```
-RELEASE_TAG="main"
+RELEASE_TAG="v0.2.1"
 git clone https://${GH_TOKEN}@github.com/alces-flight/concertim-ansible-playbook.git concertim_ui
 cd concertim_ui
 git checkout --quiet ${RELEASE_TAG}
