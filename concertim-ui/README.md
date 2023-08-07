@@ -9,8 +9,10 @@ you could [deploy Concertim directly on the targeted
 machine](/ansible/README.md).  Or you might be looking for [instructions on
 building the pre-built Docker images](/docker/README.md).
 
-The instructions here will work for the `v0.2.1` release, your milage may
-vary with other versions.
+The instructions here will work for the current `main` branch, your milage may
+vary with other versions.  You probably want to use the instructions for a
+ragged release e.g., `v0.2.1`.
+
 
 ## Image and container overview
 
@@ -111,7 +113,7 @@ Clone this directory of this github repo to the build machine.  It is a private
 repo so you will need access to your github credentials or a github token.
 
 ```
-RELEASE_TAG="v0.2.1"
+RELEASE_TAG="main"
 git clone -n --depth=1 --filter=tree:0 \
   https://${GH_TOKEN}@github.com/alces-flight/concertim-ansible-playbook.git
 cd concertim-ansible-playbook
