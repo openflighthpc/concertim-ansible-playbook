@@ -22,26 +22,17 @@ cd vagrant
 
 ### Preparation
 
-#### Concertim applications and folder structure
-
-This repo must be a sibling to a directory called `concertim`, containing the visualisation and metrics reporting repos.
-For example, if you are using a parent directory called `projects` it would contain the directory
-`concertim-ansible-playbook` and one called `concertim`, which can be created using:
-
-   ```
-   mkdir -p ~/projects/concertim/src
-   cd ~/projects/concertim/src
-   git clone git@github.com:alces-flight/concertim-metric-reporting-daemon.git ct-metric-reporting-daemon
-   git clone git@github.com:alces-flight/concertim-ct-visualisation-app.git ct-visualisation-app
-   ```
-
 #### Ensure assets can be downloaded from S3
 
 - Update `release_tag` in `ansible/group_vars/all` to use a valid release tag, if there is not one uploaded for today.
-E.g. `2023-06-13'.
+E.g. `2023-08-07'.
 - Obtain a GitHub auth token and export it to the environment variable `GH_TOKEN`
 - Obtain S3 credentials that allow you to download packages from `s3://alces-flight/concertim/packages`.
 Export these to the environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+- Alternatively, if you have already configured `aws` on your machine with the necessary credentials,
+you can run `/scripts/prepare-env.sh` to export the key and id as defined in your aws setup. This will also
+look for a file `../ansible/secrets.enc` (which you would need to manually create and populate) and export
+a github token if present (defined in the secrets file as `GH_TOKEN=<my github token>`).
 
 #### Box setup
 
@@ -85,6 +76,21 @@ Then ssh into the VM and follow the instructions in the [ansible README](../ansi
 
 ## Developing the Concertim apps
 
+#### Concertim applications and folder structure
+
+For development, this repo must be a sibling to a directory called `concertim`, containing the visualisation and metrics reporting repos.
+For example, if you are using a parent directory called `projects` it would contain the directory
+`concertim-ansible-playbook` and one called `concertim`, which can be created using:
+
+   ```
+   mkdir -p ~/projects/concertim/src
+   cd ~/projects/concertim/src
+   git clone git@github.com:alces-flight/concertim-metric-reporting-daemon.git ct-metric-reporting-daemon
+   git clone git@github.com:alces-flight/concertim-ct-visualisation-app.git ct-visualisation-app
+   ```
+
+#### Virtual Machines
+
 To develop the concertim apps first build either the `dev1` or `dev2` virtual
 machine by following the instructions above, then configure it to run in development mode.
 
@@ -123,3 +129,6 @@ screen -dmS ct-vis-app ./bin/dev
 cd /opt/concertim/dev/ct-metric-reporting-daemon
 screen -dmS ct-metrics $(go env GOPATH)/bin/air -- --config-file config/config.dev.vm.yml
 ```
+
+If you need to run data migrations or access the rails console, these should be done whilst in the directory
+`/opt/concertim/dev/ct-visualisation-app/core` (in the virtual machine).
