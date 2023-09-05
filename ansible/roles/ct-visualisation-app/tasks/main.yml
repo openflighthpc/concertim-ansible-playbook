@@ -57,6 +57,30 @@
         cmd: |
           sudo -u {{app_user}} /bin/bash -c 'EDITOR=cat ./bin/rails credentials:edit'
 
+    - name: Generate encryption keys
+      ansible.builtin.shell:
+        chdir: "{{ ct_vis_app_core_dir }}"
+        cmd: |
+          sudo -u {{app_user}} /bin/bash -c './bin/rails db:encryption:init'
+        register: encryption_init_output
+
+    - name: Remove unwanted text from encryption output
+      set_fact:
+        encryption_keys: "{{ encryption_init_output.stdout | regex_replace('Add this entry to the credentials of the target environment:', '') }}"
+
+    - name: Add encryption data to credentials
+      ansible.builtin.shell:
+        chdir: "{{ ct_vis_app_core_dir }}"
+        cmd:
+          expect -c '
+            spawn EDITOR=nano ./bin/rails credentials:edit
+            expect "\n" { send "\x04" }
+            expect "\n" { send "{{ encryption_keys }}\n" }
+            expect "\n" { send "\x0F" }
+            expect "File name to write" { send "\n" }
+            expect "Ctrl+X" { send "\x18" }
+          '
+
 - name: Adjust database config with host and password
   vars:
    # db_password: "{{ lookup('ansible.builtin.file', '/run/secrets/db/password.txt') }}"
