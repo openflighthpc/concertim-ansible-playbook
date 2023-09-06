@@ -60,7 +60,7 @@
     - name: Generate encryption keys
       ansible.builtin.shell:
         chdir: "{{ ct_vis_app_core_dir }}"
-        cmd: sudo -u {{app_user}} /bin/bash -c './bin/rails encryption:generate'
+        cmd: sudo -u {{app_user}} /bin/bash -c './bin/rake encryption:generate'
 
 - name: Adjust database config with host and password
   vars:
