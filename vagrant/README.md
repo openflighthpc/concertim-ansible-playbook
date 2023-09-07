@@ -99,6 +99,9 @@ machine by following the instructions above, then configure it to run in develop
 
    Ensure your local version of the visualisation app has an accessible `secret_key_base` set in `core`.
    This can be set using `EDITOR=nano rails credentials:edit` whilst in the visualisation app repo.
+   You must also add active record encryption keys to this credentials file. You can obtain suitable keys for this
+   by running (whist in the visualiser repo) `rails db:encryption:init` and add them to the credentials file manually,
+   or automate this process by running `rake encryption:generate`.
 
 2. In this repo, build a vagrant machine (either `dev1` or `dev2`), if not already built:
 

@@ -57,6 +57,11 @@
         cmd: |
           sudo -u {{app_user}} /bin/bash -c 'EDITOR=cat ./bin/rails credentials:edit'
 
+    - name: Generate encryption keys
+      ansible.builtin.shell:
+        chdir: "{{ ct_vis_app_core_dir }}"
+        cmd: sudo -u {{app_user}} /bin/bash -c './bin/rake encryption:generate'
+
 - name: Adjust database config with host and password
   vars:
    # db_password: "{{ lookup('ansible.builtin.file', '/run/secrets/db/password.txt') }}"
