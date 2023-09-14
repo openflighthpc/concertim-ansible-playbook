@@ -25,4 +25,4 @@
     runner_args: /usr/local/sbin/set-user-defaults.rb
     ruby_bin_dir: "{{ruby_30_bin_dir}}"
     additional_env: ""
-    chdir: "{{ ct_installation_dir }}/ct-visualisation-app/core"
+    chdir: "{{ ct_installation_dir }}/ct-visualisation-app/"

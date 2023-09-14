@@ -38,7 +38,7 @@ fi
 
 # Return path to build.yml from project root.
 get_build_yaml() {
-  echo core/config/build.yml
+  echo config/build.yml
 }
 
 create_build_yml() {

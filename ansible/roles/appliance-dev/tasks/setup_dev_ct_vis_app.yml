@@ -7,7 +7,7 @@
 
 - name: Bundle install gems for dev ct-visualisation-app
   ansible.builtin.shell: |
-    cd {{dev_root_dir}}/ct-visualisation-app/core
+    cd {{dev_root_dir}}/ct-visualisation-app/
     ./bin/bundle install
   when: dev_ct_vis_dir.stdout != ""
 
@@ -39,14 +39,14 @@
     runner_args: /usr/local/sbin/set-user-defaults.rb
     ruby_bin_dir: "{{ruby_30_bin_dir}}"
     additional_env: ""
-    chdir: "{{dev_root_dir}}/ct-visualisation-app/core"
+    chdir: "{{dev_root_dir}}/ct-visualisation-app/"
     user: root
 
 
 - name: Start dev server
   ansible.builtin.command:
     cmd: screen -dmS ct-vis-app ./bin/dev
-    chdir: "{{dev_root_dir}}/ct-visualisation-app/core"
+    chdir: "{{dev_root_dir}}/ct-visualisation-app/"
 
 - name: Create dev templates
   block:

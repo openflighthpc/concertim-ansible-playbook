@@ -97,7 +97,7 @@ machine by following the instructions above, then configure it to run in develop
 1. Configure concertim visualisation app:
 
 
-   Ensure your local version of the visualisation app has an accessible `secret_key_base` set in `core`.
+   Ensure your local version of the visualisation app has an accessible `secret_key_base` set.
    This can be set using `EDITOR=nano rails credentials:edit` whilst in the visualisation app repo.
    You must also add active record encryption keys to this credentials file. You can obtain suitable keys for this
    by running (whist in the visualiser repo) `rails db:encryption:init` and add them to the credentials file manually,
@@ -126,7 +126,7 @@ If the box is rebooted the screen sessions will need to be restarted.  SSH into
 the box, gain root and run the following.
 
 ```
-cd /opt/concertim/dev/ct-visualisation-app/core/
+cd /opt/concertim/dev/ct-visualisation-app/
 screen -dmS ct-vis-app ./bin/dev
 
 cd /opt/concertim/dev/ct-metric-reporting-daemon
@@ -134,4 +134,4 @@ screen -dmS ct-metrics $(go env GOPATH)/bin/air -- --config-file config/config.d
 ```
 
 If you need to run data migrations or access the rails console, these should be done whilst in the directory
-`/opt/concertim/dev/ct-visualisation-app/core` (in the virtual machine).
+`/opt/concertim/dev/ct-visualisation-app/` (in the virtual machine).

@@ -1,5 +1,4 @@
 ct_vis_app_path: "{{ ct_installation_dir }}/ct-visualisation-app"
-ct_vis_app_core_dir: "{{ ct_installation_dir }}/ct-visualisation-app/core"
 ct_vis_app_log_file: /var/log/ct-visualisation-app.log
 
 # Specify the password and email for the default admin user.

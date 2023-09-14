@@ -35,7 +35,7 @@
   register: result
   until: result is success
   ansible.builtin.shell: |
-    cd "{{ ct_vis_app_core_dir }}"
+    cd "{{ ct_vis_app_path }}"
     ./bin/bundle install
 
 - name: Generate shared secret
@@ -45,7 +45,7 @@
   block:
     - name: Remove existing key and credentials
       ansible.builtin.file:
-        path: "{{ct_vis_app_core_dir}}/config/{{item}}"
+        path: "{{ct_vis_app_path}}/config/{{item}}"
         state: absent
       loop:
         - master.key
@@ -53,7 +53,7 @@
 
     - name: Create master key and credentials
       ansible.builtin.shell:
-        chdir: "{{ ct_vis_app_core_dir }}"
+        chdir: "{{ ct_vis_app_path }}"
         cmd: |
           sudo -u {{app_user}} /bin/bash -c 'EDITOR=cat ./bin/rails credentials:edit'
 
@@ -67,7 +67,7 @@
    # db_password: "{{ lookup('ansible.builtin.file', '/run/secrets/db/password.txt') }}"
    db_password: db_password
   ansible.builtin.replace:
-    path: "{{ct_installation_dir}}/ct-visualisation-app/core/config/database.yml"
+    path: "{{ct_installation_dir}}/ct-visualisation-app/config/database.yml"
     regexp: "{{item.regexp}}"
     replace: "{{item.replace}}"
   loop:
@@ -94,7 +94,7 @@
     ruby_bin_dir: "{{ruby_30_bin_dir}}"
     rake_task: "assets:precompile"
     additional_env: ""
-    chdir: "{{ ct_vis_app_core_dir }}"
+    chdir: "{{ ct_vis_app_path }}"
 
 - name: Install systemd service files
   ansible.builtin.template:

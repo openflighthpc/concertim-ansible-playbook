@@ -16,7 +16,7 @@
   ansible.builtin.shell:
     cmd: |
       sudo -u {{ app_user }} /bin/bash -c 'RAILS_ENV={{rails_env}} ./bin/rails {{task}} --trace'
-    chdir: "{{ct_vis_app_core_dir}}"
+    chdir: "{{ct_vis_app_path}}"
 
 - name: Add SUPERUSER role to {{app_user}}
   vars:
@@ -31,7 +31,7 @@
   ansible.builtin.shell:
     cmd: |
       sudo -u {{ app_user }} /bin/bash -c 'RAILS_ENV={{rails_env}} ./bin/rails {{task}} --trace'
-    chdir: "{{ct_vis_app_core_dir}}"
+    chdir: "{{ct_vis_app_path}}"
 
 - name: Remove SUPERUSER role from {{app_user}}
   vars:

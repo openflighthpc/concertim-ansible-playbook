@@ -2,7 +2,7 @@ package_assets_ruby_projects:
   - repo: concertim-ct-visualisation-app
     name: ct-visualisation-app
     # This could be a git tag, git branch or git commit.
-    tag: main
+    tag: refactor/engines
     type: appliance
     subdir: ""
 
