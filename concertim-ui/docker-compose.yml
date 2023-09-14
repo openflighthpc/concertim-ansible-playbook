@@ -5,7 +5,7 @@ services:
     secrets:
       - db-password
     volumes:
-      - static-content:/opt/concertim/opt/ct-visualisation-app/core/public
+      - static-content:/opt/concertim/opt/ct-visualisation-app/public
       - concertim-etc:/opt/concertim/etc
     expose:
       - 7000
@@ -30,7 +30,7 @@ services:
       - 0.0.0.0:80:80
       - 0.0.0.0:443:443
     volumes:
-      - static-content:/opt/concertim/opt/ct-visualisation-app/core/public
+      - static-content:/opt/concertim/opt/ct-visualisation-app/public
     depends_on:
       - visualisation
       - metrics
