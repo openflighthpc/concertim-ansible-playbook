@@ -1,22 +1,3 @@
-# The daemons have libexec scripts which depend on Ruby.
-- name: Install libexec script dependencies
-  block:
-    - name: Install Ruby
-      register: result
-      until: result is success
-      ansible.builtin.apt:
-        name:
-          - ruby3.0
-
-    - name: Install gems
-      register: result
-      until: result is success
-      ansible.builtin.command:
-        cmd: gem install {{item}} --no-document
-      loop:
-        - dalli -v '~> 3.2.3'
-        - activesupport
-
 - name: Download daemon packages from S3
   amazon.aws.aws_s3:
     bucket: "{{s3_bucket}}"
