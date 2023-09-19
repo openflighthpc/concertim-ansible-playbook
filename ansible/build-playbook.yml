@@ -50,8 +50,6 @@
         state: latest
 
   roles:
-    - role: misc_packages
-      tags: misc_packages
     - role: webserver
       tags: webserver
     - role: database

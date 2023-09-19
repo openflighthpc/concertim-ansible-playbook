@@ -7,6 +7,8 @@
   ansible.builtin.apt:
     name:
       - golang-go
+      - net-tools
+      - jq
     state: latest
 
 # As above, install scripts that are for development.  Scripts that are useful
