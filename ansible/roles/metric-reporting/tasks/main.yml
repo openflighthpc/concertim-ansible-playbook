@@ -50,6 +50,7 @@
     group: root
     mode: "644"
   loop: "{{ daemons }}"
+  when: not docker_build | bool
 
 - name: Install {{item}} logrotate configuration
   ansible.builtin.copy:
@@ -57,18 +58,10 @@
     dest: "/etc/logrotate.d/{{item}}"
   loop: "{{ daemons }}"
 
-- name: Enable daemons (non-docker)
+- name: Enable daemons
   ansible.builtin.service:
     name: "{{ item }}"
     # state: started
     enabled: yes
   loop: "{{ daemons }}"
   when: not docker_build | bool
-
-- name: Enable daemons (docker)
-  ansible.builtin.file:
-    src: /lib/systemd/system/{{item}}.service
-    dest: /etc/systemd/system/multi-user.target.wants/{{item}}.service
-    state: link
-  loop: "{{daemons}}"
-  when: docker_build | bool
