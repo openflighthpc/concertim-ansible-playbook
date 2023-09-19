@@ -2,7 +2,7 @@
 
 def update_user(login, user_data)
   puts "Updating #{login} user"
-  user = Uma::User.where(login: login).order(:created_at => 'asc').first
+  user = User.where(login: login).order(:created_at => 'asc').first
   if user.nil?
     puts "    -> user not found"
   else

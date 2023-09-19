@@ -161,8 +161,8 @@ This is done by running the following commands.
 
 ```
 docker compose up db --detach
-docker compose run --rm --user www-data -e RAILS_ENV=production visualisation /bin/bash -c 'cd /opt/concertim/opt/ct-visualisation-app/core && bin/rails db:create --trace'
-docker compose run --rm --user www-data -e RAILS_ENV=production visualisation /bin/bash -c 'cd /opt/concertim/opt/ct-visualisation-app/core && bin/rails db:migrate --trace'
+docker compose run --rm --user www-data -e RAILS_ENV=production visualisation /bin/bash -c 'cd /opt/concertim/opt/ct-visualisation-app && bin/rails db:create --trace'
+docker compose run --rm --user www-data -e RAILS_ENV=production visualisation /bin/bash -c 'cd /opt/concertim/opt/ct-visualisation-app && bin/rails db:migrate --trace'
 ```
 
 If the last few lines are:

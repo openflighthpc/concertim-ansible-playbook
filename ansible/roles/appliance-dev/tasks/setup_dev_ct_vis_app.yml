@@ -7,7 +7,7 @@
 
 - name: Bundle install gems for dev ct-visualisation-app
   ansible.builtin.shell: |
-    cd {{dev_root_dir}}/ct-visualisation-app/core
+    cd {{dev_root_dir}}/ct-visualisation-app/
     ./bin/bundle install
   when: dev_ct_vis_dir.stdout != ""
 
@@ -31,6 +31,21 @@
   ansible.builtin.command:
     cmd: git config --global --add safe.directory /opt/concertim/dev/ct-visualisation-app
 
+- name: Create database
+  vars:
+    task: db:create
+  ansible.builtin.shell:
+    cmd: |
+      sudo -u root /bin/bash -c 'RAILS_ENV=development ./bin/rails {{task}} --trace'
+    chdir: "{{dev_root_dir}}/ct-visualisation-app/"
+
+- name: Migrate database
+  vars:
+    task: db:migrate
+  ansible.builtin.shell:
+    cmd: |
+      sudo -u root /bin/bash -c 'RAILS_ENV=development ./bin/rails {{task}} --trace'
+    chdir: "{{dev_root_dir}}/ct-visualisation-app/"
 
 - name: Configure users
   import_tasks: run_rails_runner.yml
@@ -38,15 +53,16 @@
     rails_runner: ./bin/rails runner
     runner_args: /usr/local/sbin/set-user-defaults.rb
     ruby_bin_dir: "{{ruby_30_bin_dir}}"
+    rails_env: "development"
     additional_env: ""
-    chdir: "{{dev_root_dir}}/ct-visualisation-app/core"
+    chdir: "{{dev_root_dir}}/ct-visualisation-app/"
     user: root
 
 
 - name: Start dev server
   ansible.builtin.command:
     cmd: screen -dmS ct-vis-app ./bin/dev
-    chdir: "{{dev_root_dir}}/ct-visualisation-app/core"
+    chdir: "{{dev_root_dir}}/ct-visualisation-app/"
 
 - name: Create dev templates
   block:

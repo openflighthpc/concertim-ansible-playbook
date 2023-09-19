@@ -14,12 +14,12 @@ docker compose \
   --file docker/docker-compose.yml \
   --project-directory . \
   run --rm --user www-data -e RAILS_ENV=production visualisation \
-    bash -c 'cd /opt/concertim/opt/ct-visualisation-app/core && bin/rails db:create --trace'
+    bash -c 'cd /opt/concertim/opt/ct-visualisation-app && bin/rails db:create --trace'
 
 docker compose \
   --file docker/docker-compose.yml \
   --project-directory . \
   run --rm --user www-data -e RAILS_ENV=production visualisation \
-    bash -c 'cd /opt/concertim/opt/ct-visualisation-app/core && bin/rails db:migrate --trace'
+    bash -c 'cd /opt/concertim/opt/ct-visualisation-app && bin/rails db:migrate --trace'
 
 "${SCRIPT_DIR}"/stop-containers.sh

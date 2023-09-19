@@ -71,7 +71,7 @@ RUN apt-get update && \
       build-essential \
       libpq-dev \
       ruby3.0-dev && \
-    cd /opt/concertim/opt/ct-visualisation-app/core && \
+    cd /opt/concertim/opt/ct-visualisation-app && \
     ./bin/bundle install && \
     apt-get remove --yes \
       autoconf \
