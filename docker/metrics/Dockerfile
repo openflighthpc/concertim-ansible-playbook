@@ -29,7 +29,6 @@ RUN apt-get update && \
       --vault-password-file /run/secrets/vault-password.txt \
       --extra-vars "@/run/secrets/aws-credentials.yml.enc" \
       --extra-vars "docker_build=true" \
-      --extra-vars "memcache_host=visualisation" \
       --tags prep,ganglia,metric-reporting \
       /ansible/build-playbook.yml && \
     apt-get remove --yes \

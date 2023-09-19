@@ -57,8 +57,6 @@
     - role: database
       tags: database
       when: not docker_build | bool
-    - role: memcached
-      tags: memcached
     - role: ganglia
       tags: ganglia
     - role: monit

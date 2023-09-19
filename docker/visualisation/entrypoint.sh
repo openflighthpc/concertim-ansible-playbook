@@ -25,8 +25,6 @@ fi
 if [ $# -gt 0 ] ; then
   exec "$@"
 else
-  /usr/bin/memcached -v -m 256 -p 11211 -u memcache &
-
   /opt/concertim/opt/ct-visualisation-app/bin/rails server -p 7000 -b 0.0.0.0 -e production &
 
   export GOOD_JOB_WORKER=true
