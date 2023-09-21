@@ -33,6 +33,15 @@
   loop: "{{ daemons }}"
   when: not docker_build | bool
 
+- name: Adjust visualisation host in config
+  ansible.builtin.replace:
+    path: "{{item}}"
+    regexp: '^(.*)http://localhost:7000(.*)$'
+    replace: '\1http://visualisation:7000\2'
+  loop:
+    - "{{ct_installation_dir}}/ct-metric-reporting-daemon/config/config.yml"
+  when: docker_build | bool
+
 - name: Install {{item}} logrotate configuration
   ansible.builtin.copy:
     src: "{{item}}.logrotate"
