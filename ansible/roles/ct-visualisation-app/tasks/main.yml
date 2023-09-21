@@ -106,8 +106,9 @@
   loop:
     - ct-visualisation-app
     - ct-visualisation-job-runner
+  when: not docker_build | bool
 
-- name: Enable visualisation app (non-docker)
+- name: Enable visualisation app
   ansible.builtin.service:
     name: "{{item}}"
     enabled: yes
@@ -116,13 +117,3 @@
     - ct-visualisation-app
     - ct-visualisation-job-runner
   when: not docker_build | bool
-
-- name: Enable visualisation app (docker)
-  ansible.builtin.file:
-    src: /lib/systemd/system/{{item}}.service
-    dest: /etc/systemd/system/multi-user.target.wants/{{item}}.service
-    state: link
-  loop:
-    - ct-visualisation-app
-    - ct-visualisation-job-runner
-  when: docker_build | bool

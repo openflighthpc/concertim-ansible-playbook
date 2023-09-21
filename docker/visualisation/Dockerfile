@@ -30,7 +30,7 @@ RUN apt-get update && \
       --extra-vars "@/run/secrets/aws-credentials.yml.enc" \
       --extra-vars "docker_build=true" \
       --extra-vars "db_host=db" \
-      --tags prep,memcached,ct-visualisation-app \
+      --tags prep,ct-visualisation-app \
       /ansible/build-playbook.yml && \
     apt-get remove --yes \
         ansible \
@@ -48,7 +48,6 @@ LABEL com.alces-flight.concertim.role=visualisation com.alces-flight.concertim.v
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install --yes --no-install-recommends \
-      memcached \
       libpq5 \
       ruby3.0 \
       tzdata && \
@@ -57,7 +56,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt/concertim/opt /opt/concertim/opt
-COPY --from=builder /etc/memcached.conf /etc/memcached.conf
 COPY --from=builder /opt/concertim/etc /opt/concertim/etc
 
 # Install gems. FSR copying them from builder doesn't seem to work.  Probably

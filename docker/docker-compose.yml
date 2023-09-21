@@ -10,6 +10,8 @@ services:
     volumes:
       - static-content:/opt/concertim/opt/ct-visualisation-app/public
       - concertim-etc:/opt/concertim/etc
+    environment:
+      - METRIC_DAEMON_URL=http://metrics:3000
     expose:
       - 7000
     depends_on:

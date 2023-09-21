@@ -130,7 +130,7 @@ cd /opt/concertim/dev/ct-visualisation-app/
 screen -dmS ct-vis-app ./bin/dev
 
 cd /opt/concertim/dev/ct-metric-reporting-daemon
-screen -dmS ct-metrics $(go env GOPATH)/bin/air -- --config-file config/config.dev.vm.yml
+screen -dmS ct-metrics $(go env GOPATH)/bin/air -- --config-file config/config.dev.yml
 ```
 
 If you need to run data migrations or access the rails console, these should be done whilst in the directory

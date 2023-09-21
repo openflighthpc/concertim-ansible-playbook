@@ -4,7 +4,6 @@
     state: restarted
   vars:
     services:
-      - memcached
       - ct-metric-reporting-daemon
       - "{{ (not want_dev_build) | ternary('ct-visualisation-app', '') }}"
       - "{{ (not want_dev_build) | ternary('ct-visualisation-job-runner', '') }}"

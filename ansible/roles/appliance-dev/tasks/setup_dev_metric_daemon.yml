@@ -28,5 +28,5 @@
 
 - name: Start dev metric daemon
   ansible.builtin.shell:
-    cmd: screen -dmS ct-metrics $(go env GOPATH)/bin/air -- --config-file config/config.dev.vm.yml
+    cmd: screen -dmS ct-metrics $(go env GOPATH)/bin/air -- --config-file config/config.dev.yml
     chdir: "{{dev_root_dir}}/ct-metric-reporting-daemon"

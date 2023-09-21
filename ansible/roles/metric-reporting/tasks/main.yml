@@ -1,22 +1,3 @@
-# The daemons have libexec scripts which depend on Ruby.
-- name: Install libexec script dependencies
-  block:
-    - name: Install Ruby
-      register: result
-      until: result is success
-      ansible.builtin.apt:
-        name:
-          - ruby3.0
-
-    - name: Install gems
-      register: result
-      until: result is success
-      ansible.builtin.command:
-        cmd: gem install {{item}} --no-document
-      loop:
-        - dalli -v '~> 3.2.3'
-        - activesupport
-
 - name: Download daemon packages from S3
   amazon.aws.aws_s3:
     bucket: "{{s3_bucket}}"
@@ -50,12 +31,13 @@
     group: root
     mode: "644"
   loop: "{{ daemons }}"
+  when: not docker_build | bool
 
-- name: Adjust memcache host in config
+- name: Adjust visualisation host in config
   ansible.builtin.replace:
     path: "{{item}}"
-    regexp: '^(\s*)args: *\["localhost:11211"\]'
-    replace: '\1args: ["{{memcache_host}}:11211"]'
+    regexp: '^(.*)http://localhost:7000(.*)$'
+    replace: '\1http://visualisation:7000\2'
   loop:
     - "{{ct_installation_dir}}/ct-metric-reporting-daemon/config/config.yml"
   when: docker_build | bool
@@ -66,18 +48,10 @@
     dest: "/etc/logrotate.d/{{item}}"
   loop: "{{ daemons }}"
 
-- name: Enable daemons (non-docker)
+- name: Enable daemons
   ansible.builtin.service:
     name: "{{ item }}"
     # state: started
     enabled: yes
   loop: "{{ daemons }}"
   when: not docker_build | bool
-
-- name: Enable daemons (docker)
-  ansible.builtin.file:
-    src: /lib/systemd/system/{{item}}.service
-    dest: /etc/systemd/system/multi-user.target.wants/{{item}}.service
-    state: link
-  loop: "{{daemons}}"
-  when: docker_build | bool
