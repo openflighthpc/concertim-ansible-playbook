@@ -27,9 +27,8 @@ if [ $# -gt 0 ] ; then
 else
   /opt/concertim/opt/ct-visualisation-app/bin/rails server -p 7000 -b 0.0.0.0 -e production &
 
-  export GOOD_JOB_WORKER=true
   cd /opt/concertim/opt/ct-visualisation-app/
-  /opt/concertim/opt/ct-visualisation-app/bin/bundle exec good_job start &
+  GOOD_JOB_WORKER=true RAILS_ENV=production /opt/concertim/opt/ct-visualisation-app/bin/bundle exec good_job start &
 
   # Wait for any process to exit.
   wait -n
