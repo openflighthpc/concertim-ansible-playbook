@@ -4,6 +4,7 @@ Description=CT Visualisation Job Runner - daemon to process jobs created by ct-v
 [Service]
 Type=exec
 Environment="GOOD_JOB_WORKER=true"
+Environment="RAILS_ENV=production"
 WorkingDirectory={{ct_vis_app_path}}
 ExecStart={{ct_vis_app_path}}/bin/bundle exec good_job start
 TimeoutSec=10sec
