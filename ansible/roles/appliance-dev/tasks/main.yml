@@ -22,6 +22,9 @@
     group: root
     mode: "0755"
 
+- name: Install Node
+  include_tasks: install_node.yml
+
 - name: Nginx dev configuration
   include_tasks: nginx_dev_configuration.yml
 
