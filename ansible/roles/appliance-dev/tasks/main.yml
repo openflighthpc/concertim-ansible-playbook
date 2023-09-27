@@ -25,6 +25,9 @@
 - name: Install Node
   include_tasks: install_node.yml
 
+- name: Install yarn
+  include_tasks: install_yarn.yml
+
 - name: Nginx dev configuration
   include_tasks: nginx_dev_configuration.yml
 

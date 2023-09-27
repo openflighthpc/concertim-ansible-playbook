@@ -1,0 +1,26 @@
+- name: Check for existing installation of yarn
+  ansible.builtin.shell: yarn -v
+  register: yarn_version
+  ignore_errors: true
+
+- name: Install dependencies and yarn
+  block:
+    - name: configure repository
+      ansible.builtin.shell: |
+        curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg |
+        sudo apt-key add - |
+        echo "deb https://dl.yarnpkg.com/debian/ stable main" |
+        sudo tee /etc/apt/sources.list.d/yarn.list
+
+    - name: Run the equivalent of "apt-get update"
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install yarn
+      register: result
+      until: result is success
+      ansible.builtin.apt:
+        name:
+          - yarn
+        state: present
+  when: yarn_version.stdout.find('1.') == -1
