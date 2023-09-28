@@ -62,21 +62,6 @@
         chdir: "{{ ct_vis_app_path }}"
         cmd: sudo -u {{app_user}} /bin/bash -c './bin/rake encryption:generate'
 
-- name: Adjust database config with host and password
-  vars:
-   # db_password: "{{ lookup('ansible.builtin.file', '/run/secrets/db/password.txt') }}"
-   db_password: db_password
-  ansible.builtin.replace:
-    path: "{{ct_installation_dir}}/ct-visualisation-app/config/database.yml"
-    regexp: "{{item.regexp}}"
-    replace: "{{item.replace}}"
-  loop:
-    - regexp: '^(\s*)#\s*host:.*$'
-      replace: '\1host: {{db_host}}'
-    - regexp: '^(\s*)#\s*password:.*$'
-      replace: '\1password: {{db_password}}'
-  when: docker_build | bool
-
 - name: Setup database
   when: not docker_build | bool
   import_tasks: setup_database.yml

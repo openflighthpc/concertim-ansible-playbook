@@ -20,6 +20,16 @@ if [ -f /opt/concertim/opt/ct-visualisation-app/tmp/pids/server.pid ] ; then
   rm /opt/concertim/opt/ct-visualisation-app/tmp/pids/server.pid
 fi
 
+# Support the database password being passed in via a docker secret.
+if [ "${DB_PASS}" == "" ] ; then
+    if [ -f /run/secrets/db-password ] ; then
+        DB_PASS=$(cat /run/secrets/db-password)
+        export DB_PASS
+    else
+        echo "Database password not set.  Either set DB_PASS environment variable or populate /run/secrets/db-password." >&2
+    fi
+fi
+
 # Probably want to replace this with supervisor or something.
 
 if [ $# -gt 0 ] ; then
