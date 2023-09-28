@@ -11,6 +11,10 @@
     ./bin/bundle install
   when: dev_ct_vis_dir.stdout != ""
 
+- name: Install yarn dependencies
+  ansible.builtin.shell: |
+    cd {{dev_root_dir}}/ct-visualisation-app/
+    yarn
 
 # - name: unmonitor ct-vis-app
 #   ansible.builtin.command:
