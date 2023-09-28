@@ -28,7 +28,7 @@ cat <<EOF >&2
 
 Build completed.  You should now remove the AWS credentials.
 
-  rm docker/secrets/aws-credentials.yml* docker/secrets/vault-password.txt
+  rm docker/secrets/aws-credentials.yml.enc docker/secrets/vault-password.txt
 
 You may also wish to remove the builder images as they contain the AWS
 credentials.  These can be safely removed.
