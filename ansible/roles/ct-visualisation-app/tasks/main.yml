@@ -15,6 +15,7 @@
       - bison
       - build-essential
       - libpq-dev
+      - libyaml-dev
 
 - name: Check for existing installation
   ansible.builtin.command:
