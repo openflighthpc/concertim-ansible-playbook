@@ -1,16 +1,6 @@
 ct_vis_app_path: "{{ ct_installation_dir }}/ct-visualisation-app"
 ct_vis_app_log_file: /var/log/ct-visualisation-app.log
 
-# Specify the password and email for the default admin user.
-#
-# It might appear that there is support for creating other default users, but
-# that is not the case.  We only support setting the password and email for
-# users that are already created as part of the ct-vis-app migrations.
-default_users:
-  admin:
-    password: admin
-    email: admin@test.com
-
 rack_limit: 10
 device_limit: 1000
 nrad_limit: 30

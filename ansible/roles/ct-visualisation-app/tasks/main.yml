@@ -67,10 +67,6 @@
   when: not docker_build | bool
   import_tasks: setup_database.yml
 
-- name: Create default users
-  when: not docker_build | bool
-  import_tasks: create_default_users.yml
-
 - name: Add licence limits
   import_tasks: licence_limits.yml
 
