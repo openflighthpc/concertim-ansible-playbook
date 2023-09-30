@@ -1,53 +1,23 @@
-- name: Ensure ganglia is at the latest version
+- name: Install gmetad and rrdtool
   register: result
   until: result is success
   ansible.builtin.apt:
     name:
-      - ganglia-monitor
       - gmetad
       - rrdtool
     state: latest
 
-- name: Install gmond configuration
-  ansible.builtin.copy:
-    src: gmond.conf
-    dest: /etc/ganglia/gmond.conf.alces
-    owner: root
-    group: root
-    mode: u=rw,g=r,o=r
-
 - name: Install gmetad configuration
-  ansible.builtin.template:
+  ansible.builtin.copy:
     src: gmetad.conf
     dest: /etc/ganglia/
     owner: root
     group: nogroup
     mode: u=rw,g=r,o=r
 
-- name: Install rrd file age monitoring script
-  block:
-    - name: Install script
-      ansible.builtin.copy:
-        src: check_rrd_age.sh
-        dest: /usr/local/sbin/
-        mode: "755"
-        owner: root
-        group: root
-
-    - name: Create symlinks
-      ansible.builtin.file:
-        src: /usr/local/sbin/check_rrd_age.sh
-        dest: "/usr/local/sbin/{{ item }}"
-        state: link
-      loop:
-        - check_gmetad_rrd_age.sh
-
-- name: Ensure that ganglia is started
+- name: Ensure that gmetad is started
   ansible.builtin.service:
-    name: "{{ item }}"
+    name: gmetad
     state: restarted
     enabled: yes
-  loop:
-    - ganglia-monitor
-    - gmetad
   when: not docker_build | bool
