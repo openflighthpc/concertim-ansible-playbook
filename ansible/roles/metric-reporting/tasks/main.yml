@@ -51,7 +51,7 @@
 - name: Enable daemons
   ansible.builtin.service:
     name: "{{ item }}"
-    # state: started
+    state: started
     enabled: yes
   loop: "{{ daemons }}"
   when: not docker_build | bool
