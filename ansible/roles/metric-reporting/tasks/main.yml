@@ -1,12 +1,11 @@
-- name: Download daemon packages from S3
+- name: Download package from S3
   amazon.aws.aws_s3:
     bucket: "{{s3_bucket}}"
-    object: "{{s3_daemons_prefix}}{{ item }}.tgz"
-    dest: "{{ role_path }}/files/tmp/{{ item }}.tgz"
+    object: "{{s3_daemons_prefix}}{{ daemon }}.tgz"
+    dest: "{{ role_path }}/files/tmp/{{ daemon }}.tgz"
     mode: get
     aws_access_key: "{{ aws_access_key_id }}"
     aws_secret_key: "{{ aws_secret_access_key }}"
-  loop: "{{ daemons }}"
 
 - name: Make destination directory
   ansible.builtin.file:
@@ -18,40 +17,36 @@
 
 - name: Extract tar files
   ansible.builtin.unarchive:
-    src: "tmp/{{ item }}.tgz"
+    src: "tmp/{{ daemon }}.tgz"
     dest: "{{ ct_installation_dir }}"
-    creates: "{{ ct_installation_dir }}/{{ item }}"
-  loop: "{{ daemons }}"
+    creates: "{{ ct_installation_dir }}/{{ daemon }}"
 
-- name: Install systemd {{item}}.service file
+- name: Install systemd file
   ansible.builtin.template:
-    src: "{{ item }}.service"
-    dest: /lib/systemd/system/{{ item }}.service
+    src: "{{ daemon }}.service"
+    dest: /lib/systemd/system/{{ daemon }}.service
     owner: root
     group: root
     mode: "644"
-  loop: "{{ daemons }}"
   when: not docker_build | bool
 
 - name: Adjust visualisation host in config
+  vars:
+    path: "{{ct_installation_dir}}/{{daemon}}/config/config.yml"
   ansible.builtin.replace:
-    path: "{{item}}"
+    path: "{{path}}"
     regexp: '^(.*)http://localhost:7000(.*)$'
     replace: '\1http://visualisation:7000\2'
-  loop:
-    - "{{ct_installation_dir}}/ct-metric-reporting-daemon/config/config.yml"
   when: docker_build | bool
 
-- name: Install {{item}} logrotate configuration
+- name: Install logrotate configuration
   ansible.builtin.copy:
-    src: "{{item}}.logrotate"
-    dest: "/etc/logrotate.d/{{item}}"
-  loop: "{{ daemons }}"
+    src: "{{daemon}}.logrotate"
+    dest: "/etc/logrotate.d/{{daemon}}"
 
-- name: Enable daemons
+- name: Enable metric reporting daemon
   ansible.builtin.service:
-    name: "{{ item }}"
+    name: "{{ daemon }}"
     state: started
     enabled: yes
-  loop: "{{ daemons }}"
   when: not docker_build | bool
