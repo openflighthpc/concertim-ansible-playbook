@@ -5,18 +5,6 @@
     name: postgresql
     state: present
 
-- name: Update configuration to log to syslog
-  ansible.builtin.replace:
-    path: /etc/postgresql/14/main/postgresql.conf
-    regexp: "{{ item.regexp }}"
-    replace: "{{ item.replace }}"
-    backup: true
-  loop:
-    - regexp: "#log_destination = 'stderr'"
-      replace: "log_destination = 'syslog'"
-    - regexp: '#syslog_'
-      replace: 'syslog_'
-
 - name: Ensure that postgresql is started
   ansible.builtin.service:
     name: postgresql
