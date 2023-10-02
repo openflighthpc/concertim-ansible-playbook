@@ -71,12 +71,9 @@
   import_tasks: licence_limits.yml
 
 - name: Precompile assets
-  import_tasks: run_rake_task.yml
-  vars:
-    ruby_bin_dir: "{{ruby_30_bin_dir}}"
-    rake_task: "assets:precompile"
-    additional_env: ""
+  ansible.builtin.shell:
     chdir: "{{ ct_vis_app_path }}"
+    cmd: sudo -u {{app_user}} /bin/bash -c 'RAILS_ENV={{rails_env}} ./bin/rake assets:precompile'
 
 - name: Install systemd service files
   ansible.builtin.template:
