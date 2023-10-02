@@ -1,7 +1,0 @@
-- name: Run rails runnner {{rails_runner}} {{runner_args}}
-  ansible.builtin.shell:
-    cmd: |
-      PATH={{ruby_bin_dir}}:$PATH
-      sudo -u {{user | default(app_user, true)}} --preserve-env=PATH,RAILS_ENV /bin/bash -c 'RAILS_ENV={{ rails_env }} {{additional_env}} {{rails_runner}} {{runner_args}}'
-    chdir: "{{chdir}}"
-

@@ -51,18 +51,6 @@
       sudo -u root /bin/bash -c 'RAILS_ENV=development ./bin/rails {{task}} --trace'
     chdir: "{{dev_root_dir}}/ct-visualisation-app/"
 
-- name: Configure users
-  import_tasks: run_rails_runner.yml
-  vars:
-    rails_runner: ./bin/rails runner
-    runner_args: /usr/local/sbin/set-user-defaults.rb
-    ruby_bin_dir: "{{ruby_30_bin_dir}}"
-    rails_env: "development"
-    additional_env: ""
-    chdir: "{{dev_root_dir}}/ct-visualisation-app/"
-    user: root
-
-
 - name: Start dev server
   ansible.builtin.command:
     cmd: screen -dmS ct-vis-app ./bin/dev
@@ -79,7 +67,7 @@
         chdir: "{{dev_root_dir}}/ct-visualisation-app/docs/api/examples"
         cmd: |
           export CONCERTIM_HOST=localhost
-          export AUTH_TOKEN=$(LOGIN=admin PASSWORD={{default_users.admin.password}} ./get-auth-token.sh)
+          export AUTH_TOKEN=$(LOGIN=admin PASSWORD=admin ./get-auth-token.sh)
           if [ $(./list-templates.sh | jq 'length') -eq 0 ] ; then
             echo "Populating dev templates"
             ./populate-templates.sh

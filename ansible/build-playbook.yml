@@ -57,8 +57,6 @@
       when: not docker_build | bool
     - role: ganglia
       tags: ganglia
-    - role: monit
-      tags: monit
     - role: metric-reporting
       tags: metric-reporting
     - role: ct-visualisation-app
@@ -66,6 +64,6 @@
     - role: appliance-dev
       tags: appliance-dev
       when: want_dev_build | bool
-    - role: finalization
-      tags: finalization
+    - role: monit
+      tags: monit
       when: not docker_build | bool

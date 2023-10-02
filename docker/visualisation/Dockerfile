@@ -67,6 +67,7 @@ RUN apt-get update && \
       bison \
       build-essential \
       libpq-dev \
+      libyaml-dev \
       ruby3.0-dev && \
     cd /opt/concertim/opt/ct-visualisation-app && \
     ./bin/bundle install && \

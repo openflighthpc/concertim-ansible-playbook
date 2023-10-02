@@ -5,15 +5,6 @@
     name: monit
     state: latest
 
-# We will enable monit after MIA is configured.  Until then we don't
-# necessarily expect all of the services to work correctly.
-- name: Stop monit
-  ansible.builtin.service:
-    name: monit
-    state: stopped
-    enabled: no
-  when: not docker_build | bool
-
 - name: Install configuration
   ansible.builtin.copy:
     src: "{{ item.src }}"
@@ -39,3 +30,10 @@
   ansible.builtin.copy:
     src: services/
     dest: /etc/monit/conf.d/
+
+- name: Restart monit
+  ansible.builtin.service:
+    name: monit
+    state: restarted
+    enabled: yes
+  when: not docker_build | bool
