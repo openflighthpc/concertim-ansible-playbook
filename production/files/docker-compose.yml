@@ -1,0 +1,92 @@
+version: "3.3"
+name: concertim
+services:
+  visualisation:
+    image: concertim-visualisation-app
+    secrets:
+      - db-password
+      - jwt-secret
+    volumes:
+      - static-content:/opt/concertim/opt/ct-visualisation-app/public
+      - concertim-etc:/opt/concertim/etc
+    environment:
+      - METRIC_DAEMON_URL=http://metrics:3000
+      - DB_HOST=db
+      - DB_PASSWORD_FILE=/run/secrets/db-password
+      - JWT_SECRET_FILE=/run/secrets/jwt-secret
+    expose:
+      - 7000
+    depends_on:
+      - db
+    networks:
+      concertim-net: {}
+
+  metrics:
+    image: concertim-metric-reporting-daemon
+    secrets:
+      - jwt-secret
+    volumes:
+      - concertim-etc:/opt/concertim/etc
+      - rrd-data:/var/lib/ganglia/rrds
+    environment:
+      - JWT_SECRET_FILE=/run/secrets/jwt-secret
+    expose:
+      - 3000
+    networks:
+      concertim-net: {}
+
+  # proxy:
+  #   image: concertim-proxy
+  #   ports:
+  #     - 0.0.0.0:80:80
+  #     - 0.0.0.0:443:443
+  #   volumes:
+  #     - static-content:/opt/concertim/opt/ct-visualisation-app/public
+  #   depends_on:
+  #     - visualisation
+  #     - metrics
+  #   networks:
+  #     concertim-net: {}
+
+  db:
+    image: postgres
+    restart: always
+    user: postgres
+    secrets:
+      - source: db-password
+        target: db-password
+        uid: "999"  # The UID of the postgres user.
+        gid: "999"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db/init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+    expose:
+      - 5432
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      concertim-net: {}
+
+volumes:
+  db-data:
+  rrd-data:
+  static-content:
+  concertim-etc:
+
+secrets:
+  db-password:
+    file: secrets/db-password
+  jwt-secret:
+    file: secrets/jwt-secret
+
+networks:
+  concertim-net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1400
+

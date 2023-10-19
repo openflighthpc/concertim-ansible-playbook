@@ -1,0 +1,13 @@
+# ==================================================
+# Directories used on the host machine.
+#
+# The root at which all other directories will be anchored.
+ct_root_dir: /opt/concertim
+
+# The directory the source repositories of the concertim components will be
+# cloned into.
+ct_installation_dir: "{{ct_root_dir}}/opt"
+
+# The directory containing the configuration files for the concertim
+# components.
+ct_etc_dir: "{{ct_root_dir}}/etc"

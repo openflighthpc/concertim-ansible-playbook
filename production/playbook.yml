@@ -1,0 +1,142 @@
+---
+- name: Install Alces Concertim components as docker containers
+  hosts: all
+  become: true
+  become_user: root
+  become_method: sudo
+
+  pre_tasks:
+    - name: Assert credentials are present
+      ansible.builtin.assert:
+        that:
+          - "{{ item }} is defined"
+          - "{{ item }} != ''"
+        fail_msg: "{{ item }} credential has not been given"
+        quiet: true
+      loop:
+        - gh_token
+
+    - name: Make installation directories
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+        mode: "{{ item.mode }}"
+        state: directory
+      loop:
+        - path: "{{ct_root_dir}}"
+          owner: root
+          group: root
+          mode: "755"
+        - path: "{{ct_etc_dir}}"
+          owner: root
+          group: root
+          mode: "755"
+        - path: "{{ct_installation_dir}}"
+          owner: root
+          group: root
+          mode: "755"
+        - path: "{{ct_etc_dir}}/docker"
+          owner: root
+          group: root
+          mode: "755"
+        - path: "{{ct_etc_dir}}/docker/secrets"
+          owner: root
+          group: root
+          mode: "755"
+
+  tasks:
+    # XXX Capture if we've updated the repository.  Use later to force a
+    # rebuild of the image.
+    - name: Checkout source directories
+      ansible.builtin.git:
+        repo: https://{{gh_token}}@github.com/alces-flight/{{item.repo}}.git
+        dest: "{{ct_installation_dir}}/{{item.dest}}"
+        single_branch: yes
+        version: "{{item.commitish}}"
+      environment:
+        GIT_TERMINAL_PROMPT: 0
+      loop:
+        - repo: concertim-metric-reporting-daemon
+          dest: metric-reporting-daemon
+          commitish: exp/dockerfile
+        - repo: concertim-ct-visualisation-app
+          dest: visualisation-app
+          commitish: chore/dockerfile
+
+    # We need the following as the directory is owned by root, but not all git
+    # commands are executed as root.
+    # XXX Can we remove this somehow?
+    - name: Workaround git and dubious ownership issues
+      ansible.builtin.command:
+        cmd: git config --global --add safe.directory "{{ct_installation_dir}}/{{item}}"
+      loop:
+        - metric-reporting-daemon
+        - visualisation-app
+
+    - name: Copy docker compose configuration
+      ansible.builtin.copy:
+        src: "{{item.src}}"
+        dest: "{{ct_etc_dir}}/{{item.dest}}"
+        # owner:
+        # group:
+        # mode:
+      loop:
+        - src: docker-compose.yml
+          dest: docker/
+        - src: db/init-database.sh
+          dest: docker/db/
+
+    - name: Ensure docker secrets exist
+      ansible.builtin.set_fact:
+        db_password: "{{ lookup('password', '{{ct_etc_dir}}/docker/secrets/db-password chars=ascii_letters,digits length=16') }}"
+        jwt_secret: "{{ lookup('password', '{{ct_etc_dir}}/docker/secrets/jwt-secret chars=ascii_letters,digits length=16') }}"
+
+    # If this is readable only by root, it can't be read by the postgres user
+    # on the db container, so we change its group and permissions to permit it
+    # to be read.
+    #
+    # XXX Figure out a better way of passing credentials.  Perhaps copy them
+    # into the image and commit?  Perhaps using an env file?
+    - name: Fix db-password accessibility
+      ansible.builtin.file:
+        path: "{{ct_etc_dir}}/docker/secrets/db-password"
+        group: 999
+        mode: "640"
+
+    - name: Create (copy) configuration
+      ansible.builtin.shell:
+        cmd: |
+          echo "Copy configuration files to ct etc dir volume.  So they can be edited."
+          echo "Setup directories for cluster builder's definitions"
+          echo "Any more???"
+
+    # XXX Add tag support here.  We should be able to determine the tag that
+    # has been checked out and use that.
+    # XXX Force rebuild if we've updated the source code.
+    - name: Build docker images
+      community.docker.docker_image:
+        name: "{{item.name}}"
+        build:
+          path: "{{ct_installation_dir}}/{{item.dir}}"
+          args: "{{item.args}}"
+          network: host
+          # http_timeout: 60
+        source: build
+      loop:
+        - name: concertim-metric-reporting-daemon
+          dir: metric-reporting-daemon
+          args: {}
+        - name: concertim-visualisation-app
+          dir: visualisation-app
+          args:
+            temp_jwt_secret: not_used_just_has_to_present
+
+    - name: Create and migrate visualisation app database
+      ansible.builtin.shell:
+        chdir: "{{ct_etc_dir}}/docker"
+        cmd: |
+          docker compose up --detach db
+          docker compose run --rm visualisation bin/rails db:create --trace
+          docker compose run --rm visualisation bin/rails db:migrate --trace
+          docker compose stop

@@ -79,11 +79,21 @@ Vagrant.configure("2") do |config|
           type: "shell",
           run: "never",
           path: "scripts/install-ansible.sh"
+        v.vm.provision "install_docker",
+          type: "shell",
+          run: "never",
+          path: "scripts/install-docker.sh"
         v.vm.provision "run_build_playbook",
           type: "shell",
           run: "never",
           inline: <<-SH
             AWS_ACCESS_KEY_ID=#{ENV.fetch('AWS_ACCESS_KEY_ID', '')} AWS_SECRET_ACCESS_KEY=#{ENV.fetch('AWS_SECRET_ACCESS_KEY', '')} /vagrant/scripts/run-build-playbook.sh
+          SH
+        v.vm.provision "run_alt_playbook",
+          type: "shell",
+          run: "never",
+          inline: <<-SH
+            GH_TOKEN=#{ENV.fetch('GH_TOKEN', '')} /vagrant/scripts/run-alt-playbook.sh
           SH
 
       end
