@@ -43,7 +43,7 @@
         - path: "{{ct_etc_dir}}/docker/secrets"
           owner: root
           group: root
-          mode: "755"
+          mode: "700"
 
   tasks:
     # XXX Capture if we've updated the repository.  Use later to force a
@@ -92,17 +92,13 @@
         db_password: "{{ lookup('password', '{{ct_etc_dir}}/docker/secrets/db-password chars=ascii_letters,digits length=16') }}"
         jwt_secret: "{{ lookup('password', '{{ct_etc_dir}}/docker/secrets/jwt-secret chars=ascii_letters,digits length=16') }}"
 
-    # If this is readable only by root, it can't be read by the postgres user
-    # on the db container, so we change its group and permissions to permit it
-    # to be read.
-    #
-    # XXX Figure out a better way of passing credentials.  Perhaps copy them
-    # into the image and commit?  Perhaps using an env file?
-    - name: Fix db-password accessibility
-      ansible.builtin.file:
-        path: "{{ct_etc_dir}}/docker/secrets/db-password"
-        group: 999
-        mode: "640"
+    - name: Create secrets env file
+      ansible.builtin.template:
+        src: secrets.env
+        dest: "{{ct_etc_dir}}/docker/secrets"
+        owner: root
+        group: root
+        mode: '0600'
 
     - name: Create (copy) configuration
       ansible.builtin.shell:

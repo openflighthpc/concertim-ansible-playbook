@@ -21,12 +21,12 @@ if [ -f /opt/concertim/opt/ct-visualisation-app/tmp/pids/server.pid ] ; then
 fi
 
 # Support the database password being passed in via a docker secret.
-if [ "${DB_PASS}" == "" ] ; then
+if [ "${POSTGRES_PASSWORD}" == "" ] ; then
     if [ -f /run/secrets/db-password ] ; then
-        DB_PASS=$(cat /run/secrets/db-password)
-        export DB_PASS
+        POSTGRES_PASSWORD=$(cat /run/secrets/db-password)
+        export POSTGRES_PASSWORD
     else
-        echo "Database password not set.  Either set DB_PASS environment variable or populate /run/secrets/db-password." >&2
+        echo "Database password not set.  Either set POSTGRES_PASSWORD environment variable or populate /run/secrets/db-password." >&2
     fi
 fi
 
