@@ -166,3 +166,9 @@
           docker compose run --rm visualisation bin/rails db:create --trace
           docker compose run --rm visualisation bin/rails db:migrate --trace
           docker compose stop
+
+    - name: Start services
+      ansible.builtin.shell:
+        chdir: "{{ct_etc_dir}}/docker"
+        cmd: |
+          docker compose up --detach
