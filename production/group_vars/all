@@ -11,3 +11,11 @@ ct_installation_dir: "{{ct_root_dir}}/opt"
 # The directory containing the configuration files for the concertim
 # components.
 ct_etc_dir: "{{ct_root_dir}}/etc"
+
+# ==================================================
+# Configuration for the nginx reverse proxy.
+#
+# The name of the metric reporting daemon service in the docker compose file.
+metrics_host: metrics
+# The name of the visualisation app service in the docker compose file.
+visualisation_host: visualisation

@@ -107,6 +107,33 @@
           echo "Setup directories for cluster builder's definitions"
           echo "Any more???"
 
+    - name: Make proxy installation directories
+      ansible.builtin.file:
+        path: "{{ct_installation_dir}}/proxy/nginx/conf.d"
+        owner: root
+        group: root
+        mode: "755"
+        state: directory
+
+    - name: Install nginx reverse proxy configuration
+      vars:
+        # This needs to match the directory at which the
+        # concertim_static-content volume is mounted on the proxy image.
+        static_content_dir: /opt/concertim/opt/ct-visualisation-app/public/
+      ansible.builtin.template:
+        src: nginx/default.conf
+        dest: "{{ct_installation_dir}}/proxy/nginx/conf.d/default.conf"
+
+    - name: Install nginx reverse proxy configuration
+      ansible.builtin.copy:
+        src: nginx
+        dest: "{{ct_installation_dir}}/proxy/"
+
+    - name: Install nginx reverse proxy Dockerfile
+      ansible.builtin.template:
+        src: nginx/Dockerfile
+        dest: "{{ct_installation_dir}}/proxy/"
+
     # XXX Add tag support here.  We should be able to determine the tag that
     # has been checked out and use that.
     # XXX Force rebuild if we've updated the source code.
@@ -127,6 +154,9 @@
           dir: visualisation-app
           args:
             temp_jwt_secret: not_used_just_has_to_present
+        - name: concertim-proxy
+          dir: proxy
+          args: {}
 
     - name: Create and migrate visualisation app database
       ansible.builtin.shell:

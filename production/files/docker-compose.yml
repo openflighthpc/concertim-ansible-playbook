@@ -30,18 +30,18 @@ services:
     networks:
       concertim-net: {}
 
-  # proxy:
-  #   image: concertim-proxy
-  #   ports:
-  #     - 0.0.0.0:80:80
-  #     - 0.0.0.0:443:443
-  #   volumes:
-  #     - static-content:/opt/concertim/opt/ct-visualisation-app/public
-  #   depends_on:
-  #     - visualisation
-  #     - metrics
-  #   networks:
-  #     concertim-net: {}
+  proxy:
+    image: concertim-proxy
+    ports:
+      - 0.0.0.0:80:80
+      - 0.0.0.0:443:443
+    volumes:
+      - static-content:/opt/concertim/opt/ct-visualisation-app/public
+    depends_on:
+      - visualisation
+      - metrics
+    networks:
+      concertim-net: {}
 
   db:
     image: postgres
