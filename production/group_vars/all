@@ -20,9 +20,12 @@ ct_etc_dir: "{{ct_root_dir}}/etc"
 #
 # The path at which the volume containing Rails static assets is mounted.
 static_content_mount: /opt/concertim/opt/ct-visualisation-app/public/
+# The path at which the host directory `ct_etc_dir` is mounted on the
+# containers.
+ct_etc_mount: /opt/concertim/etc
 # The path at which the Rails credentials should be created. This should be
 # inside the etc volume.
-credentials_path: /opt/concertim/etc/credentials.yml.enc
+credentials_path: "{{ct_etc_mount}}/credentials.yml.enc"
 
 
 # ==================================================

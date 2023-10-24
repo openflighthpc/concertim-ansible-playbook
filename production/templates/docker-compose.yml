@@ -5,7 +5,9 @@ services:
     image: concertim-visualisation-app
     volumes:
       - static-content:{{static_content_mount}}
-      - concertim-etc:/opt/concertim/etc
+      - type: bind
+        source: "{{ct_etc_dir}}"
+        target: "{{ct_etc_mount}}"
     env_file:
       - secrets/secrets.env
     environment:
@@ -22,8 +24,10 @@ services:
   metrics:
     image: concertim-metric-reporting-daemon
     volumes:
-      - concertim-etc:/opt/concertim/etc
       - rrd-data:/var/lib/ganglia/rrds
+      - type: bind
+        source: "{{ct_etc_dir}}"
+        target: "{{ct_etc_mount}}"
     env_file:
       - secrets/secrets.env
     expose:
@@ -67,7 +71,6 @@ volumes:
   db-data:
   rrd-data:
   static-content:
-  concertim-etc:
 
 networks:
   concertim-net:
