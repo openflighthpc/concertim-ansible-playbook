@@ -36,11 +36,11 @@
           owner: root
           group: root
           mode: "755"
-        - path: "{{ct_etc_dir}}/docker"
+        - path: "{{ct_docker_dir}}"
           owner: root
           group: root
           mode: "755"
-        - path: "{{ct_etc_dir}}/docker/secrets"
+        - path: "{{ct_docker_dir}}/secrets"
           owner: root
           group: root
           mode: "700"
@@ -75,26 +75,23 @@
     - name: Install docker compose file
       ansible.builtin.template:
         src: docker-compose.yml
-        dest: "{{ct_etc_dir}}/docker/"
+        dest: "{{ct_docker_dir}}/"
 
     - name: Copy additional docker compose configuration
       ansible.builtin.copy:
-        src: "{{item.src}}"
-        dest: "{{ct_etc_dir}}/{{item.dest}}"
-      loop:
-        - src: db/init-database.sh
-          dest: docker/db/
+        src: db
+        dest: "{{ct_docker_dir}}"
 
     - name: Ensure docker secrets exist
       ansible.builtin.set_fact:
-        db_password: "{{ lookup('password', '{{ct_etc_dir}}/docker/secrets/db-password chars=ascii_letters,digits length=32') }}"
-        jwt_secret: "{{ lookup('password', '{{ct_etc_dir}}/docker/secrets/jwt-secret chars=ascii_letters,digits length=32') }}"
-        rails_master_key: "{{ lookup('password', '{{ct_etc_dir}}/docker/secrets/rails-master-key chars=ascii_letters,digits length=32') }}"
+        db_password: "{{ lookup('password', '{{ct_docker_dir}}/secrets/db-password chars=ascii_letters,digits length=32') }}"
+        jwt_secret: "{{ lookup('password', '{{ct_docker_dir}}/secrets/jwt-secret chars=ascii_letters,digits length=32') }}"
+        rails_master_key: "{{ lookup('password', '{{ct_docker_dir}}/secrets/rails-master-key chars=ascii_letters,digits length=32') }}"
 
     - name: Create secrets env file
       ansible.builtin.template:
         src: secrets.env
-        dest: "{{ct_etc_dir}}/docker/secrets"
+        dest: "{{ct_docker_dir}}/secrets"
         owner: root
         group: root
         mode: '0600'
@@ -161,19 +158,19 @@
           ./bin/rake encryption:generate --trace
           mv config/credentials.yml.enc {{credentials_path}}
       ansible.builtin.shell:
-        chdir: "{{ct_etc_dir}}/docker"
+        chdir: "{{ct_docker_dir}}"
         cmd: |
           docker compose run --rm visualisation /bin/bash -c '{{script}}'
 
     - name: Precompile visualisation assets
       ansible.builtin.shell:
-        chdir: "{{ct_etc_dir}}/docker"
+        chdir: "{{ct_docker_dir}}"
         cmd: |
           docker compose run --rm visualisation bin/rails assets:precompile --trace
 
     - name: Create and migrate visualisation app database
       ansible.builtin.shell:
-        chdir: "{{ct_etc_dir}}/docker"
+        chdir: "{{ct_docker_dir}}"
         cmd: |
           docker compose up --detach db
           docker compose run --rm visualisation bin/rails db:create --trace
@@ -182,6 +179,6 @@
 
     - name: Start services
       ansible.builtin.shell:
-        chdir: "{{ct_etc_dir}}/docker"
+        chdir: "{{ct_docker_dir}}"
         cmd: |
           docker compose up --detach

@@ -8,6 +8,9 @@ ct_root_dir: /opt/concertim
 # cloned into.
 ct_installation_dir: "{{ct_root_dir}}/opt"
 
+# The directory where the docker compose configuration is installed.
+ct_docker_dir: "{{ct_installation_dir}}/docker"
+
 # The directory containing the configuration files for the concertim
 # components.
 ct_etc_dir: "{{ct_root_dir}}/etc"
