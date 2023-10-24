@@ -11,6 +11,7 @@ services:
     environment:
       - METRIC_DAEMON_URL=http://metrics:3000
       - POSTGRES_HOST=db
+      - CREDENTIALS_CONTENT_PATH=/opt/concertim/etc/credentials.yml.enc
     expose:
       - 7000
     depends_on:

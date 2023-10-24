@@ -46,8 +46,6 @@
           mode: "700"
 
   tasks:
-    # XXX Capture if we've updated the repository.  Use later to force a
-    # rebuild of the image.
     - name: Checkout source directories
       ansible.builtin.git:
         repo: https://{{gh_token}}@github.com/alces-flight/{{item.repo}}.git
@@ -89,8 +87,9 @@
 
     - name: Ensure docker secrets exist
       ansible.builtin.set_fact:
-        db_password: "{{ lookup('password', '{{ct_etc_dir}}/docker/secrets/db-password chars=ascii_letters,digits length=16') }}"
-        jwt_secret: "{{ lookup('password', '{{ct_etc_dir}}/docker/secrets/jwt-secret chars=ascii_letters,digits length=16') }}"
+        db_password: "{{ lookup('password', '{{ct_etc_dir}}/docker/secrets/db-password chars=ascii_letters,digits length=32') }}"
+        jwt_secret: "{{ lookup('password', '{{ct_etc_dir}}/docker/secrets/jwt-secret chars=ascii_letters,digits length=32') }}"
+        rails_master_key: "{{ lookup('password', '{{ct_etc_dir}}/docker/secrets/rails-master-key chars=ascii_letters,digits length=32') }}"
 
     - name: Create secrets env file
       ansible.builtin.template:
@@ -134,9 +133,6 @@
         src: nginx/Dockerfile
         dest: "{{ct_installation_dir}}/proxy/"
 
-    # XXX Add tag support here.  We should be able to determine the tag that
-    # has been checked out and use that.
-    # XXX Force rebuild if we've updated the source code.
     - name: Build docker images
       community.docker.docker_image:
         name: "{{item.name}}"
@@ -157,6 +153,30 @@
         - name: concertim-proxy
           dir: proxy
           args: {}
+
+    - name: Create visualisation credentials
+      vars:
+        # This needs to match the value in docker-compose.yml
+        credentials_content_path: /opt/concertim/etc/credentials.yml.enc
+        # Make sure not to include any single quote chars here (or fix that
+        # limitation :-).
+        script: |
+          set -e
+          set -o pipefail
+          EDITOR=cat ./bin/rails credentials:edit
+          cp -a config/credentials.yml.enc {{credentials_content_path}}
+          ./bin/rake encryption:generate --trace
+          mv config/credentials.yml.enc {{credentials_content_path}}
+      ansible.builtin.shell:
+        chdir: "{{ct_etc_dir}}/docker"
+        cmd: |
+          docker compose run --rm visualisation /bin/bash -c '{{script}}'
+
+    - name: Precompile visualisation assets
+      ansible.builtin.shell:
+        chdir: "{{ct_etc_dir}}/docker"
+        cmd: |
+          docker compose run --rm visualisation bin/rails assets:precompile --trace
 
     - name: Create and migrate visualisation app database
       ansible.builtin.shell:
