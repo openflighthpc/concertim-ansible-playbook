@@ -4,14 +4,14 @@ services:
   visualisation:
     image: concertim-visualisation-app
     volumes:
-      - static-content:/opt/concertim/opt/ct-visualisation-app/public
+      - static-content:{{static_content_mount}}
       - concertim-etc:/opt/concertim/etc
     env_file:
       - secrets/secrets.env
     environment:
       - METRIC_DAEMON_URL=http://metrics:3000
       - POSTGRES_HOST=db
-      - CREDENTIALS_CONTENT_PATH=/opt/concertim/etc/credentials.yml.enc
+      - CREDENTIALS_CONTENT_PATH={{credentials_path}}
     expose:
       - 7000
     depends_on:
@@ -37,7 +37,7 @@ services:
       - 0.0.0.0:80:80
       - 0.0.0.0:443:443
     volumes:
-      - static-content:/opt/concertim/opt/ct-visualisation-app/public
+      - static-content:{{static_content_mount}}
     depends_on:
       - visualisation
       - metrics

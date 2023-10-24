@@ -72,16 +72,16 @@
         - metric-reporting-daemon
         - visualisation-app
 
-    - name: Copy docker compose configuration
+    - name: Install docker compose file
+      ansible.builtin.template:
+        src: docker-compose.yml
+        dest: "{{ct_etc_dir}}/docker/"
+
+    - name: Copy additional docker compose configuration
       ansible.builtin.copy:
         src: "{{item.src}}"
         dest: "{{ct_etc_dir}}/{{item.dest}}"
-        # owner:
-        # group:
-        # mode:
       loop:
-        - src: docker-compose.yml
-          dest: docker/
         - src: db/init-database.sh
           dest: docker/db/
 
@@ -115,10 +115,6 @@
         state: directory
 
     - name: Install nginx reverse proxy configuration
-      vars:
-        # This needs to match the directory at which the
-        # concertim_static-content volume is mounted on the proxy image.
-        static_content_dir: /opt/concertim/opt/ct-visualisation-app/public/
       ansible.builtin.template:
         src: nginx/default.conf
         dest: "{{ct_installation_dir}}/proxy/nginx/conf.d/default.conf"
@@ -156,17 +152,14 @@
 
     - name: Create visualisation credentials
       vars:
-        # This needs to match the value in docker-compose.yml
-        credentials_content_path: /opt/concertim/etc/credentials.yml.enc
-        # Make sure not to include any single quote chars here (or fix that
-        # limitation :-).
+        # Make sure to escape any single quote chars here.
         script: |
           set -e
           set -o pipefail
           EDITOR=cat ./bin/rails credentials:edit
-          cp -a config/credentials.yml.enc {{credentials_content_path}}
+          cp -a config/credentials.yml.enc {{credentials_path}}
           ./bin/rake encryption:generate --trace
-          mv config/credentials.yml.enc {{credentials_content_path}}
+          mv config/credentials.yml.enc {{credentials_path}}
       ansible.builtin.shell:
         chdir: "{{ct_etc_dir}}/docker"
         cmd: |
