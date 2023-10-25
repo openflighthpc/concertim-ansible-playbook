@@ -9,9 +9,9 @@ Concertim services as a set of Docker containers.
   `docker-compose-plugin` installed.
 * Make a GitHub token available in the `GH_TOKEN` environment variable.
 * Gain a root shell on the target machine.
-* Clone the github repo to `/opt/concertim/ansible-playbook` and checkout the `main` branch.
+* Clone the github repo to `/opt/concertim/ansible-playbook` and checkout the `feat/automated-build-of-all-components` branch.
   ```bash
-  RELEASE_TAG="main"
+  RELEASE_TAG="feat/automated-build-of-all-components"
   mkdir /opt/concertim/
   cd /opt/concertim/
   git clone -n --depth=1 --filter=tree:0 \
