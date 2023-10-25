@@ -1,10 +1,16 @@
 # Building and configuring Alces Concertim
 
-This directory contains ansible playbooks to build an Alces Concertim machine.
+This directory contains ansible playbooks to build an Alces Concertim machine
+suitable for developing the Metric Reporting Daemon and Visualisation App
+Concertim components.
 
-Following the instructions here will result in a single machine running all of
-the Concertim servies. Alternatively, you could [deploy Concertim as Docker
-containers from pre-built images](/concertim-ui/README.md).
+Following the instructions here will result in a single VM machine running
+development deployments of the Metric Reporting Daemon and Visualisation App
+along with any services they require.
+
+If you are looking for a production deployment of Concertim, see the
+[production README](/production/README.md), for details on how to build
+Concertim as a set of Docker containers.
 
 The instructions here will work for the current `main` branch, your milage may
 vary with other versions.  You probably want to use the instructions for a
