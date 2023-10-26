@@ -39,13 +39,14 @@ Concertim services as a set of Docker containers.
 The ansible playbook will deploy the Concertim services as a set of Docker containers.
 By default, they will be installed on the machine that runs the playbook.
 All of the artefacts installed can be found under the `/opt/concertim/` directory structure.
-More details on the directory structure can be found XXX.
+More details on the directory structure can be found [below](#directory-structure-on-host-machine).
 
 The steps for installing are briefly:
 
 1. Gather your GitHub credentials.
 2. Clone this github repo (https://github.com/alces-flight/concertim-ansible-playbook).
-3. Run the ansible playbook.
+3. Optionally, edit the global settings.
+4. Run the ansible playbook.
 
 ### Gather GitHub credentials
 
@@ -81,8 +82,9 @@ git checkout --quiet ${RELEASE_TAG}
 
 Some concertim services are exposed to the host network.
 The [etc/globals.yaml](etc/globals.yaml) file can be used
-to configure which host ports and interfaces are bound to.
+to configure which host interfaces and ports they are bound to.
 The default settings should work but may not be suitable for your needs.
+You can change these setting by editing the `etc/globals.yaml` file.
 
 ```bash
 cd /opt/concertim/ansible-playbook
@@ -91,8 +93,8 @@ $EDITOR etc/globals.yaml
 
 ### Run the playbook
 
-The playbook will clone additional private github repositories,
-so you will need to have a github token available in the `GH_TOKEN` environment variable.
+The playbook will clone additional private github repositories.
+You will need to have a github token available in the `GH_TOKEN` environment variable.
 
 ```bash
 cd /opt/concertim/ansible-playbook
@@ -105,15 +107,16 @@ ansible-playbook \
 
 ## Image and container overview
 
-Four services comprising the Concertim UI are created by the playbook.
+Five services comprising Concertim are created by the playbook.
 The services are:
 
-* `metrics`: Provides an HTTP API for receiving and processing metrics.
-* `visualisation`: Provides an HTTP API for reporting racks and instances; and a web app
+* `metrics` - Provides an HTTP API for receiving and processing metrics.
+* `visualisation` - Provides an HTTP API for reporting racks and instances; and a web app
   for visualising the instances and their metrics.
-* `proxy`: An nginx reverse proxy for the `metrics` and `visualisation`
+* `cluster_builder` - Provides an HTTP API for building various types of clusters on OpenStack.
+* `proxy` - An nginx reverse proxy for the `metrics` and `visualisation`
   services.
-* `db`: A postgresql database.
+* `db` - A postgresql database.
 
 
 ## Docker volumes
@@ -134,11 +137,13 @@ your sites retention policy.
 After the playbook has ran a number of files and directories will exist under `/opt/concertim`.
 The most important are:
 
-* `/opt/concertim/etc/` configuration files for the Concertim services.  The
+* `/opt/concertim/etc/` - configuration files for the Concertim services.  The
 Concertim services can be configured by editing these files and restarting the
 appropriate service.
-* `/opt/concertim/opt/docker/docker-compose.yml` the docker compose configuration for the concertim services.
-* `/opt/concertim/opt/docker/secrets` credentials for the Concertim services.  These need to remain here, but you should be careful to ensure that the directory and file permissions are secure.
+* `/opt/concertim/usr/share/cluster-builder/` - the cluster type definitions used by the cluster builder service.
+* `/opt/concertim/opt/docker/docker-compose.yml` - the docker compose configuration for the concertim services.
+* `/opt/concertim/opt/docker/secrets` - credentials for the Concertim services.
+These need to remain here, but you should be careful to ensure that the directory and file permissions are secure.
 
 
 Other directories include:
@@ -187,5 +192,18 @@ To configure the `visualisation` service:
 1. Log in to the visualisation web app as the `admin` user.
 2. Navigate to "Cloud environment".
 3. Enter the configuration details and click "Create" (or "Update").
+
+To configure the `cluster_builder` service:
+
+New cluster type definitions can be added by adding the definition to
+`/opt/concertim/usr/share/cluster-builder/cluster-types-available`
+and then creating a *relative* symlink to
+`/opt/concertim/usr/share/cluster-builder/cluster-types-enabled`.
+
+Cluster type definitions can be disabled by removing the symlink from 
+`/opt/concertim/usr/share/cluster-builder/cluster-types-enabled`.
+
+Both changes will be picked up without need to restart the cluster builder
+service.
 
 Configuration of the `proxy` and `db` services is not currently supported.
