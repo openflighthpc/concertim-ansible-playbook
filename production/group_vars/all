@@ -15,6 +15,9 @@ ct_docker_dir: "{{ct_installation_dir}}/docker"
 # components.
 ct_etc_dir: "{{ct_root_dir}}/etc"
 
+# The location of the Concertim Cluster Builder cluster type definitions.
+ct_cluster_builder_share_dir: "{{ct_root_dir}}/usr/share/cluster-builder"
+
 # ==================================================
 # Directories used on the docker images
 #

@@ -61,6 +61,9 @@
         - repo: concertim-ct-visualisation-app
           dest: visualisation-app
           commitish: chore/dockerfile
+        - repo: concertim-cluster-builder
+          dest: cluster-builder
+          commitish: main
 
     # We need the following as the directory is owned by root, but not all git
     # commands are executed as root.
@@ -71,6 +74,7 @@
       loop:
         - metric-reporting-daemon
         - visualisation-app
+        - cluster-builder
 
     - name: Install docker compose file
       ansible.builtin.template:
@@ -102,6 +106,40 @@
           echo "Copy configuration files to ct etc dir volume.  So they can be edited."
           echo "Setup directories for cluster builder's definitions"
           echo "Any more???"
+
+    - name: Copy cluster type definitions
+      vars:
+        available_dir: "{{ct_cluster_builder_share_dir}}/cluster-types-available"
+        enabled_dir: "{{ct_cluster_builder_share_dir}}/cluster-types-enabled"
+        hot_dir: "{{ct_cluster_builder_share_dir}}/hot"
+      block:
+        - name: Create cluster type definition directories
+          ansible.builtin.file:
+            path: "{{item}}"
+            owner: root
+            group: root
+            mode: "755"
+            state: directory
+          loop:
+            - "{{available_dir}}"
+            - "{{enabled_dir}}"
+            - "{{hot_dir}}"
+        - name: Copy examples cluster type definitions
+          ansible.builtin.copy:
+            src: "{{ct_installation_dir}}/cluster-builder/examples/{{item.src}}"
+            remote_src: true
+            dest: "{{item.dest}}"
+          loop:
+            - src: cluster-types/
+              dest: "{{available_dir}}"
+            - src: hot/
+              dest: "{{hot_dir}}"
+        - name: Enable all available types
+          ansible.builtin.file:
+            src: "../cluster-types-available/{{item | basename}}"
+            dest: "{{enabled_dir}}/{{item | basename}}"
+            state: link
+          loop: "{{ query('fileglob', available_dir+'/*.yaml') }}"
 
     - name: Make proxy installation directories
       ansible.builtin.file:
@@ -143,6 +181,9 @@
           dir: visualisation-app
           args:
             temp_jwt_secret: not_used_just_has_to_present
+        - name: concertim-cluster-builder
+          dir: cluster-builder
+          args: {}
         - name: concertim-proxy
           dir: proxy
           args: {}

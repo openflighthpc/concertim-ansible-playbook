@@ -35,6 +35,20 @@ services:
     networks:
       concertim-net: {}
 
+  cluster_builder: 
+    image: concertim-cluster-builder
+    # flask requires SIGINT to stop gracefully
+    # (default stop signal from Compose is SIGTERM)
+    stop_signal: SIGINT
+    expose:
+      - 42378
+    ports:
+      - 0.0.0.0:42378:42378
+    volumes:
+      - "{{ct_cluster_builder_share_dir}}/:/app/instance"
+    networks:
+      concertim-net: {}
+
   proxy:
     image: concertim-proxy
     ports:
