@@ -3,7 +3,7 @@
 # ==================================================
 
 # The host port that the proxy service should listen to HTTPS requests on.
-proxy_host_https_port: 443
+proxy_host_https_port: 7443
 # The host IP address that the proxy service should listen to HTTPS requests on.
 # Use 0.0.0.0 to listen on all host IP addresses.
 proxy_host_https_interface: 0.0.0.0
@@ -12,7 +12,7 @@ proxy_host_https_interface: 0.0.0.0
 # Listening for HTTP requests is optional.
 # All requests received on this port are forwarded to `proxy_host_https_port`.
 # Set to false disable listening for HTTP requests.
-proxy_host_http_port: 80
+proxy_host_http_port: 7080
 # The host IP address that the proxy service should listen to HTTP requests on.
 # Use 0.0.0.0 to listen on all host IP addresses.
 # If `proxy_host_http_port` is `false`, this setting is ignored.
