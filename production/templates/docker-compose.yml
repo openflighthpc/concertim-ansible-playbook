@@ -43,7 +43,7 @@ services:
     expose:
       - 42378
     ports:
-      - 0.0.0.0:42378:42378
+      - "{{cluster_builder_host_interface}}:{{cluster_builder_host_port}}:42378"
     volumes:
       - "{{ct_cluster_builder_share_dir}}/:/app/instance"
     networks:
@@ -52,8 +52,10 @@ services:
   proxy:
     image: concertim-proxy
     ports:
-      - 0.0.0.0:80:80
-      - 0.0.0.0:443:443
+      {% if proxy_host_http_port -%}
+      - "{{proxy_host_http_interface}}:{{proxy_host_http_port}}:80"
+      {% endif -%}
+      - "{{proxy_host_https_interface}}:{{proxy_host_https_port}}:443"
     volumes:
       - static-content:{{static_content_mount}}
     depends_on:

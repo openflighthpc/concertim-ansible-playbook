@@ -19,12 +19,18 @@ Concertim services as a set of Docker containers.
   git sparse-checkout set --no-cone production
   git checkout --quiet ${RELEASE_TAG}
   ```
+* Edit the `globals.yaml` file to configure which host network ports are bound to.
+  ```bash
+  cd /opt/concertim/ansible-playbook
+  $EDITOR etc/globals.yaml
+  ```
 * Run the ansible playbook to install the Concertim services on `localhost`.
   ```bash
   cd /opt/concertim/ansible-playbook
   ansible-playbook \
     --inventory inventory.ini \
     --extra-vars "gh_token=$GH_TOKEN" \
+    --extra-vars @etc/globals.yaml \
     playbook.yml
   ```
 
@@ -71,6 +77,18 @@ git sparse-checkout set --no-cone production
 git checkout --quiet ${RELEASE_TAG}
 ```
 
+### Edit the globals.yaml file
+
+Some concertim services are exposed to the host network.
+The [etc/globals.yaml](etc/globals.yaml) file can be used
+to configure which host ports and interfaces are bound to.
+The default settings should work but may not be suitable for your needs.
+
+```bash
+cd /opt/concertim/ansible-playbook
+$EDITOR etc/globals.yaml
+```
+
 ### Run the playbook
 
 The playbook will clone additional private github repositories,
@@ -81,6 +99,7 @@ cd /opt/concertim/ansible-playbook
 ansible-playbook \
   --inventory inventory.ini \
   --extra-vars "gh_token=$GH_TOKEN" \
+  --extra-vars @etc/globals.yaml \
   playbook.yml
 ```
 

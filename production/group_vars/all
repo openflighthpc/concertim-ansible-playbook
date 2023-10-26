@@ -1,6 +1,7 @@
 # ==================================================
 # Directories used on the host machine.
-#
+# ==================================================
+
 # The root at which all other directories will be anchored.
 ct_root_dir: /opt/concertim
 
@@ -20,7 +21,8 @@ ct_cluster_builder_share_dir: "{{ct_root_dir}}/usr/share/cluster-builder"
 
 # ==================================================
 # Directories used on the docker images
-#
+# ==================================================
+
 # The path at which the volume containing Rails static assets is mounted.
 static_content_mount: /opt/concertim/opt/ct-visualisation-app/public/
 # The path at which the host directory `ct_etc_dir` is mounted on the
@@ -33,7 +35,8 @@ credentials_path: "{{ct_etc_mount}}/credentials.yml.enc"
 
 # ==================================================
 # Configuration for the nginx reverse proxy.
-#
+# ==================================================
+
 # The name of the metric reporting daemon service in the docker compose file.
 metrics_host: metrics
 # The name of the visualisation app service in the docker compose file.
