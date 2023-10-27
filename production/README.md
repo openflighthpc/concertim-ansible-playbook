@@ -12,21 +12,22 @@ Concertim services as a set of Docker containers.
 * Clone the github repo to `/opt/concertim/ansible-playbook` and checkout the `feat/automated-build-of-all-components` branch.
   ```bash
   RELEASE_TAG="feat/automated-build-of-all-components"
-  mkdir /opt/concertim/
-  cd /opt/concertim/
-  git clone -n --depth=1 --filter=tree:0 \
+  mkdir -p /opt/concertim/opt
+  cd /opt/concertim/opt
+  git clone -n --depth=1 --filter=tree:0 --no-single-branch \
     https://${GH_TOKEN}@github.com/alces-flight/concertim-ansible-playbook.git ansible-playbook
+  cd /opt/concertim/opt/ansible-playbook
   git sparse-checkout set --no-cone production
   git checkout --quiet ${RELEASE_TAG}
   ```
 * Edit the `globals.yaml` file to configure which host network ports are bound to.
   ```bash
-  cd /opt/concertim/ansible-playbook
+  cd /opt/concertim/opt/ansible-playbook/production
   $EDITOR etc/globals.yaml
   ```
 * Run the ansible playbook to install the Concertim services on `localhost`.
   ```bash
-  cd /opt/concertim/ansible-playbook
+  cd /opt/concertim/opt/ansible-playbook/production
   ansible-playbook \
     --inventory inventory.ini \
     --extra-vars "gh_token=$GH_TOKEN" \
@@ -64,16 +65,17 @@ snippets.
 Clone this github repo to the machine that will run the ansible playbook.
 The repo is a private repo,
 so you will need to have a github token available in the `GH_TOKEN` environment variable.
-The following snippet will clone the `main` branch of the repo to `/opt/concertim/ansible-playbook`, 
+The following snippet will clone the `feat/automated-build-of-all-components` branch of the repo to `/opt/concertim/ansible-playbook`, 
 it is also careful to avoid downloading more data than is needed.
-If you wish to use a branch other than `main`, change the `RELEASE_TAG` appropriately.
+If you wish to use a branch other than `feat/automated-build-of-all-components`, change the `RELEASE_TAG` appropriately.
 
 ```bash
-RELEASE_TAG="main"
-mkdir /opt/concertim/
-cd /opt/concertim/
-git clone -n --depth=1 --filter=tree:0 \
+RELEASE_TAG="feat/automated-build-of-all-components"
+mkdir -p /opt/concertim/opt
+cd /opt/concertim/opt
+git clone -n --depth=1 --filter=tree:0 --no-single-branch \
   https://${GH_TOKEN}@github.com/alces-flight/concertim-ansible-playbook.git ansible-playbook
+cd /opt/concertim/opt/ansible-playbook
 git sparse-checkout set --no-cone production
 git checkout --quiet ${RELEASE_TAG}
 ```
@@ -87,7 +89,7 @@ The default settings should work but may not be suitable for your needs.
 You can change these setting by editing the `etc/globals.yaml` file.
 
 ```bash
-cd /opt/concertim/ansible-playbook
+cd /opt/concertim/opt/ansible-playbook/production
 $EDITOR etc/globals.yaml
 ```
 
@@ -97,7 +99,7 @@ The playbook will clone additional private github repositories.
 You will need to have a github token available in the `GH_TOKEN` environment variable.
 
 ```bash
-cd /opt/concertim/ansible-playbook
+cd /opt/concertim/opt/ansible-playbook/production
 ansible-playbook \
   --inventory inventory.ini \
   --extra-vars "gh_token=$GH_TOKEN" \
