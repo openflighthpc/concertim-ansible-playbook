@@ -38,6 +38,6 @@ credentials_path: "{{ct_etc_mount}}/credentials.yml.enc"
 # ==================================================
 
 # The name of the metric reporting daemon service in the docker compose file.
-metrics_host: metrics
+metrics_host: metric_reporting_daemon
 # The name of the visualisation app service in the docker compose file.
 visualisation_host: visualisation

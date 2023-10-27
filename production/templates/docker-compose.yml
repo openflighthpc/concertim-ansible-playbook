@@ -11,7 +11,7 @@ services:
     env_file:
       - secrets/secrets.env
     environment:
-      - METRIC_DAEMON_URL=http://metrics:3000
+      - METRIC_DAEMON_URL=http://metric_reporting_daemon:3000
       - POSTGRES_HOST=db
       - CREDENTIALS_CONTENT_PATH={{credentials_path}}
     expose:
@@ -21,7 +21,7 @@ services:
     networks:
       concertim-net: {}
 
-  metrics:
+  metric_reporting_daemon:
     image: concertim-metric-reporting-daemon
     volumes:
       - rrd-data:/var/lib/ganglia/rrds
@@ -60,7 +60,7 @@ services:
       - static-content:{{static_content_mount}}
     depends_on:
       - visualisation
-      - metrics
+      - metric_reporting_daemon
     networks:
       concertim-net: {}
 

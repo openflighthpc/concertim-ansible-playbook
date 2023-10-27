@@ -112,11 +112,11 @@ ansible-playbook \
 Five services comprising Concertim are created by the playbook.
 The services are:
 
-* `metrics` - Provides an HTTP API for receiving and processing metrics.
+* `metric_reporting_daemon` - Provides an HTTP API for receiving and processing metrics.
 * `visualisation` - Provides an HTTP API for reporting racks and instances; and a web app
   for visualising the instances and their metrics.
 * `cluster_builder` - Provides an HTTP API for building various types of clusters on OpenStack.
-* `proxy` - An nginx reverse proxy for the `metrics` and `visualisation`
+* `proxy` - An nginx reverse proxy for the `metric_reporting_daemon` and `visualisation`
   services.
 * `db` - A postgresql database.
 
@@ -175,7 +175,8 @@ docker compose start
 ```
 
 A single service can be restarted by running the following,
-where `<service>` is one of `metrics`, `visualisation`, `proxy`, `db`:
+where `<service>` is one of the services mentioned above,
+e.g., `metric_reporting_daemon`, `visualisation`, `proxy`, `db`:
 
 ```bash
 cd /opt/concertim/opt/docker
@@ -184,7 +185,7 @@ docker compose restart <service>
 
 ## Configuring a Concertim service
 
-To configure the `metrics` service:
+To configure the `metric_reporting_daemon` service:
 
 1. Edit the file `/opt/concertim/etc/metric-reporting-daemon.yml`.
 2. Restart the service see [Starting and stopping services](#starting-and-stopping-the-concertim-services).
