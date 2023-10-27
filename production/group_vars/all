@@ -16,8 +16,17 @@ ct_docker_dir: "{{ct_installation_dir}}/docker"
 # components.
 ct_etc_dir: "{{ct_root_dir}}/etc"
 
+# The directory containing the logs for the concertim components.
+ct_log_dir: "{{ct_root_dir}}/var/log"
+
+# The directory containing the logs for the concertim components.
+ct_var_lib_dir: "{{ct_root_dir}}/var/lib"
+
 # The location of the Concertim Cluster Builder cluster type definitions.
 ct_cluster_builder_share_dir: "{{ct_root_dir}}/usr/share/cluster-builder"
+
+# The directory containing the data for the openstack services.
+ct_openstack_service_data_dir: "{{ct_var_lib_dir}}/openstack-service/data/"
 
 # ==================================================
 # Directories used on the docker images

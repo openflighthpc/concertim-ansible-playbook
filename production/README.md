@@ -5,6 +5,7 @@ Concertim services as a set of Docker containers.
 
 ## Quick start
 
+* Configure required OpenStack users and roles.  See https://github.com/alces-flight/concertim-openstack-service/tree/master#openstack for details.
 * Ensure the target machine has `ansible-playbook`, `docker` and
   `docker-compose-plugin` installed.
 * Make a GitHub token available in the `GH_TOKEN` environment variable.
@@ -34,6 +35,15 @@ Concertim services as a set of Docker containers.
     --extra-vars @etc/globals.yaml \
     playbook.yml
   ```
+* Edit the concertim openstack service configuration file.  See https://github.com/alces-flight/concertim-openstack-service/tree/master#configuration for details.
+  ```bash
+  $EDITOR /opt/concertim/etc/openstack-service/config.yaml
+  ```
+* Restart the openstack services to pick up the configuration changes
+  ```bash
+  cd /opt/concertim/opt/docker
+  docker compose restart
+  ```
 
 ## Deployment in more detail
 
@@ -44,10 +54,19 @@ More details on the directory structure can be found [below](#directory-structur
 
 The steps for installing are briefly:
 
-1. Gather your GitHub credentials.
-2. Clone this github repo (https://github.com/alces-flight/concertim-ansible-playbook).
-3. Optionally, edit the global settings.
-4. Run the ansible playbook.
+1. Configure OpenStack with required users and roles.
+2. Gather your GitHub credentials.
+3. Clone this github repo (https://github.com/alces-flight/concertim-ansible-playbook).
+4. Optionally, edit the global settings.
+5. Run the ansible playbook.
+6. Edit the concertim openstack service configuration.
+7. Restart the containers.
+
+### Configure OpenStack with users and roles
+
+Concertim expects certain users and roles to be configure in OpenStack.
+Currently, this needs to be done outside of this installation mechanism.
+See https://github.com/alces-flight/concertim-openstack-service/tree/master#openstack for details of the users and roles to configure.
 
 ### Gather GitHub credentials
 
@@ -107,6 +126,23 @@ ansible-playbook \
   playbook.yml
 ```
 
+### Edit the concertim openstack service configuration
+
+After the playbook has ran, the concertim openstack service configuration will have been installed.
+You should now configure this appropriately for your environment and restart the containers.
+
+```bash
+$EDITOR /opt/concertim/etc/openstack-service/config.yaml
+```
+
+Once your configuration is correct, restart the containers to have them pick up
+the changes to the configuration.
+
+```bash
+cd /opt/concertim/opt/docker
+docker compose restart
+```
+
 ## Image and container overview
 
 Five services comprising Concertim are created by the playbook.
@@ -116,6 +152,10 @@ The services are:
 * `visualisation` - Provides an HTTP API for reporting racks and instances; and a web app
   for visualising the instances and their metrics.
 * `cluster_builder` - Provides an HTTP API for building various types of clusters on OpenStack.
+* `api_server` - Manages OpenStack users, projects and keys for Concertim.
+* `bulk_updates` - Periodically syncs OpenStack instance state to Concertim.
+* `mq_listener` - Listens to the Rabbit MQ to sync OpenStack changes to Concertim in real time.
+* `metrics` - Polls OpenStack for certain metrics and reports them to Concertim.
 * `proxy` - An nginx reverse proxy for the `metric_reporting_daemon` and `visualisation`
   services.
 * `db` - A postgresql database.

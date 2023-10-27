@@ -36,6 +36,14 @@
           owner: root
           group: root
           mode: "755"
+        - path: "{{ct_log_dir}}"
+          owner: root
+          group: root
+          mode: "755"
+        - path: "{{ct_var_lib_dir}}"
+          owner: root
+          group: root
+          mode: "755"
         - path: "{{ct_docker_dir}}"
           owner: root
           group: root
@@ -64,6 +72,9 @@
         - repo: concertim-cluster-builder
           dest: cluster-builder
           commitish: main
+        - repo: concertim-openstack-service
+          dest: openstack-service
+          commitish: master
 
     # We need the following as the directory is owned by root, but not all git
     # commands are executed as root.
@@ -75,6 +86,7 @@
         - metric-reporting-daemon
         - visualisation-app
         - cluster-builder
+        - openstack-service
 
     - name: Install docker compose file
       ansible.builtin.template:
@@ -99,13 +111,6 @@
         owner: root
         group: root
         mode: '0600'
-
-    - name: Create (copy) configuration
-      ansible.builtin.shell:
-        cmd: |
-          echo "Copy configuration files to ct etc dir volume.  So they can be edited."
-          echo "Setup directories for cluster builder's definitions"
-          echo "Any more???"
 
     - name: Copy cluster type definitions
       vars:
@@ -141,6 +146,33 @@
             state: link
           loop: "{{ query('fileglob', available_dir+'/*.yaml') }}"
 
+    - name: Create concertim openstack service directories
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+        mode: "{{ item.mode }}"
+        state: directory
+      loop:
+        - path: "{{ct_etc_dir}}/openstack-service/"
+          owner: root
+          group: root
+          mode: "755"
+        - path: "{{ct_log_dir}}/openstack-service/"
+          owner: root
+          group: root
+          mode: "755"
+        - path: "{{ct_openstack_service_data_dir}}"
+          owner: root
+          group: root
+          mode: "755"
+
+    - name: Copy openstack service config files
+      ansible.builtin.copy:
+        src: "{{ct_installation_dir}}/openstack-service/etc/config-sample.yaml"
+        remote_src: true
+        dest: "{{ct_etc_dir}}/openstack-service/config.yaml"
+
     - name: Make proxy installation directories
       ansible.builtin.file:
         path: "{{ct_installation_dir}}/proxy/nginx/conf.d"
@@ -169,6 +201,7 @@
         name: "{{item.name}}"
         build:
           path: "{{ct_installation_dir}}/{{item.dir}}"
+          dockerfile: "{{item.dockerfile | default('Dockerfile')}}"
           args: "{{item.args}}"
           network: host
           # http_timeout: 60
@@ -186,6 +219,22 @@
           args: {}
         - name: concertim-proxy
           dir: proxy
+          args: {}
+        - name: concertim-api-server
+          dir: openstack-service
+          dockerfile: ./Dockerfiles/Dockerfile.api_server
+          args: {}
+        - name: concertim-bulk-updates
+          dir: openstack-service
+          dockerfile: ./Dockerfiles/Dockerfile.updates_bulk
+          args: {}
+        - name: concertim-mq-listener
+          dir: openstack-service
+          dockerfile: ./Dockerfiles/Dockerfile.updates_mq
+          args: {}
+        - name: concertim-metrics
+          dir: openstack-service
+          dockerfile: ./Dockerfiles/Dockerfile.metrics
           args: {}
 
     - name: Create visualisation credentials

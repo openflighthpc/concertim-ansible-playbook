@@ -23,3 +23,11 @@ cluster_builder_host_port: 42378
 # The host IP address that the cluster builder service should listen to HTTP requests on.
 # Use 0.0.0.0 to listen on all host IP addresses.
 cluster_builder_host_interface: 0.0.0.0
+
+# The host port that the concertim openstack api server service should listen
+# to HTTP requests on.
+api_server_host_port: 42356
+# The host IP address that the concertim openstack api server service should
+# listen to HTTP requests on.
+# Use 0.0.0.0 to listen on all host IP addresses.
+api_server_host_interface: 0.0.0.0
