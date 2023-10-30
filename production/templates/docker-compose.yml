@@ -15,8 +15,9 @@ services:
       - METRIC_DAEMON_URL=http://metric_reporting_daemon:3000
       - POSTGRES_HOST=db
       - CREDENTIALS_CONTENT_PATH={{credentials_path}}
+      - PORT={{visualisation_app_host_port}}
     expose:
-      - 7000
+      - {{visualisation_app_host_port}}
     depends_on:
       - db
     networks:
@@ -27,12 +28,12 @@ services:
     volumes:
       - rrd-data:/var/lib/ganglia/rrds
       - type: bind
-        source: "{{ct_etc_dir}}"
-        target: "{{ct_etc_mount}}"
+        source: "{{ct_etc_dir}}/metric-reporting-daemon"
+        target: "{{ct_etc_mount}}/metric-reporting-daemon"
     env_file:
       - secrets/secrets.env
     expose:
-      - 3000
+      - {{metric_reporting_daemon_api_host_port}}
     networks:
       concertim-net: {}
 
@@ -40,9 +41,9 @@ services:
     image: concertim-proxy
     ports:
       {% if proxy_host_http_port -%}
-      - "{{proxy_host_http_interface}}:{{proxy_host_http_port}}:80"
+      - "{{proxy_host_http_interface}}:{{proxy_host_http_port}}:{{proxy_host_http_port}}"
       {% endif -%}
-      - "{{proxy_host_https_interface}}:{{proxy_host_https_port}}:443"
+      - "{{proxy_host_https_interface}}:{{proxy_host_https_port}}:{{proxy_host_https_port}}"
     volumes:
       - static-content:{{static_content_mount}}
     depends_on:
@@ -77,10 +78,13 @@ services:
     # flask requires SIGINT to stop gracefully
     # (default stop signal from Compose is SIGTERM)
     stop_signal: SIGINT
+    environment:
+      - PORT={{cluster_builder_host_port}}
+      - HOST={{cluster_builder_host_interface}}
     expose:
-      - 42378
+      - {{cluster_builder_host_port}}
     ports:
-      - "{{cluster_builder_host_interface}}:{{cluster_builder_host_port}}:42378"
+      - "{{cluster_builder_host_interface}}:{{cluster_builder_host_port}}:{{cluster_builder_host_port}}"
     volumes:
       - "{{ct_cluster_builder_share_dir}}/:/app/instance"
     networks:

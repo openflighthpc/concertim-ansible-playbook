@@ -46,10 +46,10 @@ credentials_path: "{{ct_etc_mount}}/credentials.yml.enc"
 # Configuration for the nginx reverse proxy.
 # ==================================================
 
-# The name of the metric reporting daemon service in the docker compose file.
-metrics_host: metric_reporting_daemon
-# The name of the visualisation app service in the docker compose file.
-visualisation_host: visualisation
+# The hostname (or IP) of the metric reporting daemon.
+metric_reporting_daemon_hostname: metric_reporting_daemon
+# The hostname (or IP) of the visualisation app.
+visualisation_app_hostname: visualisation
 
 # ==================================================
 # Configuration for the installation of the concertim components
@@ -87,7 +87,7 @@ cluster_builder:
   install_dir: "{{ct_installation_dir}}/cluster-builder"
   source:
     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-cluster-builder"
-    commitish: main
+    commitish: enh/better-support-for-host-and-port-configuration
   docker_image:
     name: concertim-cluster-builder
 

@@ -16,7 +16,7 @@ enable_cluster_builder: yes
 # If the openstack service component is enabled, the api_server, bulk_updates,
 # mq_listener and metrics concertim openstack service containers will be
 # installed and enabled.
-enable_openstack_service: yes
+enable_openstack_service: no
 
 # ==================================================
 # Host Ports and Interfaces
@@ -37,6 +37,15 @@ proxy_host_http_port: 7080
 # Use 0.0.0.0 to listen on all host IP addresses.
 # If `proxy_host_http_port` is `false`, this setting is ignored.
 proxy_host_http_interface: 0.0.0.0
+
+metric_reporting_daemon_api_host_interface: 0.0.0.0
+metric_reporting_daemon_api_host_port: 43000
+metric_reporting_daemon_gds_host_interface: 127.0.0.1
+metric_reporting_daemon_gds_host_port: 8678
+metric_reporting_daemon_gmetad_host_port: 8651
+
+visualisation_app_host_interface: 127.0.0.1
+visualisation_app_host_port: 7000
 
 # The host port that the cluster builder service should listen to HTTP requests on.
 cluster_builder_host_port: 42378
