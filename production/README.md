@@ -21,7 +21,7 @@ Concertim services as a set of Docker containers.
   git sparse-checkout set --no-cone production
   git checkout --quiet ${RELEASE_TAG}
   ```
-* Edit the `globals.yaml` file to configure which host network ports are bound to.
+* Edit the `globals.yaml` file to configure which components are installed and which host network ports are bound to.
   ```bash
   cd /opt/concertim/opt/ansible-playbook/production
   $EDITOR etc/globals.yaml
@@ -35,6 +35,9 @@ Concertim services as a set of Docker containers.
     --extra-vars @etc/globals.yaml \
     playbook.yml
   ```
+
+If the concertim openstack service components were installed, you will also need to:
+
 * Edit the concertim openstack service configuration file.  See https://github.com/alces-flight/concertim-openstack-service/tree/master#configuration for details.
   ```bash
   $EDITOR /opt/concertim/etc/openstack-service/config.yaml
@@ -101,6 +104,11 @@ git checkout --quiet ${RELEASE_TAG}
 
 ### Edit the globals.yaml file
 
+By default, the concertim, cluster builder and concertim openstack service
+components will all be installed.  If you wish to install only some of these,
+edit the `etc/globals.yaml` file and change the `enable_*` settings
+appropriately.
+
 Some concertim services are exposed to the host network.
 The [etc/globals.yaml](etc/globals.yaml) file can be used
 to configure which host interfaces and ports they are bound to.
@@ -148,23 +156,31 @@ docker compose restart
 Five services comprising Concertim are created by the playbook.
 The services are:
 
+If the concertim components are enabled, the following containers will be installed:
+
 * `metric_reporting_daemon` - Provides an HTTP API for receiving and processing metrics.
 * `visualisation` - Provides an HTTP API for reporting racks and instances; and a web app
   for visualising the instances and their metrics.
-* `cluster_builder` - Provides an HTTP API for building various types of clusters on OpenStack.
-* `api_server` - Manages OpenStack users, projects and keys for Concertim.
-* `bulk_updates` - Periodically syncs OpenStack instance state to Concertim.
-* `mq_listener` - Listens to the Rabbit MQ to sync OpenStack changes to Concertim in real time.
-* `metrics` - Polls OpenStack for certain metrics and reports them to Concertim.
 * `proxy` - An nginx reverse proxy for the `metric_reporting_daemon` and `visualisation`
   services.
 * `db` - A postgresql database.
 
+If the cluster builder component is enabled, the following containers will be installed:
+
+* `cluster_builder` - Provides an HTTP API for building various types of clusters on OpenStack.
+
+If the openstack service components are enabled, the following containers will be installed:
+
+* `api_server` - Manages OpenStack users, projects and keys for Concertim.
+* `bulk_updates` - Periodically syncs OpenStack instance state to Concertim.
+* `mq_listener` - Listens to the Rabbit MQ to sync OpenStack changes to Concertim in real time.
+* `metrics` - Polls OpenStack for certain metrics and reports them to Concertim.
+
 
 ## Docker volumes
 
-A number of volumes are used by the images.  Two of these should be included in
-your sites retention policy.
+If the concertim components are enabled, three docker volumes are created. Two
+of these should be included in your sites retention policy.
 
 * `db-data`: contains the postgresql data including the racks and instances.
   This should be included in a data retention policy.

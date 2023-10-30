@@ -121,10 +121,12 @@ services:
       - "{{ct_openstack_service_data_dir}}:/app/var/data/"
   {% endif %}
 
+{% if enable_concertim -%}
 volumes:
   db-data:
   rrd-data:
   static-content:
+{% endif %}
 
 networks:
   concertim-net:
