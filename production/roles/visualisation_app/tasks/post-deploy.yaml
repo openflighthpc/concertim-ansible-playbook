@@ -1,0 +1,37 @@
+---
+- name: Create visualisation credentials
+  block:
+    - name: Check for existing credentials
+      ansible.builtin.stat:
+        path: "{{credentials_path}}"
+      register: credentials_file
+    - name: Create credentials
+      when: not credentials_file.stat.exists
+      vars:
+        # Make sure to escape any single quote chars here.
+        script: |
+          set -e
+          set -o pipefail
+          EDITOR=cat ./bin/rails credentials:edit
+          cp -a config/credentials.yml.enc {{credentials_path}}
+          ./bin/rake encryption:generate --trace
+          mv config/credentials.yml.enc {{credentials_path}}
+      ansible.builtin.shell:
+        chdir: "{{ct_docker_dir}}"
+        cmd: |
+          docker compose run --rm visualisation /bin/bash -c '{{script}}'
+
+- name: Precompile visualisation assets
+  ansible.builtin.shell:
+    chdir: "{{ct_docker_dir}}"
+    cmd: |
+      docker compose run --rm visualisation bin/rails assets:precompile --trace
+
+- name: Create and migrate visualisation app database
+  ansible.builtin.shell:
+    chdir: "{{ct_docker_dir}}"
+    cmd: |
+      docker compose up --detach db
+      docker compose run --rm visualisation bin/rails db:create --trace
+      docker compose run --rm visualisation bin/rails db:migrate --trace
+      docker compose stop

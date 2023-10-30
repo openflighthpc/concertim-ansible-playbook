@@ -1,6 +1,7 @@
 version: "3.3"
 name: concertim
 services:
+  {% if enable_concertim -%}
   visualisation:
     image: concertim-visualisation-app
     volumes:
@@ -35,52 +36,6 @@ services:
     networks:
       concertim-net: {}
 
-  cluster_builder: 
-    image: concertim-cluster-builder
-    # flask requires SIGINT to stop gracefully
-    # (default stop signal from Compose is SIGTERM)
-    stop_signal: SIGINT
-    expose:
-      - 42378
-    ports:
-      - "{{cluster_builder_host_interface}}:{{cluster_builder_host_port}}:42378"
-    volumes:
-      - "{{ct_cluster_builder_share_dir}}/:/app/instance"
-    networks:
-      concertim-net: {}
-
-  api_server:
-    image: concertim-api-server
-    expose:
-      - 42356
-    ports:
-      - "{{api_server_host_interface}}:{{api_server_host_port}}:42356"
-    volumes:
-      - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
-      - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
-      - "{{ct_openstack_service_data_dir}}:/app/var/data/"
-
-  bulk_updates:
-    image: concertim-bulk-updates
-    volumes:
-      - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
-      - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
-      - "{{ct_openstack_service_data_dir}}:/app/var/data/"
-
-  mq_listener:
-    image: concertim-mq-listener
-    volumes:
-      - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
-      - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
-      - "{{ct_openstack_service_data_dir}}:/app/var/data/"
-
-  metrics:
-    image: concertim-metrics
-    volumes:
-      - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
-      - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
-      - "{{ct_openstack_service_data_dir}}:/app/var/data/"
-
   proxy:
     image: concertim-proxy
     ports:
@@ -114,6 +69,57 @@ services:
       retries: 5
     networks:
       concertim-net: {}
+  {% endif %}
+
+  {% if enable_cluster_builder -%}
+  cluster_builder: 
+    image: concertim-cluster-builder
+    # flask requires SIGINT to stop gracefully
+    # (default stop signal from Compose is SIGTERM)
+    stop_signal: SIGINT
+    expose:
+      - 42378
+    ports:
+      - "{{cluster_builder_host_interface}}:{{cluster_builder_host_port}}:42378"
+    volumes:
+      - "{{ct_cluster_builder_share_dir}}/:/app/instance"
+    networks:
+      concertim-net: {}
+  {% endif %}
+
+  {% if enable_openstack_service -%}
+  api_server:
+    image: concertim-api-server
+    expose:
+      - 42356
+    ports:
+      - "{{api_server_host_interface}}:{{api_server_host_port}}:42356"
+    volumes:
+      - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
+      - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
+      - "{{ct_openstack_service_data_dir}}:/app/var/data/"
+
+  bulk_updates:
+    image: concertim-bulk-updates
+    volumes:
+      - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
+      - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
+      - "{{ct_openstack_service_data_dir}}:/app/var/data/"
+
+  mq_listener:
+    image: concertim-mq-listener
+    volumes:
+      - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
+      - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
+      - "{{ct_openstack_service_data_dir}}:/app/var/data/"
+
+  metrics:
+    image: concertim-metrics
+    volumes:
+      - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
+      - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
+      - "{{ct_openstack_service_data_dir}}:/app/var/data/"
+  {% endif %}
 
 volumes:
   db-data:

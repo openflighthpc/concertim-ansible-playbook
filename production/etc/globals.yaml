@@ -1,4 +1,24 @@
 # ==================================================
+# Components to install
+# ==================================================
+
+# Select which components you wish to install and enable.
+
+# If the concertim component is enabled, the visualisation,
+# metric_reporting_daemon, proxy and db containers will be installed and
+# enabled.
+enable_concertim: yes
+
+# If the cluster builder component is enabled, the cluster builder container
+# will be installed and enabled.
+enable_cluster_builder: yes
+
+# If the openstack service component is enabled, the api_server, bulk_updates,
+# mq_listener and metrics concertim openstack service containers will be
+# installed and enabled.
+enable_openstack_service: yes
+
+# ==================================================
 # Host Ports and Interfaces
 # ==================================================
 
