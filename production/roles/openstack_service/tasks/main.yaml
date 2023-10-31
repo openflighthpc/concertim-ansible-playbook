@@ -15,6 +15,15 @@
   ansible.builtin.command:
     cmd: git config --global --add safe.directory "{{openstack_service.install_dir}}"
 
+- name: Install killbill-fork
+  ansible.builtin.git:
+    repo: "{{killbill_fork.source.repo}}"
+    dest: "{{killbill_fork.install_dir}}"
+    single_branch: yes
+    version: "{{killbill_fork.source.commitish}}"
+  environment:
+    GIT_TERMINAL_PROMPT: 0
+
 - name: Create concertim openstack service directories
   ansible.builtin.file:
     path: "{{ item.path }}"

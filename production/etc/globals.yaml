@@ -16,7 +16,7 @@ enable_cluster_builder: yes
 # If the openstack service component is enabled, the api_server, bulk_updates,
 # mq_listener and metrics concertim openstack service containers will be
 # installed and enabled.
-enable_openstack_service: no
+enable_openstack_service: yes
 
 # ==================================================
 # Host Ports and Interfaces

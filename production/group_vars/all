@@ -109,3 +109,9 @@ openstack_service:
       dockerfile: ./Dockerfiles/Dockerfile.updates_mq
     - name: concertim-metrics
       dockerfile: ./Dockerfiles/Dockerfile.metrics
+
+killbill_fork:
+  install_dir: "{{openstack_service.install_dir}}/con_opstk/billing/killbill/killbill_fork"
+  source:
+    repo: "https://{{gh_token}}@github.com/alces-flight/killbill_fork"
+    commitish: master
