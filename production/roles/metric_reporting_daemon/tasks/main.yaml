@@ -1,0 +1,45 @@
+---
+- name: Checkout source directories
+  ansible.builtin.git:
+    repo: "{{metric_reporting_daemon.source.repo}}"
+    dest: "{{metric_reporting_daemon.install_dir}}"
+    single_branch: yes
+    version: "{{metric_reporting_daemon.source.commitish}}"
+  environment:
+    GIT_TERMINAL_PROMPT: 0
+
+# We need the following as the directory is owned by root, but not all git
+# commands are executed as root.
+# XXX Can we remove this somehow?
+- name: Workaround git and dubious ownership issues
+  ansible.builtin.command:
+    cmd: git config --global --add safe.directory "{{metric_reporting_daemon.install_dir}}"
+
+- name: Create configuration directory
+  ansible.builtin.file:
+    path: "{{ct_etc_dir}}/metric-reporting-daemon"
+    owner: root
+    group: root
+    mode: "755"
+    state: directory
+
+- name: Install metric reporting daemon configuration file
+  ansible.builtin.template:
+    src: config.yml
+    dest: "{{ct_etc_dir}}/metric-reporting-daemon/"
+
+- name: Install gmetad configuration file
+  ansible.builtin.template:
+    src: gmetad.conf
+    dest: "{{ct_etc_dir}}/metric-reporting-daemon/"
+
+- name: Build docker image
+  community.docker.docker_image:
+    name: "{{metric_reporting_daemon.docker_image.name}}"
+    build:
+      path: "{{metric_reporting_daemon.install_dir}}"
+      dockerfile: "{{metric_reporting_daemon.docker_image.dockerfile | default('Dockerfile')}}"
+      args: "{{metric_reporting_daemon.docker_image.args | default({})}}"
+      network: host
+      # http_timeout: 60
+    source: build

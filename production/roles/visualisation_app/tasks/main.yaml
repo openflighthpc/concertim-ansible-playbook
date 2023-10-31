@@ -1,0 +1,4 @@
+---
+- ansible.builtin.include_role:
+    name: visualisation_app
+    tasks_from: "{{ct_action}}"

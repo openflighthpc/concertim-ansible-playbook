@@ -1,0 +1,28 @@
+---
+- name: Checkout source directories
+  ansible.builtin.git:
+    repo: "{{visualisation_app.source.repo}}"
+    dest: "{{visualisation_app.install_dir}}"
+    single_branch: yes
+    version: "{{visualisation_app.source.commitish}}"
+  environment:
+    GIT_TERMINAL_PROMPT: 0
+
+
+# We need the following as the directory is owned by root, but not all git
+# commands are executed as root.
+# XXX Can we remove this somehow?
+- name: Workaround git and dubious ownership issues
+  ansible.builtin.command:
+    cmd: git config --global --add safe.directory "{{visualisation_app.install_dir}}"
+
+- name: Build docker image
+  community.docker.docker_image:
+    name: "{{visualisation_app.docker_image.name}}"
+    build:
+      path: "{{visualisation_app.install_dir}}"
+      dockerfile: "{{visualisation_app.docker_image.dockerfile | default('Dockerfile')}}"
+      args: "{{visualisation_app.docker_image.args | default({})}}"
+      network: host
+      # http_timeout: 60
+    source: build

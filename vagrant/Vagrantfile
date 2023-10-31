@@ -3,6 +3,7 @@ CT_SRC_DIR = [ ENV['FLIGHT_CODE'], "#{ENV['HOME']}/projects/concertim/src" ]
   .map { |p| File.expand_path(p) }
   .detect { |p| File.directory?(p) }
 ANSIBLE_DIR="../ansible"
+PRODUCTION_DIR="../production"
 MACHINES = [
   {
     name: "dev1",
@@ -40,8 +41,13 @@ Vagrant.configure("2") do |config|
 
       # Forward HTTP/S ports at predictable host ports.  Redirection from HTTP
       # to HTTPS isn't expected to work with these ports.
-      v.vm.network "forwarded_port", guest:  80, host: 9080 + idx + 1, host_ip: '127.0.0.1'
-      v.vm.network "forwarded_port", guest: 443, host: 9443 + idx + 1, host_ip: '127.0.0.1'
+      if ENV['BUILD_ENV'] == 'prod'
+        v.vm.network "forwarded_port", guest: 7080, host: 9080 + idx + 1, host_ip: '127.0.0.1'
+        v.vm.network "forwarded_port", guest: 7443, host: 9443 + idx + 1, host_ip: '127.0.0.1'
+      else
+        v.vm.network "forwarded_port", guest:  80, host: 9080 + idx + 1, host_ip: '127.0.0.1'
+        v.vm.network "forwarded_port", guest: 443, host: 9443 + idx + 1, host_ip: '127.0.0.1'
+      end
 
       v.vm.provision "swap",
         type: "shell",
@@ -53,9 +59,13 @@ Vagrant.configure("2") do |config|
         run: "never"
 
       unless to_boolean(ENV['ACCEPTANCE'])
-        v.vm.synced_folder ANSIBLE_DIR, "/ansible"
-        if File.directory?(CT_SRC_DIR)
-          v.vm.synced_folder CT_SRC_DIR, "/opt/concertim/dev"
+        if ENV['BUILD_ENV'] == 'prod'
+          v.vm.synced_folder PRODUCTION_DIR, "/production"
+        else
+          v.vm.synced_folder ANSIBLE_DIR, "/ansible"
+          if File.directory?(CT_SRC_DIR)
+            v.vm.synced_folder CT_SRC_DIR, "/opt/concertim/dev"
+          end
         end
 
         if Vagrant.has_plugin?("vagrant-notify-forwarder")
@@ -79,11 +89,21 @@ Vagrant.configure("2") do |config|
           type: "shell",
           run: "never",
           path: "scripts/install-ansible.sh"
-        v.vm.provision "run_build_playbook",
+        v.vm.provision "install_docker",
+          type: "shell",
+          run: "never",
+          path: "scripts/install-docker.sh"
+        v.vm.provision "run_dev_playbook",
           type: "shell",
           run: "never",
           inline: <<-SH
-            AWS_ACCESS_KEY_ID=#{ENV.fetch('AWS_ACCESS_KEY_ID', '')} AWS_SECRET_ACCESS_KEY=#{ENV.fetch('AWS_SECRET_ACCESS_KEY', '')} /vagrant/scripts/run-build-playbook.sh
+            AWS_ACCESS_KEY_ID=#{ENV.fetch('AWS_ACCESS_KEY_ID', '')} AWS_SECRET_ACCESS_KEY=#{ENV.fetch('AWS_SECRET_ACCESS_KEY', '')} /vagrant/scripts/run-dev-playbook.sh
+          SH
+        v.vm.provision "run_prod_playbook",
+          type: "shell",
+          run: "never",
+          inline: <<-SH
+            GH_TOKEN=#{ENV.fetch('GH_TOKEN', '')} /vagrant/scripts/run-prod-playbook.sh
           SH
 
       end

@@ -1,0 +1,155 @@
+# Configuration for the HTTP API.
+api:
+  # The address of the network interface to listen on.
+  ip: "{{metric_reporting_daemon_api_interface}}"
+
+  # The port to listen on.
+  port: {{metric_reporting_daemon_api_port}}
+
+  # Timeouts for server to process a request.
+  #
+  # read_timeout limits the time that the server will spend waiting for the
+  # client to send its full request.
+  #
+  # write_timeout limits the time that the server will spend waiting for itself
+  # to finish serving the request.
+  #
+  # idle_timeout limits the time before the server reuses keep alive
+  # connections.
+  #
+  # Requires a number and unit, e.g., `60s` for sixty seconds or `1h10m20s` for
+  # one hour ten minutes and twenty seconds.
+  # Valid time units are “ns”, “us” (or “µs”), “ms”, “s”, “m”, “h”.
+  read_timeout: 100ms
+  write_timeout: 10s
+  idle_timeout: 120s
+
+# Configuration for the gangali data source server.
+gds:
+  # The address of the network interface to listen on.
+  ip: "{{metric_reporting_daemon_gds_interface}}"
+
+  # The port to listen on.
+  port: {{metric_reporting_daemon_gds_port}}
+
+  # The cluster name to use in the ganglia output.  This should be the same as
+  # the retrieval.cluster_name and rrd.cluster_name settings.
+  cluster_name: "unspecified"
+
+  # The source to use in the ganglia output.
+  metric_source: "ct-metric-reporting-daemon"
+
+  # The time in seconds that a host should remain "fresh" for.
+  #
+  # If the last metric for a host was reported more than `hostTTL` seconds
+  # ago, the host and all of its metrics are considered stale and no longer
+  # included in the metric stream.
+  host_ttl: 180
+
+# Configuration for generating the data source map lookup.
+dsm:
+  # The data source map is periodically updated from the Concertim
+  # Visualisation App. `frequency` specifies the frequency of the periodic
+  # updating.
+  #
+  # Certain events can cause the data source map to update outside of its
+  # periodic updating.  To prevent over consumption of resources, the updates
+  # can be throttled such that no two updates will occur within `throttle` of
+  # each other.
+  #
+  # Both the `frequency` and `throttle` values require a number and unit, e.g.,
+  # `60s` for sixty seconds or `1h10m20s` for one hour ten minutes and twenty
+  # seconds.
+  #
+  # Valid time units are “ns”, “us” (or “µs”), “ms”, “s”, “m”, “h”.
+  frequency: 30s
+  throttle: 5s
+
+  # Estimate of how long it takes for the updater to run.
+  #
+  # If the DSM needs updating outside of its periodic updating, (for instance
+  # when receiving a request to report a metric), the updating goroutine sleeps
+  # for this duration and assumes that the update will have completed in that
+  # duration.
+  #
+  # This adds a delay of `duration` to API calls to report a metric when the
+  # host is not yet known.
+  #
+  # If this values is too small, it may temporarily result in metrics being
+  # incorrectly rejected due to an unknown host.  Those metrics will eventually
+  # be accepted.
+  duration: 75ms
+
+# Configuration for retrieving metrics from gmetad.
+retrieval:
+  # The IP address, or hostname, of the gmetad server to poll for metrics.
+  ip: localhost
+
+  # The port of the gmetad server to poll for metrics.
+  port: {{metric_reporting_daemon_gmetad_port}}
+
+  # The ganglia grid from which to retrieve clusters.  All other grids are
+  # ignored.  This should be the same as the rrd.grid_name setting.
+  grid_name: "unspecified"
+
+  # The ganglia cluster from which to retrieve hosts.  All other clusters are
+  # ignored.  This should be the same as the gds.cluster_name and
+  # rrd.cluster_name settings.
+  cluster_name: "unspecified"
+
+  # The metrics are periodically retrieved from the gmetad source. `frequency`
+  # specifies the frequency of the periodic updating.
+  #
+  # Certain events can cause the metrics to be retrieved outside of its
+  # periodic updating.  To prevent over consumption of resources, the updates
+  # can be throttled such that no two updates will occur within `throttle` of
+  # each other.
+  #
+  # Both the `frequency` and `throttle` values require a number and unit, e.g.,
+  # `60s` for sixty seconds or `1h10m20s` for one hour ten minutes and twenty
+  # seconds.
+  #
+  # Valid time units are “ns”, “us” (or “µs”), “ms”, “s”, “m”, “h”.
+  frequency: 15s
+  throttle: 5s
+
+  # After gmetad has requested metrics from us, we request metrics from gmetad.
+  # This value configures the delay between the two.  We want to provide enough
+  # time for gmetad to have processed the metrics, but don't want to wait too
+  # long as we want the metrics to be available to IRV as soon as possible.
+  post_gmetad_delay: 500ms
+
+# Configuration for accessing the Concertim Visualization App (aka Visualizer)
+# API.
+visualizer_api:
+  # The URL used for gaining an authentication token.
+  auth_url: "http://{{visualisation_app_hostname}}:{{visualisation_app_port}}/users/sign_in.json"
+  # The authentication credentials.
+  username: "admin"
+  password: "admin"
+  # The URL used to obtain the data source maps.
+  data_source_map_url: "http://{{visualisation_app_hostname}}:{{visualisation_app_port}}/api/v1/data-source-maps"
+  # If set to true skip all TLS certificate verification checks.
+  skip_certificate_check: true
+
+# Configuration for retrieving historic metrics with RRDTool.  Currently, the
+# RRD files are created by Ganglia's Gmetad.  These values must be consistent
+# with how Gmetad has been configured.
+rrd:
+  # The ganglia grid from which to retrieve historic metrics.  All other grids
+  # are ignored.  This should be the same as the retrieval.grid_name setting.
+  grid_name: "unspecified"
+
+  # The ganglia cluster from which to retrieve historic hosts.  All other
+  # clusters are ignored.  This should be the same as the gds.cluster_name and
+  # retrieval.cluster_name settings.
+  cluster_name: "unspecified"
+
+  # Directory where the RRD files are stored.
+  directory: /var/lib/ganglia/rrds/
+
+  # Path to the RRDTool executable.
+  rrd_tool_path: /usr/bin/rrdtool
+
+log_level: info
+shared_secret_file: "/opt/concertim/etc/secret"

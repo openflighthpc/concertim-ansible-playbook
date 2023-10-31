@@ -1,0 +1,4 @@
+- name: Copy init-database.sh
+  ansible.builtin.copy:
+    src: init-database.sh
+    dest: "{{ct_docker_dir}}/db/"

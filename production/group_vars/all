@@ -1,0 +1,117 @@
+# ==================================================
+# Directories used on the host machine.
+# ==================================================
+
+# The root at which all other directories will be anchored.
+ct_root_dir: /opt/concertim
+
+# The directory the source repositories of the concertim components will be
+# cloned into.
+ct_installation_dir: "{{ct_root_dir}}/opt"
+
+# The directory where the docker compose configuration is installed.
+ct_docker_dir: "{{ct_installation_dir}}/docker"
+
+# The directory containing the configuration files for the concertim
+# components.
+ct_etc_dir: "{{ct_root_dir}}/etc"
+
+# The directory containing the logs for the concertim components.
+ct_log_dir: "{{ct_root_dir}}/var/log"
+
+# The directory containing the logs for the concertim components.
+ct_var_lib_dir: "{{ct_root_dir}}/var/lib"
+
+# The location of the Concertim Cluster Builder cluster type definitions.
+ct_cluster_builder_share_dir: "{{ct_root_dir}}/usr/share/cluster-builder"
+
+# The directory containing the data for the openstack services.
+ct_openstack_service_data_dir: "{{ct_var_lib_dir}}/openstack-service/data/"
+
+# ==================================================
+# Directories used on the docker images
+# ==================================================
+
+# The path at which the volume containing Rails static assets is mounted.
+static_content_mount: /opt/concertim/opt/ct-visualisation-app/public/
+# The path at which the host directory `ct_etc_dir` is mounted on the
+# containers.
+ct_etc_mount: /opt/concertim/etc
+# The path at which the Rails credentials should be created. This should be
+# inside the etc volume.
+credentials_path: "{{ct_etc_mount}}/credentials.yml.enc"
+
+
+# ==================================================
+# Configuration for container <-> container communication
+# ==================================================
+
+# The hostnames that our containers can use to resolve the address of other containers.
+
+# The hostname (or IP) of the metric reporting daemon.
+metric_reporting_daemon_hostname: localhost
+# The hostname (or IP) of the visualisation app.
+visualisation_app_hostname: localhost
+# The hostname (or IP) of the db container.
+db_hostname: localhost
+
+# ==================================================
+# Configuration for the installation of the concertim components
+# ==================================================
+
+# These variables control which components are going to be installed.  They are
+# defined here to ensure that they are defined, but are intended to be set in
+# the etc/globals.yaml file.
+enable_concertim: no
+enable_cluster_builder: no
+enable_openstack_service: no
+
+metric_reporting_daemon:
+  install_dir: "{{ct_installation_dir}}/metric-reporting-daemon"
+  source:
+    repo: "https://{{gh_token}}@github.com/alces-flight/concertim-metric-reporting-daemon"
+    commitish: main
+  docker_image:
+    name: concertim-metric-reporting-daemon
+
+visualisation_app:
+  install_dir: "{{ct_installation_dir}}/visualisation-app"
+  source:
+    repo: "https://{{gh_token}}@github.com/alces-flight/concertim-ct-visualisation-app"
+    commitish: main
+  docker_image:
+    name: concertim-visualisation-app
+
+proxy:
+  install_dir: "{{ct_installation_dir}}/proxy"
+  docker_image:
+    name: concertim-proxy
+
+cluster_builder:
+  install_dir: "{{ct_installation_dir}}/cluster-builder"
+  source:
+    repo: "https://{{gh_token}}@github.com/alces-flight/concertim-cluster-builder"
+    commitish: main
+  docker_image:
+    name: concertim-cluster-builder
+
+openstack_service:
+  install_dir: "{{ct_installation_dir}}/openstack-service"
+  source:
+    repo: "https://{{gh_token}}@github.com/alces-flight/concertim-openstack-service"
+    commitish: master
+  docker_images:
+    - name: concertim-api-server
+      dockerfile: ./Dockerfiles/Dockerfile.api_server
+    - name: concertim-bulk-updates
+      dockerfile: ./Dockerfiles/Dockerfile.updates_bulk
+    - name: concertim-mq-listener
+      dockerfile: ./Dockerfiles/Dockerfile.updates_mq
+    - name: concertim-metrics
+      dockerfile: ./Dockerfiles/Dockerfile.metrics
+
+killbill_fork:
+  install_dir: "{{openstack_service.install_dir}}/con_opstk/billing/killbill/killbill_fork"
+  source:
+    repo: "https://{{gh_token}}@github.com/alces-flight/killbill_fork"
+    commitish: master

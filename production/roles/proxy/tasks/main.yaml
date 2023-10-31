@@ -1,0 +1,33 @@
+- name: Make proxy installation directories
+  ansible.builtin.file:
+    path: "{{proxy.install_dir}}/nginx/conf.d"
+    owner: root
+    group: root
+    mode: "755"
+    state: directory
+
+- name: Install nginx reverse proxy configuration
+  ansible.builtin.template:
+    src: default.conf
+    dest: "{{proxy.install_dir}}/nginx/conf.d/default.conf"
+
+- name: Install nginx reverse proxy configuration
+  ansible.builtin.copy:
+    src: nginx
+    dest: "{{proxy.install_dir}}/"
+
+- name: Install nginx reverse proxy Dockerfile
+  ansible.builtin.template:
+    src: Dockerfile
+    dest: "{{proxy.install_dir}}/"
+
+- name: Build docker image
+  community.docker.docker_image:
+    name: "{{proxy.docker_image.name}}"
+    build:
+      path: "{{proxy.install_dir}}"
+      dockerfile: "{{proxy.docker_image.dockerfile | default('Dockerfile')}}"
+      args: "{{proxy.docker_image.args | default({})}}"
+      network: host
+      # http_timeout: 60
+    source: build
