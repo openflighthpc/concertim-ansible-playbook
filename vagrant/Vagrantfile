@@ -41,8 +41,13 @@ Vagrant.configure("2") do |config|
 
       # Forward HTTP/S ports at predictable host ports.  Redirection from HTTP
       # to HTTPS isn't expected to work with these ports.
-      v.vm.network "forwarded_port", guest:  80, host: 9080 + idx + 1, host_ip: '127.0.0.1'
-      v.vm.network "forwarded_port", guest: 443, host: 9443 + idx + 1, host_ip: '127.0.0.1'
+      if ENV['BUILD_ENV'] == 'prod'
+        v.vm.network "forwarded_port", guest: 7080, host: 9080 + idx + 1, host_ip: '127.0.0.1'
+        v.vm.network "forwarded_port", guest: 7443, host: 9443 + idx + 1, host_ip: '127.0.0.1'
+      else
+        v.vm.network "forwarded_port", guest:  80, host: 9080 + idx + 1, host_ip: '127.0.0.1'
+        v.vm.network "forwarded_port", guest: 443, host: 9443 + idx + 1, host_ip: '127.0.0.1'
+      end
 
       v.vm.provision "swap",
         type: "shell",
@@ -54,10 +59,13 @@ Vagrant.configure("2") do |config|
         run: "never"
 
       unless to_boolean(ENV['ACCEPTANCE'])
-        v.vm.synced_folder PRODUCTION_DIR, "/production"
-        v.vm.synced_folder ANSIBLE_DIR, "/ansible"
-        if File.directory?(CT_SRC_DIR)
-          v.vm.synced_folder CT_SRC_DIR, "/opt/concertim/dev"
+        if ENV['BUILD_ENV'] == 'prod'
+          v.vm.synced_folder PRODUCTION_DIR, "/production"
+        else
+          v.vm.synced_folder ANSIBLE_DIR, "/ansible"
+          if File.directory?(CT_SRC_DIR)
+            v.vm.synced_folder CT_SRC_DIR, "/opt/concertim/dev"
+          end
         end
 
         if Vagrant.has_plugin?("vagrant-notify-forwarder")
