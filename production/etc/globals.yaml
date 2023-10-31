@@ -22,41 +22,54 @@ enable_openstack_service: no
 # Host Ports and Interfaces
 # ==================================================
 
-# The host port that the proxy service should listen to HTTPS requests on.
-proxy_host_https_port: 7443
-# The host IP address that the proxy service should listen to HTTPS requests on.
-# Use 0.0.0.0 to listen on all host IP addresses.
-proxy_host_https_interface: 0.0.0.0
+# The port that the proxy service should listen to HTTPS requests on.
+proxy_https_port: 7443
+# The interface that the proxy service should listen to HTTPS requests on.
+# Use 0.0.0.0 to listen on all interfaces.
+proxy_https_interface: 0.0.0.0
 
-# The host port that the proxy service should listen to HTTP requests on.
+# The port that the proxy service should listen to HTTP requests on.
 # Listening for HTTP requests is optional.
-# All requests received on this port are forwarded to `proxy_host_https_port`.
+# All requests received on this port are forwarded to `proxy_https_port`.
 # Set to false disable listening for HTTP requests.
-proxy_host_http_port: 7080
-# The host IP address that the proxy service should listen to HTTP requests on.
-# Use 0.0.0.0 to listen on all host IP addresses.
-# If `proxy_host_http_port` is `false`, this setting is ignored.
-proxy_host_http_interface: 0.0.0.0
+proxy_http_port: 7080
+# The interface that the proxy service should listen to HTTP requests on.
+# Use 0.0.0.0 to listen on all interfaces.
+# If `proxy_http_port` is `false`, this setting is ignored.
+proxy_http_interface: 0.0.0.0
 
-metric_reporting_daemon_api_host_interface: 0.0.0.0
-metric_reporting_daemon_api_host_port: 43000
-metric_reporting_daemon_gds_host_interface: 127.0.0.1
-metric_reporting_daemon_gds_host_port: 8678
-metric_reporting_daemon_gmetad_host_port: 8651
+# The port that the metric reporting daemon service should listen to HTTP requests on.
+metric_reporting_daemon_api_port: 43000
+# The interface that the proxy service should listen to HTTPS requests on.
+# Use 0.0.0.0 to listen on all interfaces.
+metric_reporting_daemon_api_interface: 127.0.0.1
 
-visualisation_app_host_interface: 127.0.0.1
-visualisation_app_host_port: 7000
+# Internal ports used by the metric reporting daemon to communicate with
+# gmetad.  The ports can be any value that works.  The interface should be
+# 127.0.0.1.
+metric_reporting_daemon_gds_port: 8678
+metric_reporting_daemon_gds_interface: 127.0.0.1
+metric_reporting_daemon_gmetad_port: 8651
 
-# The host port that the cluster builder service should listen to HTTP requests on.
-cluster_builder_host_port: 42378
-# The host IP address that the cluster builder service should listen to HTTP requests on.
-# Use 0.0.0.0 to listen on all host IP addresses.
-cluster_builder_host_interface: 0.0.0.0
+# The port that the visualisation app service should listen to HTTP requests on.
+visualisation_app_port: 7000
+# The interface that the proxy service should listen to HTTPS requests on.
+# Use 0.0.0.0 to listen on all interfaces.
+visualisation_app_interface: 127.0.0.1
 
-# The host port that the concertim openstack api server service should listen
-# to HTTP requests on.
-api_server_host_port: 42356
-# The host IP address that the concertim openstack api server service should
+# The port that the cluster builder service should listen to HTTP requests on.
+cluster_builder_port: 42378
+# The interface that the cluster builder service should listen to HTTP requests on.
+# Use 0.0.0.0 to listen on all interfaces.
+cluster_builder_interface: 127.0.0.1
+
+# The port that the db service should listen on.
+db_port: 45432
+# The interface that the db service should listen on.
+# Use 0.0.0.0 to listen on all interfaces.
+db_interface: 127.0.0.1
+
+# The interface that the concertim openstack api server service should
 # listen to HTTP requests on.
-# Use 0.0.0.0 to listen on all host IP addresses.
-api_server_host_interface: 0.0.0.0
+# Use 0.0.0.0 to listen on all interfaces.
+api_server_interface: 127.0.0.1

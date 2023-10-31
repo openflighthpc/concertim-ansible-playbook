@@ -1,10 +1,10 @@
 # Configuration for the HTTP API.
 api:
   # The address of the network interface to listen on.
-  ip: "{{metric_reporting_daemon_api_host_interface}}"
+  ip: "{{metric_reporting_daemon_api_interface}}"
 
   # The port to listen on.
-  port: {{metric_reporting_daemon_api_host_port}}
+  port: {{metric_reporting_daemon_api_port}}
 
   # Timeouts for server to process a request.
   #
@@ -27,10 +27,10 @@ api:
 # Configuration for the gangali data source server.
 gds:
   # The address of the network interface to listen on.
-  ip: "{{metric_reporting_daemon_gds_host_interface}}"
+  ip: "{{metric_reporting_daemon_gds_interface}}"
 
   # The port to listen on.
-  port: {{metric_reporting_daemon_gds_host_port}}
+  port: {{metric_reporting_daemon_gds_port}}
 
   # The cluster name to use in the ganglia output.  This should be the same as
   # the retrieval.cluster_name and rrd.cluster_name settings.
@@ -86,7 +86,7 @@ retrieval:
   ip: localhost
 
   # The port of the gmetad server to poll for metrics.
-  port: {{metric_reporting_daemon_gmetad_host_port}}
+  port: {{metric_reporting_daemon_gmetad_port}}
 
   # The ganglia grid from which to retrieve clusters.  All other grids are
   # ignored.  This should be the same as the rrd.grid_name setting.
@@ -123,12 +123,12 @@ retrieval:
 # API.
 visualizer_api:
   # The URL used for gaining an authentication token.
-  auth_url: "http://{{visualisation_app_hostname}}:{{visualisation_app_host_port}}/users/sign_in.json"
+  auth_url: "http://{{visualisation_app_hostname}}:{{visualisation_app_port}}/users/sign_in.json"
   # The authentication credentials.
   username: "admin"
   password: "admin"
   # The URL used to obtain the data source maps.
-  data_source_map_url: "http://{{visualisation_app_hostname}}:{{visualisation_app_host_port}}/api/v1/data-source-maps"
+  data_source_map_url: "http://{{visualisation_app_hostname}}:{{visualisation_app_port}}/api/v1/data-source-maps"
   # If set to true skip all TLS certificate verification checks.
   skip_certificate_check: true
 

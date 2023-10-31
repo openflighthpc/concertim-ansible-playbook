@@ -43,13 +43,17 @@ credentials_path: "{{ct_etc_mount}}/credentials.yml.enc"
 
 
 # ==================================================
-# Configuration for the nginx reverse proxy.
+# Configuration for container <-> container communication
 # ==================================================
 
+# The hostnames that our containers can use to resolve the address of other containers.
+
 # The hostname (or IP) of the metric reporting daemon.
-metric_reporting_daemon_hostname: metric_reporting_daemon
+metric_reporting_daemon_hostname: localhost
 # The hostname (or IP) of the visualisation app.
-visualisation_app_hostname: visualisation
+visualisation_app_hostname: localhost
+# The hostname (or IP) of the db container.
+db_hostname: localhost
 
 # ==================================================
 # Configuration for the installation of the concertim components

@@ -12,16 +12,16 @@ services:
     env_file:
       - secrets/secrets.env
     environment:
-      - METRIC_DAEMON_URL=http://metric_reporting_daemon:3000
-      - POSTGRES_HOST=db
+      - METRIC_DAEMON_URL=http://{{metric_reporting_daemon_hostname}}:{{metric_reporting_daemon_api_port}}
+      - POSTGRES_HOST={{db_hostname}}
+      - POSTGRES_PORT={{db_port}}
       - CREDENTIALS_CONTENT_PATH={{credentials_path}}
-      - PORT={{visualisation_app_host_port}}
-    expose:
-      - {{visualisation_app_host_port}}
+      - PORT={{visualisation_app_port}}
     depends_on:
       - db
-    networks:
-      concertim-net: {}
+    ports:
+      - "{{visualisation_app_interface}}:{{visualisation_app_port}}:{{visualisation_app_port}}"
+    network_mode: host
 
   metric_reporting_daemon:
     image: concertim-metric-reporting-daemon
@@ -32,25 +32,23 @@ services:
         target: "{{ct_etc_mount}}/metric-reporting-daemon"
     env_file:
       - secrets/secrets.env
-    expose:
-      - {{metric_reporting_daemon_api_host_port}}
-    networks:
-      concertim-net: {}
+    ports:
+      - "{{metric_reporting_daemon_api_interface}}:{{metric_reporting_daemon_api_port}}:{{metric_reporting_daemon_api_port}}"
+    network_mode: host
 
   proxy:
     image: concertim-proxy
     ports:
-      {% if proxy_host_http_port -%}
-      - "{{proxy_host_http_interface}}:{{proxy_host_http_port}}:{{proxy_host_http_port}}"
+      {% if proxy_http_port -%}
+      - "{{proxy_http_interface}}:{{proxy_http_port}}:{{proxy_http_port}}"
       {% endif -%}
-      - "{{proxy_host_https_interface}}:{{proxy_host_https_port}}:{{proxy_host_https_port}}"
+      - "{{proxy_https_interface}}:{{proxy_https_port}}:{{proxy_https_port}}"
     volumes:
       - static-content:{{static_content_mount}}
     depends_on:
       - visualisation
       - metric_reporting_daemon
-    networks:
-      concertim-net: {}
+    network_mode: host
 
   db:
     image: postgres
@@ -59,17 +57,17 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
       - ./db/init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
+    command: ["postgres", "-c", "listen_addresses={{db_interface}}", "-c", "port={{db_port}}"]
     env_file:
       - secrets/secrets.env
-    expose:
-      - 5432
+    ports:
+      - "{{db_interface}}:{{db_port}}:{{db_port}}"
     healthcheck:
       test: [ "CMD", "pg_isready" ]
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      concertim-net: {}
+    network_mode: host
   {% endif %}
 
   {% if enable_cluster_builder -%}
@@ -79,29 +77,25 @@ services:
     # (default stop signal from Compose is SIGTERM)
     stop_signal: SIGINT
     environment:
-      - PORT={{cluster_builder_host_port}}
-      - HOST={{cluster_builder_host_interface}}
-    expose:
-      - {{cluster_builder_host_port}}
+      - PORT={{cluster_builder_port}}
+      - HOST={{cluster_builder_interface}}
     ports:
-      - "{{cluster_builder_host_interface}}:{{cluster_builder_host_port}}:{{cluster_builder_host_port}}"
+      - "{{cluster_builder_interface}}:{{cluster_builder_port}}:{{cluster_builder_port}}"
     volumes:
       - "{{ct_cluster_builder_share_dir}}/:/app/instance"
-    networks:
-      concertim-net: {}
+    network_mode: host
   {% endif %}
 
   {% if enable_openstack_service -%}
   api_server:
     image: concertim-api-server
-    expose:
-      - 42356
     ports:
-      - "{{api_server_host_interface}}:{{api_server_host_port}}:42356"
+      - "{{api_server_interface}}:42356:42356"
     volumes:
       - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
       - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
       - "{{ct_openstack_service_data_dir}}:/app/var/data/"
+    network_mode: host
 
   bulk_updates:
     image: concertim-bulk-updates
@@ -109,6 +103,7 @@ services:
       - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
       - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
       - "{{ct_openstack_service_data_dir}}:/app/var/data/"
+    network_mode: host
 
   mq_listener:
     image: concertim-mq-listener
@@ -116,6 +111,7 @@ services:
       - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
       - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
       - "{{ct_openstack_service_data_dir}}:/app/var/data/"
+    network_mode: host
 
   metrics:
     image: concertim-metrics
@@ -123,6 +119,7 @@ services:
       - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
       - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
       - "{{ct_openstack_service_data_dir}}:/app/var/data/"
+    network_mode: host
   {% endif %}
 
 {% if enable_concertim -%}
@@ -131,9 +128,3 @@ volumes:
   rrd-data:
   static-content:
 {% endif %}
-
-networks:
-  concertim-net:
-    driver: bridge
-    driver_opts:
-      com.docker.network.driver.mtu: 1400
