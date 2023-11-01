@@ -115,7 +115,7 @@ machine by following the instructions above, then configure it to run in develop
    cd vagrant
    vagrant ssh dev1
    sudo su -
-   /vagrant/scripts/run-build-playbook.sh --tags appliance-dev --extra-vars want_dev_build=true
+   /vagrant/scripts/run-dev-playbook.sh --tags appliance-dev --extra-vars want_dev_build=true
    ```
 
 The `appliance-dev` will run the `ct-vis-app` and `ct-metrics` apps in separate

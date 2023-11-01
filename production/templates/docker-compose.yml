@@ -63,7 +63,7 @@ services:
     ports:
       - "{{db_interface}}:{{db_port}}:{{db_port}}"
     healthcheck:
-      test: [ "CMD", "pg_isready" ]
+      test: [ "CMD-SHELL", "PGPORT={{db_port}} pg_isready" ]
       interval: 10s
       timeout: 5s
       retries: 5
