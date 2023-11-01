@@ -86,6 +86,13 @@ proxy:
   install_dir: "{{ct_installation_dir}}/proxy"
   docker_image:
     name: concertim-proxy
+  ssl:
+    # *_host_path are relative to proxy.install_dir.
+    crt_host_path: ssl/concertim.pem
+    key_host_path: ssl/concertim.key
+    # *_container_path should be absolute paths.
+    crt_container_path: /etc/ssl/certs/concertim.pem
+    key_container_path: /etc/ssl/private/concertim.key
 
 cluster_builder:
   install_dir: "{{ct_installation_dir}}/cluster-builder"

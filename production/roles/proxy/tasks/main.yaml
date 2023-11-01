@@ -21,6 +21,26 @@
     src: Dockerfile
     dest: "{{proxy.install_dir}}/"
 
+- name: Install SSL certificates
+  block:
+    - name: Make SSL directories
+      ansible.builtin.file:
+        path: "{{proxy.install_dir}}/{{proxy.ssl.key_host_path | dirname}}"
+        owner: root
+        group: root
+        mode: "755"
+        state: directory
+    - name: Generate self-signed private key
+      community.crypto.openssl_privatekey:
+        path: "{{proxy.install_dir}}/{{proxy.ssl.key_host_path}}"
+        state: present
+    - name: Create simple self-signed certificate
+      community.crypto.x509_certificate:
+        path: "{{proxy.install_dir}}/{{proxy.ssl.crt_host_path}}"
+        privatekey_path: "{{proxy.install_dir}}/{{proxy.ssl.key_host_path}}"
+        provider: selfsigned
+        state: present
+
 - name: Build docker image
   community.docker.docker_image:
     name: "{{proxy.docker_image.name}}"
