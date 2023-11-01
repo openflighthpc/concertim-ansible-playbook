@@ -7,6 +7,7 @@
     version: "{{openstack_service.source.commitish}}"
   environment:
     GIT_TERMINAL_PROMPT: 0
+  register: openstack_service_checkout
 
 # We need the following as the directory is owned by root, but not all git
 # commands are executed as root.
@@ -61,4 +62,9 @@
       network: host
       # http_timeout: 60
     source: build
+    state: present
+    force_source: "{{openstack_service_checkout.changed}}"
   loop: "{{openstack_service.docker_images}}"
+  notify:
+    - "Tag openstack_service images with git tag"
+    - "Stop openstack_service containers"

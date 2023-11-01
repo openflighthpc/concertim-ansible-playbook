@@ -7,6 +7,7 @@
     version: "{{visualisation_app.source.commitish}}"
   environment:
     GIT_TERMINAL_PROMPT: 0
+  register: visualisation_app_checkout
 
 
 # We need the following as the directory is owned by root, but not all git
@@ -26,3 +27,8 @@
       network: host
       # http_timeout: 60
     source: build
+    state: present
+    force_source: "{{visualisation_app_checkout.changed}}"
+  notify:
+    - "Tag visualisation_app image with git tag"
+    - "Stop visualisation container"

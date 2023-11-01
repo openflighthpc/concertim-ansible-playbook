@@ -1,0 +1,27 @@
+- name: Get git tag
+  ansible.builtin.shell:
+    chdir: "{{visualisation_app.install_dir}}"
+    cmd: |
+      # Output to stdout the SHA1, branch and tag on separate lines.  The tag entry may be blank.
+      git rev-parse HEAD
+      git rev-parse --abbrev-ref HEAD
+      git tag --list --points-at HEAD --sort=-v:refname
+  register: visualisation_app_git_tag
+  listen: Tag visualisation_app image with git tag
+
+- name: Tag docker image
+  vars:
+    tag: "{{ (visualisation_app_git_tag.stdout_lines | length >= 3) | ternary(visualisation_app_git_tag.stdout_lines[2], None) }}"
+  community.docker.docker_image:
+    name: "{{visualisation_app.docker_image.name}}:latest"
+    repository: "{{visualisation_app.docker_image.name}}:{{tag}}"
+    source: local
+    state: present
+  listen: Tag visualisation_app image with git tag
+  when: tag is defined
+
+- name: Stop visualisation container
+  ansible.builtin.shell:
+    chdir: "{{ct_docker_dir}}"
+    cmd: |
+      docker compose down visualisation

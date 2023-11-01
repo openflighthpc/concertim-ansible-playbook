@@ -1,0 +1,28 @@
+- name: Get git tag
+  ansible.builtin.shell:
+    chdir: "{{openstack_service.install_dir}}"
+    cmd: |
+      # Output to stdout the SHA1, branch and tag on separate lines.  The tag entry may be blank.
+      git rev-parse HEAD
+      git rev-parse --abbrev-ref HEAD
+      git tag --list --points-at HEAD --sort=-v:refname
+  register: openstack_service_git_tag
+  listen: Tag openstack_service images with git tag
+
+- name: Tag docker image
+  vars:
+    tag: "{{ (openstack_service_git_tag.stdout_lines | length >= 3) | ternary(openstack_service_git_tag.stdout_lines[2], None) }}"
+  community.docker.docker_image:
+    name: "{{item.name}}:latest"
+    repository: "{{item.name}}:{{tag}}"
+    source: local
+    state: present
+  loop: "{{openstack_service.docker_images}}"
+  listen: Tag openstack_service images with git tag
+  when: tag is defined
+
+- name: Stop openstack_service containers
+  ansible.builtin.shell:
+    chdir: "{{ct_docker_dir}}"
+    cmd: |
+      docker compose down api_server bulk_updates mq_listener metrics

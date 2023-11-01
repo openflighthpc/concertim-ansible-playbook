@@ -111,7 +111,11 @@
   become_user: root
   become_method: sudo
   tasks:
+    # Ensure all services are up.  If any needed restarting they will have been
+    # downed in the previous plays, all that needs to happen here is ensure
+    # they're up.
     - name: Start services
+      tags: always
       ansible.builtin.shell:
         chdir: "{{ct_docker_dir}}"
         cmd: |

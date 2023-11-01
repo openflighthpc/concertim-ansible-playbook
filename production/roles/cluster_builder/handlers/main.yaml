@@ -1,0 +1,27 @@
+- name: Get git tag
+  ansible.builtin.shell:
+    chdir: "{{cluster_builder.install_dir}}"
+    cmd: |
+      # Output to stdout the SHA1, branch and tag on separate lines.  The tag entry may be blank.
+      git rev-parse HEAD
+      git rev-parse --abbrev-ref HEAD
+      git tag --list --points-at HEAD --sort=-v:refname
+  register: cluster_builder_git_tag
+  listen: Tag cluster_builder image with git tag
+
+- name: Tag docker image
+  vars:
+    tag: "{{ (cluster_builder_git_tag.stdout_lines | length >= 3) | ternary(cluster_builder_git_tag.stdout_lines[2], None) }}"
+  community.docker.docker_image:
+    name: "{{cluster_builder.docker_image.name}}:latest"
+    repository: "{{cluster_builder.docker_image.name}}:{{tag}}"
+    source: local
+    state: present
+  listen: Tag cluster_builder image with git tag
+  when: tag is defined
+
+- name: Stop cluster_builder container
+  ansible.builtin.shell:
+    chdir: "{{ct_docker_dir}}"
+    cmd: |
+      docker compose down cluster_builder
