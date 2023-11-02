@@ -1,0 +1,29 @@
+- name: Gather git checkout and docker image facts
+  block:
+    - name: Get git checkout info
+      ansible.builtin.shell:
+        chdir: "{{install_dir}}"
+        cmd: |
+          # Output to stdout the SHA1, branch and tag on separate lines.  The tag entry may be blank.
+          git rev-parse HEAD
+          git rev-parse --abbrev-ref HEAD
+          git tag --list --points-at HEAD --sort=-v:refname | \
+              grep '^v[[:digit:]]' | \
+              head -n 1
+      register: "git_info"
+    - name: Set git facts
+      ansible.builtin.set_fact:
+        "{{component}}_facts_git_info": "{{git_info}}"
+        "{{component}}_facts_git_tag": "{{ (git_info.stdout_lines | length >= 3) | ternary(git_info.stdout_lines[2], None) }}"
+        "{{component}}_facts_git_sha": "{{git_info.stdout_lines[0]}}"
+    - name: Set docker facts
+      vars:
+        git_tag: "{{lookup('vars', component + '_facts_git_tag')}}"
+      ansible.builtin.set_fact:
+        "{{component}}_facts_docker_image_tag": "{{(git_tag == '') | ternary('latest', git_tag)}}"
+    - ansible.builtin.debug:
+        msg: "{{component + '_facts_' + item}}={{lookup('vars', component + '_facts_' + item)}}"
+      loop:
+        - "git_tag"
+        - "git_sha"
+        - "docker_image_tag"

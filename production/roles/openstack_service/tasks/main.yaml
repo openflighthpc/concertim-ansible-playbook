@@ -52,19 +52,19 @@
     remote_src: true
     dest: "{{ct_etc_dir}}/openstack-service/config.yaml"
 
-- name: Build docker images
-  community.docker.docker_image:
-    name: "{{item.name}}"
-    build:
-      path: "{{openstack_service.install_dir}}"
-      dockerfile: "{{item.dockerfile | default('Dockerfile')}}"
-      args: "{{item.args | default({})}}"
-      network: host
-      # http_timeout: 60
-    source: build
-    state: present
+- name: Set git checkout and docker image facts
+  vars:
+    component: openstack_service
+    install_dir: "{{openstack_service.install_dir}}"
+  import_tasks: gather_git_and_docker_facts.yaml
+
+- name: Build docker image
+  vars:
+    component: openstack_service
     force_source: "{{openstack_service_checkout.changed}}"
+    notifications:
+      - "Stop openstack_service containers"
+    name: "{{item.name}}"
+    dockerfile: "{{item.dockerfile}}"
+  include_tasks: build_docker_image.yaml
   loop: "{{openstack_service.docker_images}}"
-  notify:
-    - "Tag openstack_service images with git tag"
-    - "Stop openstack_service containers"

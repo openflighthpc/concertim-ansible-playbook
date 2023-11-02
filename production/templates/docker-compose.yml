@@ -3,7 +3,7 @@ name: concertim
 services:
   {% if enable_concertim -%}
   visualisation:
-    image: concertim-visualisation-app
+    image: concertim-visualisation-app:{{visualisation_app_facts_docker_image_tag}}
     volumes:
       - static-content:{{static_content_mount}}
       - type: bind
@@ -24,7 +24,7 @@ services:
     network_mode: host
 
   metric_reporting_daemon:
-    image: concertim-metric-reporting-daemon
+    image: concertim-metric-reporting-daemon:{{metric_reporting_daemon_facts_docker_image_tag}}
     volumes:
       - rrd-data:/var/lib/ganglia/rrds
       - type: bind
@@ -72,7 +72,7 @@ services:
 
   {% if enable_cluster_builder -%}
   cluster_builder: 
-    image: concertim-cluster-builder
+    image: concertim-cluster-builder:{{cluster_builder_facts_docker_image_tag}}
     # flask requires SIGINT to stop gracefully
     # (default stop signal from Compose is SIGTERM)
     stop_signal: SIGINT
@@ -88,7 +88,7 @@ services:
 
   {% if enable_openstack_service -%}
   api_server:
-    image: concertim-api-server
+    image: concertim-api-server:{{openstack_service_facts_docker_image_tag}}
     ports:
       - "{{api_server_interface}}:42356:42356"
     volumes:
@@ -98,7 +98,7 @@ services:
     network_mode: host
 
   bulk_updates:
-    image: concertim-bulk-updates
+    image: concertim-bulk-updates:{{openstack_service_facts_docker_image_tag}}
     volumes:
       - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
       - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
@@ -106,7 +106,7 @@ services:
     network_mode: host
 
   mq_listener:
-    image: concertim-mq-listener
+    image: concertim-mq-listener:{{openstack_service_facts_docker_image_tag}}
     volumes:
       - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
       - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
@@ -114,7 +114,7 @@ services:
     network_mode: host
 
   metrics:
-    image: concertim-metrics
+    image: concertim-metrics:{{openstack_service_facts_docker_image_tag}}
     volumes:
       - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
       - "{{ct_log_dir}}/openstack-service/:/app/var/log/"

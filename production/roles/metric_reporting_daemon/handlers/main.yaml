@@ -1,25 +1,3 @@
-- name: Get git tag
-  ansible.builtin.shell:
-    chdir: "{{metric_reporting_daemon.install_dir}}"
-    cmd: |
-      # Output to stdout the SHA1, branch and tag on separate lines.  The tag entry may be blank.
-      git rev-parse HEAD
-      git rev-parse --abbrev-ref HEAD
-      git tag --list --points-at HEAD --sort=-v:refname
-  register: metric_reporting_daemon_git_tag
-  listen: Tag metric_reporting_daemon image with git tag
-
-- name: Tag docker image
-  vars:
-    tag: "{{ (metric_reporting_daemon_git_tag.stdout_lines | length >= 3) | ternary(metric_reporting_daemon_git_tag.stdout_lines[2], None) }}"
-  community.docker.docker_image:
-    name: "{{metric_reporting_daemon.docker_image.name}}:latest"
-    repository: "{{metric_reporting_daemon.docker_image.name}}:{{tag}}"
-    source: local
-    state: present
-  listen: Tag metric_reporting_daemon image with git tag
-  when: tag is defined
-
 - name: Stop metric_reporting_daemon container
   ansible.builtin.shell:
     chdir: "{{ct_docker_dir}}"

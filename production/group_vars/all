@@ -70,7 +70,7 @@ metric_reporting_daemon:
   install_dir: "{{ct_installation_dir}}/metric-reporting-daemon"
   source:
     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-metric-reporting-daemon"
-    commitish: main
+    commitish: enh/better-all-in-one-build-support
   docker_image:
     name: concertim-metric-reporting-daemon
 
@@ -78,7 +78,7 @@ visualisation_app:
   install_dir: "{{ct_installation_dir}}/visualisation-app"
   source:
     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-ct-visualisation-app"
-    commitish: main
+    commitish: enh/better-all-in-one-build-support
   docker_image:
     name: concertim-visualisation-app
 
@@ -98,7 +98,7 @@ cluster_builder:
   install_dir: "{{ct_installation_dir}}/cluster-builder"
   source:
     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-cluster-builder"
-    commitish: main
+    commitish: enh/better-all-in-one-build-support
   docker_image:
     name: concertim-cluster-builder
 

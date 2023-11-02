@@ -1,16 +1,3 @@
-- name: Build docker image
-  community.docker.docker_image:
-    name: "{{proxy.docker_image.name}}"
-    build:
-      path: "{{proxy.install_dir}}"
-      dockerfile: "{{proxy.docker_image.dockerfile | default('Dockerfile')}}"
-      args: "{{proxy.docker_image.args | default({})}}"
-      network: host
-      # http_timeout: 60
-    source: build
-    state: present
-    force_source: true
-
 - name: Stop proxy container
   ansible.builtin.shell:
     chdir: "{{ct_docker_dir}}"

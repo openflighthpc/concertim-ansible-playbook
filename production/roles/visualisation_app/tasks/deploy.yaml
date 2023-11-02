@@ -17,18 +17,16 @@
   ansible.builtin.command:
     cmd: git config --global --add safe.directory "{{visualisation_app.install_dir}}"
 
+- name: Set git checkout and docker image facts
+  vars:
+    component: visualisation_app
+    install_dir: "{{visualisation_app.install_dir}}"
+  import_tasks: gather_git_and_docker_facts.yaml
+
 - name: Build docker image
-  community.docker.docker_image:
-    name: "{{visualisation_app.docker_image.name}}"
-    build:
-      path: "{{visualisation_app.install_dir}}"
-      dockerfile: "{{visualisation_app.docker_image.dockerfile | default('Dockerfile')}}"
-      args: "{{visualisation_app.docker_image.args | default({})}}"
-      network: host
-      # http_timeout: 60
-    source: build
-    state: present
+  vars:
+    component: visualisation_app
     force_source: "{{visualisation_app_checkout.changed}}"
-  notify:
-    - "Tag visualisation_app image with git tag"
-    - "Stop visualisation container"
+    notifications:
+      - "Stop visualisation container"
+  import_tasks: build_docker_image.yaml

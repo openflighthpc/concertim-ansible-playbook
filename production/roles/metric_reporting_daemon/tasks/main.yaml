@@ -34,18 +34,16 @@
     src: gmetad.conf
     dest: "{{ct_etc_dir}}/metric-reporting-daemon/"
 
+- name: Set git checkout and docker image facts
+  vars:
+    component: metric_reporting_daemon
+    install_dir: "{{metric_reporting_daemon.install_dir}}"
+  import_tasks: gather_git_and_docker_facts.yaml
+
 - name: Build docker image
-  community.docker.docker_image:
-    name: "{{metric_reporting_daemon.docker_image.name}}"
-    build:
-      path: "{{metric_reporting_daemon.install_dir}}"
-      dockerfile: "{{metric_reporting_daemon.docker_image.dockerfile | default('Dockerfile')}}"
-      args: "{{metric_reporting_daemon.docker_image.args | default({})}}"
-      network: host
-      # http_timeout: 60
-    source: build
-    state: present
+  vars:
+    component: metric_reporting_daemon
     force_source: "{{metric_reporting_daemon_checkout.changed}}"
-  notify:
-    - "Tag metric_reporting_daemon image with git tag"
-    - "Stop metric_reporting_daemon container"
+    notifications:
+      - "Stop metric_reporting_daemon container"
+  import_tasks: build_docker_image.yaml
