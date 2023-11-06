@@ -7,13 +7,12 @@ development of Concertim.
 
 ## Deploying Alces Concertim
 
-To deploy Alces Concertim, visit the [releases
-page](https://github.com/alces-flight/concertim-ansible-playbook/releases) and
-select the release you want to deploy. The release notes for that release will
-contain instructions for deploying Concertim as Docker containers.
+You are viewing the development version of Alces Concertim Ansible Playbook.
+To deploy this version of Alces Concertim follow [these
+instructions](production/README.md).
 
-Alternatively, if you are looking to build from the `main` branch,
-follow [these instructions](production/README.md).
+To deploy a released version of Alces Concertim select the tag for that
+release and follow the deployment instructions there.
 
 ## Developing
 
