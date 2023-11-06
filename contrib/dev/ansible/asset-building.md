@@ -42,7 +42,7 @@ The [Vagrantfile](/contrib/dev/vagrant/Vagrantfile) contains an `asset-build` bo
 be used to build the assets.
 
 If building dev assets bring the box up with `vagrant up asset-build`.  The
-ansible scripts will then be available on that box at `/ansible` skipping the
+ansible scripts will then be available on that box at `/ansible-dev` skipping the
 need to clone the git repository.
 
 If building release assets bring the box up with `ACCEPTANCE=true vagrant up
@@ -110,7 +110,7 @@ RELEASE_TAG="main"  # or "v0.1.0"
 ```bash
 cd /root
 git clone https://${GH_TOKEN}@github.com/alces-flight/concertim-ansible-playbook.git
-ln -s /root/concertim-ansible-playbook/ansible /ansible
+ln -s /root/concertim-ansible-playbook/ansible /ansible-dev
 cd /root/concertim-ansible-playbook
 echo "Using tag ${RELEASE_TAG}"
 git checkout --quiet ${RELEASE_TAG}
@@ -128,8 +128,8 @@ GH_TOKEN=...
 ```
 
 ```bash
-ansible-playbook /ansible/package-assets-playbook.yml \
-  --inventory /ansible/inventory.ini \
+ansible-playbook /ansible-dev/package-assets-playbook.yml \
+  --inventory /ansible-dev/inventory.ini \
   --extra-vars "gh_token=$GH_TOKEN" \
   --extra-vars "aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY"
 ```
@@ -141,8 +141,8 @@ with a `dev-...` prefix.
 If that looks OK upload the assets by running the following:
 
 ```bash
-ansible-playbook /ansible/package-assets-playbook.yml \
-  --inventory /ansible/inventory.ini \
+ansible-playbook /ansible-dev/package-assets-playbook.yml \
+  --inventory /ansible-dev/inventory.ini \
   --extra-vars "gh_token=$GH_TOKEN" \
   --extra-vars "aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
   --extra-vars "dryrun=no" \

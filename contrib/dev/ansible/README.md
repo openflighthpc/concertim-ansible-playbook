@@ -1,6 +1,6 @@
 # Building and configuring Alces Concertim
 
-This directory contains ansible playbooks to build an Alces Concertim machine
+This directory contains an ansible playbook to build an Alces Concertim machine
 suitable for developing the Metric Reporting Daemon and Visualisation App
 Concertim components.
 
@@ -13,8 +13,7 @@ If you are looking for a production deployment of Concertim, see the
 Concertim as a set of Docker containers.
 
 The instructions here will work for the current `main` branch, your milage may
-vary with other versions.  You probably want to use the instructions for a
-ragged release e.g., `v0.2.1`.
+vary with other versions.
 
 ## Prerequisites
 
@@ -82,7 +81,7 @@ credentials to clone it.
 RELEASE_TAG="main"
 cd /root
 git clone https://${GH_TOKEN}@github.com/alces-flight/concertim-ansible-playbook.git
-ln -s /root/concertim-ansible-playbook/ansible /ansible
+ln -s /root/concertim-ansible-playbook/contrib/dev/ansible /ansible-dev
 cd /root/concertim-ansible-playbook
 echo "Using tag ${RELEASE_TAG}"
 git checkout --quiet ${RELEASE_TAG}
@@ -100,7 +99,7 @@ AWS_SECRET_ACCESS_KEY=...
 
 ```bash
 ansible-playbook \
-  --inventory /ansible/inventory.ini \
+  --inventory /ansible-dev/inventory.ini \
   --extra-vars "aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
-  /ansible/build-playbook.yml
+  /ansible-dev/build-playbook.yml
 ```

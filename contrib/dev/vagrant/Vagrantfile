@@ -6,7 +6,7 @@ CT_SRC_DIR = [ ENV['FLIGHT_CODE'], "#{ENV['HOME']}/projects/concertim/src" ]
 # DEV_ANSIBLE_DIR contains the path to the old ansible playbook.  The old
 # playbook is now only used to setup a development environment for developing
 # concertim components and will eventually disappear.
-DEV_ANSIBLE_DIR="../../../ansible"
+DEV_ANSIBLE_DIR="../ansible"
 
 # PROD_ANSIBLE_DIR contains the path to the new ansible playbook.  The new
 # playbook is currently used to setup a production environment.  Eventually, it
