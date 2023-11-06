@@ -14,7 +14,7 @@ used for asset building (see [asset-building.md](../ansible/asset-building.md)).
 ## Quick start
 
 ```sh
-cd vagrant
+cd contrib/dev/vagrant
 ./scripts/rebuild-box.sh dev1
 ```
 
@@ -41,7 +41,7 @@ preparation is split into the following Vagrant provisioners, `swap` and
 `install_ansible`. These can be ran with:
 
 ```sh
-cd vagrant/
+cd contrib/dev/vagrant/
 vagrant up --no-provision BOX_NAME
 vagrant provision --provision-with swap BOX_NAME
 vagrant provision --provision-with install_ansible BOX_NAME
@@ -53,7 +53,7 @@ This will build a new Concertim machine automating an ansible run of the build
 playbook. The two concertim apps will be launched in production mode.
 
 ```
-cd vagrant/
+cd contrib/dev/vagrant/
 source scripts/prepare-env.sh
 vagrant provision --provision-with run_build_playbook BOX_NAME
 ```
@@ -67,7 +67,7 @@ the `ansible` directory on the machine; and (3) not run the ansible playbooks.
 This should be done before cutting a new release.
 
 ```
-cd vagrant/
+cd contrib/dev/vagrant/
 vagrant destroy BOX_NAME
 ACCEPTANCE=true vagrant up --provision-with swap BOX_NAME
 ```
@@ -106,13 +106,13 @@ machine by following the instructions above, then configure it to run in develop
 2. In this repo, build a vagrant machine (either `dev1` or `dev2`), if not already built:
 
    ```
-   cd vagrant
+   cd contrib/dev/vagrant
    ./scripts/rebuild-box.sh dev1
    ```
 
 3. SSH into the vagrant box and install the appliance-dev role:
    ```
-   cd vagrant
+   cd contrib/dev/vagrant
    vagrant ssh dev1
    sudo su -
    /vagrant/scripts/run-dev-playbook.sh --tags appliance-dev --extra-vars want_dev_build=true

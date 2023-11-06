@@ -20,4 +20,4 @@ For details on how to develop and test the ansible deployment playbook see
 [production DEVELOPMENT](production/DEVELOPMENT.md).
 
 If you are looking for details on how to develop the Concertim services
-themselves see the [vagrant README](vagrant/README.md).
+themselves see the [vagrant README](contrib/dev/vagrant/README.md).

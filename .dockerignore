@@ -2,5 +2,5 @@
 *.vmdk
 README.md
 tmp/
-vagrant/
+contrib/dev/vagrant/
 ansible/tmp/

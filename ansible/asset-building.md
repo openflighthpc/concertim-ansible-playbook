@@ -10,7 +10,7 @@ available for it in S3.  These assets are built by running the
   CPUs.  This machine will become the Alces Concertim machine.
 * Root access on that Ubuntu machine.
 
-The [Vagrantfile](/vagrant/Vagrantfile) contains an `asset-build` box which can
+The [Vagrantfile](/contrib/dev/vagrant/Vagrantfile) contains an `asset-build` box which can
 be used for this.
 
 ## Overview
@@ -38,7 +38,7 @@ To build dev assets:
 
 ## Asset build vagrant box
 
-The [Vagrantfile](/vagrant/Vagrantfile) contains an `asset-build` box which can
+The [Vagrantfile](/contrib/dev/vagrant/Vagrantfile) contains an `asset-build` box which can
 be used to build the assets.
 
 If building dev assets bring the box up with `vagrant up asset-build`.  The
