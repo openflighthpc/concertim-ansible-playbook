@@ -1,8 +1,11 @@
-# Building and configuring Alces Concertim
+# Creating a development environment for developing the Concertim Services
 
 This directory contains an ansible playbook to build an Alces Concertim machine
 suitable for developing the Metric Reporting Daemon and Visualisation App
-Concertim components.
+components.  It is not intended for a production deployment.
+
+The easiest way to use this playbook is to follow the instructions at [contrib/dev/README.md](/contrib/dev/README.md).
+If those instructions don't work for you, continue reading.
 
 Following the instructions here will result in a single VM machine running
 development deployments of the Metric Reporting Daemon and Visualisation App
@@ -27,34 +30,22 @@ vary with other versions.
 The process is as follows.  Steps 2 through 5 are to be ran in the root shell
 obtained in step 1.  They are described in more detail below.
 
-1. Log into the virtual machine that is going to become the Concertim appliance
-   and gain root access.
-2. Gather GitHub and S3 credentials.
-3. Install ansible and dependencies.
-4. Clone this git repository and checkout the correct tag.
-5. Run the build playbook.
+1. Log into the virtual machine that is going to become your Concertim
+   development appliance and gain root access.
+2. Install ansible and dependencies.
+3. Clone this git repository and checkout the correct tag.
+4. Run the build playbook.
 
-## Gather GitHub and S3 credentials
+## Gather GitHub
 
-You will need GitHub credentials to clone this repository.
-
-You will also need S3 credentials to allow the playbook to download packages
-from S3.  The credentials need to allow downloading from
-`s3://alces-flight/concertim/packages`.
+You will need GitHub credentials to clone this repository, the metric reporting
+daemon and the visualisation app repositories.
 
 Obtaining these credentials is left as an exercise for the reader.
 
-The following code snippets assume that these credentials are available in the
-following environment variables.  If they are you can copy and paste the code
+The following code snippets assumes that the credentials are available in the
+`GH_TOKEN` environment variables.  If they are you can copy and paste the code
 snippets.
-
-* `AWS_ACCESS_KEY_ID` is your AWS access key id allowing downloading from
-  the S3 bucket mentioned above.
-* `AWS_SECRET_ACCESS_KEY` is your secret AWS access key allowing downloading
-  from the S3 bucket mentioned above.
-* `GH_TOKEN` is your GitHub oath token that allows access to the
-  `alces-flight/concertim-ansible-playbook` repository.
-
 
 ## Install ansible
 
@@ -67,39 +58,31 @@ add-apt-repository --yes ppa:ansible/ansible
 apt install --yes ansible
 ```
 
+## Clone the needed git repositories
 
-## Clone this git repository and checkout the correct tag
-
-This git repository contains the ansible playbook to build and configure Alces
-Concertim.  The playbook is intended to be ran on the Concertim machine itself.
-To that end it needs to be downloaded to the Concertim machine.
-
-This git repository is a private repository, so you will need to provide
-credentials to clone it.
+Clone this git repository onto the virutal machine that is going to become your
+development environment. This git repository is a private repository, so you
+will need to provide credentials to clone it.
 
 ```bash
-RELEASE_TAG="main"
 cd /root
-git clone https://${GH_TOKEN}@github.com/alces-flight/concertim-ansible-playbook.git
+git clone git@github.com:alces-flight/concertim-ansible-playbook.git
 ln -s /root/concertim-ansible-playbook/contrib/dev/ansible /ansible-dev
-cd /root/concertim-ansible-playbook
-echo "Using tag ${RELEASE_TAG}"
-git checkout --quiet ${RELEASE_TAG}
+```
+
+Clone the metric reporting daemon and visualisation app repositories
+
+```sh
+mkdir -p /opt/concertim/dev
+cd /opt/concertim/dev
+git clone git@github.com:alces-flight/concertim-metric-reporting-daemon.git ct-metric-reporting-daemon
+git clone git@github.com:alces-flight/concertim-ct-visualisation-app.git ct-visualisation-app
 ```
 
 ## Run the build playbook
 
-Run the build playbook. You will need to ensure that your AWS credentials have
-been gathered and exported.
-
-```
-AWS_ACCESS_KEY_ID=...
-AWS_SECRET_ACCESS_KEY=...
-```
-
 ```bash
 ansible-playbook \
   --inventory /ansible-dev/inventory.ini \
-  --extra-vars "aws_access_key_id=$AWS_ACCESS_KEY_ID aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
-  /ansible-dev/build-playbook.yml
+  /ansible-dev/dev-playbook.yml
 ```
