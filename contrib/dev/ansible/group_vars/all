@@ -1,29 +1,7 @@
 # ==================================================
-# Release tag
-#
-# Used in configuring tags, S3 prefixes etc. for the installed assets.  E.g.,
-# `v8.0.0`, `resurect-10` or `dev-2022-11-28`.
-release_tag: "dev-{{ansible_date_time.date}}"
-# release_tag: "v0.2.1"
-
-# ==================================================
-# S3 variables
-#
-# Some of our assets are stored in S3.  These are common variables for
-# accessing them.
-s3_bucket: alces-flight
-s3_packages_prefix:      /concertim/packages/{{release_tag}}/
-s3_appliances_prefix:    /concertim/packages/{{release_tag}}/appliances/
-s3_daemons_prefix:       /concertim/packages/{{release_tag}}/daemons/
-
-# ==================================================
 # Hostnames at which our various services can be found
 metrics_host: 127.0.0.1
 visualisation_host: 127.0.0.1
-
-# The following are expected to be provided as `--extra-args` from the CLI.
-# aws_access_key_id
-# aws_secret_access_key
 
 # ==================================================
 # Ruby variables
@@ -50,9 +28,3 @@ ct_root_dir: /opt/concertim
 ct_installation_dir: /opt/concertim/opt
 # The directory into which some of the ct configuration can be found.
 ct_etc_dir: /opt/concertim/etc
-
-# ==================================================
-# Configuration for which parts of the build we want.
-
-# Set to true to configure for a development build.
-want_dev_build: false

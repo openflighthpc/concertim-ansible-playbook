@@ -36,4 +36,3 @@
     name: monit
     state: restarted
     enabled: yes
-  when: not docker_build | bool

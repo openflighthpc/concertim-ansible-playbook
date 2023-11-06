@@ -20,7 +20,6 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 BUILD_ENV=${BUILD_ENV:-dev}
 
 cd "${SCRIPT_DIR}"/..
-source "${SCRIPT_DIR}"/prepare-env.sh
 vagrant destroy --force "${BOX_NAME}"
 
 # FSR, this is much more reliable if separated into multiple separate runs.

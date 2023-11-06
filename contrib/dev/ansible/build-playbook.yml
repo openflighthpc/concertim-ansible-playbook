@@ -5,18 +5,7 @@
   become_user: root
   become_method: sudo
 
-  vars:
-    docker_build: false
-
   pre_tasks:
-    - name: Check credentials and release tag
-      tags: prep
-      vars:
-        credentials:
-          - aws_access_key_id
-          - aws_secret_access_key
-      include_tasks: tasks/assert_credentials_and_release_tag.yml
-
     - name: Make installation directories
       tags: prep
       ansible.builtin.file:
@@ -54,12 +43,9 @@
       tags: webserver
     - role: database
       tags: database
-      when: not docker_build | bool
     - role: ganglia
       tags: ganglia
     - role: appliance-dev
       tags: appliance-dev
-      when: want_dev_build | bool
     - role: monit
       tags: monit
-      when: not docker_build | bool

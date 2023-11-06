@@ -29,10 +29,6 @@ E.g. `2023-08-07'.
 - Obtain a GitHub auth token and export it to the environment variable `GH_TOKEN`
 - Obtain S3 credentials that allow you to download packages from `s3://alces-flight/concertim/packages`.
 Export these to the environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
-- Alternatively, if you have already configured `aws` on your machine with the necessary credentials,
-you can run `/scripts/prepare-env.sh` to export the key and id as defined in your aws setup. This will also
-look for a file `../ansible/secrets.enc` (which you would need to manually create and populate) and export
-a github token if present (defined in the secrets file as `GH_TOKEN=<my github token>`).
 
 #### Box setup
 
@@ -54,7 +50,6 @@ playbook. The two concertim apps will be launched in production mode.
 
 ```
 cd contrib/dev/vagrant/
-source scripts/prepare-env.sh
 vagrant provision --provision-with run_build_playbook BOX_NAME
 ```
 
@@ -110,16 +105,8 @@ machine by following the instructions above, then configure it to run in develop
    ./scripts/rebuild-box.sh dev1
    ```
 
-3. SSH into the vagrant box and install the appliance-dev role:
-   ```
-   cd contrib/dev/vagrant
-   vagrant ssh dev1
-   sudo su -
-   /vagrant/scripts/run-dev-playbook.sh --tags appliance-dev --extra-vars want_dev_build=true
-   ```
-
-The `appliance-dev` will run the `ct-vis-app` and `ct-metrics` apps in separate
-screen session.  They can be connected to with `screen -r ct-vis-app` and
+The `ct-vis-app` and `ct-metrics` apps will be running in development mode in separate
+screen sessions.  They can be connected to with `screen -r ct-vis-app` and
 `screen -r ct-metrics` respectively.
 
 If the box is rebooted the screen sessions will need to be restarted.  SSH into
