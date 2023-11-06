@@ -47,5 +47,3 @@
       tags: ganglia
     - role: appliance-dev
       tags: appliance-dev
-    - role: monit
-      tags: monit
