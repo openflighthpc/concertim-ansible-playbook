@@ -57,10 +57,6 @@
       when: not docker_build | bool
     - role: ganglia
       tags: ganglia
-    - role: metric-reporting
-      tags: metric-reporting
-    - role: ct-visualisation-app
-      tags: ct-visualisation-app
     - role: appliance-dev
       tags: appliance-dev
       when: want_dev_build | bool

@@ -9,18 +9,6 @@
     cmd: go build -o ./tmp/reporting ./cmd/reporting/
     chdir: "{{dev_root_dir}}/ct-metric-reporting-daemon"
 
-- name: unmonitor metric daemons
-  ansible.builtin.command:
-    cmd: monit unmonitor -g ct-metrics
-
-- name: Disable production metric daemon
-  ansible.builtin.service:
-    name: "{{item}}"
-    state: stopped
-    enabled: no
-  loop:
-    - ct-metric-reporting-daemon
-
 - name: Install air
   ansible.builtin.shell:
     cmd: |

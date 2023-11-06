@@ -1,3 +1,15 @@
+- name: Install build dependencies
+  register: result
+  until: result is success
+  ansible.builtin.apt:
+    name:
+      - ruby3.0-dev
+      - autoconf
+      - bison
+      - build-essential
+      - libpq-dev
+      - libyaml-dev
+
 - name: Check for dev installation
   ansible.builtin.command:
     cmd: ls -d {{dev_root_dir}}/ct-visualisation-app
@@ -16,24 +28,29 @@
     cd {{dev_root_dir}}/ct-visualisation-app/
     yarn
 
-# - name: unmonitor ct-vis-app
-#   ansible.builtin.command:
-#     cmd: monit unmonitor ct-visualisation-app
-
-
-- name: Disable production ct-visualisation-app
-  ansible.builtin.service:
-    name: "{{item}}"
-    state: stopped
-    enabled: no
-  loop:
-    - ct-visualisation-app
-    - ct-visualisation-job-runner
-
-
 - name: Workaround git and vboxfs issue
   ansible.builtin.command:
     cmd: git config --global --add safe.directory /opt/concertim/dev/ct-visualisation-app
+
+- name: Install licence-limits.yml
+  ansible.builtin.template:
+    src:  licence-limits.yml
+    dest: "{{ct_etc_dir}}"
+    owner: root
+    group: "{{app_user}}"
+    mode: "644"
+
+- name: Configure database user
+  block:
+    - name: Check if {{ app_user }} role exists
+      ansible.builtin.command:
+        cmd: sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='{{ app_user }}'"
+      register: db_user_exist
+
+    - name: Create {{ app_user }} role
+      when: db_user_exist.stdout == ""
+      ansible.builtin.command:
+        cmd: sudo -u postgres createuser {{ app_user }} -S -R -d
 
 - name: Create database
   vars:
