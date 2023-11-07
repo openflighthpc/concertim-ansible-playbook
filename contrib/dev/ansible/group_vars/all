@@ -4,19 +4,6 @@ metrics_host: 127.0.0.1
 visualisation_host: 127.0.0.1
 
 # ==================================================
-# Ruby variables
-
-# The directory containing Ruby version 3.0.
-ruby_30_bin_dir: /usr/bin
-
-
-# ==================================================
-# Rails variables
-#
-rails_env: production
-
-
-# ==================================================
 # General variables
 #
 # The name of (1) the unix user used to run our rails apps; (2) the database
