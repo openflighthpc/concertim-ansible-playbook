@@ -1,7 +1,7 @@
 # Deploying Alces Concertim as a set of Docker containers
 
-This directory contains an ansible playbook that will deploy the Alces
-Concertim services as a set of Docker containers.
+This directory contains an ansible playbook that will deploy the latest development version
+of the Alces Concertim services as a set of Docker containers.
 
 ## Quick start
 
@@ -10,9 +10,9 @@ Concertim services as a set of Docker containers.
   `docker-compose-plugin` installed.
 * Make a GitHub token available in the `GH_TOKEN` environment variable.
 * Gain a root shell on the target machine.
-* Clone the github repo to `/opt/concertim/ansible-playbook` and checkout the `main` branch.
+* Clone the github repo to `/opt/concertim/ansible-playbook` and checkout the `v0.2.2` branch.
   ```bash
-  RELEASE_TAG="main"
+  RELEASE_TAG="v0.2.2"
   mkdir -p /opt/concertim/opt
   cd /opt/concertim/opt
   git clone -n --depth=1 --filter=tree:0 --no-single-branch \
@@ -67,7 +67,7 @@ The steps for installing are briefly:
 
 ### Configure OpenStack with users and roles
 
-Concertim expects certain users and roles to be configure in OpenStack.
+Concertim expects certain users and roles to be configured in OpenStack.
 Currently, this needs to be done outside of this installation mechanism.
 See https://github.com/alces-flight/concertim-openstack-service/tree/master#openstack for details of the users and roles to configure.
 
@@ -87,12 +87,13 @@ snippets.
 Clone this github repo to the machine that will run the ansible playbook.
 The repo is a private repo,
 so you will need to have a github token available in the `GH_TOKEN` environment variable.
-The following snippet will clone the `main` branch of the repo to `/opt/concertim/ansible-playbook`, 
+The following snippet will clone the `v0.2.2` branch of the repo to `/opt/concertim/ansible-playbook`,
 it is also careful to avoid downloading more data than is needed.
-If you wish to use a branch other than `main`, change the `RELEASE_TAG` appropriately.
+If you wish to install an alternate release, you should follow the instructions for that release.
+If you wish to install the development version, you should follow the instructions for the `main` branch.
 
 ```bash
-RELEASE_TAG="main"
+RELEASE_TAG="v0.2.2"
 mkdir -p /opt/concertim/opt
 cd /opt/concertim/opt
 git clone -n --depth=1 --filter=tree:0 --no-single-branch \
@@ -259,7 +260,7 @@ New cluster type definitions can be added by adding the definition to
 and then creating a *relative* symlink to
 `/opt/concertim/usr/share/cluster-builder/cluster-types-enabled`.
 
-Cluster type definitions can be disabled by removing the symlink from 
+Cluster type definitions can be disabled by removing the symlink from
 `/opt/concertim/usr/share/cluster-builder/cluster-types-enabled`.
 
 Both changes will be picked up without need to restart the cluster builder
