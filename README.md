@@ -17,7 +17,7 @@ release and follow the deployment instructions there.
 ## Developing
 
 For details on how to develop and test the ansible deployment playbook see
-[ansible/DEVELOPMENT.md](ansible/DEVELOPMENT.md).
+[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
 If you are looking for details on how to develop the Concertim services
 themselves see the [vagrant README](contrib/dev/vagrant/README.md).
