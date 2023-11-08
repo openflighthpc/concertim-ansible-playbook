@@ -1,0 +1,5 @@
+- name: Stop db container
+  ansible.builtin.shell:
+    chdir: "{{ct_docker_dir}}"
+    cmd: |
+      docker compose down db

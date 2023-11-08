@@ -10,24 +10,53 @@
   ansible.builtin.template:
     src: default.conf
     dest: "{{proxy.install_dir}}/nginx/conf.d/default.conf"
+  notify:
+    - "Stop proxy container"
 
 - name: Install nginx reverse proxy configuration
   ansible.builtin.copy:
     src: nginx
     dest: "{{proxy.install_dir}}/"
+  notify:
+    - "Stop proxy container"
 
 - name: Install nginx reverse proxy Dockerfile
   ansible.builtin.template:
     src: Dockerfile
     dest: "{{proxy.install_dir}}/"
+  notify:
+    - "Stop proxy container"
+
+- name: Install SSL certificates
+  block:
+    - name: Make SSL directories
+      ansible.builtin.file:
+        path: "{{proxy.install_dir}}/{{proxy.ssl.key_host_path | dirname}}"
+        owner: root
+        group: root
+        mode: "755"
+        state: directory
+    - name: Generate self-signed private key
+      community.crypto.openssl_privatekey:
+        path: "{{proxy.install_dir}}/{{proxy.ssl.key_host_path}}"
+        state: present
+    - name: Create simple self-signed certificate
+      community.crypto.x509_certificate:
+        path: "{{proxy.install_dir}}/{{proxy.ssl.crt_host_path}}"
+        privatekey_path: "{{proxy.install_dir}}/{{proxy.ssl.key_host_path}}"
+        provider: selfsigned
+        state: present
+      notify:
+        - "Stop proxy container"
 
 - name: Build docker image
-  community.docker.docker_image:
-    name: "{{proxy.docker_image.name}}"
-    build:
-      path: "{{proxy.install_dir}}"
-      dockerfile: "{{proxy.docker_image.dockerfile | default('Dockerfile')}}"
-      args: "{{proxy.docker_image.args | default({})}}"
-      network: host
-      # http_timeout: 60
-    source: build
+  vars:
+    component: proxy
+    force_source: true
+    notifications:
+      - "Stop proxy container"
+    # XXX See if we can grab these from the concertim-ansible-playbook repo somehow.
+    build_version: ""
+    build_revision: ""
+    docker_image_tag: "latest"
+  import_tasks: build_docker_image.yaml

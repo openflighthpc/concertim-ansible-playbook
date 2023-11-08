@@ -1,0 +1,5 @@
+- name: Stop proxy container
+  ansible.builtin.shell:
+    chdir: "{{ct_docker_dir}}"
+    cmd: |
+      docker compose down proxy

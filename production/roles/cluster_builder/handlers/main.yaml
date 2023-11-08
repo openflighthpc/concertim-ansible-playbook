@@ -1,0 +1,5 @@
+- name: Stop cluster_builder container
+  ansible.builtin.shell:
+    chdir: "{{ct_docker_dir}}"
+    cmd: |
+      docker compose down cluster_builder

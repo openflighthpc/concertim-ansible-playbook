@@ -153,8 +153,7 @@ docker compose restart
 
 ## Image and container overview
 
-Five services comprising Concertim are created by the playbook.
-The services are:
+A number of containers comprising Concertim are created by the playbook.
 
 If the concertim components are enabled, the following containers will be installed:
 

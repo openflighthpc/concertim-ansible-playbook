@@ -7,6 +7,7 @@
     version: "{{cluster_builder.source.commitish}}"
   environment:
     GIT_TERMINAL_PROMPT: 0
+  register: cluster_builder_checkout
 
 # We need the following as the directory is owned by root, but not all git
 # commands are executed as root.
@@ -51,13 +52,16 @@
         state: link
       loop: "{{ query('fileglob', available_dir+'/*.yaml') }}"
 
+- name: Set git checkout and docker image facts
+  vars:
+    component: cluster_builder
+    install_dir: "{{cluster_builder.install_dir}}"
+  import_tasks: gather_git_and_docker_facts.yaml
+
 - name: Build docker image
-  community.docker.docker_image:
-    name: "{{cluster_builder.docker_image.name}}"
-    build:
-      path: "{{cluster_builder.install_dir}}"
-      dockerfile: "{{cluster_builder.docker_image.dockerfile | default('Dockerfile')}}"
-      args: "{{cluster_builder.docker_image.args | default({})}}"
-      network: host
-      # http_timeout: 60
-    source: build
+  vars:
+    component: cluster_builder
+    force_source: "{{cluster_builder_checkout.changed}}"
+    notifications:
+      - "Stop cluster_builder container"
+  import_tasks: build_docker_image.yaml
