@@ -4,7 +4,7 @@ set -e
 set -o pipefail
 
 ansible-playbook \
-  --inventory /ansible-prod/inventory.ini \
+  --inventory /ansible/inventory.ini \
   --extra-vars "gh_token=$GH_TOKEN" \
-  --extra-vars @/ansible-prod/etc/globals.yaml \
-  /ansible-prod/playbook.yml "$@"
+  --extra-vars @/ansible/etc/globals.yaml \
+  /ansible/playbook.yml "$@"

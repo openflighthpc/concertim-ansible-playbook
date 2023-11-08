@@ -11,7 +11,7 @@ DEV_ANSIBLE_DIR="../ansible"
 # PROD_ANSIBLE_DIR contains the path to the new ansible playbook.  The new
 # playbook is currently used to setup a production environment.  Eventually, it
 # will also setup an environment for developing the concertim components.
-PROD_ANSIBLE_DIR="../../../production"
+PROD_ANSIBLE_DIR="../../../ansible"
 
 MACHINES = [
   {
@@ -64,7 +64,7 @@ Vagrant.configure("2") do |config|
         run: "never"
 
       if ENV['BUILD_ENV'] == 'prod'
-        v.vm.synced_folder PROD_ANSIBLE_DIR, "/ansible-prod"
+        v.vm.synced_folder PROD_ANSIBLE_DIR, "/ansible"
       else
         v.vm.synced_folder DEV_ANSIBLE_DIR, "/ansible-dev"
         if File.directory?(CT_SRC_DIR)

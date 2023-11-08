@@ -12,7 +12,7 @@ development deployments of the Metric Reporting Daemon and Visualisation App
 along with any services they require.
 
 If you are looking for a production deployment of Concertim, see the
-[production README](/production/README.md), for details on how to build
+[these instructions](/ansible/README.md), for details on how to build
 Concertim as a set of Docker containers.
 
 The instructions here will work for the current `main` branch, your milage may
