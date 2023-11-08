@@ -16,14 +16,7 @@ and Visualisation App components.
    git clone git@github.com:alces-flight/concertim-ct-visualisation-app.git ct-visualisation-app
    ```
 
-2. Configure the concertim visualisation app.  Create the needed credentials and secret keys:
-   ```sh
-   cd ~/projects/concertim/src/ct-visualisation-app
-   EDITOR=nano rails credentials:edit
-   rails db:encryption:init
-   ```
-
-3. Build the vagrant machine `dev1`:
+2. Build the vagrant machine `dev1`:
    ```sh
    cd contrib/dev/vagrant
    ./scripts/rebuild-box.sh dev1

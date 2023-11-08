@@ -6,6 +6,8 @@
       if [ ! -f {{document_root}} -a -f {{document_root}}.disabled ] ; then
         # Looks like we've already ran this.
         :
+      elif [ ! -f {{document_root}} ] ; then
+        echo "/etc/nginx/snippets/server-https.d/document-root.conf not found. Unable to disable"
       else
         mv {{document_root}} {{document_root}}.disabled
       fi

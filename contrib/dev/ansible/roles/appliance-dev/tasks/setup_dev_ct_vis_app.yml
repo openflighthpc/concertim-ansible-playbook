@@ -40,6 +40,28 @@
     group: "{{app_user}}"
     mode: "644"
 
+- name: Ensure credentials exist
+  vars:
+    credentials_path: "{{dev_root_dir}}/ct-visualisation-app/config/credentials.yml.enc"
+  block:
+    - name: Check for existing credentials
+      ansible.builtin.stat:
+        path: "{{credentials_path}}"
+      register: credentials_file
+
+    - name: Create credentials
+      when: not credentials_file.stat.exists
+      ansible.builtin.shell:
+        chdir: "{{dev_root_dir}}/ct-visualisation-app/"
+        cmd: |
+          EDITOR=cat ./bin/rails credentials:edit
+
+    - name: Generate encryption keys
+      ansible.builtin.shell:
+        chdir: "{{dev_root_dir}}/ct-visualisation-app/"
+        cmd: |
+          ./bin/rake encryption:generate
+
 - name: Configure database user
   block:
     - name: Check if {{ app_user }} role exists

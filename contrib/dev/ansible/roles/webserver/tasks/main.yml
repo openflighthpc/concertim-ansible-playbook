@@ -18,7 +18,7 @@
     src:  "{{ item }}"
     dest: "/etc/{{ item }}"
   loop:
-    - nginx/snippets/server-https.d/document-root.conf
+    # - nginx/snippets/server-https.d/document-root.conf
     - nginx/snippets/server-https.d/metric-reporting-daemon.conf
     - nginx/snippets/server-https.d/zzz-ct-visualisation-app.conf
 
