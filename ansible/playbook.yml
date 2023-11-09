@@ -85,6 +85,10 @@
       tags: openstack_service
       when: enable_openstack_service | bool
 
+    - role: killbill
+      tags: killbill
+      when: enable_killbill | bool
+
   tasks:
     - name: Install docker compose file
       ansible.builtin.template:
@@ -114,9 +118,16 @@
     # Ensure all services are up.  If any needed restarting they will have been
     # downed in the previous plays, all that needs to happen here is ensure
     # they're up.
-    - name: Start services
+    - name: Start concertim services
       tags: always
       ansible.builtin.shell:
         chdir: "{{ct_docker_dir}}"
+        cmd: |
+          docker compose up --detach
+
+    - name: Start killbill
+      tags: always
+      ansible.builtin.shell:
+        chdir: "{{ct_installation_dir}}/killbill"
         cmd: |
           docker compose up --detach

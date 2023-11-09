@@ -1,0 +1,14 @@
+- name: Make installation directories
+  ansible.builtin.file:
+    path: "{{killbill.install_dir}}"
+    owner: root
+    group: root
+    mode: "755"
+    state: directory
+
+- name: Install docker compose file
+  ansible.builtin.template:
+    src: docker-compose.yml
+    dest: "{{killbill.install_dir}}"
+  notify:
+    - "Stop killbill containers"
