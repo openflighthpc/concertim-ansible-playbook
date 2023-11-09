@@ -6,8 +6,9 @@ of the Alces Concertim services as a set of Docker containers.
 ## Quick start
 
 * Configure required OpenStack users and roles.  See https://github.com/alces-flight/concertim-openstack-service/tree/master#openstack for details.
-* Ensure the target machine has `ansible-playbook`, `docker` and
-  `docker-compose-plugin` installed.
+* Ensure the target machine has `ansible-playbook` `>= 2.10.8`, `docker` `>=
+  24.0.7`, `docker-compose-plugin` `>= v2.21.0`, and the Python3 Docker libraries
+  (`python3-docker` on Ubuntu).
 * Make a GitHub token available in the `GH_TOKEN` environment variable.
 * Gain a root shell on the target machine.
 * Clone the github repo to `/opt/concertim/ansible-playbook` and checkout the `main` branch.
