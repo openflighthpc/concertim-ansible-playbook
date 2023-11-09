@@ -54,6 +54,10 @@ metric_reporting_daemon_hostname: localhost
 visualisation_app_hostname: localhost
 # The hostname (or IP) of the db container.
 db_hostname: localhost
+# The hostname (or IP) of the proxy container.
+proxy_hostname: localhost
+# The hostname (or IP) of the killbill container.
+killbill_hostname: localhost
 
 # ==================================================
 # Configuration for the installation of the concertim components
