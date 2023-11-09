@@ -1,9 +1,9 @@
 - name: Build docker image
   vars:
-    default_build_version: "{{ lookup('vars', component + '_facts_git_tag') | default('') }}"
-    default_build_revision: "{{ lookup('vars', component + '_facts_git_sha') | default('') }}"
-    default_docker_image_tag: "{{ lookup('vars', component + '_facts_docker_image_tag') | default('') }}"
-    default_name: "{{lookup('vars', component).docker_image.name}}"
+    default_build_version: "{{ lookup('vars', component + '_facts_git_tag', default='') }}"
+    default_build_revision: "{{ lookup('vars', component + '_facts_git_sha', default='') }}"
+    default_docker_image_tag: "{{ lookup('vars', component + '_facts_docker_image_tag', default='') }}"
+    default_name: "{{lookup('vars', component).docker_image.name | default(omit)}}"
     default_dockerfile: "{{lookup('vars', component).docker_image.dockerfile | default('Dockerfile')}}"
   community.docker.docker_image:
     name: "{{ name | default(default_name) }}"
