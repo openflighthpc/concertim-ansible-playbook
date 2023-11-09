@@ -1,7 +1,7 @@
 # Creating a development environment for developing the Concertim Services
 
 This directory contains an ansible playbook and a Vagrantfile that can be used
-to build a development environment for development the Metric Reporting Daemon
+to build a development environment for development of the Metric Reporting Daemon
 and Visualisation App components.
 
 ## Quick start
@@ -16,16 +16,16 @@ and Visualisation App components.
    git clone git@github.com:alces-flight/concertim-ct-visualisation-app.git ct-visualisation-app
    ```
 
-2. Build the vagrant machine `dev1`:
+2. Build the vagrant machine `dev2`:
    ```sh
    cd contrib/dev/vagrant
-   ./scripts/rebuild-box.sh dev1
+   BUILD_ENV=dev ./scripts/rebuild-box.sh dev2
    ```
 
 You now have a working development environment for metric reporting daemon and
 visualisation app.
 
-You can access the visualisation app at https://localhost:9444.
+You can access the visualisation app at https://localhost:9445.
 
 You can edit the code for visualisation app and metric reporting daemon on your
 laptop (e.g., `$EDITOR ~/projects/concertim/src/ct-visualisation-app/README.md`)
@@ -59,3 +59,11 @@ virtual machine).
 
 If you wish to develop without using the provided Vagrantfile, you can follow
 the [instructions for the development ansible playbook](ansible/README.md).
+
+## Simultaneous development of concertim ansible playbook and concertim components
+
+The [Vagrantfile](vagrant/Vagrantfile) defines two identical vagrant boxes
+`dev1` and `dev2`.  The documentation assumes that `dev1` is used to develop
+the concertim ansible playbook itself, whilst `dev2` is used to develop the
+concertim applications.  However, that is entirely convention and you can use
+them as you wish.
