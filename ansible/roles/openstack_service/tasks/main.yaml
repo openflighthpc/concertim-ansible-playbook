@@ -3,7 +3,7 @@
   ansible.builtin.git:
     repo: "{{openstack_service.source.repo}}"
     dest: "{{openstack_service.install_dir}}"
-    single_branch: yes
+    # single_branch: yes
     version: "{{openstack_service.source.commitish}}"
   environment:
     GIT_TERMINAL_PROMPT: 0
@@ -20,7 +20,7 @@
   ansible.builtin.git:
     repo: "{{killbill_fork.source.repo}}"
     dest: "{{killbill_fork.install_dir}}"
-    single_branch: yes
+    # single_branch: yes
     version: "{{killbill_fork.source.commitish}}"
   environment:
     GIT_TERMINAL_PROMPT: 0

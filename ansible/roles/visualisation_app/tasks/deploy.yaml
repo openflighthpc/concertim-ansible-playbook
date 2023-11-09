@@ -3,7 +3,7 @@
   ansible.builtin.git:
     repo: "{{visualisation_app.source.repo}}"
     dest: "{{visualisation_app.install_dir}}"
-    single_branch: yes
+    # single_branch: yes
     version: "{{visualisation_app.source.commitish}}"
   environment:
     GIT_TERMINAL_PROMPT: 0

@@ -49,13 +49,12 @@ snippets.
 
 ## Install ansible
 
-The ansible playbook has been tested against `ansible` version `5.10.0` other
-versions of ansible may work but have not been tested.  Ansible `5.10.0` can
+The ansible playbook has been tested against `ansible` version `2.10.8` other
+versions of ansible may work but have not been tested.  Ansible `2.10.8` can
 be installed with the following.
 
 ```bash
-add-apt-repository --yes ppa:ansible/ansible
-apt install --yes ansible
+apt install --yes ansible python3-docker
 ```
 
 ## Clone the needed git repositories

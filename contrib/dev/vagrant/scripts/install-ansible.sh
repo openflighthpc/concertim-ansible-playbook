@@ -4,5 +4,5 @@ set -e
 set -o pipefail
 
 export DEBIAN_FRONTEND=noninteractive
-add-apt-repository --yes ppa:ansible/ansible
-apt install --yes ansible
+apt update --yes
+apt install --yes ansible python3-docker

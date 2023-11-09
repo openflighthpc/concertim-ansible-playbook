@@ -3,7 +3,7 @@
   ansible.builtin.git:
     repo: "{{metric_reporting_daemon.source.repo}}"
     dest: "{{metric_reporting_daemon.install_dir}}"
-    single_branch: yes
+    # single_branch: yes
     version: "{{metric_reporting_daemon.source.commitish}}"
   environment:
     GIT_TERMINAL_PROMPT: 0

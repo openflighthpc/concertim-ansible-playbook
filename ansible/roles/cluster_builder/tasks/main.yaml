@@ -3,7 +3,7 @@
   ansible.builtin.git:
     repo: "{{cluster_builder.source.repo}}"
     dest: "{{cluster_builder.install_dir}}"
-    single_branch: yes
+    # single_branch: yes
     version: "{{cluster_builder.source.commitish}}"
   environment:
     GIT_TERMINAL_PROMPT: 0
