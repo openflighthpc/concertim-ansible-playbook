@@ -8,10 +8,23 @@ You could achieve both of these by using an OpenStack instance.
 Alternatively, you can use a Vagrant machine defined in the
 [Vagrantfile](/contrib/dev/vagrant/Vagrantfile).
 
+## Gather GitHub credentials
+
+You will need GitHub credentials to clone the Concertim repositories.
+The credentials will need to be able to clone the Concertim repositories from
+the `alces-flight` organisation.
+Obtaining these credentials is left as an exercise for the reader.
+
+Your GitHub credentials will need to be exported in the `GH_TOKEN` environment
+variable.
+
+## Run the playbook
+
 To automate rebuilding the vagrant machine and running the playbook from scratch:
 
 ```sh
 cd contrib/dev/vagrant
+export GH_TOKEN=<your github credentials>
 BUILD_ENV=prod ./scripts/rebuild-box.sh dev1
 ```
 
@@ -19,21 +32,22 @@ To run the playbook manually. First bring up the box.
 
 ```sh
 cd contrib/dev/vagrant
-BUILD_ENV=prod vagrant up --no-provision BOX_NAME
-vagrant provision --provision-with swap BOX_NAME
-vagrant provision --provision-with install_ansible BOX_NAME
-vagrant provision --provision-with install_docker BOX_NAME
+BUILD_ENV=prod vagrant up --no-provision dev1
+vagrant provision --provision-with swap dev1
+vagrant provision --provision-with install_ansible dev1
+vagrant provision --provision-with install_docker dev1
 ```
 
 Then SSH into it
 
 ```sh
-vagrant ssh BOX_NAME
+vagrant ssh dev1
 ```
 
 Then run the playbook:
 
 ```sh
+export GH_TOKEN=<your github credentials>
 /vagrant/scripts/run-prod-playbook.sh
 ```
 

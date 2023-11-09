@@ -1,4 +1,4 @@
-CT_SRC_DIR = [ ENV['FLIGHT_CODE'], "#{ENV['HOME']}/projects/concertim/src" ]
+CT_SRC_DIR = [ ENV['CT_SRC_DIR'], "#{ENV['HOME']}/projects/concertim/src" ]
   .compact
   .map { |p| File.expand_path(p) }
   .detect { |p| File.directory?(p) }
@@ -32,7 +32,7 @@ Vagrant.configure("2") do |config|
       elsif ENV['BUILD_ENV'] == 'prod'
         v.memory = 512
       else
-        v.memory = 1024
+        v.memory = 2048
       end
     end
 

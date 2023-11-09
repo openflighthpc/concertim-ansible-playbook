@@ -54,11 +54,14 @@ If you need to run data migrations or access the rails console, these should be
 done whilst in the directory `/opt/concertim/dev/ct-visualisation-app/` (in the
 virtual machine).
 
+## Vagrant machine configuration
 
-## Developing without using a vagrant machine
+The Vagrant machine supports some configuration via environment variables when it is started.
 
-If you wish to develop without using the provided Vagrantfile, you can follow
-the [instructions for the development ansible playbook](ansible/README.md).
+* `BOX_MEM` - How much memory the VM should have.  The defaults *should* work for you.
+* `CT_SRC_DIR` - The location of the directory containing the git repos for
+  `concertim-metric-reporting-daemon` and `concertim-ct-visualisation-app`.  If
+  you followed the quickstart above, the default value will be correct.
 
 ## Simultaneous development of concertim ansible playbook and concertim components
 
@@ -67,3 +70,8 @@ The [Vagrantfile](vagrant/Vagrantfile) defines two identical vagrant boxes
 the concertim ansible playbook itself, whilst `dev2` is used to develop the
 concertim applications.  However, that is entirely convention and you can use
 them as you wish.
+
+## Developing without using a vagrant machine
+
+If you wish to develop without using the provided Vagrantfile, you can follow
+the [instructions for the development ansible playbook](ansible/README.md).
