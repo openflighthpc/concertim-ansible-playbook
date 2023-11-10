@@ -1,6 +1,0 @@
-ct_vis_app_path: "{{ ct_installation_dir }}/ct-visualisation-app"
-ct_vis_app_log_file: /var/log/ct-visualisation-app.log
-
-rack_limit: 10
-device_limit: 1000
-nrad_limit: 30

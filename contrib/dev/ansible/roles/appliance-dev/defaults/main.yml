@@ -1,0 +1,7 @@
+# The directory into which development versions of the apps can be found.
+dev_root_dir: /opt/concertim/dev
+
+# Licence limits
+rack_limit: 10
+device_limit: 1000
+nrad_limit: 30

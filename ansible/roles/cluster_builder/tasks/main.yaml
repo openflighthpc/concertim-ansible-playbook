@@ -1,0 +1,67 @@
+---
+- name: Checkout source directories
+  ansible.builtin.git:
+    repo: "{{cluster_builder.source.repo}}"
+    dest: "{{cluster_builder.install_dir}}"
+    # single_branch: yes
+    version: "{{cluster_builder.source.commitish}}"
+  environment:
+    GIT_TERMINAL_PROMPT: 0
+  register: cluster_builder_checkout
+
+# We need the following as the directory is owned by root, but not all git
+# commands are executed as root.
+# XXX Can we remove this somehow?
+- name: Workaround git and dubious ownership issues
+  ansible.builtin.command:
+    cmd: git config --global --add safe.directory "{{cluster_builder.install_dir}}"
+
+- name: Copy cluster type definitions
+  vars:
+    available_dir: "{{ct_cluster_builder_share_dir}}/cluster-types-available"
+    enabled_dir: "{{ct_cluster_builder_share_dir}}/cluster-types-enabled"
+    hot_dir: "{{ct_cluster_builder_share_dir}}/hot"
+  block:
+    - name: Create cluster type definition directories
+      ansible.builtin.file:
+        path: "{{item}}"
+        owner: root
+        group: root
+        mode: "755"
+        state: directory
+      loop:
+        - "{{available_dir}}"
+        - "{{enabled_dir}}"
+        - "{{hot_dir}}"
+
+    - name: Copy examples cluster type definitions
+      ansible.builtin.copy:
+        src: "{{cluster_builder.install_dir}}/examples/{{item.src}}"
+        remote_src: true
+        dest: "{{item.dest}}"
+      loop:
+        - src: cluster-types/
+          dest: "{{available_dir}}"
+        - src: hot/
+          dest: "{{hot_dir}}"
+
+    - name: Enable all available types
+      ansible.builtin.file:
+        src: "../cluster-types-available/{{item | basename}}"
+        dest: "{{enabled_dir}}/{{item | basename}}"
+        state: link
+      loop: "{{ query('fileglob', available_dir+'/*.yaml') }}"
+
+- name: Set git checkout and docker image facts
+  vars:
+    component: cluster_builder
+    install_dir: "{{cluster_builder.install_dir}}"
+  import_tasks: gather_git_and_docker_facts.yaml
+
+- name: Build docker image
+  vars:
+    component: cluster_builder
+    force_source: "{{cluster_builder_checkout.changed}}"
+    notifications:
+      - "Stop cluster_builder container"
+  import_tasks: build_docker_image.yaml

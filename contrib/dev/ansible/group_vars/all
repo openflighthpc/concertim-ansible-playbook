@@ -1,0 +1,17 @@
+# ==================================================
+# Hostnames at which our various services can be found
+metrics_host: 127.0.0.1
+visualisation_host: 127.0.0.1
+
+# ==================================================
+# General variables
+#
+# The name of (1) the unix user used to run our rails apps; (2) the database
+# user/role used.
+app_user: www-data
+
+ct_root_dir: /opt/concertim
+# The directory into which the ct apps are installed.
+ct_installation_dir: /opt/concertim/opt
+# The directory into which some of the ct configuration can be found.
+ct_etc_dir: /opt/concertim/etc

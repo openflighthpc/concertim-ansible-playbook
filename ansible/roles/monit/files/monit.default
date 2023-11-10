@@ -1,2 +1,0 @@
-startup=0
-STATEFILE="/var/lib/monit/state"

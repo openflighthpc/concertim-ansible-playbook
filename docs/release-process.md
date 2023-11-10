@@ -24,14 +24,14 @@ Create a release branch for the new version of `concertim-ansible-playbook`,
 e.g., if we're about to tag `v0.2.2`, create a branch `release/v0.2.2`.
 
 Update `<component>.source.commitish` values for each concertim component in
-`production/group_vars/all`.  Using the example versions above the commit would
+`ansible/group_vars/all`.  Using the example versions above the commit would
 look like this:
 
 ```diff
-diff --git a/production/group_vars/all b/production/group_vars/all
+diff --git a/ansible/group_vars/all b/ansible/group_vars/all
 index d867a5f..f38c6cb 100644
---- a/production/group_vars/all
-+++ b/production/group_vars/all
+--- a/ansible/group_vars/all
++++ b/ansible/group_vars/all
 @@ -69,17 +69,17 @@ enable_openstack_service: no
  metric_reporting_daemon:
    install_dir: "{{ct_installation_dir}}/metric-reporting-daemon"
@@ -82,10 +82,10 @@ above, the commit would look like this:
 
 
 ```diff
-diff --git a/production/README.md b/production/README.md
+diff --git a/ansible/README.md b/ansible/README.md
 index a22be5c..cf5aebd 100644
---- a/production/README.md
-+++ b/production/README.md
+--- a/ansible/README.md
++++ b/ansible/README.md
 @@ -10,9 +10,9 @@ of the Alces Concertim services as a set of Docker containers.
    `docker-compose-plugin` installed.
  * Make a GitHub token available in the `GH_TOKEN` environment variable.
@@ -134,7 +134,7 @@ index 767b628..0f18b4d 100644
 -You are viewing the development version of Alces Concertim Ansible Playbook.
 +You are viewing release `v0.2.2` of Alces Concertim Ansible Playbook.
  To deploy this version of Alces Concertim follow [these
- instructions](production/README.md).
+ instructions](ansible/README.md).
  
 -To deploy a released version of Alces Concertim select the tag for that
 +To deploy an alternate release of Alces Concertim select the tag for that
@@ -175,7 +175,7 @@ index 0f18b4d..767b628 100644
 -You are viewing release `v0.2.2` of Alces Concertim Ansible Playbook.
 +You are viewing the development version of Alces Concertim Ansible Playbook.
  To deploy this version of Alces Concertim follow [these
- instructions](production/README.md).
+ instructions](ansible/README.md).
  
 -To deploy an alternate release of Alces Concertim select the tag for that
 +To deploy a released version of Alces Concertim select the tag for that
@@ -187,10 +187,10 @@ index 0f18b4d..767b628 100644
  ## Developing
  
  For details on how to develop and test the ansible deployment playbook see
-diff --git a/production/README.md b/production/README.md
+diff --git a/ansible/README.md b/ansible/README.md
 index cf5aebd..a22be5c 100644
---- a/production/README.md
-+++ b/production/README.md
+--- a/ansible/README.md
++++ b/ansible/README.md
 @@ -10,9 +10,9 @@ of the Alces Concertim services as a set of Docker containers.
    `docker-compose-plugin` installed.
  * Make a GitHub token available in the `GH_TOKEN` environment variable.
@@ -220,10 +220,10 @@ index cf5aebd..a22be5c 100644
  mkdir -p /opt/concertim/opt
  cd /opt/concertim/opt
  git clone -n --depth=1 --filter=tree:0 --no-single-branch \
-diff --git a/production/group_vars/all b/production/group_vars/all
+diff --git a/ansible/group_vars/all b/ansible/group_vars/all
 index f38c6cb..d867a5f 100644
---- a/production/group_vars/all
-+++ b/production/group_vars/all
+--- a/ansible/group_vars/all
++++ b/ansible/group_vars/all
 @@ -70,7 +70,7 @@ metric_reporting_daemon:
    install_dir: "{{ct_installation_dir}}/metric-reporting-daemon"
    source:
