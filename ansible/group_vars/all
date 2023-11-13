@@ -46,30 +46,31 @@ credentials_path: "{{ct_etc_mount}}/credentials.yml.enc"
 # Configuration for container <-> container communication
 # ==================================================
 
-# The hostnames that our concertim, cluster_builder and openstack_service
-# containers can use to resolve the address of other containers.
+# The IP addresses that our concertim, cluster_builder and openstack_service
+# containers can use to communicate with other containers.
 #
-# Our containers run in two different docker compose contexts.  The concertim,
-# cluster_builder, and openstack_service containers all use `network_mode:
-# host`.  The killbill containers use a bridged network.
+# The concertim, cluster_builder, and openstack_service containers all use `network_mode: host`.
+# Referencing containers via service name does not work well with `network_mode: host`.
+# We can make it work by using `extra_hosts` and setting each service name to `127.0.0.1`.
 #
-# The killbill containers reference only containers in the same
-# docker-compose.yml file and can do so via service name.
-#
-# The `network_mode: host` containers cannot reference each other via service
-# name as that is not compatible with `network_mode: host`.  So we use these
-# aliases instead.
+# The killbill containers do not need this workaround as they
+# only reference containers in the same docker-compose.yml file
+# and use a bridged network.
 
-# The hostname (or IP) of the metric reporting daemon.
-metric_reporting_daemon_hostname: localhost
-# The hostname (or IP) of the visualisation app.
-visualisation_app_hostname: localhost
-# The hostname (or IP) of the db container.
-db_hostname: localhost
-# The hostname (or IP) of the proxy container.
-proxy_hostname: localhost
-# The hostname (or IP) of the killbill container.
-killbill_hostname: localhost
+# The IP address of the metric reporting daemon.
+metric_reporting_daemon_ip: 127.0.0.1
+# The IP address of the visualisation app.
+visualisation_app_ip: 127.0.0.1
+# The IP address of the concertim db container.
+db_ip: 127.0.0.1
+# The IP address of the concertim proxy container.
+proxy_ip: 127.0.0.1
+# The IP address of the cluster builder container.
+cluster_builder_ip: 127.0.0.1
+# The IP address of the concertim openstack api server container.
+api_server_ip: 127.0.0.1
+# The IP address of the killbill container.
+killbill_ip: 127.0.0.1
 
 # ==================================================
 # Configuration for the installation of the concertim components

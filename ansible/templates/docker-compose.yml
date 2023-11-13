@@ -12,8 +12,8 @@ services:
     env_file:
       - secrets/secrets.env
     environment:
-      - METRIC_DAEMON_URL=http://{{metric_reporting_daemon_hostname}}:{{metric_reporting_daemon_api_port}}
-      - POSTGRES_HOST={{db_hostname}}
+      - METRIC_DAEMON_URL=http://metric_reporting_daemon:{{metric_reporting_daemon_api_port}}
+      - POSTGRES_HOST=db
       - POSTGRES_PORT={{db_port}}
       - CREDENTIALS_CONTENT_PATH={{credentials_path}}
       - PORT={{visualisation_app_port}}
@@ -22,6 +22,12 @@ services:
     ports:
       - "{{visualisation_app_interface}}:{{visualisation_app_port}}:{{visualisation_app_port}}"
     network_mode: host
+    extra_hosts:
+      - "metric_reporting_daemon:{{metric_reporting_daemon_ip}}"
+      - "db:{{db_ip}}"
+      - "cluster_builder:{{cluster_builder_ip}}"
+      - "api_server:{{api_server_ip}}"
+      - "user_handler:{{api_server_ip}}"
 
   metric_reporting_daemon:
     image: concertim-metric-reporting-daemon:{{metric_reporting_daemon_facts_docker_image_tag}}
@@ -35,6 +41,8 @@ services:
     ports:
       - "{{metric_reporting_daemon_api_interface}}:{{metric_reporting_daemon_api_port}}:{{metric_reporting_daemon_api_port}}"
     network_mode: host
+    extra_hosts:
+      - "visualisation:{{visualisation_app_ip}}"
 
   proxy:
     image: concertim-proxy
@@ -49,6 +57,9 @@ services:
       - visualisation
       - metric_reporting_daemon
     network_mode: host
+    extra_hosts:
+      - "metric_reporting_daemon:{{metric_reporting_daemon_ip}}"
+      - "visualisation:{{visualisation_app_ip}}"
 
   db:
     image: postgres
@@ -96,6 +107,9 @@ services:
       - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
       - "{{ct_openstack_service_data_dir}}:/app/var/data/"
     network_mode: host
+    extra_hosts:
+      - "proxy:{{proxy_ip}}"
+      - "killbill:{{killbill_ip}}"
 
   bulk_updates:
     image: concertim-bulk-updates:{{openstack_service_facts_docker_image_tag}}
@@ -104,6 +118,8 @@ services:
       - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
       - "{{ct_openstack_service_data_dir}}:/app/var/data/"
     network_mode: host
+    extra_hosts:
+      - "proxy:{{proxy_ip}}"
 
   mq_listener:
     image: concertim-mq-listener:{{openstack_service_facts_docker_image_tag}}
@@ -112,6 +128,8 @@ services:
       - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
       - "{{ct_openstack_service_data_dir}}:/app/var/data/"
     network_mode: host
+    extra_hosts:
+      - "proxy:{{proxy_ip}}"
 
   metrics:
     image: concertim-metrics:{{openstack_service_facts_docker_image_tag}}
@@ -120,6 +138,8 @@ services:
       - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
       - "{{ct_openstack_service_data_dir}}:/app/var/data/"
     network_mode: host
+    extra_hosts:
+      - "proxy:{{proxy_ip}}"
   {% endif %}
 
 {% if enable_concertim -%}
