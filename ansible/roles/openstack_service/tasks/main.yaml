@@ -65,6 +65,10 @@
       replace: '\1"admin"'
     - regexp: '^(\s*api_host:\s*)"http://host.killbill:8080"'
       replace: '\1"http://{{killbill_hostname}}:{{killbill_port}}"'
+    - regexp: '^(\s*apikey:\s*)"key"'
+      replace: '\1"{{ killbill_apikey | default("key") }}"'
+    - regexp: '^(\s*apisecret:\s*)"secret"'
+      replace: '\1"{{ killbill_apisecret | default("secret") }}"'
   notify:
     - "Stop openstack_service containers"
 

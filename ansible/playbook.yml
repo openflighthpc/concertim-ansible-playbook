@@ -81,13 +81,13 @@
       tags: cluster_builder
       when: enable_cluster_builder | bool
 
-    - role: openstack_service
-      tags: openstack_service
-      when: enable_openstack_service | bool
-
     - role: killbill
       tags: killbill
       when: enable_killbill | bool
+
+    - role: openstack_service
+      tags: openstack_service
+      when: enable_openstack_service | bool
 
   tasks:
     - name: Install docker compose file
