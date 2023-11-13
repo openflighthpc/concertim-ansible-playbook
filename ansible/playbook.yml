@@ -119,14 +119,19 @@
     # downed in the previous plays, all that needs to happen here is ensure
     # they're up.
     - name: Start concertim services
-      tags: always
+      tags:
+        - concertim
+        - cluster_builder
+        - openstack_service
+      when: (enable_concertim | bool) or (enable_cluster_builder | bool) or (enable_openstack_service | bool)
       ansible.builtin.shell:
         chdir: "{{ct_docker_dir}}"
         cmd: |
           docker compose up --detach
 
     - name: Start killbill
-      tags: always
+      tags: killbill
+      when: enable_killbill | bool
       ansible.builtin.shell:
         chdir: "{{ct_installation_dir}}/killbill"
         cmd: |
