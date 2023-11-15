@@ -120,6 +120,7 @@ services:
     network_mode: host
     extra_hosts:
       - "proxy:{{proxy_ip}}"
+      - "killbill:{{killbill_ip}}"
 
   mq_listener:
     image: concertim-mq-listener:{{openstack_service_facts_docker_image_tag}}
@@ -130,6 +131,7 @@ services:
     network_mode: host
     extra_hosts:
       - "proxy:{{proxy_ip}}"
+      - "killbill:{{killbill_ip}}"
 
   metrics:
     image: concertim-metrics:{{openstack_service_facts_docker_image_tag}}
