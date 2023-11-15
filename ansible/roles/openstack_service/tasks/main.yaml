@@ -46,11 +46,31 @@
       group: root
       mode: "755"
 
-- name: Copy openstack service config files
+- name: Copy example openstack service config file
   ansible.builtin.copy:
     src: "{{openstack_service.install_dir}}/etc/config-sample.yaml"
     remote_src: true
     dest: "{{ct_etc_dir}}/openstack-service/config.yaml"
+    force: false
+
+- name: Update openstack service config file
+  ansible.builtin.replace:
+    path: "{{ct_etc_dir}}/openstack-service/config.yaml"
+    regexp: "{{item.regexp}}"
+    replace: "{{item.replace}}"
+  loop:
+    - regexp: '^(\s*concertim_url:\s*)"https://host.concertim"'
+      replace: '\1"https://proxy:{{proxy_https_port}}"'
+    - regexp: '^(\s*concertim_password:\s*)"password"'
+      replace: '\1"admin"'
+    - regexp: '^(\s*api_host:\s*)"http://host.killbill:8080"'
+      replace: '\1"http://killbill:{{killbill_port}}"'
+    - regexp: '^(\s*apikey:\s*)"key"'
+      replace: '\1"{{ killbill_apikey | default("key") }}"'
+    - regexp: '^(\s*apisecret:\s*)"secret"'
+      replace: '\1"{{ killbill_apisecret | default("secret") }}"'
+  notify:
+    - "Stop openstack_service containers"
 
 - name: Set git checkout and docker image facts
   vars:

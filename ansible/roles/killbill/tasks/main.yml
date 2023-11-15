@@ -1,0 +1,30 @@
+- name: Make installation directories
+  ansible.builtin.file:
+    path: "{{killbill.install_dir}}"
+    owner: root
+    group: root
+    mode: "755"
+    state: directory
+
+- name: Ensure docker secrets exist
+  ansible.builtin.set_fact:
+    killbill_db_password: "{{ lookup('password', '{{killbill.install_dir}}/secrets/killbill-db-password chars=ascii_letters,digits length=32') }}"
+    killbill_apikey: "{{ lookup('password', '{{killbill.install_dir}}/secrets/killbill-apikey chars=ascii_letters,digits length=32') }}"
+    killbill_apisecret: "{{ lookup('password', '{{killbill.install_dir}}/secrets/killbill-apisecret chars=ascii_letters,digits length=32') }}"
+
+- name: Create secrets env file
+  ansible.builtin.template:
+    src: secrets.env
+    dest: "{{killbill.install_dir}}/secrets"
+    owner: root
+    group: root
+    mode: '0600'
+  notify:
+    - "Stop killbill containers"
+
+- name: Install docker compose file
+  ansible.builtin.template:
+    src: docker-compose.yml
+    dest: "{{killbill.install_dir}}"
+  notify:
+    - "Stop killbill containers"

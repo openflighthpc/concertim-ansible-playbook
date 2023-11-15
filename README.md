@@ -25,8 +25,10 @@ Concertim Ansible Playbook deploys containers for the following Concertim projec
 
 Concertim Ansible Playbook deploys containers for the following infrastructure components:
 
-* [Postgresql](https://www.postgresql.org/) an open source object-relational database system
-* [Nginx](https://nginx.org/) a HTTP and reverse proxy server
+* [Kill Bill](https://killbill.io/) an open source billing and payments platform.
+* [MariaDB](https://mariadb.com/) for MySQL database.
+* [Nginx](https://nginx.org/) a HTTP and reverse proxy server.
+* [Postgresql](https://www.postgresql.org/) an open source object-relational database system.
 
 ## Directories
 

@@ -1,0 +1,2 @@
+killbill:
+  install_dir: "{{ct_installation_dir}}/killbill"

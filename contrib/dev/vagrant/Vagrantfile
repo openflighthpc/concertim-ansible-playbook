@@ -30,9 +30,16 @@ Vagrant.configure("2") do |config|
       if ENV['BOX_MEM'].to_i != 0
         v.memory = ENV['BOX_MEM'].to_i
       elsif ENV['BUILD_ENV'] == 'prod'
-        v.memory = 512
+        v.memory = 2048
       else
         v.memory = 2048
+      end
+    end
+
+    if ENV['BUILD_ENV'] == 'prod'
+      config.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--cpus", "2"]
+        vb.customize ["modifyvm", :id, "--ioapic", "on"]
       end
     end
 
@@ -48,10 +55,16 @@ Vagrant.configure("2") do |config|
       # Forward HTTP/S ports at predictable host ports.  Redirection from HTTP
       # to HTTPS isn't expected to work with these ports.
       if ENV['BUILD_ENV'] == 'prod'
-        v.vm.network "forwarded_port", guest: 7080, host: 9080 + idx + 1, host_ip: '127.0.0.1'
-        v.vm.network "forwarded_port", guest: 7443, host: 9443 + idx + 1, host_ip: '127.0.0.1'
+        # Visualiser over HTTP.
+        v.vm.network "forwarded_port", guest:  7080, host: 9080 + idx + 1, host_ip: '127.0.0.1'
+        # Visualiser over HTTPS.
+        v.vm.network "forwarded_port", guest:  7443, host: 9443 + idx + 1, host_ip: '127.0.0.1'
+        # Killbill over HTTP.
+        v.vm.network "forwarded_port", guest: 49090, host: 9090,           host_ip: '127.0.0.1'
       else
+        # Visualiser over HTTP.
         v.vm.network "forwarded_port", guest:  80, host: 9080 + idx + 1, host_ip: '127.0.0.1'
+        # Visualiser over HTTPS.
         v.vm.network "forwarded_port", guest: 443, host: 9443 + idx + 1, host_ip: '127.0.0.1'
       end
 

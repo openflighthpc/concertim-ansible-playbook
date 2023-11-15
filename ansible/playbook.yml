@@ -81,6 +81,10 @@
       tags: cluster_builder
       when: enable_cluster_builder | bool
 
+    - role: killbill
+      tags: killbill
+      when: enable_killbill | bool
+
     - role: openstack_service
       tags: openstack_service
       when: enable_openstack_service | bool
@@ -114,9 +118,21 @@
     # Ensure all services are up.  If any needed restarting they will have been
     # downed in the previous plays, all that needs to happen here is ensure
     # they're up.
-    - name: Start services
-      tags: always
+    - name: Start concertim services
+      tags:
+        - concertim
+        - cluster_builder
+        - openstack_service
+      when: (enable_concertim | bool) or (enable_cluster_builder | bool) or (enable_openstack_service | bool)
       ansible.builtin.shell:
         chdir: "{{ct_docker_dir}}"
+        cmd: |
+          docker compose up --detach
+
+    - name: Start killbill
+      tags: killbill
+      when: enable_killbill | bool
+      ansible.builtin.shell:
+        chdir: "{{ct_installation_dir}}/killbill"
         cmd: |
           docker compose up --detach

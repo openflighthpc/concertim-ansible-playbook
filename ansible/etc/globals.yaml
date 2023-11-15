@@ -18,6 +18,10 @@ enable_cluster_builder: yes
 # installed and enabled.
 enable_openstack_service: yes
 
+# If the killbill component is enabled, the killbill, kaui and killbill_db
+# components will be installed and enabled.
+enable_killbill: yes
+
 # ==================================================
 # Host Ports and Interfaces
 # ==================================================
@@ -73,3 +77,15 @@ db_interface: 127.0.0.1
 # listen to HTTP requests on.
 # Use 0.0.0.0 to listen on all interfaces.
 api_server_interface: 127.0.0.1
+
+# The port that the killbill service should listen on.
+killbill_port: 48080
+# The interface that the killbill service should listen on.
+# Use 0.0.0.0 to listen on all interfaces.
+killbill_interface: 0.0.0.0
+
+# The port that the killbill service should listen on.
+kaui_port: 49090
+# The interface that the killbill service should listen on.
+# Use 0.0.0.0 to listen on all interfaces.
+kaui_interface: 0.0.0.0

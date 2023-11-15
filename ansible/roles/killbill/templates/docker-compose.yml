@@ -1,0 +1,34 @@
+version: '3.3'
+volumes:
+  db:
+services:
+  killbill:
+    image: killbill/killbill:0.24.0
+    ports:
+      - "{{killbill_interface}}:{{killbill_port}}:8080"
+    env_file:
+      - secrets/secrets.env
+    environment:
+      - KILLBILL_DAO_URL=jdbc:mysql://db:3306/killbill
+      - KILLBILL_DAO_USER=root
+      - KILLBILL_CATALOG_URI=SpyCarAdvanced.xml
+  kaui:
+    image: killbill/kaui:2.0.11
+    ports:
+      - "{{kaui_interface}}:{{kaui_port}}:8080"
+    env_file:
+      - secrets/secrets.env
+    environment:
+      - KAUI_CONFIG_DAO_URL=jdbc:mysql://db:3306/kaui
+      - KAUI_CONFIG_DAO_USER=root
+      - KAUI_KILLBILL_URL=http://killbill:8080
+  db:
+    image: killbill/mariadb:0.24
+    volumes:
+      - type: volume
+        source: db
+        target: /var/lib/mysql
+    expose:
+      - "3306"
+    env_file:
+      - secrets/secrets.env

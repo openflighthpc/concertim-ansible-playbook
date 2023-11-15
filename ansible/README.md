@@ -36,6 +36,11 @@ of the Alces Concertim services as a set of Docker containers.
     playbook.yml
   ```
 
+If the killbill service was installed, you will also need to:
+
+* Create a KAUI tenant and upload a catalog.  See https://github.com/alces-flight/concertim-openstack-service/blob/master/docs/killbill_basic.md#configuration-of-kaui for details.
+* Edit the concertim openstack service configuration file with the Kill Bill API key and API secret.
+
 If the concertim openstack service components were installed, you will also need to:
 
 * Edit the concertim openstack service configuration file.  See https://github.com/alces-flight/concertim-openstack-service/tree/master#configuration for details.
@@ -62,8 +67,9 @@ The steps for installing are briefly:
 3. Clone this github repo (https://github.com/alces-flight/concertim-ansible-playbook).
 4. Optionally, edit the global settings.
 5. Run the ansible playbook.
-6. Edit the concertim openstack service configuration.
-7. Restart the containers.
+6. Configure Kill Bill / KAUI.
+7. Edit the concertim openstack service configuration.
+8. Restart the containers.
 
 ### Configure OpenStack with users and roles
 
@@ -133,6 +139,19 @@ ansible-playbook \
   playbook.yml
 ```
 
+
+### Configure Kill Bill and KAUI
+
+If Kill Bill has been installed, you will need to create a KAUI tenant and upload a catalog.
+You can login to KAUI at `http://my.host:49090` where `my.host` is the hostname of the machine this playbook was ran on.
+The default username and password are available in `/opt/concertim/etc/openstack-service/config.yaml`.
+
+Once logged in create the tenant using the `apikey` and `apisecret` available in `/opt/concertim/etc/openstack-service/config.yaml`.
+If you use a different API key and secret, be sure to update the `apikey` and `apisecret` in `/opt/concertim/etc/openstack-service/config.yaml`.
+
+Once the tenant is created, a catalog needs to be created.  Details of how to do this are given at https://github.com/alces-flight/concertim-openstack-service/blob/master/docs/killbill_basic.md#configuration-of-kaui
+
+
 ### Edit the concertim openstack service configuration
 
 After the playbook has ran, the concertim openstack service configuration will have been installed.
@@ -153,6 +172,7 @@ docker compose restart
 ## Image and container overview
 
 A number of containers comprising Concertim are created by the playbook.
+They are managed by a docker compose file located at `/opt/concertim/opt/docker/docker-compose.yml`.
 
 If the concertim components are enabled, the following containers will be installed:
 
@@ -174,18 +194,32 @@ If the openstack service components are enabled, the following containers will b
 * `mq_listener` - Listens to the Rabbit MQ to sync OpenStack changes to Concertim in real time.
 * `metrics` - Polls OpenStack for certain metrics and reports them to Concertim.
 
+If the killbill service was enabled, a second set of containers is installed.
+They are managed by a docker compose file located at `/opt/concertim/opt/killbill/docker-compose.yml`,
+and consists of the following:
+
+* `killbill` - an opensource billing and payments platform.
+* `kaui` - the Kill Bill admin user interface.
+* `db` - A mariadb database.
+
 
 ## Docker volumes
 
 If the concertim components are enabled, three docker volumes are created. Two
 of these should be included in your sites retention policy.
 
-* `db-data`: contains the postgresql data including the racks and instances.
+* `concertim_db-data` - contains the postgresql data including the racks and instances.
   This should be included in a data retention policy.
-* `rrd-data`: contains the historial metrics as rrd file.  This should be
-  included in a data retention policy.
-* `static-content`: used to enable `proxy` to serve static assets.  This does
-  not need to be backed up.
+* `concertim_rrd-data` - contains the historial metrics as rrd file.
+  This should be included in a data retention policy.
+* `concertim_static-content` - used to enable `proxy` to serve static assets.
+  This does not need to be backed up.
+
+If the killbill service is enabled, an additional docker volume is created.
+It should be included in your sites retention policy.
+
+* `killbill_db` - contains the mariadb data for Kill Bill.
+  This should be included in a data retention policy.
 
 
 ## Directory structure on host machine
@@ -199,7 +233,10 @@ appropriate service.
 * `/opt/concertim/usr/share/cluster-builder/` - the cluster type definitions used by the cluster builder service.
 * `/opt/concertim/opt/docker/docker-compose.yml` - the docker compose configuration for the concertim services.
 * `/opt/concertim/opt/docker/secrets` - credentials for the Concertim services.
-These need to remain here, but you should be careful to ensure that the directory and file permissions are secure.
+  These need to remain here, but you should be careful to ensure that the directory and file permissions are secure.
+* `/opt/concertim/opt/killbill/docker-compose.yml` - the docker compose configuration for the Kill Bill services.
+* `/opt/concertim/opt/killbill/secrets` - credentials for the Kill Bill service.
+  These need to remain here, but you should be careful to ensure that the directory and file permissions are secure.
 
 
 Other directories include:
@@ -217,15 +254,13 @@ After the playbook has ran all of the Concertim services are running.
 The services can be stopped by running:
 
 ```bash
-cd /opt/concertim/opt/docker
-docker compose stop
+docker compose -f /opt/concertim/opt/docker/docker-compose.yml stop
 ```
 
 The services can be started by running:
 
 ```bash
-cd /opt/concertim/opt/docker
-docker compose start
+docker compose -f /opt/concertim/opt/docker/docker-compose.yml start
 ```
 
 A single service can be restarted by running the following,
@@ -233,9 +268,15 @@ where `<service>` is one of the services mentioned above,
 e.g., `metric_reporting_daemon`, `visualisation`, `proxy`, `db`:
 
 ```bash
-cd /opt/concertim/opt/docker
-docker compose restart <service>
+docker compose -f /opt/concertim/opt/docker/docker-compose.yml restart <service>
 ```
+
+The Kill Bill service can be started, stopped or restarted by running:
+
+```bash
+docker compose -f /opt/concertim/opt/killbill/docker-compose.yml {start|stop|restart}
+```
+
 
 ## Configuring a Concertim service
 

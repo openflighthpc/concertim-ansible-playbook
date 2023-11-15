@@ -1,0 +1,6 @@
+- name: Stop killbill containers
+  ansible.builtin.shell:
+    chdir: "{{killbill.install_dir}}"
+    cmd: |
+      docker compose down
+
