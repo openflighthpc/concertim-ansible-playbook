@@ -1,0 +1,55 @@
+services:
+{% if enable_concertim %}
+  visualisation:
+    volumes:
+      - type: bind
+        source: "{{visualisation_app.install_dir}}"
+        target: "/opt/concertim/opt/ct-visualisation-app/"
+    environment:
+      - RAILS_ENV=development
+
+  metric_reporting_daemon:
+    volumes:
+      - type: bind
+        source: "{{metric_reporting_daemon.install_dir}}"
+        target: "/app"
+    environment:
+      - CONFIG_FILE=/opt/concertim/etc/metric-reporting-daemon/config.yml
+{% endif %}
+
+{% if enable_cluster_builder %}
+  cluster_builder:
+    volumes:
+      - type: bind
+        source: "{{cluster_builder.install_dir}}"
+        target: "/app"
+    command: ["flask", "--app", "cluster_builder", "run", "-h", "0.0.0.0", "-p", "42378", "--debug"]
+{% endif %}
+
+{% if enable_openstack_service %}
+  api_server:
+    volumes:
+      - type: bind
+        source: "{{openstack_service.install_dir}}"
+        target: "/app"
+  billing:
+    volumes:
+      - type: bind
+        source: "{{openstack_service.install_dir}}"
+        target: "/app"
+  bulk_updates:
+    volumes:
+      - type: bind
+        source: "{{openstack_service.install_dir}}"
+        target: "/app"
+  mq_listener:
+    volumes:
+      - type: bind
+        source: "{{openstack_service.install_dir}}"
+        target: "/app"
+  metrics:
+    volumes:
+      - type: bind
+        source: "{{openstack_service.install_dir}}"
+        target: "/app"
+{% endif %}
