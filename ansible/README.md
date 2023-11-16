@@ -190,6 +190,7 @@ If the cluster builder component is enabled, the following containers will be in
 If the openstack service components are enabled, the following containers will be installed:
 
 * `api_server` - Manages OpenStack users, projects and keys for Concertim.
+* `billing` - Manages interactions between the chosen billing application and other services.
 * `bulk_updates` - Periodically syncs OpenStack instance state to Concertim.
 * `mq_listener` - Listens to the Rabbit MQ to sync OpenStack changes to Concertim in real time.
 * `metrics` - Polls OpenStack for certain metrics and reports them to Concertim.
@@ -245,6 +246,7 @@ Other directories include:
 * `/opt/concertim/opt/visualisation-app/` the source code for Concertim Visualisation App.  It is used to build a docker image.
 * `/opt/concertim/opt/metric-reporting-daemon/` the source code for Concertim Metric Reporting Daemon.  It is used to build a docker image.
 * `/opt/concertim/opt/proxy/` configuration for building an nginx reverse proxy docker image.
+* `/opt/concertim/opt/openstack-service/` the source code for Concertim OpenStack Service.  It is used to build a docker image.
 
 
 ## Starting and stopping the Concertim services

@@ -10,6 +10,7 @@
   ansible.builtin.template:
     src: default.conf
     dest: "{{proxy.install_dir}}/nginx/conf.d/default.conf"
+    lstrip_blocks: yes
   notify:
     - "Stop proxy container"
 
@@ -24,6 +25,7 @@
   ansible.builtin.template:
     src: Dockerfile
     dest: "{{proxy.install_dir}}/"
+    lstrip_blocks: yes
   notify:
     - "Stop proxy container"
 

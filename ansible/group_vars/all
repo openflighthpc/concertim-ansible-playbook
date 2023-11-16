@@ -127,6 +127,8 @@ openstack_service:
   docker_images:
     - name: concertim-api-server
       dockerfile: ./Dockerfiles/Dockerfile.api_server
+    - name: concertim-billing
+      dockerfile: ./Dockerfiles/Dockerfile.billing
     - name: concertim-bulk-updates
       dockerfile: ./Dockerfiles/Dockerfile.updates_bulk
     - name: concertim-mq-listener

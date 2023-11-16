@@ -28,11 +28,13 @@
   ansible.builtin.template:
     src: config.yml
     dest: "{{ct_etc_dir}}/metric-reporting-daemon/"
+    lstrip_blocks: yes
 
 - name: Install gmetad configuration file
   ansible.builtin.template:
     src: gmetad.conf
     dest: "{{ct_etc_dir}}/metric-reporting-daemon/"
+    lstrip_blocks: yes
 
 - name: Set git checkout and docker image facts
   vars:
