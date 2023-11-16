@@ -19,6 +19,7 @@
     owner: root
     group: root
     mode: '0600'
+    lstrip_blocks: yes
   notify:
     - "Stop killbill containers"
 
@@ -26,5 +27,6 @@
   ansible.builtin.template:
     src: docker-compose.yml
     dest: "{{killbill.install_dir}}"
+    lstrip_blocks: yes
   notify:
     - "Stop killbill containers"
