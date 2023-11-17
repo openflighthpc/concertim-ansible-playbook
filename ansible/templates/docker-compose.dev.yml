@@ -7,6 +7,7 @@ services:
         target: "/opt/concertim/opt/ct-visualisation-app/"
     environment:
       - RAILS_ENV=development
+    command: ["bin/dev"]
 
   metric_reporting_daemon:
     volumes:
