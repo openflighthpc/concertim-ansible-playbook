@@ -82,10 +82,8 @@
       - name: Wait for visualisation container
         ansible.builtin.wait_for:
           port: "{{visualisation_app_port}}"
-          delay: 1
-          timeout: 10
-          # delay: 5
-          # timeout: 60
+          delay: 3
+          timeout: 300
           msg: "Timed out waiting for visualisation port {{visualisation_app_port}} to become open on the host"
 
       - name: Start concertim services
