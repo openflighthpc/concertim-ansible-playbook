@@ -1,0 +1,64 @@
+---
+- name: Checkout source directories
+  ansible.builtin.git:
+    repo: "{{openstack_service.source.repo}}"
+    dest: "{{openstack_service.install_dir}}"
+    # single_branch: yes
+    version: "{{openstack_service.source.commitish}}"
+  environment:
+    GIT_TERMINAL_PROMPT: 0
+  register: openstack_service_checkout
+
+# We need the following as the directory is owned by root, but not all git
+# commands are executed as root.
+# XXX Can we remove this somehow?
+- name: Workaround git and dubious ownership issues
+  ansible.builtin.command:
+    cmd: git config --global --add safe.directory "{{openstack_service.install_dir}}"
+
+- name: Install killbill-fork
+  ansible.builtin.git:
+    repo: "{{killbill_fork.source.repo}}"
+    dest: "{{killbill_fork.install_dir}}"
+    # single_branch: yes
+    version: "{{killbill_fork.source.commitish}}"
+  environment:
+    GIT_TERMINAL_PROMPT: 0
+
+- name: Create concertim openstack service directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    state: directory
+  loop:
+    - path: "{{ct_etc_dir}}/openstack-service/"
+      owner: root
+      group: root
+      mode: "755"
+    - path: "{{ct_log_dir}}/openstack-service/"
+      owner: root
+      group: root
+      mode: "755"
+    - path: "{{ct_openstack_service_data_dir}}"
+      owner: root
+      group: root
+      mode: "755"
+
+- name: Set git checkout and docker image facts
+  vars:
+    component: openstack_service
+    install_dir: "{{openstack_service.install_dir}}"
+  import_tasks: gather_git_and_docker_facts.yaml
+
+- name: Build docker image
+  vars:
+    component: openstack_service
+    force_source: "{{openstack_service_checkout.changed}}"
+    notifications:
+      - "Stop openstack_service containers"
+    name: "{{item.name}}"
+    dockerfile: "{{item.dockerfile}}"
+  include_tasks: build_docker_image.yaml
+  loop: "{{openstack_service.docker_images}}"

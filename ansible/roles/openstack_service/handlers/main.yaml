@@ -3,3 +3,21 @@
     chdir: "{{ct_docker_dir}}"
     cmd: |
       docker compose down api_server billing bulk_updates mq_listener metrics
+
+- name: Restart openstack_service containers
+  ansible.builtin.shell:
+    chdir: "{{ct_docker_dir}}"
+    cmd: |
+      if [ $( docker compose ps --quiet --status running {{item}} | wc -l ) -eq 0 ] ; then
+        # Container is not running, so not restarting.
+        :
+      else
+        docker compose restart {{item}}
+      fi
+  when: enable_openstack_service | bool
+  loop:
+    - api_server
+    - billing
+    - bulk_updates
+    - mq_listener
+    - metrics

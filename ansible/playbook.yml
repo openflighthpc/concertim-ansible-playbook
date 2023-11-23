@@ -98,7 +98,7 @@
 
 # Run any tasks that need to run after all of the containers and the docker
 # compose configuration is in place.  E.g., migrating databases.
-- name: Post-install configuration of Alces Concertim components
+- name: Post-install configuration
   hosts: all
   become: true
   become_user: root
@@ -109,6 +109,14 @@
     - role: visualisation_app
       tags: concertim
       when: enable_concertim | bool
+
+    - role: openstack_service
+      tags: openstack_service
+      when: enable_openstack_service | bool
+
+    - role: killbill
+      tags: killbill
+      when: enable_killbill | bool
 
 - name: Start Alces Concertim components and infrastructure
   hosts: all

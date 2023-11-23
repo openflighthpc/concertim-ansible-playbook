@@ -1,4 +1,4 @@
 ---
 - ansible.builtin.include_role:
-    name: openstack_service
+    name: killbill
     tasks_from: "{{ct_action}}"
