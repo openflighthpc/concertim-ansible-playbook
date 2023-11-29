@@ -17,9 +17,11 @@ services:
       - POSTGRES_PORT={{db_port}}
       - CREDENTIALS_CONTENT_PATH={{credentials_path}}
       - PORT={{visualisation_app_port}}
+      - REDIS_URL="redis://{{redis_interface}}:{{redis_port}}/1"
     depends_on:
       - db
       - proxy
+      - redis
     ports:
       - "{{visualisation_app_interface}}:{{visualisation_app_port}}:{{visualisation_app_port}}"
     network_mode: host
@@ -29,6 +31,14 @@ services:
       - "cluster_builder:{{cluster_builder_ip}}"
       - "api_server:{{api_server_ip}}"
       - "user_handler:{{api_server_ip}}"
+      - "redis:{{redis_ip}}"
+
+  redis:
+    image: redis
+    ports:
+      - "{{redis_interface}}:{{redis_port}}:{{redis_port}}"
+    command: ["redis-server", "--port", "{{redis_port}}"]
+    network_mode: host
 
   metric_reporting_daemon:
     image: concertim-metric-reporting-daemon:{{metric_reporting_daemon_facts_docker_image_tag}}

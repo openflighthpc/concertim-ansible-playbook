@@ -71,6 +71,8 @@ cluster_builder_ip: 127.0.0.1
 api_server_ip: 127.0.0.1
 # The IP address of the killbill container.
 killbill_ip: 127.0.0.1
+# The IP address of the redis container.
+redis_ip: 127.0.0.1
 
 # ==================================================
 # Configuration for the installation of the concertim components
