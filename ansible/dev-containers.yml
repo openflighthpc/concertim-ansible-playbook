@@ -37,6 +37,32 @@
         marker: "# {mark} ANSIBLE MANAGED BLOCK location assets"
         block: ""
 
+    # For each of the git repos we checked out to /opt/concertim/opt/<REPO>, if
+    # there is a corresponding repo at /opt/concertim/dev/<REPO>, add a remote to 
+    # /opt/concertim/opt/<REPO> pointing at /opt/concertim/dev/<REPO>.
+    #
+    # When developing on the vagrant machine defined in contrib/dev/vagrant/,
+    # /opt/concertim/dev is a vagrant shared directory.
+    #
+    # The combination of the shared folder and the `laptop` remote allows for
+    # developing on one's laptop, committing changes, pulling the changes
+    # into the repo at /opt/concertim/opt.  For dev containers with
+    # live-reloading support, this provides live-reloading without the need for
+    # reliable notifications across vagrant shared directories.
+    #
+    # This development method is optional, you could instead edit the code in
+    # /opt/concertim/opt/<REPO> directly.  Or install directly on your laptop
+    # instead of a vagrant machine.
+    - name: Add git remote to host repos
+      vars:
+        unfiltered_repos:
+          - "{{ enable_concertim | ternary('metric_reporting_daemon', '') }}"
+          - "{{ enable_concertim | ternary('visualisation_app', '') }}"
+          - "{{ enable_cluster_builder | ternary('cluster_builder', '') }}"
+          - "{{ enable_openstack_service | ternary('openstack_service', '') }}"
+      include_tasks: tasks/add_dev_git_remote.yaml
+      loop: "{{ unfiltered_repos|select|list }}"
+
     # We need the target with go and other useful programs installed.  Not the
     # minimal target containing just the compiled binary.
     - name: Rebuild metric reporting daemon image

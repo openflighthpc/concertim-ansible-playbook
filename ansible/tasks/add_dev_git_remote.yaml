@@ -1,0 +1,23 @@
+- vars:
+    install_dir: "{{ lookup('vars', item).install_dir }}"
+    laptop_repo: /opt/concertim/dev/{{install_dir|basename}}
+  
+  block:
+    - name: Check for {{laptop_repo}} repo
+      ansible.builtin.stat:
+        path: "{{laptop_repo}}"
+      register: laptop_repo_check
+
+    - name: Add laptop remote ({{laptop_repo}}) to {{install_dir}} repo
+      # Git module does not know how to add remotes (yet...)
+      # Using command and silencing corresponding ansible-lint rule 
+      # noqa command-instead-of-module
+      command:
+        cmd: git remote add laptop {{laptop_repo}}
+        chdir: "{{install_dir}}"
+      register: add_result
+      changed_when: add_result.rc == 0
+      failed_when:
+        - add_result.rc != 0
+        - add_result.stderr | default('') is not search("remote .* already exists")
+      when: laptop_repo_check.stat.exists

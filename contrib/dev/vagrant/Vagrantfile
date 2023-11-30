@@ -79,6 +79,9 @@ Vagrant.configure("2") do |config|
 
       if ENV['BUILD_ENV'] == 'prod'
         v.vm.synced_folder PROD_ANSIBLE_DIR, "/ansible"
+        if File.directory?(CT_SRC_DIR)
+          v.vm.synced_folder CT_SRC_DIR, "/opt/concertim/dev"
+        end
       else
         v.vm.synced_folder DEV_ANSIBLE_DIR, "/ansible-dev"
         if File.directory?(CT_SRC_DIR)
