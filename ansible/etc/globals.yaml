@@ -48,13 +48,6 @@ metric_reporting_daemon_api_port: 43000
 # Use 0.0.0.0 to listen on all interfaces.
 metric_reporting_daemon_api_interface: 127.0.0.1
 
-# Internal ports used by the metric reporting daemon to communicate with
-# gmetad.  The ports can be any value that works.  The interface should be
-# 127.0.0.1.
-metric_reporting_daemon_gds_port: 8678
-metric_reporting_daemon_gds_interface: 127.0.0.1
-metric_reporting_daemon_gmetad_port: 8651
-
 # The port that the visualisation app service should listen to HTTP requests on.
 visualisation_app_port: 7000
 # The interface that the proxy service should listen to HTTPS requests on.

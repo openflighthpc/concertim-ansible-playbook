@@ -3,7 +3,6 @@
   until: result is success
   ansible.builtin.apt:
     name:
-      - golang-go
       - net-tools
       - ruby3.0
       - jq
