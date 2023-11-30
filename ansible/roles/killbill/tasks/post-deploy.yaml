@@ -1,0 +1,25 @@
+- name: Update openstack service config file
+  vars:
+    config_file: "{{ct_etc_dir}}/openstack-service/config.yaml"
+  block:
+    - name: Check for openstack service config file
+      ansible.builtin.stat:
+        path: "{{config_file}}"
+      register: openstack_service_config_file
+
+    - name: Update apikey and apisecret
+      ansible.builtin.replace:
+        path: "{{config_file}}"
+        regexp: "{{item.regexp}}"
+        replace: "{{item.replace}}"
+      loop:
+        - regexp: '^(\s*api_host:\s*)"http://host.killbill:8080"'
+          replace: '\1"http://killbill:{{killbill_port}}"'
+        - regexp: '^(\s*apikey:\s*)"key"'
+          replace: '\1"{{ killbill_apikey | default("key") }}"'
+        - regexp: '^(\s*apisecret:\s*)"secret"'
+          replace: '\1"{{ killbill_apisecret | default("secret") }}"'
+      when:
+        openstack_service_config_file.stat.exists
+      notify:
+        - "Restart openstack_service containers"
