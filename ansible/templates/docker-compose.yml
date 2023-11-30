@@ -33,7 +33,7 @@ services:
   metric_reporting_daemon:
     image: concertim-metric-reporting-daemon:{{metric_reporting_daemon_facts_docker_image_tag}}
     volumes:
-      - rrd-data:/var/lib/ganglia/rrds
+      - rrd-data:/var/lib/metric-reporting-daemon/rrds
       - type: bind
         source: "{{ct_etc_dir}}/metric-reporting-daemon"
         target: "{{ct_etc_mount}}/metric-reporting-daemon"

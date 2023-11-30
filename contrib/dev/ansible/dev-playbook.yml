@@ -43,7 +43,5 @@
       tags: webserver
     - role: database
       tags: database
-    - role: ganglia
-      tags: ganglia
     - role: appliance-dev
       tags: appliance-dev
