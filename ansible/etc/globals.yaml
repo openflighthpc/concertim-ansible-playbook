@@ -62,7 +62,7 @@ visualisation_app_port: 7000
 visualisation_app_interface: 127.0.0.1
 
 # The port that the redis service should listen to HTTP requests on.
-redis_port: 6379
+redis_port: 46379
 # The interface that the redis service should listen to HTTP requests on.
 # Use 0.0.0.0 to listen on all interfaces.
 redis_interface: 127.0.0.1
