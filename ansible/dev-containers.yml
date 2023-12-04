@@ -37,6 +37,19 @@
         marker: "# {mark} ANSIBLE MANAGED BLOCK location assets"
         block: ""
 
+    - name: Rebuild proxy image
+      community.docker.docker_image:
+        name: "{{ proxy.docker_image.name }}"
+        build:
+          path: "{{proxy.install_dir}}"
+          dockerfile: "Dockerfile"
+          network: host
+          # http_timeout: 60
+        source: build
+        tag: "latest"
+        state: present
+        force_source: yes
+
     # For each of the git repos we checked out to /opt/concertim/opt/<REPO>, if
     # there is a corresponding repo at /opt/concertim/dev/<REPO>, add a remote to 
     # /opt/concertim/opt/<REPO> pointing at /opt/concertim/dev/<REPO>.
