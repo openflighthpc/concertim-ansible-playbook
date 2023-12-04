@@ -37,7 +37,7 @@ services:
     image: redis
     ports:
       - "{{redis_interface}}:{{redis_port}}:{{redis_port}}"
-    command: ["redis-server", "--port", "{{redis_port}}"]
+    command: ["redis-server", "--port", "{{redis_port}}", "--requirepass", "{{redis_password}}"]
     network_mode: host
 
   metric_reporting_daemon:
