@@ -1,3 +1,13 @@
+- name: Add golang-backports repository
+  register: result
+  until: result is success
+  ansible.builtin.apt_repository:
+    repo: ppa:longsleep/golang-backports
+
+- name: Run the equivalent of "apt update"
+  ansible.builtin.apt:
+    update_cache: yes
+
 - name: Install dependencies
   register: result
   until: result is success
