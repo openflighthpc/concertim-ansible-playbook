@@ -3,6 +3,7 @@
     db_password: "{{ lookup('password', '{{ct_docker_dir}}/secrets/db-password chars=ascii_letters,digits length=32') }}"
     jwt_secret: "{{ lookup('password', '{{ct_docker_dir}}/secrets/jwt-secret chars=ascii_letters,digits length=32') }}"
     rails_master_key: "{{ lookup('password', '{{ct_docker_dir}}/secrets/rails-master-key chars=ascii_letters,digits length=32') }}"
+    redis_password: "{{ lookup('password', '{{ct_docker_dir}}/secrets/redis-password chars=ascii_letters,digits length=32') }}"
 
 - name: Create secrets env file
   ansible.builtin.template:

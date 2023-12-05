@@ -9,13 +9,13 @@
       - build-essential
       - libpq-dev
       - libyaml-dev
+      - redis-server
 
 - name: Check for dev installation
   ansible.builtin.command:
     cmd: ls -d {{dev_root_dir}}/ct-visualisation-app
   register: dev_ct_vis_dir
   failed_when: False
-
 
 - name: Bundle install gems for dev ct-visualisation-app
   ansible.builtin.shell: |
