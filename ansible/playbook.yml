@@ -9,15 +9,13 @@
     ct_action: deploy
 
   pre_tasks:
-    - name: Assert credentials are present
+    - name: Assert GitHub credentials are present
       ansible.builtin.assert:
         that:
-          - "{{ item }} is defined"
-          - "{{ item }} != ''"
-        fail_msg: "{{ item }} credential has not been given"
+          - "gh_token is defined"
+          - "gh_token != ''"
+        fail_msg: "gh_token credential has not been given"
         quiet: true
-      loop:
-        - gh_token
 
     - name: Make installation directories
       ansible.builtin.file:
@@ -155,8 +153,8 @@
       - name: Wait for visualisation container
         ansible.builtin.wait_for:
           port: "{{visualisation_app_port}}"
-          delay: 1
-          timeout: 10
+          delay: 3
+          timeout: 300
           msg: "Timed out waiting for visualisation port {{visualisation_app_port}} to become open on the host"
 
       - name: Start concertim services
