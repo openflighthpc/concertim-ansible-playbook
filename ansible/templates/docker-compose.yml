@@ -18,6 +18,7 @@ services:
       - CREDENTIALS_CONTENT_PATH={{credentials_path}}
       - PORT={{visualisation_app_port}}
       - REDIS_URL="redis://{{redis_interface}}:{{redis_port}}/1"
+      - RAILS_ENV=production
     depends_on:
       - db
       - proxy
