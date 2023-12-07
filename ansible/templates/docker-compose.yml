@@ -18,7 +18,7 @@ services:
       - CREDENTIALS_CONTENT_PATH={{credentials_path}}
       - PORT={{visualisation_app_port}}
       - REDIS_URL="redis://{{redis_interface}}:{{redis_port}}/1"
-      - ACTION_CABLE_ALLOWED_ORIGINS={{action_cable_allowed_origins}}
+      - ACTION_CABLE_ALLOWED_ORIGINS={{action_cable_allowed_origins | default(ansible_facts.hostname)}}
       - RAILS_ENV=production
     depends_on:
       - db

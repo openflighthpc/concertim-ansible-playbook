@@ -55,6 +55,7 @@ visualisation_app_port: 7000
 visualisation_app_interface: 127.0.0.1
 # The hosts that visualiser's action cable (websockets) should allow requests from.
 # If multiple, these should be separated by a comma.
+# Comment this line out to use the hostname detected by ansible.
 action_cable_allowed_origins: https://localhost:9444,https://127.0.0.1:9444
 
 # The port that the redis service should listen to HTTP requests on.
