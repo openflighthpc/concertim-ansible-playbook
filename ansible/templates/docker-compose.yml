@@ -18,6 +18,11 @@ services:
       - CREDENTIALS_CONTENT_PATH={{credentials_path}}
       - PORT={{visualisation_app_port}}
       - REDIS_URL="redis://{{redis_interface}}:{{redis_port}}/1"
+      {% if access_hostnames is not defined or access_hostnames is none %}
+      - ACTION_CABLE_ALLOWED_ORIGINS={{ansible_facts.hostname}}
+      {% else %}
+      - ACTION_CABLE_ALLOWED_ORIGINS={{access_hostnames | join(",")}}
+      {% endif %}
       - RAILS_ENV=production
     depends_on:
       - db
