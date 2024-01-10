@@ -113,6 +113,14 @@
           docker compose -f docker-compose.yml -f docker-compose.dev.yml run --rm visualisation bin/rails db:migrate --trace
           docker compose -f docker-compose.yml -f docker-compose.dev.yml stop
 
+    - name: Clobber precompiled assets
+      ansible.builtin.shell:
+        chdir: "{{ct_docker_dir}}"
+        cmd: |
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml start db
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml run --rm visualisation bin/rails assets:clobber
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml stop
+
     - block:
         # There is an order of initialisation issue where some
         # concertim-openstack-service containers will exit if visualisation is
