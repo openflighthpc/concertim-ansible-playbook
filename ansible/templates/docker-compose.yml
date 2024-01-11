@@ -111,6 +111,8 @@ services:
     volumes:
       - "{{ct_cluster_builder_share_dir}}/:/app/instance"
     network_mode: host
+    extra_hosts:
+      - "user_handler:{{api_server_ip}}"
 {% endif %}
 
 {% if enable_openstack_service %}
