@@ -21,7 +21,7 @@ of the Alces Concertim services as a set of Docker containers.
   cd /opt/concertim/opt/ansible-playbook
   git checkout --quiet ${RELEASE_TAG}
   ```
-* Edit the `globals.yaml` file to configure which components are installed and which host network ports are bound to.
+* Edit the `globals.yaml` file to configure which components are installed, which host network ports the services are bound to, and optionally which hostnames the concertim UI will be accessed over.
   ```bash
   cd /opt/concertim/opt/ansible-playbook/ansible
   $EDITOR etc/globals.yaml
@@ -124,6 +124,12 @@ You can change these setting by editing the `etc/globals.yaml` file.
 cd /opt/concertim/opt/ansible-playbook/ansible
 $EDITOR etc/globals.yaml
 ```
+
+To enable live updates on the interactive rack view, Concertim needs to be
+configured with the hostname that is used to access the Concertim UI.  If this
+is not provided, it will default to the fully qualified hostname of the machine
+concertim is installed on.  A list of alternative hostnames can be provided by
+editing the `access_hostnames` variable in etc/globals.yaml.
 
 ### Run the playbook
 
