@@ -6,7 +6,7 @@ services:
         source: "{{visualisation_app.install_dir}}"
         target: "/opt/concertim/opt/ct-visualisation-app/"
     environment:
-      - RAILS_ENV=development
+      - RAILS_ENV
     command: ["bin/dev"]
 
   metric_reporting_daemon:
