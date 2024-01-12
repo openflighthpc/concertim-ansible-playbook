@@ -54,6 +54,19 @@
           group: root
           mode: "700"
 
+    - name: Ensure shared jwt secret exists
+      ansible.builtin.set_fact:
+          jwt_secret: "{{ lookup('password', '{{ct_docker_dir}}/secrets/jwt-secret chars=ascii_letters,digits length=32') }}"
+
+    - name: Create shared jwt secret env file
+      ansible.builtin.template:
+          src: jwt_secret.env
+          dest: "{{ct_docker_dir}}/secrets"
+          owner: root
+          group: root
+          mode: '0600'
+          lstrip_blocks: yes
+
   roles:
     - role: concertim_common
       tags: concertim

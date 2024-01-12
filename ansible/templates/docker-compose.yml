@@ -11,6 +11,7 @@ services:
         target: "{{ct_etc_mount}}"
     env_file:
       - secrets/secrets.env
+      - secrets/jwt_secret.env
     environment:
       - METRIC_DAEMON_URL=http://metric_reporting_daemon:{{metric_reporting_daemon_api_port}}
       - POSTGRES_HOST=db
@@ -55,6 +56,7 @@ services:
         target: "{{ct_etc_mount}}/metric-reporting-daemon"
     env_file:
       - secrets/secrets.env
+      - secrets/jwt_secret.env
     ports:
       - "{{metric_reporting_daemon_api_interface}}:{{metric_reporting_daemon_api_port}}:{{metric_reporting_daemon_api_port}}"
     network_mode: host
@@ -106,6 +108,8 @@ services:
     environment:
       - PORT={{cluster_builder_port}}
       - HOST={{cluster_builder_interface}}
+    env_file:
+      - secrets/jwt_secret.env
     ports:
       - "{{cluster_builder_interface}}:{{cluster_builder_port}}:{{cluster_builder_port}}"
     volumes:
@@ -118,6 +122,8 @@ services:
 {% if enable_openstack_service %}
   api_server:
     image: concertim-api-server:{{openstack_service_facts_docker_image_tag}}
+    env_file:
+      - secrets/jwt_secret.env
     ports:
       - "{{api_server_interface}}:42356:42356"
     volumes:
@@ -131,6 +137,8 @@ services:
 
   billing:
     image: concertim-billing:{{openstack_service_facts_docker_image_tag}}
+    env_file:
+      - secrets/jwt_secret.env
     volumes:
       - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
       - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
@@ -142,6 +150,8 @@ services:
 
   bulk_updates:
     image: concertim-bulk-updates:{{openstack_service_facts_docker_image_tag}}
+    env_file:
+      - secrets/jwt_secret.env
     volumes:
       - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
       - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
@@ -153,6 +163,8 @@ services:
 
   mq_listener:
     image: concertim-mq-listener:{{openstack_service_facts_docker_image_tag}}
+    env_file:
+      - secrets/jwt_secret.env
     volumes:
       - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
       - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
@@ -164,6 +176,8 @@ services:
 
   metrics:
     image: concertim-metrics:{{openstack_service_facts_docker_image_tag}}
+    env_file:
+      - secrets/jwt_secret.env
     volumes:
       - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
       - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
