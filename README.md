@@ -5,12 +5,15 @@ components in Docker containers.
 
 ## Getting Started
 
-You are viewing the development version of Alces Concertim Ansible Playbook.
+You are viewing release `v1.0.0` of Alces Concertim Ansible Playbook.
 To deploy this version of Alces Concertim follow [these
 instructions](ansible/README.md).
 
-To deploy a released version of Alces Concertim select the tag for that
+To deploy an alternate release of Alces Concertim select the tag for that
 release and follow the deployment instructions there.
+
+To deploy the development version of Alces Concertim select the `main` branch
+and follow the deployment instructions there.
 
 ### Concertim services
 
