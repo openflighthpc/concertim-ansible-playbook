@@ -3,7 +3,6 @@
   until: result is success
   ansible.builtin.apt:
     name:
-      - ruby3.0-dev
       - autoconf
       - bison
       - build-essential
@@ -18,9 +17,11 @@
   failed_when: False
 
 - name: Bundle install gems for dev ct-visualisation-app
-  ansible.builtin.shell: |
-    cd {{dev_root_dir}}/ct-visualisation-app/
-    ./bin/bundle install
+  ansible.builtin.shell:
+    chdir: "{{dev_root_dir}}/ct-visualisation-app/"
+    cmd: ./bin/bundle install
+  environment:
+    PATH: "{{ruby_dir}}:{{ansible_env.PATH}}"
   when: dev_ct_vis_dir.stdout != ""
 
 - name: Install yarn dependencies
@@ -59,8 +60,9 @@
     - name: Generate encryption keys
       ansible.builtin.shell:
         chdir: "{{dev_root_dir}}/ct-visualisation-app/"
-        cmd: |
-          ./bin/rake encryption:generate
+        cmd: ./bin/rake encryption:generate
+      environment:
+        PATH: "{{ruby_dir}}:{{ansible_env.PATH}}"
 
 - name: Configure database user
   block:
@@ -78,22 +80,28 @@
   vars:
     task: db:create
   ansible.builtin.shell:
-    cmd: |
-      sudo -u root /bin/bash -c 'RAILS_ENV=development ./bin/rails {{task}} --trace'
+    cmd: ./bin/rails {{task}} --trace
     chdir: "{{dev_root_dir}}/ct-visualisation-app/"
+  environment:
+    RAILS_ENV: development
+    PATH: "{{ruby_dir}}:{{ansible_env.PATH}}"
 
 - name: Migrate database
   vars:
     task: db:migrate
   ansible.builtin.shell:
-    cmd: |
-      sudo -u root /bin/bash -c 'RAILS_ENV=development ./bin/rails {{task}} --trace'
+    cmd: ./bin/rails {{task}} --trace
     chdir: "{{dev_root_dir}}/ct-visualisation-app/"
+  environment:
+    RAILS_ENV: development
+    PATH: "{{ruby_dir}}:{{ansible_env.PATH}}"
 
 - name: Start dev server
   ansible.builtin.command:
     cmd: screen -dmS ct-vis-app ./bin/dev
     chdir: "{{dev_root_dir}}/ct-visualisation-app/"
+  environment:
+    PATH: "{{ruby_dir}}:{{ansible_env.PATH}}"
 
 - name: Create dev templates
   block:

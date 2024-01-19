@@ -1,0 +1,63 @@
+- name: Install rbenv
+  register: result
+  until: result is success
+  ansible.builtin.apt:
+    name:
+      - rbenv
+    state: latest
+
+- name: Add rbenv initialisation to bashrc
+  ansible.builtin.lineinfile:
+    path: ~/.bashrc
+    line: 'eval "$(rbenv init -)"'
+    state: present
+    insertafter: EOF
+
+- name: Remove ruby-build
+  register: result
+  until: result is success
+  ansible.builtin.apt:
+    name:
+      - ruby-build
+    state: absent
+
+- name: Install latest ruby-build
+  block:
+    - name: Locate rbenv root
+      ansible.builtin.shell:
+        cmd: rbenv root
+      register: rbenv_root
+    - name: Check for existing ruby-build installation
+      ansible.builtin.stat:
+        path: "{{rbenv_root.stdout}}/plugins/ruby-build"
+      register: ruby_build_dir
+    - name: Install ruby-build
+      ansible.builtin.shell:
+        cmd: git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
+      when: not ruby_build_dir.stat.exists
+      register: result
+      until: result is success
+
+- name: Update ruby-build definitions
+  register: result
+  until: result is success
+  ansible.builtin.shell:
+    cmd: git -C "$(rbenv root)"/plugins/ruby-build pull
+
+- name: Install build dependencies
+  register: result
+  until: result is success
+  ansible.builtin.apt:
+    name:
+      - zlib1g-dev
+      - libffi-dev
+      - libyaml-dev
+    state: latest
+
+- name: Install Ruby 3.3.0
+  ansible.builtin.shell:
+    cmd: rbenv install --skip-existing 3.3.0
+
+- name: Set global Ruby to 3.3.0
+  ansible.builtin.shell:
+    cmd: rbenv global 3.3.0

@@ -4,9 +4,11 @@
   ansible.builtin.apt:
     name:
       - net-tools
-      - ruby3.0
       - jq
     state: latest
+
+- name: Install Ruby
+  include_tasks: install_ruby.yml
 
 # As above, install scripts that are for development.  Scripts that are useful
 # for production debugging and maintenance should be installed by the
