@@ -80,7 +80,7 @@ services:
       - "visualisation:{{visualisation_app_ip}}"
 
   db:
-    image: postgres
+    image: postgres:16-bookworm
     restart: always
     user: postgres
     volumes:

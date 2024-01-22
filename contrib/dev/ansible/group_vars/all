@@ -15,3 +15,6 @@ ct_root_dir: /opt/concertim
 ct_installation_dir: /opt/concertim/opt
 # The directory into which some of the ct configuration can be found.
 ct_etc_dir: /opt/concertim/etc
+
+# The directory into which Ruby 3.3.x is installed.
+ruby_dir: /root/.rbenv/shims
