@@ -7,19 +7,13 @@
       register: credentials_file
     - name: Create credentials
       when: not credentials_file.stat.exists
-      vars:
-        # Make sure to escape any single quote chars here.
-        script: |
-          set -e
-          set -o pipefail
-          EDITOR=cat ./bin/rails credentials:edit
-          cp -a config/credentials.yml.enc {{credentials_path}}
-          ./bin/rake encryption:generate --trace
-          mv config/credentials.yml.enc {{credentials_path}}
+      environment:
+        EDITOR: cat
       ansible.builtin.shell:
         chdir: "{{ct_docker_dir}}"
         cmd: |
-          docker compose run --rm visualisation /bin/bash -c '{{script}}'
+          docker compose run --rm visualisation ./bin/rails credentials:edit
+          docker compose run --rm visualisation ./bin/rake encryption:generate --trace
 
 - name: Precompile visualisation assets
   ansible.builtin.shell:
