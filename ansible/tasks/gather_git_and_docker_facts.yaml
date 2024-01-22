@@ -1,3 +1,21 @@
+# This task sets some facts for each component.
+#
+# The following facts about the git repository are set:
+#
+#  - {{component}}_facts_git_branch : the git branch that is checked out.
+#  - {{component}}_facts_git_sha : the git commit SHA that is checked out.
+#  - {{component}}_facts_git_tag : the git tag that points to the checkout if any.
+#
+# Those facts are used to set the following facts about the docker image:
+#
+#  - {{component}}_facts_docker_image_tag : the tag name to use for the docker image.
+#
+# Setting the {{component}}_facts_docker_image_tag fact has a complication with
+# development builds.  If we are building a development build and we just so
+# happen to be on a tagged version, we want to ignore the git tag and use
+# `latest` for the docker image tag.  This is controlled via the
+# `force_docker_latest` variable.
+#
 - name: Gather git checkout and docker image facts
   block:
     - name: Get git checkout info
@@ -11,19 +29,30 @@
               grep '^v[[:digit:]]' | \
               head -n 1
       register: "git_info"
+
     - name: Set git facts
       ansible.builtin.set_fact:
         "{{component}}_facts_git_info": "{{git_info}}"
         "{{component}}_facts_git_tag": "{{ (git_info.stdout_lines | length >= 3) | ternary(git_info.stdout_lines[2], None) }}"
         "{{component}}_facts_git_sha": "{{git_info.stdout_lines[0]}}"
+        "{{component}}_facts_git_branch": "{{git_info.stdout_lines[1]}}"
+
     - name: Set docker facts
       vars:
         git_tag: "{{lookup('vars', component + '_facts_git_tag')}}"
+        force_latest: "{{lookup('vars', 'force_docker_latest', default=False)}}"
+        use_latest: "{{force_latest or git_tag == ''}}"
       ansible.builtin.set_fact:
-        "{{component}}_facts_docker_image_tag": "{{(git_tag == '') | ternary('latest', git_tag)}}"
+        "{{component}}_facts_docker_image_tag": "{{(use_latest) | ternary('latest', git_tag)}}"
+
+    - ansible.builtin.debug:
+        msg: "{{component + '.source.commitish'}}={{lookup('vars', component).source.commitish}}"
+      ignore_errors: True
+
     - ansible.builtin.debug:
         msg: "{{component + '_facts_' + item}}={{lookup('vars', component + '_facts_' + item)}}"
       loop:
         - "git_tag"
         - "git_sha"
+        - "git_branch"
         - "docker_image_tag"
