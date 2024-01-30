@@ -11,9 +11,9 @@ of the Alces Concertim services as a set of Docker containers.
   (`python3-docker` on Ubuntu).
 * Make a GitHub token available in the `GH_TOKEN` environment variable.
 * Gain a root shell on the target machine.
-* Clone the github repo to `/opt/concertim/ansible-playbook` and checkout the `v1.0.0` branch.
+* Clone the github repo to `/opt/concertim/ansible-playbook` and checkout the `v1.0.1` tag.
   ```bash
-  RELEASE_TAG="v1.0.0"
+  RELEASE_TAG="v1.0.1"
   mkdir -p /opt/concertim/opt
   cd /opt/concertim/opt
   git clone -n --depth=1 --filter=tree:0 --no-single-branch \
@@ -93,13 +93,13 @@ snippets.
 Clone this github repo to the machine that will run the ansible playbook.
 The repo is a private repo,
 so you will need to have a github token available in the `GH_TOKEN` environment variable.
-The following snippet will clone the `v1.0.0` branch of the repo to `/opt/concertim/ansible-playbook`,
+The following snippet will clone the `v1.0.1` branch of the repo to `/opt/concertim/ansible-playbook`,
 it is also careful to avoid downloading more data than is needed.
 If you wish to install an alternate release, you should follow the instructions for that release.
 If you wish to install the development version, you should follow the instructions for the `main` branch.
 
 ```bash
-RELEASE_TAG="v1.0.0"
+RELEASE_TAG="v1.0.1"
 mkdir -p /opt/concertim/opt
 cd /opt/concertim/opt
 git clone -n --depth=1 --filter=tree:0 --no-single-branch \

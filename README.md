@@ -5,7 +5,7 @@ components in Docker containers.
 
 ## Getting Started
 
-You are viewing release `v1.0.0` of Alces Concertim Ansible Playbook.
+You are viewing release `v1.0.1` of Alces Concertim Ansible Playbook.
 To deploy this version of Alces Concertim follow [these
 instructions](ansible/README.md).
 

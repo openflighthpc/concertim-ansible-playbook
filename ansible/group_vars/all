@@ -97,7 +97,7 @@ visualisation_app:
   install_dir: "{{ct_installation_dir}}/visualisation-app"
   source:
     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-ct-visualisation-app"
-    commitish: v1.0.0
+    commitish: v1.0.1
   docker_image:
     name: concertim-visualisation-app
 
