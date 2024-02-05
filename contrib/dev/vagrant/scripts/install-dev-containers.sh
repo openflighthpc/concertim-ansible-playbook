@@ -7,4 +7,4 @@ ansible-playbook \
   --inventory /ansible/inventory.ini \
   --extra-vars "gh_token=$GH_TOKEN" \
   --extra-vars @/ansible/etc/globals.yaml \
-  /ansible/dev-containers.yml "$@"
+  /ansible-dev/install-dev-containers.yml "$@"
