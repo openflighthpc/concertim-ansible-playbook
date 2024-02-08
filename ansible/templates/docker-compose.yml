@@ -154,6 +154,11 @@ services:
     extra_hosts:
       - "proxy:{{proxy_ip}}"
       - "killbill:{{killbill_ip}}"
+{% if enable_concertim %}
+    depends_on:
+      visualisation:
+        condition: service_healthy
+{% endif %}
 
   bulk_updates:
     image: concertim-bulk-updates:{{openstack_service_facts_docker_image_tag}}
@@ -167,6 +172,11 @@ services:
     extra_hosts:
       - "proxy:{{proxy_ip}}"
       - "killbill:{{killbill_ip}}"
+{% if enable_concertim %}
+    depends_on:
+      visualisation:
+        condition: service_healthy
+{% endif %}
 
   mq_listener:
     image: concertim-mq-listener:{{openstack_service_facts_docker_image_tag}}
@@ -180,6 +190,11 @@ services:
     extra_hosts:
       - "proxy:{{proxy_ip}}"
       - "killbill:{{killbill_ip}}"
+{% if enable_concertim %}
+    depends_on:
+      visualisation:
+        condition: service_healthy
+{% endif %}
 
   metrics:
     image: concertim-metrics:{{openstack_service_facts_docker_image_tag}}
@@ -192,6 +207,11 @@ services:
     network_mode: host
     extra_hosts:
       - "proxy:{{proxy_ip}}"
+{% if enable_concertim %}
+    depends_on:
+      visualisation:
+        condition: service_healthy
+{% endif %}
 {% endif %}
 
 {% if enable_concertim %}
