@@ -31,6 +31,13 @@ services:
       - redis
     ports:
       - "{{visualisation_app_interface}}:{{visualisation_app_port}}:{{visualisation_app_port}}"
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://{{visualisation_app_interface}}:{{visualisation_app_port}}']
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s #  For the first 30s after starting the container
+      start_interval: 5s # check every 5s to see if it has started yet
     network_mode: host
     extra_hosts:
       - "metric_reporting_daemon:{{metric_reporting_daemon_ip}}"
@@ -100,7 +107,7 @@ services:
 {% endif %}
 
 {% if enable_cluster_builder %}
-  cluster_builder: 
+  cluster_builder:
     image: concertim-cluster-builder:{{cluster_builder_facts_docker_image_tag}}
     # flask requires SIGINT to stop gracefully
     # (default stop signal from Compose is SIGTERM)
@@ -147,6 +154,11 @@ services:
     extra_hosts:
       - "proxy:{{proxy_ip}}"
       - "killbill:{{killbill_ip}}"
+{% if enable_concertim %}
+    depends_on:
+      visualisation:
+        condition: service_healthy
+{% endif %}
 
   bulk_updates:
     image: concertim-bulk-updates:{{openstack_service_facts_docker_image_tag}}
@@ -160,6 +172,11 @@ services:
     extra_hosts:
       - "proxy:{{proxy_ip}}"
       - "killbill:{{killbill_ip}}"
+{% if enable_concertim %}
+    depends_on:
+      visualisation:
+        condition: service_healthy
+{% endif %}
 
   mq_listener:
     image: concertim-mq-listener:{{openstack_service_facts_docker_image_tag}}
@@ -173,6 +190,11 @@ services:
     extra_hosts:
       - "proxy:{{proxy_ip}}"
       - "killbill:{{killbill_ip}}"
+{% if enable_concertim %}
+    depends_on:
+      visualisation:
+        condition: service_healthy
+{% endif %}
 
   metrics:
     image: concertim-metrics:{{openstack_service_facts_docker_image_tag}}
@@ -185,6 +207,11 @@ services:
     network_mode: host
     extra_hosts:
       - "proxy:{{proxy_ip}}"
+{% if enable_concertim %}
+    depends_on:
+      visualisation:
+        condition: service_healthy
+{% endif %}
 {% endif %}
 
 {% if enable_concertim %}

@@ -147,31 +147,13 @@
         cmd: |
           docker compose up --detach
 
-    - tags:
+    - name: Start concertim services
+      tags:
         - concertim
         - cluster_builder
         - openstack_service
       when: (enable_concertim | bool) or (enable_cluster_builder | bool) or (enable_openstack_service | bool)
-      block:
-        # There is an order of initialisation issue where some
-        # concertim-openstack-service containers will exit if visualisation is
-        # not accepting connections when they start.  We work around that here,
-        # but it should be fixed upstream.
-      - name: Start concertim visualisation service
-        ansible.builtin.shell:
-          chdir: "{{ct_docker_dir}}"
-          cmd: |
-            docker compose up --detach visualisation
-
-      - name: Wait for visualisation container
-        ansible.builtin.wait_for:
-          port: "{{visualisation_app_port}}"
-          delay: 3
-          timeout: 300
-          msg: "Timed out waiting for visualisation port {{visualisation_app_port}} to become open on the host"
-
-      - name: Start concertim services
-        ansible.builtin.shell:
-          chdir: "{{ct_docker_dir}}"
-          cmd: |
-            docker compose up --detach
+      ansible.builtin.shell:
+        chdir: "{{ct_docker_dir}}"
+        cmd: |
+          docker compose up --detach
