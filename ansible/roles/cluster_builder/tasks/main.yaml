@@ -55,11 +55,17 @@
       register: available_types
 
     - name: Enable all available types
+      vars:
+        disabled_cluster_types:
+          - big-data-analysis
+          - big-data-analysis-direct
+          - k8s-web-hosting
       ansible.builtin.file:
         src: "../cluster-types-available/{{item.path | dirname | basename}}"
         dest: "{{enabled_dir}}/{{item.path | dirname | basename}}"
         state: link
       loop: "{{ available_types.files }}"
+      when: "item.path | dirname | basename not in disabled_cluster_types"
 
 - name: Set git checkout and docker image facts
   vars:
