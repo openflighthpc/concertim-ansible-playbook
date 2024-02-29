@@ -50,7 +50,7 @@
   vars:
     component: openstack_service
     install_dir: "{{openstack_service.install_dir}}"
-    force_docker_latest: "{{openstack_service.source.commitish == 'develop'}}"
+    force_docker_latest: "{{openstack_service.source.commitish == 'master'}}"
   import_tasks: gather_git_and_docker_facts.yaml
 
 - name: Build docker image
