@@ -20,6 +20,7 @@
   vars:
     available_dir: "{{ct_cluster_builder_share_dir}}/cluster-types-available"
     enabled_dir: "{{ct_cluster_builder_share_dir}}/cluster-types-enabled"
+    templates_dir: "{{ct_cluster_builder_share_dir}}/templates"
   block:
     - name: Create cluster type definition directories
       ansible.builtin.file:
@@ -31,6 +32,7 @@
       loop:
         - "{{available_dir}}"
         - "{{enabled_dir}}"
+        - "{{templates_dir}}"
 
     - name: Copy examples cluster type definitions
       ansible.builtin.copy:
@@ -40,6 +42,8 @@
       loop:
         - src: cluster-types/
           dest: "{{available_dir}}"
+        - src: templates/
+          dest: "{{templates_dir}}"
 
     - name: Find available types
       ansible.builtin.find:
