@@ -20,7 +20,7 @@ enable_openstack_service: yes
 
 # If the killbill component is enabled, the killbill, kaui and killbill_db
 # components will be installed and enabled.
-enable_killbill: yes
+enable_killbill: no
 
 # ==================================================
 # Host Ports and Interfaces
@@ -55,8 +55,8 @@ visualisation_app_port: 7000
 visualisation_app_interface: 127.0.0.1
 # The hostname(s) that will be used to access concertim (i.e. the hostname that users type into their browser).
 # If not set, it will default to the fully qualified hostname of the machine concertim is installed on.
-#access_hostnames:
-#  - myhostname.mydomain
+access_hostnames:
+  - https://localhost:9444
 
 # The port that the redis service should listen to HTTP requests on.
 redis_port: 46379
