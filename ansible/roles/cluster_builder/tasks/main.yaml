@@ -20,6 +20,7 @@
   vars:
     available_dir: "{{ct_cluster_builder_share_dir}}/cluster-types-available"
     enabled_dir: "{{ct_cluster_builder_share_dir}}/cluster-types-enabled"
+    templates_dir: "{{ct_cluster_builder_share_dir}}/templates"
   block:
     - name: Create cluster type definition directories
       ansible.builtin.file:
@@ -31,6 +32,7 @@
       loop:
         - "{{available_dir}}"
         - "{{enabled_dir}}"
+        - "{{templates_dir}}"
 
     - name: Copy examples cluster type definitions
       ansible.builtin.copy:
@@ -40,6 +42,8 @@
       loop:
         - src: cluster-types/
           dest: "{{available_dir}}"
+        - src: templates/
+          dest: "{{templates_dir}}"
 
     - name: Find available types
       ansible.builtin.find:
@@ -51,11 +55,17 @@
       register: available_types
 
     - name: Enable all available types
+      vars:
+        disabled_cluster_types:
+          - big-data-analysis
+          - big-data-analysis-direct
+          - k8s-web-hosting
       ansible.builtin.file:
         src: "../cluster-types-available/{{item.path | dirname | basename}}"
         dest: "{{enabled_dir}}/{{item.path | dirname | basename}}"
         state: link
       loop: "{{ available_types.files }}"
+      when: "item.path | dirname | basename not in disabled_cluster_types"
 
 - name: Set git checkout and docker image facts
   vars:
