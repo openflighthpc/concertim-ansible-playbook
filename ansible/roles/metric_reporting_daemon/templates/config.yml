@@ -76,4 +76,5 @@ rrd:
   step: 15s
 
 log_level: info
+log_file: /app/log/metric-reporting-daemon.log
 shared_secret_file: "/opt/concertim/etc/secret"

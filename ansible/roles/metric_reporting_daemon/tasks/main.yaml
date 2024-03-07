@@ -16,13 +16,22 @@
   ansible.builtin.command:
     cmd: git config --global --add safe.directory "{{metric_reporting_daemon.install_dir}}"
 
-- name: Create configuration directory
+- name: Create directories
   ansible.builtin.file:
-    path: "{{ct_etc_dir}}/metric-reporting-daemon"
-    owner: root
-    group: root
-    mode: "755"
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
     state: directory
+  loop:
+    - path: "{{ct_etc_dir}}/metric-reporting-daemon"
+      owner: root
+      group: root
+      mode: "755"
+    - path: "{{ct_log_dir}}/metric-reporting-daemon"
+      owner: root
+      group: root
+      mode: "755"
 
 - name: Install metric reporting daemon configuration file
   ansible.builtin.template:

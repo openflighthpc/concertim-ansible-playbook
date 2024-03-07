@@ -17,6 +17,19 @@
   ansible.builtin.command:
     cmd: git config --global --add safe.directory "{{visualisation_app.install_dir}}"
 
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    state: directory
+  loop:
+    - path: "{{ct_log_dir}}/visualisation/"
+      owner: root
+      group: root
+      mode: "755"
+
 - name: Set git checkout and docker image facts
   vars:
     component: visualisation_app
