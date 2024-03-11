@@ -1,4 +1,4 @@
-# Creating an alternative development environment for developing the Concertim Services
+# Configuring the Concertim containers to create a development environment for Concertim Services
 
 This directory contains an ansible playbook to configure the production
 installation of the docker containers to one that is suitable for development.
@@ -56,6 +56,27 @@ On the virtual machine run the following:
 ```
 
 This will install the docker containers in a configuration suitable for production use.
+
+
+## Prevent visualisation from serving the pre-compiled assets
+
+Edit the docker-compose.yml file and remove the `static-content` volume from
+the `visualisation` service.  Without this, new assets may not be picked up by
+the development server.
+
+```diff
+--- docker-compose.yml.orig	2024-03-11 14:37:48.370604710 +0000
++++ docker-compose.yml	2024-03-11 14:38:07.786597337 +0000
+@@ -4,7 +4,7 @@
+   visualisation:
+     image: concertim-visualisation-app:latest
+     volumes:
+-      - static-content:/opt/concertim/opt/ct-visualisation-app/public/
++      # - static-content:/opt/concertim/opt/ct-visualisation-app/public/
+       - type: bind
+         source: "/opt/concertim/etc"
+         target: "/opt/concertim/etc"
+```
 
 
 ## Run the dev containers playbook.

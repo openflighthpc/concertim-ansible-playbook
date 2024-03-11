@@ -1,8 +1,43 @@
 # Creating a development environment for developing the Concertim Services
 
 This directory contains an ansible playbook and a Vagrantfile that can be used
-to build a development environment for development of the Metric Reporting Daemon
-and Visualisation App components.
+to build a development environment for development of the Concertim components.
+
+# Configure Concertim containers for development
+
+Install the production containers and then configure them so that they are
+suitable for development.
+
+## Quick start
+
+1. Checkout the concertim repositories in the expected locations.
+   ```sh
+   mkdir -p ~/projects/concertim/src
+   cd ~/projects/concertim
+   git clone git@github.com:alces-flight/concertim-ansible-playbook.git
+   cd ~/projects/concertim/src
+   git clone git@github.com:alces-flight/concertim-metric-reporting-daemon.git metric-reporting-daemon
+   git clone git@github.com:alces-flight/concertim-ct-visualisation-app.git visualisation-app
+   git clone git@github.com:alces-flight/concertim-cluster-builder.git cluster-builder
+   git clone git@github.com:alces-flight/concertim-openstack-service.git openstack-service
+   ```
+
+2. Build the vagrant machine `dev2` (note: `BUILD_ENV=prod` is correct):
+   ```sh
+   cd contrib/dev/vagrant
+   BUILD_ENV=prod ./scripts/rebuild-box.sh dev2
+   ```
+
+Follow the instructions to [configure the containers for
+development](ansible-dev-containers/README.md).
+
+---
+
+
+# Another development environment
+
+This is an alternative method of creating a development environment for Metric
+Reporting Daemon and Visualisation App.
 
 ## Quick start
 
