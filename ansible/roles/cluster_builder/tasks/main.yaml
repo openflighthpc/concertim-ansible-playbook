@@ -71,6 +71,7 @@
   vars:
     component: cluster_builder
     install_dir: "{{cluster_builder.install_dir}}"
+    force_docker_latest: "{{cluster_builder.source.commitish == 'main'}}"
   import_tasks: gather_git_and_docker_facts.yaml
 
 - name: Build docker image

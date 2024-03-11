@@ -125,7 +125,7 @@ openstack_service:
   install_dir: "{{ct_installation_dir}}/openstack-service"
   source:
     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-openstack-service"
-    commitish: develop
+    commitish: master
   docker_images:
     - name: concertim-api-server
       dockerfile: ./Dockerfiles/Dockerfile.api_server

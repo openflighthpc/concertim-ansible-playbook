@@ -1,0 +1,146 @@
+---
+- name: Configure containers for development
+  hosts: all
+  become: true
+  become_user: root
+  become_method: sudo
+
+  tasks:
+    - name: Assert GitHub credentials are present
+      ansible.builtin.assert:
+        that:
+          - "gh_token is defined"
+          - "gh_token != ''"
+        fail_msg: "gh_token credential has not been given"
+        quiet: true
+
+    - name: Check for current installation
+      ansible.builtin.stat:
+        path: "{{ct_docker_dir}}/docker-compose.yml"
+      register: docker_compose_file
+
+    - name: Assert prod playbook has been ran
+      ansible.builtin.assert:
+        that: docker_compose_file.stat.exists 
+        fail_msg: "It looks like the playbook.yml playbook has not been ran"
+        quiet: true
+
+    - name: Down current containers
+      ansible.builtin.shell:
+        chdir: "{{ct_docker_dir}}"
+        cmd: |
+          docker compose -f docker-compose.yml down
+
+    - name: Proxy no longer serves assets
+      ansible.builtin.blockinfile:
+        path: "{{proxy.install_dir}}/nginx/conf.d/default.conf"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK location assets"
+        block: ""
+
+    - name: Rebuild proxy image
+      community.docker.docker_image:
+        name: "{{ proxy.docker_image.name }}"
+        build:
+          path: "{{proxy.install_dir}}"
+          dockerfile: "Dockerfile"
+          network: host
+          # http_timeout: 60
+        source: build
+        tag: "latest"
+        state: present
+        force_source: yes
+
+    # For each of the git repos we checked out to /opt/concertim/opt/<REPO>, if
+    # there is a corresponding repo at /opt/concertim/dev/<REPO>, add a remote to 
+    # /opt/concertim/opt/<REPO> pointing at /opt/concertim/dev/<REPO>.
+    #
+    # When developing on the vagrant machine defined in contrib/dev/vagrant/,
+    # /opt/concertim/dev is a vagrant shared directory.
+    #
+    # The combination of the shared folder and the `laptop` remote allows for
+    # developing on one's laptop, committing changes, pulling the changes
+    # into the repo at /opt/concertim/opt.  For dev containers with
+    # live-reloading support, this provides live-reloading without the need for
+    # reliable notifications across vagrant shared directories.
+    #
+    # This development method is optional, you could instead edit the code in
+    # /opt/concertim/opt/<REPO> directly.  Or install directly on your laptop
+    # instead of a vagrant machine.
+    - name: Add git remote to host repos
+      vars:
+        unfiltered_repos:
+          - "{{ enable_concertim | ternary('metric_reporting_daemon', '') }}"
+          - "{{ enable_concertim | ternary('visualisation_app', '') }}"
+          - "{{ enable_cluster_builder | ternary('cluster_builder', '') }}"
+          - "{{ enable_openstack_service | ternary('openstack_service', '') }}"
+      include_tasks: tasks/add_dev_git_remote.yaml
+      loop: "{{ unfiltered_repos|select|list }}"
+
+    # We need the target with go and other useful programs installed.  Not the
+    # minimal target containing just the compiled binary.
+    - name: Rebuild metric reporting daemon image
+      community.docker.docker_image:
+        name: "{{ metric_reporting_daemon.docker_image.name }}"
+        build:
+          path: "{{metric_reporting_daemon.install_dir}}"
+          dockerfile: "Dockerfile"
+          target: dev
+          network: host
+          # http_timeout: 60
+        source: build
+        tag: "latest"
+        state: present
+        force_source: yes
+
+    - name: Install dev docker compose file
+      ansible.builtin.template:
+        src: docker-compose.dev.yml
+        dest: "{{ct_docker_dir}}/"
+        lstrip_blocks: yes
+
+    - name: Recreate docker containers
+      ansible.builtin.shell:
+        chdir: "{{ct_docker_dir}}"
+        cmd: |
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml create
+
+    - name: Create and migrate visualisation app database
+      ansible.builtin.shell:
+        chdir: "{{ct_docker_dir}}"
+        cmd: |
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml start db
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml run --rm visualisation bin/rails db:create --trace
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml run --rm visualisation bin/rails db:migrate --trace
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml stop
+
+    - name: Clobber precompiled assets
+      ansible.builtin.shell:
+        chdir: "{{ct_docker_dir}}"
+        cmd: |
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml start db
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml run --rm visualisation bin/rails assets:clobber
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml stop
+
+    - block:
+        # There is an order of initialisation issue where some
+        # concertim-openstack-service containers will exit if visualisation is
+        # not accepting connections when they start.  We work around that here,
+        # but it should be fixed upstream.
+      - name: Start concertim visualisation service
+        ansible.builtin.shell:
+          chdir: "{{ct_docker_dir}}"
+          cmd: |
+            docker compose -f docker-compose.yml -f docker-compose.dev.yml start visualisation
+
+      - name: Wait for visualisation container
+        ansible.builtin.wait_for:
+          port: "{{visualisation_app_port}}"
+          delay: 3
+          timeout: 300
+          msg: "Timed out waiting for visualisation port {{visualisation_app_port}} to become open on the host"
+
+      - name: Start concertim services
+        ansible.builtin.shell:
+          chdir: "{{ct_docker_dir}}"
+          cmd: |
+            docker compose -f docker-compose.yml -f docker-compose.dev.yml start

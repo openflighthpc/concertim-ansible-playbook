@@ -34,6 +34,7 @@
   vars:
     component: metric_reporting_daemon
     install_dir: "{{metric_reporting_daemon.install_dir}}"
+    force_docker_latest: "{{metric_reporting_daemon.source.commitish == 'main'}}"
   import_tasks: gather_git_and_docker_facts.yaml
 
 - name: Build docker image
