@@ -24,6 +24,8 @@ services:
       - type: bind
         source: "{{cluster_builder.install_dir}}"
         target: "/app"
+    environment:
+      - CONFIG_FILE=/app/config/config.dev.yaml
     command: ["flask", "--app", "cluster_builder", "run", "-h", "0.0.0.0", "-p", "42378", "--debug"]
 {% endif %}
 

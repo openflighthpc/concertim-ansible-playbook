@@ -9,6 +9,7 @@ services:
       - type: bind
         source: "{{ct_etc_dir}}"
         target: "{{ct_etc_mount}}"
+      - "{{ct_log_dir}}/visualisation/:/opt/concertim/opt/ct-visualisation-app/log"
     env_file:
       - secrets/secrets.env
       - secrets/jwt_secret.env
@@ -61,6 +62,7 @@ services:
       - type: bind
         source: "{{ct_etc_dir}}/metric-reporting-daemon"
         target: "{{ct_etc_mount}}/metric-reporting-daemon"
+      - "{{ct_log_dir}}/metric-reporting-daemon/:/app/log"
     env_file:
       - secrets/secrets.env
       - secrets/jwt_secret.env
@@ -121,6 +123,7 @@ services:
       - "{{cluster_builder_interface}}:{{cluster_builder_port}}:{{cluster_builder_port}}"
     volumes:
       - "{{ct_cluster_builder_share_dir}}/:/app/instance"
+      - "{{ct_log_dir}}/cluster-builder/:/app/log"
     network_mode: host
     extra_hosts:
       - "user_handler:{{api_server_ip}}"
