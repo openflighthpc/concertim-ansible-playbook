@@ -38,7 +38,8 @@ ansible-playbook \
 1. Create the `RELEASE_TAG` and `GH_TOKEN` variables.
 
    `RELEASE_TAG` should contain the desired release tag to update to, e.g,. `v1.2.0`.
-   `GH_TOKEN` should contain your GitHub token.
+   `GH_TOKEN` should contain your GitHub token. This will need to be able to
+   clone the Concertim repositories from the `alces-flight` organisation.
 
    ```bash
    RELEASE_TAG="..."
@@ -81,11 +82,11 @@ ansible-playbook \
 5. Re-run the playbook.  It will rebuild the images; install updated
    configuration files; re-create the containers and restart the services.
 
-  ```bash
-  cd /opt/concertim/opt/ansible-playbook/ansible
-  ansible-playbook \
-    --inventory inventory.ini \
-    --extra-vars "gh_token=$GH_TOKEN" \
-    --extra-vars @etc/globals.yaml \
-    playbook.yml
-  ```
+   ```bash
+   cd /opt/concertim/opt/ansible-playbook/ansible
+   ansible-playbook \
+     --inventory inventory.ini \
+     --extra-vars "gh_token=$GH_TOKEN" \
+     --extra-vars @etc/globals.yaml \
+     playbook.yml
+   ```

@@ -173,7 +173,7 @@ docker compose restart
 ```
 
 
-## Starting, stopping and configuring the containers
+## Container overview and controlling
 
 For details on how to control the containers see the [starting and stopping instructions](/docs/controlling.md).
 For details of the images, containers and volumes see the [container overview](/docs/container-overview.md).

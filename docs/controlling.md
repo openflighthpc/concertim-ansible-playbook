@@ -17,7 +17,8 @@ docker compose -f /opt/concertim/opt/docker/docker-compose.yml start
 ```
 
 A single service can be restarted by running the following,
-where `<service>` is one of the services mentioned above,
+where `<service>` is one of the services mentioned in the [container
+overview](/docs/container-overview.md#image-and-container-overview),
 e.g., `metric_reporting_daemon`, `visualisation`, `proxy`, `db`:
 
 ```bash
