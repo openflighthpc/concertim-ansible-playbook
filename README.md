@@ -7,7 +7,7 @@ components in Docker containers.
 
 You are viewing the development version of Alces Concertim Ansible Playbook.
 To deploy this version of Alces Concertim follow [these
-instructions](ansible/README.md).
+instructions](docs/installation.md).
 
 To deploy a released version of Alces Concertim select the tag for that
 release and follow the deployment instructions there.

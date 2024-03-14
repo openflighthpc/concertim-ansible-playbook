@@ -82,10 +82,10 @@ above, the commit would look like this:
 
 
 ```diff
-diff --git a/ansible/README.md b/ansible/README.md
+diff --git a/docs/installation.md b/docs/installation.md
 index a22be5c..cf5aebd 100644
---- a/ansible/README.md
-+++ b/ansible/README.md
+--- a/docs/installation.md
++++ b/docs/installation.md
 @@ -10,9 +10,9 @@ of the Alces Concertim services as a set of Docker containers.
    `docker-compose-plugin` installed.
  * Make a GitHub token available in the `GH_TOKEN` environment variable.
@@ -134,7 +134,7 @@ index 767b628..0f18b4d 100644
 -You are viewing the development version of Alces Concertim Ansible Playbook.
 +You are viewing release `v0.2.2` of Alces Concertim Ansible Playbook.
  To deploy this version of Alces Concertim follow [these
- instructions](ansible/README.md).
+ instructions](docs/installation.md).
  
 -To deploy a released version of Alces Concertim select the tag for that
 +To deploy an alternate release of Alces Concertim select the tag for that
@@ -175,7 +175,7 @@ index 0f18b4d..767b628 100644
 -You are viewing release `v0.2.2` of Alces Concertim Ansible Playbook.
 +You are viewing the development version of Alces Concertim Ansible Playbook.
  To deploy this version of Alces Concertim follow [these
- instructions](ansible/README.md).
+ instructions](docs/installation.md).
  
 -To deploy an alternate release of Alces Concertim select the tag for that
 +To deploy a released version of Alces Concertim select the tag for that
@@ -187,10 +187,10 @@ index 0f18b4d..767b628 100644
  ## Developing
  
  For details on how to develop and test the ansible deployment playbook see
-diff --git a/ansible/README.md b/ansible/README.md
+diff --git a/docs/installation.md b/docs/installation.md
 index cf5aebd..a22be5c 100644
---- a/ansible/README.md
-+++ b/ansible/README.md
+--- a/docs/installation.md
++++ b/docs/installation.md
 @@ -10,9 +10,9 @@ of the Alces Concertim services as a set of Docker containers.
    `docker-compose-plugin` installed.
  * Make a GitHub token available in the `GH_TOKEN` environment variable.
