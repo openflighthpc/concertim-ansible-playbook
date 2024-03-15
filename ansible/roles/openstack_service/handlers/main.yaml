@@ -2,7 +2,7 @@
   ansible.builtin.shell:
     chdir: "{{ct_docker_dir}}"
     cmd: |
-      docker compose down api_server billing bulk_updates mq_listener metrics
+      docker compose down api_server billing bulk_updates mq_listener metrics view_sync
 
 - name: Restart openstack_service containers
   ansible.builtin.shell:
@@ -21,3 +21,4 @@
     - bulk_updates
     - mq_listener
     - metrics
+    - view_sync

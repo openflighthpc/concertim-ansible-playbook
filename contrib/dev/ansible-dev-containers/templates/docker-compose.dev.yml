@@ -50,6 +50,11 @@ services:
       - type: bind
         source: "{{openstack_service.install_dir}}"
         target: "/app"
+  view_sync:
+    volumes:
+      - type: bind
+        source: "{{openstack_service.install_dir}}"
+        target: "/app"
   metrics:
     volumes:
       - type: bind
