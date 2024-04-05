@@ -97,7 +97,7 @@ visualisation_app:
   install_dir: "{{ct_installation_dir}}/visualisation-app"
   source:
     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-ct-visualisation-app"
-    commitish: teams/new-middleware2
+    commitish: main
   docker_image:
     name: concertim-visualisation-app
 
@@ -125,7 +125,7 @@ openstack_service:
   install_dir: "{{ct_installation_dir}}/openstack-service"
   source:
     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-openstack-service"
-    commitish: abstraction/teams
+    commitish: code-abstraction
   docker_images:
     - name: concertim-api-server
       dockerfile: ./Dockerfiles/Dockerfile.api_server
