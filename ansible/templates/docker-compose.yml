@@ -199,6 +199,24 @@ services:
         condition: service_healthy
 {% endif %}
 
+  view_sync:
+    image: concertim-view-sync:{{openstack_service_facts_docker_image_tag}}
+    env_file:
+      - secrets/jwt_secret.env
+    volumes:
+      - "{{ct_etc_dir}}/openstack-service/config.yaml:/etc/concertim-openstack-service/config.yaml"
+      - "{{ct_log_dir}}/openstack-service/:/app/var/log/"
+      - "{{ct_openstack_service_data_dir}}:/app/var/data/"
+    network_mode: host
+    extra_hosts:
+      - "proxy:{{proxy_ip}}"
+      - "killbill:{{killbill_ip}}"
+  {% if enable_concertim %}
+    depends_on:
+      visualisation:
+        condition: service_healthy
+  {% endif %}
+
   metrics:
     image: concertim-metrics:{{openstack_service_facts_docker_image_tag}}
     env_file:

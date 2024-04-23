@@ -125,21 +125,23 @@ openstack_service:
   install_dir: "{{ct_installation_dir}}/openstack-service"
   source:
     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-openstack-service"
-    commitish: master
+    commitish: code-abstraction
   docker_images:
     - name: concertim-api-server
       dockerfile: ./Dockerfiles/Dockerfile.api_server
     - name: concertim-billing
       dockerfile: ./Dockerfiles/Dockerfile.billing
     - name: concertim-bulk-updates
-      dockerfile: ./Dockerfiles/Dockerfile.updates_bulk
+      dockerfile: ./Dockerfiles/Dockerfile.fe_updates
     - name: concertim-mq-listener
-      dockerfile: ./Dockerfiles/Dockerfile.updates_mq
+      dockerfile: ./Dockerfiles/Dockerfile.view_queue
+    - name: concertim-view-sync
+      dockerfile: ./Dockerfiles/Dockerfile.view_sync
     - name: concertim-metrics
-      dockerfile: ./Dockerfiles/Dockerfile.metrics
+      dockerfile: ./Dockerfiles/Dockerfile.fe_metrics
 
 killbill_fork:
-  install_dir: "{{openstack_service.install_dir}}/con_opstk/billing/killbill/killbill_fork"
+  install_dir: "{{openstack_service.install_dir}}/conser/modules/clients/billing/killbill/killbill_fork"
   source:
     repo: "https://{{gh_token}}@github.com/alces-flight/killbill_fork"
     commitish: master
