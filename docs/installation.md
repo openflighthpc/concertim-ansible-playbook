@@ -8,7 +8,7 @@
   (`python3-docker` on Ubuntu).
 * Make a GitHub token available in the `GH_TOKEN` environment variable.
 * Gain a root shell on the target machine.
-* Clone the github repo to `/opt/concertim/ansible-playbook` and checkout the `main` branch.
+* Clone the github repo to `/opt/concertim/ansible-playbook` and checkout the `v1.2.0` release tag.
   ```bash
   RELEASE_TAG="main"
   mkdir -p /opt/concertim/opt
