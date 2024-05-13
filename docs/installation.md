@@ -2,7 +2,7 @@
 
 ## Quick start
 
-* Configure required OpenStack users and roles.  See https://github.com/alces-flight/concertim-openstack-service/tree/master#openstack for details.
+* Configure required OpenStack users and roles.  See https://github.com/openflighthpc/concertim-openstack-service/tree/master#openstack for details.
 * Ensure the target machine has `ansible-playbook` `>= 2.10.8`, `docker` `>=
   24.0.7`, `docker-compose-plugin` `>= v2.21.0`, and the Python3 Docker libraries
   (`python3-docker` on Ubuntu).
@@ -14,7 +14,7 @@
   mkdir -p /opt/concertim/opt
   cd /opt/concertim/opt
   git clone -n --depth=1 --filter=tree:0 --no-single-branch \
-    https://${GH_TOKEN}@github.com/alces-flight/concertim-ansible-playbook.git ansible-playbook
+    https://${GH_TOKEN}@github.com/openflighthpc/concertim-ansible-playbook.git ansible-playbook
   cd /opt/concertim/opt/ansible-playbook
   git checkout --quiet ${RELEASE_TAG}
   ```
@@ -35,12 +35,12 @@
 
 If the killbill service was installed, you will also need to:
 
-* Create a KAUI tenant and upload a catalog.  See https://github.com/alces-flight/concertim-openstack-service/blob/master/docs/killbill_basic.md#configuration-of-kaui for details.
+* Create a KAUI tenant and upload a catalog.  See https://github.com/openflighthpc/concertim-openstack-service/blob/master/docs/killbill_basic.md#configuration-of-kaui for details.
 * Edit the concertim openstack service configuration file with the Kill Bill API key and API secret.
 
 If the concertim openstack service components were installed, you will also need to:
 
-* Edit the concertim openstack service configuration file.  See https://github.com/alces-flight/concertim-openstack-service/tree/master#configuration for details.
+* Edit the concertim openstack service configuration file.  See https://github.com/openflighthpc/concertim-openstack-service/tree/master#configuration for details.
   ```bash
   $EDITOR /opt/concertim/etc/openstack-service/config.yaml
   ```
@@ -61,7 +61,7 @@ The steps for installing are briefly:
 
 1. Configure OpenStack with required users and roles.
 2. Gather your GitHub credentials.
-3. Clone this github repo (https://github.com/alces-flight/concertim-ansible-playbook).
+3. Clone this github repo (https://github.com/openflighthpc/concertim-ansible-playbook).
 4. Optionally, edit the global settings.
 5. Run the ansible playbook.
 6. Configure Kill Bill / KAUI.
@@ -72,7 +72,7 @@ The steps for installing are briefly:
 
 Concertim expects certain users and roles to be configured in OpenStack.
 Currently, this needs to be done outside of this installation mechanism.
-See https://github.com/alces-flight/concertim-openstack-service/tree/master#openstack for details of the users and roles to configure.
+See https://github.com/openflighthpc/concertim-openstack-service/tree/master#openstack for details of the users and roles to configure.
 
 ### Gather GitHub credentials
 
@@ -99,7 +99,7 @@ RELEASE_TAG="main"
 mkdir -p /opt/concertim/opt
 cd /opt/concertim/opt
 git clone -n --depth=1 --filter=tree:0 --no-single-branch \
-  https://${GH_TOKEN}@github.com/alces-flight/concertim-ansible-playbook.git ansible-playbook
+  https://${GH_TOKEN}@github.com/openflighthpc/concertim-ansible-playbook.git ansible-playbook
 cd /opt/concertim/opt/ansible-playbook
 git checkout --quiet ${RELEASE_TAG}
 ```
@@ -152,7 +152,7 @@ The default username and password are available in `/opt/concertim/etc/openstack
 Once logged in create the tenant using the `apikey` and `apisecret` available in `/opt/concertim/etc/openstack-service/config.yaml`.
 If you use a different API key and secret, be sure to update the `apikey` and `apisecret` in `/opt/concertim/etc/openstack-service/config.yaml`.
 
-Once the tenant is created, a catalog needs to be created.  Details of how to do this are given at https://github.com/alces-flight/concertim-openstack-service/blob/master/docs/killbill_basic.md#configuration-of-kaui
+Once the tenant is created, a catalog needs to be created.  Details of how to do this are given at https://github.com/openflighthpc/concertim-openstack-service/blob/master/docs/killbill_basic.md#configuration-of-kaui
 
 
 ### Edit the concertim openstack service configuration

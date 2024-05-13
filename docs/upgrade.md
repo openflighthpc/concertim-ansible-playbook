@@ -57,7 +57,7 @@ ansible-playbook \
 3. Stop and remove all of the concertim containers and images.
 
    Currently there is [an
-   issue](https://github.com/alces-flight/concertim-ansible-playbook/issues/85)
+   issue](https://github.com/openflighthpc/concertim-ansible-playbook/issues/85)
    in the concertim container versioning that may result in the docker images
    not being correctly rebuilt.  To work around that issue stop and remove all
    of the containers and then remove all of the concertim images.
@@ -71,7 +71,7 @@ ansible-playbook \
 4. Remove the `concertim_static-content` docker volume.
 
    Currently there is [an
-   issue](https://github.com/alces-flight/concertim-ansible-playbook/issues/87)
+   issue](https://github.com/openflighthpc/concertim-ansible-playbook/issues/87)
    where changes in Concertim assets might not be picked up during an upgrade.
    To work around that we remove the static content volume.
 

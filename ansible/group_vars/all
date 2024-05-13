@@ -88,7 +88,7 @@ enable_openstack_service: no
 metric_reporting_daemon:
   install_dir: "{{ct_installation_dir}}/metric-reporting-daemon"
   source:
-    repo: "https://{{gh_token}}@github.com/alces-flight/concertim-metric-reporting-daemon"
+    repo: "https://{{gh_token}}@github.com/openflighthpc/concertim-metric-reporting-daemon"
     commitish: main
   docker_image:
     name: concertim-metric-reporting-daemon
@@ -96,7 +96,7 @@ metric_reporting_daemon:
 visualisation_app:
   install_dir: "{{ct_installation_dir}}/visualisation-app"
   source:
-    repo: "https://{{gh_token}}@github.com/alces-flight/concertim-ct-visualisation-app"
+    repo: "https://{{gh_token}}@github.com/openflighthpc/concertim-ct-visualisation-app"
     commitish: main
   docker_image:
     name: concertim-visualisation-app
@@ -116,7 +116,7 @@ proxy:
 cluster_builder:
   install_dir: "{{ct_installation_dir}}/cluster-builder"
   source:
-    repo: "https://{{gh_token}}@github.com/alces-flight/concertim-cluster-builder"
+    repo: "https://{{gh_token}}@github.com/openflighthpc/concertim-cluster-builder"
     commitish: main
   docker_image:
     name: concertim-cluster-builder
@@ -124,7 +124,7 @@ cluster_builder:
 openstack_service:
   install_dir: "{{ct_installation_dir}}/openstack-service"
   source:
-    repo: "https://{{gh_token}}@github.com/alces-flight/concertim-openstack-service"
+    repo: "https://{{gh_token}}@github.com/openflighthpc/concertim-openstack-service"
     commitish: code-abstraction
   docker_images:
     - name: concertim-api-server

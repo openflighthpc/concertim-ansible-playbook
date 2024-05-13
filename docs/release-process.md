@@ -36,7 +36,7 @@ index d867a5f..f38c6cb 100644
  metric_reporting_daemon:
    install_dir: "{{ct_installation_dir}}/metric-reporting-daemon"
    source:
-     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-metric-reporting-daemon"
+     repo: "https://{{gh_token}}@github.com/openflighthpc/concertim-metric-reporting-daemon"
 -    commitish: main
 +    commitish: v0.2.2
    docker_image:
@@ -45,7 +45,7 @@ index d867a5f..f38c6cb 100644
  visualisation_app:
    install_dir: "{{ct_installation_dir}}/visualisation-app"
    source:
-     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-ct-visualisation-app"
+     repo: "https://{{gh_token}}@github.com/openflighthpc/concertim-ct-visualisation-app"
 -    commitish: main
 +    commitish: v0.2.3
    docker_image:
@@ -56,7 +56,7 @@ index d867a5f..f38c6cb 100644
  cluster_builder:
    install_dir: "{{ct_installation_dir}}/cluster-builder"
    source:
-     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-cluster-builder"
+     repo: "https://{{gh_token}}@github.com/openflighthpc/concertim-cluster-builder"
 -    commitish: main
 +    commitish: v0.1.3
    docker_image:
@@ -65,7 +65,7 @@ index d867a5f..f38c6cb 100644
  openstack_service:
    install_dir: "{{ct_installation_dir}}/openstack-service"
    source:
-     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-openstack-service"
+     repo: "https://{{gh_token}}@github.com/openflighthpc/concertim-openstack-service"
 -    commitish: develop
 +    commitish: v0.2.0
    docker_images:
@@ -227,7 +227,7 @@ index f38c6cb..d867a5f 100644
 @@ -70,7 +70,7 @@ metric_reporting_daemon:
    install_dir: "{{ct_installation_dir}}/metric-reporting-daemon"
    source:
-     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-metric-reporting-daemon"
+     repo: "https://{{gh_token}}@github.com/openflighthpc/concertim-metric-reporting-daemon"
 -    commitish: v0.2.2
 +    commitish: main
    docker_image:
@@ -236,7 +236,7 @@ index f38c6cb..d867a5f 100644
 @@ -78,7 +78,7 @@ visualisation_app:
    install_dir: "{{ct_installation_dir}}/visualisation-app"
    source:
-     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-ct-visualisation-app"
+     repo: "https://{{gh_token}}@github.com/openflighthpc/concertim-ct-visualisation-app"
 -    commitish: v0.2.3
 +    commitish: main
    docker_image:
@@ -245,7 +245,7 @@ index f38c6cb..d867a5f 100644
 @@ -91,7 +91,7 @@ cluster_builder:
    install_dir: "{{ct_installation_dir}}/cluster-builder"
    source:
-     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-cluster-builder"
+     repo: "https://{{gh_token}}@github.com/openflighthpc/concertim-cluster-builder"
 -    commitish: v0.1.3
 +    commitish: main
    docker_image:
@@ -254,7 +254,7 @@ index f38c6cb..d867a5f 100644
 @@ -99,7 +99,7 @@ openstack_service:
    install_dir: "{{ct_installation_dir}}/openstack-service"
    source:
-     repo: "https://{{gh_token}}@github.com/alces-flight/concertim-openstack-service"
+     repo: "https://{{gh_token}}@github.com/openflighthpc/concertim-openstack-service"
 -    commitish: v0.2.0
 +    commitish: develop
    docker_images:
