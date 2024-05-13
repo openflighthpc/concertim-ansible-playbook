@@ -16,10 +16,10 @@ release and follow the deployment instructions there.
 
 Concertim Ansible Playbook deploys containers for the following Concertim projects:
 
-* [Concertim Visualisation App](https://github.com/alces-flight/concertim-ct-visualisation-app)
-* [Concertim Metric Reporting Daemon](https://github.com/alces-flight/concertim-metric-reporting-daemon)
-* [Concertim Cluster Builder](https://github.com/alces-flight/concertim-cluster-builder)
-* [Concertim Openstack Service](https://github.com/alces-flight/concertim-openstack-service)
+* [Concertim Visualisation App](https://github.com/openflighthpc/concertim-ct-visualisation-app)
+* [Concertim Metric Reporting Daemon](https://github.com/openflighthpc/concertim-metric-reporting-daemon)
+* [Concertim Cluster Builder](https://github.com/openflighthpc/concertim-cluster-builder)
+* [Concertim Openstack Service](https://github.com/openflighthpc/concertim-openstack-service)
 
 ### Infrastructure components
 
